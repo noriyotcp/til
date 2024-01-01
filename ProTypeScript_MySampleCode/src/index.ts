@@ -1,4 +1,5 @@
-const greeting = "Hello, ";
-const text = greeting + "world!";
+const i = 5;
 
-console.log(text);
+if (i < 10) {
+  console.log("i は 10 未満です");
+}
