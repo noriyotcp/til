@@ -1,3 +1,4 @@
+// 3.3.1 部分型とは
 // foo, bar 以外のことには言及していない
 type FooBar = {
   foo: string;
@@ -19,3 +20,4 @@ const obj: FooBarBaz = {
 
 const obj2: FooBar = obj;
 
+console.log(obj2);
