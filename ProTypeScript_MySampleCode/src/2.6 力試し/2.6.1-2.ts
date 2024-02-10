@@ -1,3 +1,5 @@
+// 2.6.1 FizzBuzzを書いてみよう
+
 // FizzBuzzを書いてみよう
 let message = "";
 let i = 1;
@@ -20,3 +22,4 @@ while (i <= 100) {
 }
 
 console.log(message);
+
