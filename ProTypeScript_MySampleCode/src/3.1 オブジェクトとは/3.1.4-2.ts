@@ -1,3 +1,5 @@
+// 3.1.4 プロパティアクセス:値の取得と代入
+
 import { createInterface } from "readline";
 
 const rl = createInterface({
@@ -20,3 +22,4 @@ rl.question("数値を入力してください:", (line) => {
   console.log(messages[num >= 0 ? "good" : "bad"]);
   rl.close();
 });
+

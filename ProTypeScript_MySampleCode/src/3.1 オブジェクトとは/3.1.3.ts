@@ -1,3 +1,5 @@
+// 3.1.3 オブジェクトリテラル(2)プロパティ名の種々の指定方法
+
 const propName = "buzz";
 
 const obj = {
@@ -15,4 +17,5 @@ console.log(obj['↑↓↑↓']);
 console.log(obj["1"]);
 console.log(obj["2.05"]);
 console.log(obj.buzz);
+
 

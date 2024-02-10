@@ -1,3 +1,5 @@
+// 3.1.5 オブジェクトリテラル(3)スプレッド構文
+
 const obj1 = {
   foo: 123,
   bar: 456,
@@ -17,3 +19,4 @@ const obj2 = {
 
 // { foo: -9999, bar: 456, baz: 789 }
 console.log(obj2);
+
