@@ -1,3 +1,5 @@
+// 2.3.3 数値リテラル
+
 const binary = 0b1010;
 const octal = 0o755;
 const hexdecimal = 0xff;
@@ -13,4 +15,5 @@ console.log(big, small);
 const million = 1_000_000;
 
 console.log(million);
+
 

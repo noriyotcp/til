@@ -1,3 +1,5 @@
+// 2.3.10 プリミティブ型同士の変換(2)明示的な変換を行う
+
 const num1 = Number(true);
 console.log(num1); // 1
 
@@ -32,3 +34,4 @@ console.log(str2);
 const str3 = String(null); // null という文字列
 const str4 = String(undefined); // undefined という文字列
 console.log(str3, str4);
+

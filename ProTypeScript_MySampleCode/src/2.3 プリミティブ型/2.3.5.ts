@@ -1,3 +1,5 @@
+// 2.3.5 文字列型と3種類の文字列リテラル
+
 const message: string = `Hello
 world!`;
 
@@ -14,3 +16,4 @@ console.log("Hello \\world/");
 
 // Unicodeコードポイントを指定する
 console.log("Hello \u{796d} world!");
+
