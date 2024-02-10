@@ -1,3 +1,5 @@
+// 2.4.7 条件演算子
+
 import { createInterface } from "readline";
 
 const rl = createInterface({
@@ -11,3 +13,4 @@ rl.question("数値を入力してください:", (line) => {
   console.log(message);
   rl.close();
 });
+

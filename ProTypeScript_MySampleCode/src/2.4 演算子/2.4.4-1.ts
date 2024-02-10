@@ -1,3 +1,5 @@
+// 2.4.4 比較演算子と等価演算子
+
 const left1 = -5, right1 = 0;
 console.log(left1 < right1);
 
@@ -18,4 +20,5 @@ const right: number = 2;
 
 console.log(left === right);
 console.log(left !== right);
+
 

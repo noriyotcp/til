@@ -1,3 +1,5 @@
+// 2.4.5 論理演算子(1)真偽値の演算
+
 import { createInterface } from "readline";
 
 const rl = createInterface({
@@ -16,3 +18,4 @@ rl.question("数値を入力してください:", (line) => {
   }
   rl.close();
 });
+

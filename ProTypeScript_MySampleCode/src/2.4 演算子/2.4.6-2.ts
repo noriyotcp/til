@@ -1,3 +1,5 @@
+// 2.4.6 論理演算子(2)一般形と短絡評価
+
 import { createInterface } from "readline";
 
 const rl = createInterface({
@@ -6,9 +8,8 @@ const rl = createInterface({
 });
 
 rl.question("名前を入力してください:", (name) => {
-  const getDefaultName = () => "名無しなんですけど";
-  const displayName = name || getDefaultName();
-
+  const displayName = name || "名無し";
   console.log(`こんにちは、${displayName}さん`);
   rl.close();
 });
+

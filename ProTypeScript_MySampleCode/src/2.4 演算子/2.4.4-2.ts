@@ -1,3 +1,5 @@
+// 2.4.4 比較演算子と等価演算子
+
 import { createInterface } from "readline";
 
 const rl = createInterface({
@@ -13,3 +15,4 @@ rl.question("パスワードを入力してください:", (password) => {
   }
   rl.close();
 });
+

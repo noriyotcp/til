@@ -1,3 +1,5 @@
+// 2.4.8 代入演算子
+
 import { createInterface } from "readline";
 
 const rl = createInterface({
@@ -6,6 +8,10 @@ const rl = createInterface({
 });
 
 rl.question("名前を入力してください:", (name) => {
-  console.log("こんにちは、" + name + "さん！");
+  if (name === '') {
+    name = '名無し';
+  }
+  console.log(`こんにちは、${name}さん`);
   rl.close();
 });
+

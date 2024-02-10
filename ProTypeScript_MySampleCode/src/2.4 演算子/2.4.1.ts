@@ -1,3 +1,5 @@
+// 2.4.1 算術演算子(1)二項演算子
+
 const addResult = 1024 + 314 + 500;
 console.log(addResult);
 const discounted = addResult * 0.7;
@@ -22,3 +24,4 @@ const str: string = '123';
 
 // 優先度、左から高い順
 // **, * / %, + -
+

@@ -1,3 +1,5 @@
+// 2.4.3 文字列の結合を+演算子で行う
+
 import { createInterface } from "readline";
 
 const rl = createInterface({
@@ -6,9 +8,7 @@ const rl = createInterface({
 });
 
 rl.question("名前を入力してください:", (name) => {
-  if (name === '') {
-    name = '名無し';
-  }
-  console.log(`こんにちは、${name}さん`);
+  console.log("こんにちは、" + name + "さん！");
   rl.close();
 });
+
