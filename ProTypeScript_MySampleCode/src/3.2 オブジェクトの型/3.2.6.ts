@@ -1,3 +1,5 @@
+// 3.2.6 オプショナルなプロパティの宣言
+
 type MyObj = {
   foo: boolean;
   bar: boolean;
@@ -15,3 +17,4 @@ console.log(obj2.baz); // 1234
 if (obj2.baz !== undefined) {
   console.log(obj2.baz * 1000); // 1234000
 }
+

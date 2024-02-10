@@ -1,3 +1,5 @@
+// 3.2.5 任意のプロパティ名を許容する型（インデックスシグネチャ）
+
 type PriceData = {
   [key: string]: number;
 }
@@ -16,3 +18,4 @@ data.chicken = 250;
 data.弁当 = "foo";
 
 console.log(data);
+

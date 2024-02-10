@@ -1,3 +1,5 @@
+// 3.2.8 typeofキーワードで変数の型を得る
+
 const num: number = 0;
 // 型 Tは変数 num の型、number型を持つ
 type T = typeof num;
@@ -19,3 +21,4 @@ const obj2: MyObj = {
 };
 
 console.log(obj2);
+
