@@ -1,3 +1,5 @@
+// 2.5.3 条件分岐(2)elseを使う
+
 let userName = "Noriyo";
 
 // if (条件式) 文1 else 文2
@@ -27,4 +29,5 @@ if (num < 0) { // if (条件式)
     console.log("num は正の数です");
   }
 }
+
 

@@ -1,3 +1,5 @@
+// 2.5.4 switch文
+
 import { createInterface } from "readline";
 
 const rl = createInterface({
@@ -20,3 +22,4 @@ rl.question("コマンドを入力してください:", (name) => {
   }
   rl.close();
 });
+

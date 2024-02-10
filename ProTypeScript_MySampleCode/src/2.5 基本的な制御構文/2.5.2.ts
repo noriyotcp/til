@@ -1,3 +1,5 @@
+// 2.5.2 ブロック
+
 let userName = "";
 
 if (userName === "") {
@@ -6,4 +8,5 @@ if (userName === "") {
 }
 
 console.log(userName);
+
 
