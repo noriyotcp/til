@@ -19,7 +19,7 @@ const users: User[] = data.trim().split("\n").map((line) => {
   const age = parseInt(ageString, 10);
   const premiumUser = premiumUserString === "1";
   return { name, age, premiumUser };
-};
+});
 
 assert(users[0].name === "uhyo");
 assert(users[0].age === 26);
