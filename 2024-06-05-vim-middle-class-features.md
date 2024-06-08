@@ -35,3 +35,17 @@ def add_suffix(fname: str, extension: str) -> str:
 3.g<C-a> を押す
 ```
 
+## 挿入モード内でインデントを増減する
+通常は > / <
+
+<C-t> / <C-d>
+
+メリットはカーソルが行頭になくても動作する
+
+- indent
+  - indent in INSERT mode
+
+ついでにインデントの設定もした  
+[vimで言語ごとにインデントの大きさを変えてみた #Vim - Qiita](https://qiita.com/daiki44/items/8da9d4f89bb295f1399d)
+マークダウンではスペース2文字
+
