@@ -43,3 +43,20 @@ function bob(a) {
 // 変数に代入して名前をつける
 const bob2 = a => a + 100;
 
+const func = () => { foo: 1 };
+console.log(func()); // undefined
+
+// const func2 = () => { foo: function () {} };
+// console.log(func2());
+// SyntaxError: Function statements require a function name
+
+// const func3 = () => { foo() {} };
+// console.log(func3());
+// SyntaxError: Unexpected token '{'
+
+// これは、 JavaScript がアロー関数を簡潔文体とみなすのは、アローに続くトークンが左中括弧でない場合のみであるため、中括弧 ({}) 内のコードは一連の文として解釈され、 foo はオブジェクトリテラルのキーではなく、ラベルとなります。
+//
+//オブジェクトリテラルを括弧で囲む
+const func4 = () => ({ foo: 1});
+console.log(func4());
+
