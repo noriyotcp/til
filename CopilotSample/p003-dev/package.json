@@ -1,0 +1,16 @@
+{
+  "name": "p003-dev",
+  "version": "1.0.0",
+  "main": "getPhoneBrand.js",
+  "scripts": {
+    "start": "node index.js",
+    "test": "jest"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "devDependencies": {
+    "jest": "^29.7.0"
+  }
+}
