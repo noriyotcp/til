@@ -2,6 +2,7 @@
 # This is for macOS
 
 MSG="${BASH_SOURCE:-$0} $(date +"%Y-%m")"
+
 DESC=$(cat <<-EOD
 DESCRIPTION
     The options are as follows:
@@ -10,13 +11,25 @@ DESCRIPTION
 EOD
 )
 
+USAGE=$(cat <<-EOD
+USAGE
+./monthly-posts.sh $(date +"%Y-%m")
+./monthly-posts.sh $(date +"%Y-%m") -p docs
+EOD
+)
+
 # 初期値の設定
 TARGET_DIR="."
 
 # ディレクトリ名が指定されているか確認
 if [ ${#} -eq 0 ]; then
-  echo "No args: eg) ${MSG}"
-  echo "$DESC"
+  cat <<-EOD
+The first argument must be the directory name in YYYY-MM format
+
+$USAGE
+
+$DESC
+EOD
   exit 1
 fi
 
