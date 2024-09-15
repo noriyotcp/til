@@ -1,4 +1,5 @@
 #!/bin/sh
+
 # This is for macOS
 
 CMD="$0 $(date +"%Y-%m")"
@@ -73,6 +74,8 @@ NEW_DIR_PATH="$TARGET_DIR/$NEW_DIR"
 mkdir -p "$NEW_DIR_PATH"
 
 # 指定された日付形式のファイルをディレクトリに移動
-mv "${NEW_DIR}"*.md "$NEW_DIR_PATH"
-
-echo "Files moved to: $NEW_DIR_PATH"
+if mv "${NEW_DIR}"*.md "$NEW_DIR_PATH"; then
+  echo "Files moved to: $NEW_DIR_PATH"
+else
+  echo "No files to move."
+fi
