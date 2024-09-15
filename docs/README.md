@@ -1,12 +1,14 @@
 # Noriyo Akita's Today I Learned
 This is website from [https://github.com/noriyotcp/til](noriyotcp/til)
 
-{% for page in site.pages %}
+{% assign pages = site.pages | sort: 'date' | reverse %}
+{% for page in pages %}
   {% if page.path contains '.md' and page.path != 'README.md'%}
   ## [{{ page.title | default: page.basename }}]({{ page.url | relative_url }})
   ```
   {{ page.content | strip_html | truncate: 100 }}
   ```
+  Date: {{ page.date }}
 
 ---
 
