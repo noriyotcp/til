@@ -8,7 +8,7 @@ This is website from [https://github.com/noriyotcp/til](noriyotcp/til)
   ```
   {{ page.content | strip_html | truncate: 100 }}
   ```
-  Date: {{ page.date }}
+  *<small>Date: {{ page.date }} / Last modified: {{ page.last_modified_at }}</small>*
 
 ---
 
