@@ -1,6 +1,6 @@
 ---
 date: "2024-09-13 00:37:58 +0900"
-last_modified_at: "2024-09-16 06:03:32 +0900"
+last_modified_at: "2024-09-17 02:26:10 +0900"
 ---
 
 # Part 1: Exploring Rails and Its Abstractions
