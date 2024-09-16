@@ -1,3 +1,8 @@
+---
+date: "2024-09-13 00:37:58 +0900"
+last_modified_at: "2024-09-16 06:03:32 +0900"
+---
+
 # Part 1: Exploring Rails and Its Abstractions
 
 ## Chapter 1: Rails as a Web Application Framework
