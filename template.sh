@@ -63,6 +63,11 @@ fi
 
 # ファイル作成
 cat <<-EOD >> "$TARGET_DIR/${DATE}.md"
+---
+title: "${DATE}"
+date: "$(date +"%Y-%m-%d %H:%M:%S %z")"
+---
+
 # ${DATE}
 
 EOD
