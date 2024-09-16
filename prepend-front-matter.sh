@@ -72,12 +72,30 @@ last_modified_at: "${LAST_MODIFIED_DATE}"
 EOM
 )
 
-# 改行を適切に処理し、Front matterをファイルの先頭行に挿入
-sed -i.bak -e "1i\\
-${FRONTMATTER//$'\n'/\\
-}\\
-" "$FILE_PATH"
+# Backup original file
+cp "$FILE_PATH" "$FILE_PATH.bak"
 
-# 一時ファイルを削除
+# New temporary file for editing
+TEMP_FILE=$(mktemp)
+
+# 既存のFront Matterを検出し、更新または新しいものを挿入
+if grep -q '^---' "$FILE_PATH"; then
+  # Front Matterが存在する場合、そのブロックを全て削除し新しいFront Matterを追加
+  {
+    echo "$FRONTMATTER"
+    sed '1,/^---/d' "$FILE_PATH"
+  } > "$TEMP_FILE"
+else
+  # Front Matterが存在しない場合、新しいものを先頭に挿入
+  {
+    echo "$FRONTMATTER\n"
+    cat "$FILE_PATH"
+  } > "$TEMP_FILE"
+fi
+
+# Update the original file with changes
+mv "$TEMP_FILE" "$FILE_PATH"
+
+# バックアップファイルを削除
 rm "${FILE_PATH}.bak"
 
