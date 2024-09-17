@@ -15,9 +15,6 @@ function processListItems(list) {
     const originalContent = li.innerHTML.trim();
     const convertedContent = convert(originalContent);
 
-    console.log("originalContent:", originalContent);
-    console.log("convertedContent:", convertedContent);
-
     if (convertedContent !== originalContent) {
       li.innerHTML = convertedContent;
       li.classList.add("task-list-item");
@@ -33,9 +30,27 @@ function processListItems(list) {
   });
 }
 
+function addTaskListClass(parent) {
+  parent.querySelectorAll("ul").forEach((ul) => {
+    let hasTaskItem = false;
+
+    // 1レベル配下のli要素をチェック
+    ul.querySelectorAll(":scope > li").forEach((li) => {
+      if (li.querySelector(".task-list-item-checkbox")) {
+        hasTaskItem = true;
+      }
+    });
+
+    if (hasTaskItem) {
+      ul.classList.add("contains-task-list");
+    }
+  });
+}
+
 document.addEventListener("DOMContentLoaded", () => {
   const contentEl = document.getElementById("main_content");
   if (contentEl) {
     processListItems(contentEl.querySelectorAll("li"));
+    addTaskListClass(contentEl);
   }
 });
