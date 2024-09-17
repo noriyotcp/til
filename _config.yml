@@ -3,13 +3,12 @@ title: "til"
 description: "Noriyo Akita's Today I Learned"
 url: "https://noriyotcp.github.io/til/"
 markdown: GFM
-source: docs
-baseurl: "/docs"  # リポジトリのルート URLからの相対パス
 
 exclude:
   - Gemfile
   - Gemfile.lock
   - vendor
+  - projects
 
 author:
   name: "Noriyo Akita"
