@@ -4,7 +4,11 @@
     <meta charset='utf-8'>
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" href="/assets/css/style.css">
+    {% if site.url contains "https://noriyotcp.github.io/til/" %}
+      <link rel="stylesheet" href="https://noriyotcp.github.io/til/assets/css/style.css">
+    {% else %}
+      <link rel="stylesheet" href="/til/assets/css/style.css">
+    {% endif %}
     <!-- start custom head snippets, customize with your own _includes/head-custom.html file -->
 
 <!-- Setup theme-color -->
@@ -66,6 +70,10 @@
         {{ content }}
       </section>
     </div>
-    <script type='text/javascript' src='{{ "/assets/js/convertToTasklist.js" }}'></script>
+    {% if site.url contains "https://noriyotcp.github.io/til/" %}
+      <script type='text/javascript' src="https://noriyotcp.github.io/til/assets/js/convertToTasklist.js"></script>
+    {% else %}
+      <link rel="stylesheet" href="/til/assets/js/convertToTasklist.js">
+    {% endif %}
   </body>
 </html>
