@@ -53,7 +53,12 @@
 
     <header>
       <div class="container">
-        <a id="a-title" href="/">
+      {% if site.url contains "https://noriyotcp.github.io/til/" %}
+        {% assign site_url = site.url %}
+      {% else %}
+        {% assign site_url = site.url | append: site.baseurl/ %}
+      {% endif %}
+        <a id="a-title" href={{ site_url }}>
           <h1>til</h1>
         </a>
         <h2>Noriyo Akita's Today I Learned</h2>
