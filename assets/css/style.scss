@@ -10,7 +10,7 @@ ul.contains-task-list {
   $checkbox-size: 1em;
 
   list-style: none;
-  padding-left: 0.5em;
+  padding-left: 1em;
 
   li.task-list-item {
     list-style-image: none;
@@ -18,7 +18,7 @@ ul.contains-task-list {
 
     input.task-list-item-checkbox {
       display: inline-block;
-      margin-right: 1.2em;
+      margin-right: 0.5em;
       width: $checkbox-size;
       height: $checkbox-size;
       vertical-align: middle;
