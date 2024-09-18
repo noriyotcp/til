@@ -3,7 +3,7 @@ This is website from [https://github.com/noriyotcp/til](noriyotcp/til)
 
 {% assign pages = site.pages | sort: 'date' | reverse %}
 {% for page in pages %}
-  {% if page.path contains '.md' and page.path != 'README.md'%}
+  {% if page.path contains 'docs/' %}
   ## [{{ page.title | default: page.basename }}]({{ page.url | relative_url }})
   ```
   {{ page.content | strip_html | truncate: 100 }}
