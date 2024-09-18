@@ -56,7 +56,7 @@
       {% if site.url contains "https://noriyotcp.github.io/til/" %}
         {% assign site_url = site.url %}
       {% else %}
-        {% assign site_url = site.url | append: site.baseurl/ %}
+        {% assign site_url = site.url | append: site.baseurl | append: '/' %}
       {% endif %}
         <a id="a-title" href={{ site_url }}>
           <h1>til</h1>
