@@ -4,12 +4,8 @@
     <meta charset='utf-8'>
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    {% if site.url contains "https://noriyotcp.github.io/til/" %}
-      <link rel="stylesheet" href="https://noriyotcp.github.io/til/assets/css/style.css">
-    {% else %}
-      <link rel="stylesheet" href="/til/assets/css/style.css">
-    {% endif %}
-    <!-- start custom head snippets, customize with your own _includes/head-custom.html file -->
+    <link rel="stylesheet" href="{{ '/assets/css/style.css' | relative_url }}">
+   <!-- start custom head snippets, customize with your own _includes/head-custom.html file -->
 
 <!-- Setup theme-color -->
 <!-- start theme color meta headers -->
@@ -53,12 +49,7 @@
 
     <header>
       <div class="container">
-      {% if site.url contains "https://noriyotcp.github.io/til/" %}
-        {% assign site_url = site.url %}
-      {% else %}
-        {% assign site_url = site.url | append: site.baseurl | append: '/' %}
-      {% endif %}
-        <a id="a-title" href={{ site_url }}>
+       <a id="a-title" href="{{ '/' | relative_url }}">
           <h1>til</h1>
         </a>
         <h2>Noriyo Akita's Today I Learned</h2>
@@ -75,10 +66,6 @@
         {{ content }}
       </section>
     </div>
-    {% if site.url contains "https://noriyotcp.github.io/til/" %}
-      <script type='text/javascript' src="https://noriyotcp.github.io/til/assets/js/convertToTasklist.js"></script>
-    {% else %}
-      <link rel="stylesheet" href="/til/assets/js/convertToTasklist.js">
-    {% endif %}
+    <script type="text/javascript" src="{{ '/assets/js/convertToTasklist.js' | relative_url }}"></script>
   </body>
 </html>
