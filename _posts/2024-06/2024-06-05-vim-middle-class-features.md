@@ -1,6 +1,6 @@
 ---
 date: "2024-06-06 02:10:53 +0900"
-last_modified_at: "2024-09-15 21:41:31 +0900"
+last_modified_at: "2024-09-21 13:52:38 +0900"
 ---
 
 # https://zenn.dev/vim_jp/articles/2024-06-05-vim-middle-class-features
