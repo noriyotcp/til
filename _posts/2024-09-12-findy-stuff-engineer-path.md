@@ -1,6 +1,7 @@
 ---
 date: "2024-09-13 00:37:48 +0900"
-last_modified_at: "2024-09-21 13:52:38 +0900"
+last_modified_at: "2024-09-21 14:04:11 +0900"
+title: "スタッフエンジニアの道~ Forkwell Library#66"
 ---
 
 # スタッフエンジニアの道~ Forkwell Library#66

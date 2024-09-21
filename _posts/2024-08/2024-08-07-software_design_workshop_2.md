@@ -1,6 +1,7 @@
 ---
 date: "2024-08-08 22:24:34 +0900"
-last_modified_at: "2024-09-21 13:52:38 +0900"
+last_modified_at: "2024-09-21 14:04:11 +0900"
+title: "[第2回 ソフトウェア設計における思考と学び方を考える 「増田設計道場」 - connpass](https://levii.connpass.com/event/325035/)"
 ---
 
 # [第2回 ソフトウェア設計における思考と学び方を考える 「増田設計道場」 - connpass](https://levii.connpass.com/event/325035/)
