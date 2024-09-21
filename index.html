@@ -4,10 +4,9 @@ layout: default
 
 <!-- Pagination links -->
 <div class="pagination text-center">
+  <a id="a-title" href="{{ '/' | relative_url }}">First</a>
   {% if paginator.previous_page %}
-    <a href="{{ paginator.previous_page_path | relative_url }}" class="previous">
-      Previous
-    </a>
+    <a href="{{ paginator.previous_page_path | relative_url }}" class="previous">Previous</a>
   {% else %}
     <span class="previous">Previous</span>
   {% endif %}
@@ -19,6 +18,7 @@ layout: default
   {% else %}
     <span class="next ">Next</span>
   {% endif %}
+  <a href="{{ '/page' | append: paginator.total_pages | relative_url }}" class="">Last</a>
 </div>
 
 <hr>
@@ -39,10 +39,9 @@ layout: default
 
 <!-- Pagination links -->
 <div class="pagination text-center">
+  <a id="a-title" href="{{ '/' | relative_url }}">First</a>
   {% if paginator.previous_page %}
-    <a href="{{ paginator.previous_page_path | relative_url }}" class="previous">
-      Previous
-    </a>
+    <a href="{{ paginator.previous_page_path | relative_url }}" class="previous">Previous</a>
   {% else %}
     <span class="previous">Previous</span>
   {% endif %}
@@ -54,4 +53,6 @@ layout: default
   {% else %}
     <span class="next ">Next</span>
   {% endif %}
+  <a href="{{ '/page' | append: paginator.total_pages | relative_url }}" class="">Last</a>
 </div>
+
