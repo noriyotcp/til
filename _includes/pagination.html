@@ -1,19 +1,18 @@
 <!-- Pagination links -->
 <div class="pagination text-center">
-  <a id="a-title" href="{{ '/' | relative_url }}">First</a>
+  <a id="a-title" href="{{ '/' | relative_url }}">{{ '<<' | escape }}</a>
   {% if paginator.previous_page %}
-    <a href="{{ paginator.previous_page_path | relative_url }}" class="previous">Previous</a>
+    <a href="{{ paginator.previous_page_path | relative_url }}" class="previous">Prev</a>
   {% else %}
-    <span class="previous">Previous</span>
+    <span class="previous">Prev</span>
   {% endif %}
   <span class="page_number ">
-    Page: {{ paginator.page }} of {{ paginator.total_pages }}
+    {{ paginator.page }} of {{ paginator.total_pages }}
   </span>
   {% if paginator.next_page %}
     <a href="{{ paginator.next_page_path | relative_url }}" class="next">Next</a>
   {% else %}
     <span class="next ">Next</span>
   {% endif %}
-  <a href="{{ '/page' | append: paginator.total_pages | relative_url }}" class="">Last</a>
+  <a href="{{ '/page' | append: paginator.total_pages | relative_url }}" class="">{{ '>>' | escape }}</a>
 </div>
-
