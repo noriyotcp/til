@@ -61,8 +61,10 @@ if [[ ! -d "$TARGET_DIR" ]]; then
   exit 1
 fi
 
+FILE_PATH="$TARGET_DIR/${DATE}-${DATE}.md"
+
 # ファイル作成
-cat <<-EOD >> "$TARGET_DIR/${DATE}.md"
+cat <<-EOD >> "$FILE_PATH"
 ---
 title: "${DATE}"
 date: "$(date +"%Y-%m-%d %H:%M:%S %z")"
@@ -72,4 +74,5 @@ date: "$(date +"%Y-%m-%d %H:%M:%S %z")"
 
 EOD
 
-echo "File created: $TARGET_DIR/${DATE}.md"
+echo "File created: $FILE_PATH"
+
