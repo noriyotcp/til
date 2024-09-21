@@ -5,6 +5,8 @@ title: "Frontendのテスト全部知る 〜Unit TestからE2Eまで〜 - Encraf
 ---
 
 # Frontendのテスト全部知る 〜Unit TestからE2Eまで〜 - Encraft #18
+https://knowledgework.connpass.com/event/327800/
+
 ## コンポーネントのテストとして採れそうな手法と、その効果を考える
 Storybook もテストランナーあるんだよなあー  
 Vitest のブラウザモードとか  
