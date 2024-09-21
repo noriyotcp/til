@@ -62,11 +62,15 @@ get_git_file_info() {
 # ファイル情報を取得する関数を呼び出す
 get_git_file_info "$FILE_PATH"
 
+# 最初のレベル1の見出しを抽出
+TITLE=$(grep -m 1 '^# ' "$FILE_PATH" | sed 's/^# //')
+
 # Front matterの生成
 FRONTMATTER=$(cat <<-EOM
 ---
 date: "${CREATION_DATE}"
 last_modified_at: "${LAST_MODIFIED_DATE}"
+title: "${TITLE}"
 ---
 
 EOM
