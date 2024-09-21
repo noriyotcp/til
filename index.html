@@ -2,11 +2,32 @@
 layout: default
 ---
 
+<!-- Pagination links -->
+<div class="pagination text-center">
+  {% if paginator.previous_page %}
+    <a href="{{ paginator.previous_page_path | relative_url }}" class="previous">
+      Previous
+    </a>
+  {% else %}
+    <span class="previous">Previous</span>
+  {% endif %}
+  <span class="page_number ">
+    Page: {{ paginator.page }} of {{ paginator.total_pages }}
+  </span>
+  {% if paginator.next_page %}
+    <a href="{{ paginator.next_page_path | relative_url }}" class="next">Next</a>
+  {% else %}
+    <span class="next ">Next</span>
+  {% endif %}
+</div>
+
+<hr>
+
 <!-- This loops through the paginated posts -->
 {% for post in paginator.posts %}
   <h1><a href="{{ post.url | relative_url }}">{{ post.title }}</a></h1>
   <div class="content">
-    {{ post.content | strip_html | strip | truncate: 100 }}
+      {{ post.content | strip_html | strip | truncate: 200 }}
   </div>
   <p>
     <em>
@@ -17,7 +38,7 @@ layout: default
 {% endfor %}
 
 <!-- Pagination links -->
-<div class="pagination">
+<div class="pagination text-center">
   {% if paginator.previous_page %}
     <a href="{{ paginator.previous_page_path | relative_url }}" class="previous">
       Previous
