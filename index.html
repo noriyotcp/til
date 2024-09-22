@@ -9,7 +9,7 @@ layout: default
 <!-- This loops through the paginated posts -->
 {% for post in paginator.posts %}
   <h1><a href="{{ post.url | relative_url }}">{{ post.title }}</a></h1>
-  <div class="content">
+  <div class="truncated-content">
       {{ post.content | strip_html | strip | truncate: 200 }}
   </div>
   <p>

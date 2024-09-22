@@ -45,3 +45,15 @@ ul.contains-task-list {
 
 // Utilities
 .text-center { text-align: center; }
+
+.truncated-content {
+  background: rgba(0, 0, 0, 0.9);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  padding: 10px;
+  font-size: 16px;
+  color: #b5e853;
+  border-radius: 2px;
+  word-wrap: normal;
+  overflow: auto;
+  overflow-y: hidden;
+}
