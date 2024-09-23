@@ -31,6 +31,10 @@ search: false
 @media (min-width: 64em) { .wide .page__related { padding-right: 20px; } }
 @media (min-width: 80em) { .wide .page__related { padding-right: 20px; } }
 
+/* ========================================================================== SEARCH ========================================================================== */
+// @media (min-width: 64em) { .search-content .archive__item { width: 75%; } }
+@media (min-width: 80em) { .search-content .archive__item { width: 75%; } }
+
 .archive__item-excerpt { margin-top: 0; font-size: 0.75em; word-wrap: break-word; }
 
 #site-nav .site-title {
