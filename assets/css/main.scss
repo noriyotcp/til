@@ -10,26 +10,26 @@ search: false
 
 /* ========================================================================== ARCHIVE ========================================================================== */
 .archive { margin-top: 1em; margin-bottom: 2em; }
-@media (min-width: 64em) { .archive { float: right; width: calc(100% - 160px); padding-right: 200px; } }
-@media (min-width: 80em) { .archive { width: calc(100% - 160px); padding-right: 300px; } }
+@media (min-width: 64em) { .archive { float: right; width: calc(100% - 5em); padding-right: 200px; } }
+@media (min-width: 80em) { .archive { width: calc(100% - 5em); padding-right: 300px; } }
 
 /* Wide Pages ========================================================================== */
-@media (min-width: 64em) { .wide .archive { padding-right: 160px; } }
-@media (min-width: 80em) { .wide .archive { padding-right: 160px; } }
+@media (min-width: 64em) { .wide .archive { padding-right: 5em; } }
+@media (min-width: 80em) { .wide .archive { padding-right: 5em; } }
 
-@media (min-width: 64em) { .page { float: right; width: calc(100% - 160px); padding-right: 200px; } }
-@media (min-width: 80em) { .page { width: calc(100% - 160px); padding-right: 300px; } }
+@media (min-width: 64em) { .page { float: right; width: calc(100% - 20px); padding-right: 200px; } }
+@media (min-width: 80em) { .page { width: calc(100% - 20px); padding-right: 300px; } }
 
 /* Related ========================================================================== */
 .page__related { clear: both; float: left; margin-top: 2em; padding-top: 1em; border-top: none; }
-@media (min-width: 64em) { .page__related { float: right; width: calc(100% - 160px); } }
-@media (min-width: 80em) { .page__related { width: calc(100% - 160px); } }
+@media (min-width: 64em) { .page__related { float: right; width: calc(100% - 20px); } }
+@media (min-width: 80em) { .page__related { width: calc(100% - 20px); } }
 
 /* Wide Pages ========================================================================== */
-@media (min-width: 64em) { .wide .page { padding-right: 160px; } }
-@media (min-width: 80em) { .wide .page { padding-right: 160px; } }
-@media (min-width: 64em) { .wide .page__related { padding-right: 160px; } }
-@media (min-width: 80em) { .wide .page__related { padding-right: 160px; } }
+@media (min-width: 64em) { .wide .page { padding-right: 20px; } }
+@media (min-width: 80em) { .wide .page { padding-right: 20px; } }
+@media (min-width: 64em) { .wide .page__related { padding-right: 20px; } }
+@media (min-width: 80em) { .wide .page__related { padding-right: 20px; } }
 
 .archive__item-excerpt { margin-top: 0; font-size: 0.75em; word-wrap: break-word; }
 
@@ -489,5 +489,22 @@ body {
 // font-awesome
 .fa-classic, .fa-regular, .fa-solid, .far, .fas {
     font-family: "Font Awesome 6 Free";
+}
+
+// font size in a post page
+.page__content p, .page__content li, .page__content dl {
+    font-size: 0.8rem;
+}
+
+.page__content :not(pre) > code {
+  // padding-top: 0.1rem;
+  // padding-bottom: 0.1rem;
+  // font-size: 0.8em;
+  background: rgba(0,0,0,0.9);
+  // border: 1px solid rgba(255, 255, 255, 0.15);
+  // padding: 0px 3px;
+  // margin: 0px -3px;
+  color: #aa759f;
+  border-radius: 2px;
 }
 
