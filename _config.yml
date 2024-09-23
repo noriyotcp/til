@@ -34,6 +34,7 @@ defaults:
 # locale: en-US
 locale: ja-JP
 title: "til"
+subtitle: "Noriyo Akita's Today I Learned"
 description: "Noriyo Akita's Today I Learned"
 url: "https://noriyotcp.github.io/til/"
 search: true
