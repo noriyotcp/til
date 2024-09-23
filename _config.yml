@@ -1,8 +1,52 @@
-remote_theme: pages-themes/hacker@v0.2.0
+# Welcome to Jekyll!
+#
+# This config file is meant for settings that affect your whole blog, values
+# which you are expected to set up once and rarely edit after that. If you find
+# yourself editing this file very often, consider using Jekyll's data files
+# feature for the data you need to update frequently.
+#
+# For technical reasons, this file is *NOT* reloaded automatically when you use
+# 'bundle exec jekyll serve'. If you change this file, please restart the server process.
+
+# Site settings
+# These are used to personalize your new site. If you look in the HTML files,
+# you will see them accessed via {{ site.title }}, {{ site.email }}, and so on.
+# You can create any custom variable you would like, and they will be accessible
+# in the templates via {{ site.myvariable }}.
+remote_theme: "mmistakes/minimal-mistakes@4.26.2"
+
+minimal_mistakes_skin: "dark" # "air", "aqua", "contrast", "dark", "dirt", "neon", "mint", "plum", "sunrise"
+
+defaults:
+  # _posts
+  - scope:
+      path: ""
+      type: posts
+    values:
+      layout: single
+      author_profile: false
+      show_date: true
+      read_time: false
+      comments: false
+      share: false
+      related: true
+      classes: wide
+# locale: en-US
+locale: ja-JP
 title: "til"
+subtitle: "Noriyo Akita's Today I Learned"
 description: "Noriyo Akita's Today I Learned"
 url: "https://noriyotcp.github.io/til/"
-markdown: GFM
+search: true
+breadcrumbs: false # true, false (default)
+words_per_minute: 200
+
+# Build settings
+# Conversion
+highlighter: rouge
+excerpt_separator: "<!--more-->"
+incremental: false #set incremental to true to speed things up. if changes arent showing set to false
+
 paginate: 5
 paginate_path: /page:num/
 
@@ -12,12 +56,28 @@ exclude:
   - vendor
   - projects
 
-author:
-  name: "Noriyo Akita"
-  location: "Japan"
-  email: "noriyo.akita@gmail.com"
-  github: "noriyotcp"
+atom_feed:
+  hide: true
 
+encoding: "utf-8"
+
+# Exclude from processing.
+# The following items will not be processed, by default. Create a custom list
+# to override the default setting.
+# exclude:
+#   - Gemfile
+#   - Gemfile.lock
+#   - node_modules
+#   - vendor/bundle/
+#   - vendor/cache/
+#   - vendor/gems/
+#   - vendor/ruby/
+exclude:
+  - projects
+
+# Plugins (previously gems:)
 plugins:
-  - jekyll-remote-theme # add this line to the plugins list if you already have onetheme: jekyll-theme-slate
+  - jekyll-remote-theme # add this line to the plugins list if you already have one
+
+github: true
 

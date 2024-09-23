@@ -1,24 +1,6 @@
 ---
-layout: default
+layout: home
+author_profile: false
+classes: wide
 ---
-
-{% include pagination.html %}
-
-<hr>
-
-<!-- This loops through the paginated posts -->
-{% for post in paginator.posts %}
-  <h1><a href="{{ post.url | relative_url }}">{{ post.title }}</a></h1>
-  <div class="truncated-content">
-      {{ post.content | strip_html | strip | truncate: 200 }}
-  </div>
-  <p>
-    <em>
-      <small>Date: {{ post.date }} / Last modified: {{ post.last_modified_at }}</small>
-    </em>
-  </p>
-  <hr>
-{% endfor %}
-
-{% include pagination.html %}
 
