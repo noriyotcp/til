@@ -42,22 +42,9 @@ words_per_minute: 200
 
 # Build settings
 # Conversion
-# markdown: kramdown
-markdown: GFM
 highlighter: rouge
 excerpt_separator: "<!--more-->"
 incremental: false #set incremental to true to speed things up. if changes arent showing set to false
-
-# Markdown Processing
-# kramdown:
-#   input: GFM
-#   hard_wrap: false
-#   auto_ids: true
-#   footnote_nr: 1
-#   entity_output: as_char
-#   toc_levels: 1..6
-#   smart_quotes: lsquo,rsquo,ldquo,rdquo
-#   enable_coderay: false
 
 paginate: 5
 paginate_path: /page:num/

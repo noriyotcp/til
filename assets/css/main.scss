@@ -325,13 +325,14 @@ pre {
   overflow-y: hidden;
 }
 
+// customized
 code.highlighter-rouge {
-  background: rgba(0,0,0,0.9);
+  // background: rgba(0,0,0,0.9);
   border: 1px solid rgba(255, 255, 255, 0.15);
   padding: 0px 3px;
   margin: 0px -3px;
   color: #aa759f;
-  border-radius: 2px;
+  // border-radius: 4px;
 }
 
 table {
@@ -498,18 +499,6 @@ body {
 // font size in a post page
 .page__content p, .page__content li, .page__content dl {
     font-size: 0.8rem;
-}
-
-.page__content :not(pre) > code {
-  // padding-top: 0.1rem;
-  // padding-bottom: 0.1rem;
-  // font-size: 0.8em;
-  background: rgba(0,0,0,0.9);
-  // border: 1px solid rgba(255, 255, 255, 0.15);
-  // padding: 0px 3px;
-  // margin: 0px -3px;
-  color: #aa759f;
-  border-radius: 2px;
 }
 
 .page__title, .page__related {
