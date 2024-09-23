@@ -14,7 +14,16 @@ document.addEventListener("DOMContentLoaded", function() {
     // 記事本文の <p> タグ内のテキストノードを処理する関数
     const paragraphs = document.querySelectorAll('section.page__content p');
     paragraphs.forEach(function(paragraph) {
-      const textNodes = getTextNodesUnder(paragraph);
+      // <code> タグのテキストは除外するために、一旦その祖先を確認
+      const codeElements = paragraph.querySelectorAll('code');
+      const codeTextNodes = [];
+
+      codeElements.forEach(function(codeElement) {
+        codeTextNodes.push(...getTextNodesUnder(codeElement));
+      });
+
+      const textNodes = getTextNodesUnder(paragraph).filter(node => !codeTextNodes.includes(node));
+
       textNodes.forEach(function(textNode) {
         const text = textNode.nodeValue;
         const newText = text.replace(urlRegex, function(url) {
