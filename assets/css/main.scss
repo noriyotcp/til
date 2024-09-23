@@ -508,3 +508,9 @@ body {
   border-radius: 2px;
 }
 
+.page__title, .page__related {
+  a:hover {
+    text-decoration: underline;
+  }
+}
+
