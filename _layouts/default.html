@@ -1,71 +1,37 @@
-<!DOCTYPE html>
-<html lang="en-US">
+---
+---
+
+<!doctype html>
+{% include copyright.html %}
+<html lang="{{ site.locale | replace: "_", "-" | default: "en" }}" class="no-js">
   <head>
-    <meta charset='utf-8'>
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" href="{{ '/assets/css/style.css' | relative_url }}">
-   <!-- start custom head snippets, customize with your own _includes/head-custom.html file -->
-
-<!-- Setup theme-color -->
-<!-- start theme color meta headers -->
-<meta name="theme-color" content="#151515">
-<meta name="msapplication-navbutton-color" content="#151515">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<!-- end theme color meta headers -->
-
-
-<!-- Setup Google Analytics -->
-
-
-
-<!-- You can set your favicon here -->
-<!-- link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" -->
-
-<!-- end custom head snippets -->
-
-
-<!-- Begin Jekyll SEO tag v2.8.0 -->
-<title>Noriyo Akita&#39;s Today I Learned | til</title>
-<meta name="generator" content="Jekyll v3.10.0" />
-<meta property="og:title" content="Noriyo Akita&#39;s Today I Learned" />
-<meta name="author" content="Noriyo Akita" />
-<meta property="og:locale" content="en_US" />
-<meta name="description" content="Noriyo Akita&#39;s Today I Learned" />
-<meta property="og:description" content="Noriyo Akita&#39;s Today I Learned" />
-<link rel="canonical" href="http://localhost:4000/" />
-<meta property="og:url" content="http://localhost:4000/" />
-<meta property="og:site_name" content="til" />
-<meta property="og:type" content="website" />
-<meta name="twitter:card" content="summary" />
-<meta property="twitter:title" content="Noriyo Akita&#39;s Today I Learned" />
-<script type="application/ld+json">
-{"@context":"https://schema.org","@type":"WebSite","author":{"@type":"Person","name":"Noriyo Akita"},"description":"Noriyo Akita&#39;s Today I Learned","headline":"Noriyo Akita&#39;s Today I Learned","name":"til","url":"http://localhost:4000/"}</script>
-<!-- End Jekyll SEO tag -->
-
+    {% include head.html %}
+    {% include head/custom.html %}
   </head>
 
-  <body>
+  <body class="layout--{{ page.layout | default: layout.layout }}{% if page.classes or layout.classes %}{{ page.classes | default: layout.classes | join: ' ' | prepend: ' ' }}{% endif %}" dir="{% if site.rtl %}rtl{% else %}ltr{% endif %}">
+    {% include_cached skip-links.html %}
+    {% include_cached masthead.html %}
 
-    <header>
-      <div class="container">
-       <a id="a-title" href="{{ '/' | relative_url }}">
-          <h1>til</h1>
-        </a>
-        <h2>Noriyo Akita's Today I Learned</h2>
-
-        <section id="downloads">
-
-          <a href="https://github.com/noriyotcp/til" class="btn btn-github"><span class="icon"></span>View on GitHub</a>
-        </section>
-      </div>
-    </header>
-
-    <div class="container">
-      <section id="main_content">
-        {{ content }}
-      </section>
+    <div class="initial-content">
+      {{ content }}
+      {% include after-content.html %}
     </div>
-    <script type="text/javascript" src="{{ '/assets/js/convertToTasklist.js' | relative_url }}"></script>
+
+    {% if site.search == true %}
+      <div class="search-content">
+        {% include_cached search/search_form.html %}
+      </div>
+    {% endif %}
+
+    <div id="footer" class="page__footer">
+      <footer>
+        {% include footer/custom.html %}
+        {% include_cached footer.html %}
+      </footer>
+    </div>
+
+    {% include scripts.html %}
   </body>
 </html>
+
