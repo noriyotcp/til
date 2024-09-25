@@ -402,11 +402,13 @@ a {
   color: #63c0f5;
   text-shadow: none;
   // text-shadow: 0 0 5px rgba(104, 182, 255, 0.5);
+  word-wrap: break-word;
 }
 
 a:visited {
   color: #9370db;
   text-shadow: none;
+  word-wrap: break-word;
 }
 
 /* Clearfix */
@@ -498,7 +500,7 @@ body {
 
 // font size in a post page
 .page__content p, .page__content li, .page__content dl {
-    font-size: 0.8rem;
+    font-size: 0.85rem;
 }
 
 .page__title, .page__related {
