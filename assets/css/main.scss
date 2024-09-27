@@ -526,3 +526,24 @@ a.site-title:hover {
   word-break: break-word;
 }
 
+.back-to-top-container {
+  display: flex;
+  justify-content: flex-end; /* 右寄せ */
+  width: 100%; /* 親要素の幅に合わせる */
+  padding-right: 10px; /* 右端のスペースを調整, 必要に応じて調整 */
+  box-sizing: border-box; /* パディングを含めてボックスサイズを計算 */
+}
+
+.back-to-top-container a {
+  text-decoration: none;
+  margin: 0 5px;
+}
+
+// .back-to-top-container a + a::before {
+//   content: " | ";
+// }
+
+.back-to-top-container a:hover {
+  text-decoration: underline;
+}
+

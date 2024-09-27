@@ -1,0 +1,36 @@
+---
+title: "Posts by Year"
+permalink: /posts-by-year/
+layout: archive
+author_profile: false
+---
+
+{% assign postsByYear = site.posts | where_exp: "item", "item.hidden != true" | group_by_exp: 'post', 'post.date | date:
+"%Y"' %}
+
+{% for year in postsByYear %}
+<ul class="taxonomy__index" id="{{ year.name }}">
+  <li>
+    <a href="{{ year.name | relative_url }}">
+      <strong>{{ year.name }}</strong> <span class="taxonomy__count">{{ year.items | size }}</span>
+    </a>
+  </li>
+</ul>
+
+{% assign postsByYearMonth = year.items | where_exp: "item", "item.hidden != true" | group_by_exp: 'post', 'post.date |
+date: "%Y-%m"' %}
+<ul class="taxonomy__index">
+  {% for yearMonth in postsByYearMonth %}
+  <li>
+    <a href="{{ yearMonth.name | replace: '-', '/' | relative_url }}">
+      <strong>{{ yearMonth.name }}</strong> <span class="taxonomy__count">{{ yearMonth.items | size }}</span>
+    </a>
+  </li>
+  {% endfor %}
+</ul>
+
+<div class="back-to-top-container">
+  <a href="#page-title" class="back-to-top">BACK TO TOP &uarr;</a>
+  <a href="#{{ year.name }}" class="back-to-top">BACK TO {{ year.name }} &uarr;</a>
+</div>
+{% endfor %}
