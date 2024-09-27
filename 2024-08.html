@@ -1,16 +1,16 @@
 ---
-title: "Posts in 2024-05"
-permalink: "/2024/05"
+title: "Posts in 2024-08"
+permalink: "/2024/08"
 layout: archive
 author_profile: false
 ---
 
 {% include back_to_posts_by_year.html %}
 {% assign postsInYear = site.posts | where_exp: "item", "item.hidden != true" | group_by_exp: 'post', 'post.date | date: "%Y-%m"' %}
-{% assign postsIn202405 = postsInYear | where: 'name', '2024-05' %}
+{% assign postsIn202408 = postsInYear | where: 'name', '2024-08' %}
 
 {% assign entries_layout = page.entries_layout | default: 'list' %}
-{% for year in postsIn202405 %}
+{% for year in postsIn202408 %}
   <section id="{{ year.name }}" class="taxonomy__section">
     <h2 class="archive__subtitle">{{ year.name }}</h2>
     <div class="entries-{{ entries_layout }}">
