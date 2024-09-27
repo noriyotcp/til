@@ -1,6 +1,6 @@
 ---
 title: "Posts by Year"
-permalink: /year-archive/
+permalink: /posts-by-year/
 layout: archive
 author_profile: false
 ---
@@ -22,7 +22,7 @@ date: "%Y-%m"' %}
 <ul class="taxonomy__index">
   {% for yearMonth in postsByYearMonth %}
   <li>
-    <a href="{{ yearMonth.name | relative_url }}">
+    <a href="{{ yearMonth.name | replace: '-', '/' | relative_url }}">
       <strong>{{ yearMonth.name }}</strong> <span class="taxonomy__count">{{ yearMonth.items | size }}</span>
     </a>
   </li>
