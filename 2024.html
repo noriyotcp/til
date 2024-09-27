@@ -5,13 +5,7 @@ layout: archive
 author_profile: false
 ---
 
-<ul class="taxonomy__index" id="{{ year.name }}">
-  <li>
-    <a href="{{ 'posts-by-year' | relative_url }}">
-      <strong>&larr; Posts by Year</strong>
-    </a>
-  </li>
-</ul>
+{% include back_to_posts_by_year.html %}
 
 <ul class="taxonomy__index">
   {% assign postsByYearMonth = site.posts | where_exp: "item", "item.hidden != true" | group_by_exp: 'post', 'post.date | date: "%Y-%m"' %}
@@ -41,4 +35,3 @@ author_profile: false
     </div>
   </section>
 {% endfor %}
-
