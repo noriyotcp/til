@@ -35,6 +35,14 @@ function getOS() {
 }
 
 document.addEventListener("DOMContentLoaded", function () {
+  const searchIcon = document.querySelector('button.search__toggle');
+  if (!searchIcon) {
+    console.log('searchIcon is not found');
+    return false;
+  };
+  searchIcon.setAttribute('tooltip', 'cmd/ctrl + k to open, esc to close');
+  searchIcon.setAttribute('tooltip-position', 'left');
+
   const openSearchForm = () => {
     const isSearchOpen = document
       .querySelector(".search-content")
