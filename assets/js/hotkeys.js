@@ -133,17 +133,22 @@ document.addEventListener("DOMContentLoaded", function () {
       linkItem.classList.remove("item-focus");
     });
 
-    incrementIndex(listItemLinks.length);
     listItemLinks[focusedItemIndex].focus();
     console.log(focusedItemIndex);
 
     return false;
   };
 
-  // Detect whether you are using macOS or not
-  if (os === "macOS") {
-    hotkeys("j", focusListItem);
-  } else {
-    hotkeys("j", focusListItem);
-  }
+  const moveFocusToNextItem = () => {
+    if (isSearchOpen()) {
+      return false;
+    }
+
+    incrementIndex(listItemLinks.length);
+    focusListItem();
+
+    return false;
+  };
+
+  hotkeys("j", moveFocusToNextItem);
 });
