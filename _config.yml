@@ -82,7 +82,6 @@ plugins:
 
 head_scripts:
   - https://unpkg.com/hotkeys-js/dist/hotkeys.min.js
-  - /assets/js/hotkeys.js
   - /assets/js/convertToLink.js
 
 github: true
