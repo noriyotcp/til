@@ -43,13 +43,15 @@ document.addEventListener("DOMContentLoaded", function () {
   searchIcon.setAttribute("tooltip", "cmd/ctrl + k to open, esc to close");
   searchIcon.setAttribute("tooltip-position", "left");
 
-  const openSearchForm = () => {
-    const isSearchOpen = document
-      .querySelector(".search-content")
-      .classList.contains("is--visible");
+  const isSearchOpen = () => {
+    return document
+    .querySelector(".search-content")
+    ?.classList.contains("is--visible");
+  }
 
+  const openSearchForm = () => {
     // If the search form is already open, do nothing
-    if (isSearchOpen) {
+    if (isSearchOpen()) {
       return false;
     }
 
@@ -81,14 +83,34 @@ document.addEventListener("DOMContentLoaded", function () {
 
   // setup
   const entriesList = document.querySelector(".entries-list");
+  const entriesLists = document.querySelectorAll(".entries-list");
   // If the entries list is not found, do nothing
   if (!entriesList) {
     return false;
   }
+  if (entriesLists.length === 0) {
+    return false;
+  }
 
-  const listItems = entriesList.querySelectorAll(".list__item");
+  // const listItems = entriesList.querySelectorAll(".list__item");
 
-  const listItemLinks = entriesList.querySelectorAll(".list__item h2 > a");
+  const listItems = [];
+  entriesLists.forEach((list) => {
+    list.querySelectorAll(".list__item").forEach((item) => {
+      listItems.push(item);
+    }
+    );
+  });
+
+  // const listItemLinks = entriesList.querySelectorAll(".list__item h2 > a");
+
+    const listItemLinks = [];
+    entriesLists.forEach((list) => {
+      list.querySelectorAll(".list__item h2 > a").forEach((item) => {
+        listItemLinks.push(item);
+      });
+    });
+
   console.log(listItemLinks);
 
   listItemLinks.forEach((link, index) => {
@@ -102,18 +124,18 @@ document.addEventListener("DOMContentLoaded", function () {
   });
 
   const focusListItem = () => {
+    if (isSearchOpen()) {
+      return false;
+    }
+
     // remove .item-focus class from all list items
     listItems.forEach((linkItem) => {
       linkItem.classList.remove("item-focus");
     });
 
-    incrementIndex(listItems.length);
+    incrementIndex(listItemLinks.length);
     listItemLinks[focusedItemIndex].focus();
     console.log(focusedItemIndex);
-
-    // listItems[focusedItemIndex].querySelector("a").focus({ focusVisible: true });
-    // // add .item-focus class to the first list item
-    // listItems[focusedItemIndex].classList.add("item-focus");
 
     return false;
   };
