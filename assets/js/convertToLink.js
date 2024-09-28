@@ -1,4 +1,6 @@
 document.addEventListener("DOMContentLoaded", function() {
+  const isSameOrigin = (origin, destination) => origin.origin === destination.origin;
+
   // 正規表現で URL を検出
   const urlRegex = /\bhttps?:\/\/[^\s<]+/ig;
 
@@ -29,7 +31,12 @@ document.addEventListener("DOMContentLoaded", function() {
         const newText = text.replace(urlRegex, function(url) {
           try {
             const validUrl = new URL(url);
-            return `<a href="${validUrl.href}" target="_blank" rel="noopener noreferrer">${validUrl.href}</a>`;
+            // 同一オリジンの場合は target="_blank" を付与しない
+            if (isSameOrigin(window.location, validUrl)) {
+              return `<a href="${validUrl.href}">${validUrl.href}</a>`;
+            } else {
+              return `<a href="${validUrl.href}" target="_blank" rel="noopener noreferrer">${validUrl.href} <i class="fa-solid fa-arrow-up-right-from-square"></i></a>`;
+            }
           } catch (e) {
             return url; // 有効なURLでない場合はそのままにする
           }
@@ -45,4 +52,3 @@ document.addEventListener("DOMContentLoaded", function() {
     });
   }
 });
-
