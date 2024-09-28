@@ -1,36 +1,4 @@
-function getOS() {
-  const userAgent = window.navigator.userAgent.toLowerCase();
-
-  // Detect macOS
-  if (
-    userAgent.indexOf("macintosh") !== -1 ||
-    userAgent.indexOf("mac os x") !== -1
-  ) {
-    return "macOS";
-  }
-
-  // Detect Windows
-  if (userAgent.indexOf("windows") !== -1) {
-    return "Windows";
-  }
-
-  // Detect Linux
-  if (userAgent.indexOf("linux") !== -1) {
-    return "Linux";
-  }
-
-  // Detect iOS
-  if (/iphone|ipad|ipod/.test(userAgent)) {
-    return "iOS";
-  }
-
-  // Detect Android
-  if (/android/.test(userAgent)) {
-    return "Android";
-  }
-
-  return "Unknown";
-}
+import { getOS } from "./osUtils.js";
 
 document.addEventListener("DOMContentLoaded", function () {
   const searchIcon = document.querySelector("button.search__toggle");
@@ -43,9 +11,9 @@ document.addEventListener("DOMContentLoaded", function () {
 
   const isSearchOpen = () => {
     return document
-    .querySelector(".search-content")
-    ?.classList.contains("is--visible");
-  }
+      .querySelector(".search-content")
+      ?.classList.contains("is--visible");
+  };
 
   const openSearchForm = () => {
     // If the search form is already open, do nothing
@@ -58,6 +26,7 @@ document.addEventListener("DOMContentLoaded", function () {
   };
 
   const os = getOS();
+  console.log(os);
 
   // Detect whether you are using macOS or not
   if (os === "macOS") {
@@ -77,14 +46,14 @@ document.addEventListener("DOMContentLoaded", function () {
     } else if (focusedItemIndex !== listLength - 1) {
       focusedItemIndex++;
     }
-  }
+  };
 
   const decrementIndex = (listLength) => {
     // if current index is the first index of the list, does not decrement
     if (focusedItemIndex !== null && focusedItemIndex !== 0) {
       focusedItemIndex--;
     }
-  }
+  };
 
   // setup
   const entriesLists = document.querySelectorAll(".entries-list");
