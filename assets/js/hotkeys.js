@@ -1,34 +1,9 @@
 import { getOS } from "./osUtils.js";
 import { isSearchOpen } from "./searchUtils.js";
+import { setupSearchHotkeys } from "./searchHotkeys.js";
 
 document.addEventListener("DOMContentLoaded", function () {
-  const searchIcon = document.querySelector("button.search__toggle");
-  if (!searchIcon) {
-    console.log("searchIcon is not found");
-    return false;
-  }
-  searchIcon.setAttribute("tooltip", "cmd/ctrl + k to open, esc to close");
-  searchIcon.setAttribute("tooltip-position", "left");
-
-  const openSearchForm = () => {
-    // If the search form is already open, do nothing
-    if (isSearchOpen()) {
-      return false;
-    }
-
-    document.querySelector(".search__toggle").click();
-    return false;
-  };
-
-  const os = getOS();
-  console.log(os);
-
-  // Detect whether you are using macOS or not
-  if (os === "macOS") {
-    hotkeys("command+k", openSearchForm);
-  } else {
-    hotkeys("ctrl+k", openSearchForm);
-  }
+  setupSearchHotkeys();
 
   let focusedItemIndex = null;
   // default index is null
