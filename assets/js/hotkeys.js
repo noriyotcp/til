@@ -1,23 +1,21 @@
 function getOS() {
   const userAgent = window.navigator.userAgent.toLowerCase();
-  const platform = window.navigator.platform.toLowerCase();
 
   // Detect macOS
   if (
     userAgent.indexOf("macintosh") !== -1 ||
-    userAgent.indexOf("mac os x") !== -1 ||
-    platform.indexOf("mac") !== -1
+    userAgent.indexOf("mac os x") !== -1
   ) {
     return "macOS";
   }
 
   // Detect Windows
-  if (userAgent.indexOf("windows") !== -1 || platform.indexOf("win") !== -1) {
+  if (userAgent.indexOf("windows") !== -1) {
     return "Windows";
   }
 
   // Detect Linux
-  if (userAgent.indexOf("linux") !== -1 || platform.indexOf("linux") !== -1) {
+  if (userAgent.indexOf("linux") !== -1) {
     return "Linux";
   }
 
