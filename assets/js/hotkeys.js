@@ -89,34 +89,18 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   // setup
-  const entriesList = document.querySelector(".entries-list");
   const entriesLists = document.querySelectorAll(".entries-list");
   // If the entries list is not found, do nothing
-  if (!entriesList) {
-    return false;
-  }
   if (entriesLists.length === 0) {
     return false;
   }
 
-  // const listItems = entriesList.querySelectorAll(".list__item");
-
-  const listItems = [];
+  const listItemLinks = [];
   entriesLists.forEach((list) => {
-    list.querySelectorAll(".list__item").forEach((item) => {
-      listItems.push(item);
-    }
-    );
-  });
-
-  // const listItemLinks = entriesList.querySelectorAll(".list__item h2 > a");
-
-    const listItemLinks = [];
-    entriesLists.forEach((list) => {
-      list.querySelectorAll(".list__item h2 > a").forEach((item) => {
-        listItemLinks.push(item);
-      });
+    list.querySelectorAll(".list__item h2 > a").forEach((item) => {
+      listItemLinks.push(item);
     });
+  });
 
   console.log(listItemLinks);
 
@@ -134,11 +118,6 @@ document.addEventListener("DOMContentLoaded", function () {
     if (isSearchOpen()) {
       return false;
     }
-
-    // remove .item-focus class from all list items
-    listItems.forEach((linkItem) => {
-      linkItem.classList.remove("item-focus");
-    });
 
     listItemLinks[focusedItemIndex].focus();
     console.log(focusedItemIndex);
