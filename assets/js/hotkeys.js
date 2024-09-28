@@ -1,5 +1,5 @@
 import { getOS } from "./osUtils.js";
-import { isSearchOpen, openSearchForm } from "./searchUtils.js";
+import { openSearchForm } from "./searchUtils.js";
 import { moveFocusToPreviousItem, moveFocusToNextItem, focusedItemIndex, resetFocusedItemIndex } from "./focusNavigation.js";
 
 document.addEventListener("DOMContentLoaded", function () {
@@ -21,7 +21,7 @@ document.addEventListener("DOMContentLoaded", function () {
     hotkeys("ctrl+k", openSearchForm);
   }
 
-  // setup
+  // setup to move focus to next/previous item
   const entriesLists = document.querySelectorAll(".entries-list");
   if (entriesLists.length === 0) {
     return false;
