@@ -10,7 +10,7 @@ export const resetFocusedItemIndex = () => {
   focusedItemIndex = null;
 };
 
-export const incrementIndex = (listLength) => {
+const incrementIndex = (listLength) => {
   if (focusedItemIndex === null) {
     focusedItemIndex = 0;
   } else if (focusedItemIndex !== listLength - 1) {
@@ -18,13 +18,13 @@ export const incrementIndex = (listLength) => {
   }
 };
 
-export const decrementIndex = (listLength) => {
+const decrementIndex = (listLength) => {
   if (focusedItemIndex !== null && focusedItemIndex !== 0) {
     focusedItemIndex--;
   }
 };
 
-export const focusListItem = (listItemLinks) => {
+const focusListItem = (listItemLinks) => {
   if (isSearchOpen()) {
     return false;
   }
