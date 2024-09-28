@@ -81,6 +81,13 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   }
 
+  const decrementIndex = (listLength) => {
+    // if current index is the first index of the list, does not decrement
+    if (focusedItemIndex !== null && focusedItemIndex !== 0) {
+      focusedItemIndex--;
+    }
+  }
+
   // setup
   const entriesList = document.querySelector(".entries-list");
   const entriesLists = document.querySelectorAll(".entries-list");
@@ -150,5 +157,17 @@ document.addEventListener("DOMContentLoaded", function () {
     return false;
   };
 
+  const moveFocusToPreviousItem = () => {
+    if (isSearchOpen()) {
+      return false;
+    }
+
+    decrementIndex(listItemLinks.length);
+    focusListItem();
+
+    return false;
+  };
+
   hotkeys("j", moveFocusToNextItem);
+  hotkeys("k", moveFocusToPreviousItem);
 });
