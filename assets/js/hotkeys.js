@@ -1,9 +1,24 @@
 import { getOS } from "./osUtils.js";
-import { isSearchOpen } from "./searchUtils.js";
-import { setupSearchHotkeys } from "./searchHotkeys.js";
+import { isSearchOpen, openSearchForm } from "./searchUtils.js";
 
 document.addEventListener("DOMContentLoaded", function () {
-  setupSearchHotkeys();
+  // setup to search
+  const searchIcon = document.querySelector("button.search__toggle");
+  if (!searchIcon) {
+    console.log("searchIcon is not found");
+    return false;
+  }
+  searchIcon.setAttribute("tooltip", "cmd/ctrl + k to open, esc to close");
+  searchIcon.setAttribute("tooltip-position", "left");
+
+  const os = getOS();
+  console.log(os);
+
+  if (os === "macOS") {
+    hotkeys("command+k", openSearchForm);
+  } else {
+    hotkeys("ctrl+k", openSearchForm);
+  }
 
   let focusedItemIndex = null;
   // default index is null

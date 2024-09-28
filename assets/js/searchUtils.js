@@ -4,3 +4,12 @@ export const isSearchOpen = () => {
     ?.classList.contains("is--visible");
 };
 
+export const openSearchForm = () => {
+  if (isSearchOpen()) {
+    return false;
+  }
+
+  document.querySelector(".search__toggle").click();
+  return false;
+};
+
