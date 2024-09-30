@@ -1,5 +1,4 @@
-import { getOS } from "./osUtils.js";
-import { openSearchForm } from "./searchUtils.js";
+import { detectOS } from "./detectOS.js";
 import { moveFocusToPreviousItem, moveFocusToNextItem, focusedItemIndex, resetFocusedItemIndex } from "./focusNavigation.js";
 
 document.addEventListener("DOMContentLoaded", function () {
@@ -12,8 +11,21 @@ document.addEventListener("DOMContentLoaded", function () {
   searchIcon.setAttribute("tooltip", "cmd/ctrl + k to open, esc to close");
   searchIcon.setAttribute("tooltip-position", "left");
 
-  const os = getOS();
+  const os = detectOS();
   console.log(os);
+
+  const openSearchForm = () => {
+    const isSearchOpen = document
+      .querySelector(".search-content")
+      ?.classList.contains("is--visible");
+
+    if (isSearchOpen) {
+      return false;
+    }
+
+    searchIcon.click();
+    return false;
+  };
 
   if (os === "macOS") {
     hotkeys("command+k", openSearchForm);

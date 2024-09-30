@@ -1,4 +1,8 @@
-import { isSearchOpen } from "./searchUtils.js";
+const isSearchOpen = () => {
+  return document
+    .querySelector(".search-content")
+    ?.classList.contains("is--visible");
+};
 
 export let focusedItemIndex = null;
 
@@ -56,4 +60,3 @@ export const moveFocusToPreviousItem = (listItemLinks) => {
 
   return false;
 };
-
