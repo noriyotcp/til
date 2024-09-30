@@ -1,5 +1,4 @@
 import { getOS } from "./osUtils.js";
-import { openSearchForm } from "./searchUtils.js";
 import { moveFocusToPreviousItem, moveFocusToNextItem, focusedItemIndex, resetFocusedItemIndex } from "./focusNavigation.js";
 
 document.addEventListener("DOMContentLoaded", function () {
@@ -14,6 +13,19 @@ document.addEventListener("DOMContentLoaded", function () {
 
   const os = getOS();
   console.log(os);
+
+  const openSearchForm = () => {
+    const isSearchOpen = document
+      .querySelector(".search-content")
+      ?.classList.contains("is--visible");
+
+    if (isSearchOpen) {
+      return false;
+    }
+
+    searchIcon.click();
+    return false;
+  };
 
   if (os === "macOS") {
     hotkeys("command+k", openSearchForm);
