@@ -61,24 +61,19 @@ document.addEventListener("DOMContentLoaded", function () {
   hotkeys("j", () => moveFocusToNextItem(listItemLinks));
   hotkeys("k", () => moveFocusToPreviousItem(listItemLinks));
 
-  const helpModal = document.getElementById("hotkeys-modal");
-  const closeBtn = document.getElementById("close-btn");
+  // setup to open hotkeys modal
+  const hotkeysModal = document.getElementById("hotkeys-modal");
+  const hotkeysModalCloseBtn = document.getElementById("hotkeys-modal-close-btn");
 
   // Close modal
-  closeBtn.addEventListener("click", () => helpModal.close());
-  helpModal.addEventListener("click", (e) => {
+  hotkeysModalCloseBtn.addEventListener("click", () => hotkeysModal.close());
+  hotkeysModal.addEventListener("click", (e) => {
     const { target, currentTarget } = e;
     if (target === currentTarget) {
-      helpModal.close();
+      hotkeysModal.close();
     }
   });
 
-  // Hotkeys handler
-  hotkeys("*", function () {
-    if (hotkeys.shift && hotkeys.isPressed(191)) {
-      console.log("shift + ? is pressed");
-      helpModal.showModal();
-      console.log("show help modal");
-    }
-  });
+  // Press '?' to open modal
+  hotkeys("shift+/", () => hotkeysModal.showModal());
 });
