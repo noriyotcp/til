@@ -60,4 +60,25 @@ document.addEventListener("DOMContentLoaded", function () {
 
   hotkeys("j", () => moveFocusToNextItem(listItemLinks));
   hotkeys("k", () => moveFocusToPreviousItem(listItemLinks));
+
+  const helpModal = document.getElementById("hotkeys-modal");
+  const closeBtn = document.getElementById("close-btn");
+
+  // Close modal
+  closeBtn.addEventListener("click", () => helpModal.close());
+  helpModal.addEventListener("click", (e) => {
+    const { target, currentTarget } = e;
+    if (target === currentTarget) {
+      helpModal.close();
+    }
+  });
+
+  // Hotkeys handler
+  hotkeys("*", function () {
+    if (hotkeys.shift && hotkeys.isPressed(191)) {
+      console.log("shift + ? is pressed");
+      helpModal.showModal();
+      console.log("show help modal");
+    }
+  });
 });
