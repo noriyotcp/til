@@ -1,9 +1,3 @@
-export const isSearchOpen = () => {
-  return document
-    .querySelector(".search-content")
-    ?.classList.contains("is--visible");
-};
-
 export const openSearchForm = () => {
   const isSearchOpen = document
     .querySelector(".search-content")
