@@ -5,11 +5,14 @@ export const isSearchOpen = () => {
 };
 
 export const openSearchForm = () => {
-  if (isSearchOpen()) {
+  const isSearchOpen = document
+    .querySelector(".search-content")
+    ?.classList.contains("is--visible");
+
+  if (isSearchOpen) {
     return false;
   }
 
   document.querySelector(".search__toggle").click();
   return false;
 };
-
