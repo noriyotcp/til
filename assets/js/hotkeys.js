@@ -1,4 +1,4 @@
-import { getOS } from "./osUtils.js";
+import { detectOS } from "./detectOS.js";
 import { moveFocusToPreviousItem, moveFocusToNextItem, focusedItemIndex, resetFocusedItemIndex } from "./focusNavigation.js";
 
 document.addEventListener("DOMContentLoaded", function () {
@@ -11,7 +11,7 @@ document.addEventListener("DOMContentLoaded", function () {
   searchIcon.setAttribute("tooltip", "cmd/ctrl + k to open, esc to close");
   searchIcon.setAttribute("tooltip-position", "left");
 
-  const os = getOS();
+  const os = detectOS();
   console.log(os);
 
   const openSearchForm = () => {

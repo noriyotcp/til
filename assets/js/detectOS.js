@@ -1,4 +1,4 @@
-export function getOS() {
+export function detectOS() {
   const userAgent = window.navigator.userAgent.toLowerCase();
 
   // Detect macOS
@@ -31,4 +31,3 @@ export function getOS() {
 
   return "Unknown";
 }
-
