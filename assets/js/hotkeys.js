@@ -4,62 +4,58 @@ import { moveFocusToPreviousItem, moveFocusToNextItem, focusedItemIndex, resetFo
 document.addEventListener("DOMContentLoaded", function () {
   // setup to search
   const searchIcon = document.querySelector("button.search__toggle");
-  if (!searchIcon) {
-    console.log("searchIcon is not found");
-    return false;
-  }
-  searchIcon.setAttribute("tooltip", "cmd/ctrl + k to open, esc to close");
-  searchIcon.setAttribute("tooltip-position", "left");
+  if (searchIcon) {
+    searchIcon.setAttribute("tooltip", "cmd/ctrl + k to open, esc to close");
+    searchIcon.setAttribute("tooltip-position", "left");
 
-  const os = detectOS();
-  console.log(os);
+    const os = detectOS();
+    console.log(os);
 
-  const openSearchForm = () => {
-    const isSearchOpen = document
-      .querySelector(".search-content")
-      ?.classList.contains("is--visible");
+    const openSearchForm = () => {
+      const isSearchOpen = document
+        .querySelector(".search-content")
+        ?.classList.contains("is--visible");
 
-    if (isSearchOpen) {
+      if (isSearchOpen) {
+        return false;
+      }
+
+      searchIcon.click();
       return false;
+    };
+
+    if (os === "macOS") {
+      hotkeys("command+k", openSearchForm);
+    } else {
+      hotkeys("ctrl+k", openSearchForm);
     }
-
-    searchIcon.click();
-    return false;
-  };
-
-  if (os === "macOS") {
-    hotkeys("command+k", openSearchForm);
-  } else {
-    hotkeys("ctrl+k", openSearchForm);
   }
 
   // setup to move focus to next/previous item
   const entriesLists = document.querySelectorAll(".entries-list");
-  if (entriesLists.length === 0) {
-    return false;
+  if (entriesLists.length > 0) {
+    const listItemLinks = [];
+    entriesLists.forEach((list) => {
+      list.querySelectorAll(".list__item h2 > a").forEach((item) => {
+        listItemLinks.push(item);
+      });
+    });
+
+    console.log(listItemLinks);
+
+    listItemLinks.forEach((link, index) => {
+      link.addEventListener("focusout", (_event) => {
+        if (focusedItemIndex === index) {
+          resetFocusedItemIndex();
+        }
+        console.log(`listItem link ${index} is unfocused`);
+        console.log(`focusedItemIndex is ${focusedItemIndex}`);
+      });
+    });
+
+    hotkeys("j", () => moveFocusToNextItem(listItemLinks));
+    hotkeys("k", () => moveFocusToPreviousItem(listItemLinks));
   }
-
-  const listItemLinks = [];
-  entriesLists.forEach((list) => {
-    list.querySelectorAll(".list__item h2 > a").forEach((item) => {
-      listItemLinks.push(item);
-    });
-  });
-
-  console.log(listItemLinks);
-
-  listItemLinks.forEach((link, index) => {
-    link.addEventListener("focusout", (_event) => {
-      if (focusedItemIndex === index) {
-        resetFocusedItemIndex();
-      }
-      console.log(`listItem link ${index} is unfocused`);
-      console.log(`focusedItemIndex is ${focusedItemIndex}`);
-    });
-  });
-
-  hotkeys("j", () => moveFocusToNextItem(listItemLinks));
-  hotkeys("k", () => moveFocusToPreviousItem(listItemLinks));
 
   // setup to open hotkeys modal
   const hotkeysModal = document.getElementById("hotkeys-modal");
