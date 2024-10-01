@@ -3,7 +3,7 @@ document.addEventListener("DOMContentLoaded", function () {
     origin.origin === destination.origin;
 
   // 正規表現で URL を検出
-  const urlRegex = /\bhttps?:\/\/[^\s<]+/gi;
+  const urlRegex = /\bhttps?:\/\/[^\s"'<>]+/gi;
 
   // 特定のタグ内のテキストノードを取得する関数
   function getTextNodesUnder(el) {
