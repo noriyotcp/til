@@ -361,6 +361,7 @@ hr {
 /* Buttons
 */
 
+/*
 .btn {
   display: inline-block;
   background: -webkit-linear-gradient(top, rgba(40, 40, 40, 0.3), rgba(35, 35, 35, 0.3) 50%, rgba(10, 10, 10, 0.3) 50%, rgba(0, 0, 0, 0.3));
@@ -394,6 +395,7 @@ hr {
   opacity: 0.6;
   background: url("../images/blacktocat.png") 0 0 no-repeat;
 }
+*/
 
 /* Links
    a, a:hover, a:visited
@@ -638,4 +640,36 @@ a.site-title:hover {
 [tooltip]:hover::after,
 [tooltip]:hover::before {
   opacity: 1;
+}
+
+dialog#hotkeys-modal {
+  padding: 0;
+  width: 30%;
+  min-width: 180px;
+  background-color: #252a34;
+  color: #eaeaea;
+  > div {
+    padding: 1em;
+  }
+
+  #hotkeys-modal-close-btn {
+    margin-top: 20px;
+  }
+
+  .toc .nav__title {
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+  }
+
+  .toc__menu li {
+    margin-bottom: 0;
+    line-height: inherit;
+    border: #00adb5 solid 1px;
+    border-top: none;
+    padding: 0.5em;
+  }
+}
+
+.unset {
+  all: unset;
 }
