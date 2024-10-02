@@ -31,3 +31,7 @@ export function detectOS() {
 
   return "Unknown";
 }
+
+export function isMobile() {
+  return detectOS() === "iOS" || detectOS() === "Android";
+}
