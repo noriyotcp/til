@@ -519,9 +519,13 @@ a.site-title:hover {
   text-decoration: underline;
 }
 
-.archive__item:hover {
-  background-color: #3c4555;
-  opacity: 0.8;
+.archive {
+  .taxonomy__index li, .archive__item {
+    &:hover {
+      background-color: #3c4555;
+      opacity: 0.8;
+    }
+  }
 }
 
 .site-subtitle {
