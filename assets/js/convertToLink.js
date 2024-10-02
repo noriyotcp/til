@@ -59,6 +59,40 @@ document.addEventListener("DOMContentLoaded", function () {
           textNode.parentElement.replaceChild(span, textNode);
         }
       });
+
+      // 既存のすべての <a> タグに対しても処理を行う
+      const anchors = paragraph.querySelectorAll("a");
+      anchors.forEach(function (anchor) {
+        try {
+          const validUrl = new URL(anchor.href);
+          if (!isSameOrigin(window.location, validUrl)) {
+            // 同一オリジンではない場合に target="_blank" と rel="noopener noreferrer" をチェック
+            if (
+              !anchor.hasAttribute("target") ||
+              anchor.getAttribute("target") !== "_blank"
+            ) {
+              anchor.setAttribute("target", "_blank");
+            }
+            if (
+              !anchor.hasAttribute("rel") ||
+              !anchor.getAttribute("rel").includes("noopener noreferrer")
+            ) {
+              anchor.setAttribute("rel", "noopener noreferrer");
+            }
+            // アイコンを既に含んでいない場合は追加
+            if (
+              !anchor.innerHTML.includes(
+                '<i class="fa-solid fa-arrow-up-right-from-square"></i>'
+              )
+            ) {
+              anchor.innerHTML +=
+                ' <i class="fa-solid fa-arrow-up-right-from-square"></i>';
+            }
+          }
+        } catch (e) {
+          // 無効な URL があった場合は何もしない
+        }
+      });
     });
   }
 });
