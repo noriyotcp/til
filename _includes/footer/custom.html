@@ -1,3 +1,10 @@
 {% include hotkeys_modal.html %}
 
 <script src={{ 'assets/js/hotkeys.js' | relative_url }} type="module"></script>
+<script type="module">
+  import { install } from 'https://unpkg.com/@github/hotkey@3.1.1/dist/index.js';
+
+  for (const el of document.querySelectorAll("[data-hotkey]")) {
+    install(el, el.dataset.shortcut);
+  }
+</script>
