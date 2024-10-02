@@ -22,7 +22,7 @@ const incrementIndex = (listLength) => {
   }
 };
 
-const decrementIndex = (listLength) => {
+const decrementIndex = () => {
   if (focusedItemIndex !== null && focusedItemIndex !== 0) {
     focusedItemIndex--;
   }
