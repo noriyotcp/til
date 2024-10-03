@@ -3,9 +3,9 @@
     {% comment %} Link for previous page {% endcomment %}
     {% if paginator.previous_page %}
       {% if paginator.previous_page == 1 %}
-        <li><a href="{{ paginator.first_page_path | relative_url }}">{{ site.data.ui-text[site.locale].pagination_previous | default: "Previous" }}</a></li>
+        <li><a href="{{ paginator.first_page_path | relative_url }}" data-hotkey="g p">{{ site.data.ui-text[site.locale].pagination_previous | default: "Previous" }}</a></li>
       {% else %}
-        <li><a href="{{ paginator.previous_page_path | relative_url }}">{{ site.data.ui-text[site.locale].pagination_previous | default: "Previous" }}</a></li>
+        <li><a href="{{ paginator.previous_page_path | relative_url }}" data-hotkey="g p">{{ site.data.ui-text[site.locale].pagination_previous | default: "Previous" }}</a></li>
       {% endif %}
     {% else %}
       <li><a href="#" class="disabled"><span aria-hidden="true">{{ site.data.ui-text[site.locale].pagination_previous | default: "Previous" }}</span></a></li>
@@ -25,7 +25,7 @@
       {% if paginator.page == 1 %}
         <li><a href="#" class="disabled current">1</a></li>
       {% else %}
-        <li><a href="{{ paginator.first_page_path | relative_url }}">1</a></li>
+        <li><a href="{{ paginator.first_page_path | relative_url }}" data-hotkey="g f">1</a></li>
       {% endif %}
     {% endunless %}
 
@@ -54,16 +54,15 @@
       {% if paginator.page == paginator.total_pages %}
         <li><a href="#" class="disabled current">{{ paginator.page }}</a></li>
       {% else %}
-        <li><a href="{{ paginator.last_page_path | remove: 'index.html' | relative_url }}">{{ paginator.total_pages }}</a></li>
+        <li><a href="{{ paginator.last_page_path | remove: 'index.html' | relative_url }}" data-hotkey="g l">{{ paginator.total_pages }}</a></li>
       {% endif %}
     {% endunless %}
 
     {% comment %} Link next page {% endcomment %}
     {% if paginator.next_page %}
-      <li><a href="{{ paginator.next_page_path | remove: 'index.html' | relative_url }}">{{ site.data.ui-text[site.locale].pagination_next | default: "Next" }}</a></li>
+      <li><a href="{{ paginator.next_page_path | remove: 'index.html' | relative_url }}" data-hotkey="g n">{{ site.data.ui-text[site.locale].pagination_next | default: "Next" }}</a></li>
     {% else %}
       <li><a href="#" class="disabled"><span aria-hidden="true">{{ site.data.ui-text[site.locale].pagination_next | default: "Next" }}</span></a></li>
     {% endif %}
   </ul>
 </nav>
-
