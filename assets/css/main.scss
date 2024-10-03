@@ -521,7 +521,7 @@ a.site-title:hover {
 
 .archive {
   .taxonomy__index li, .archive__item {
-    &:hover {
+    &:hover, &:focus-within {
       background-color: #3c4555;
       opacity: 0.8;
     }
