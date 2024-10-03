@@ -647,34 +647,6 @@ a.site-title:hover {
   opacity: 1;
 }
 
-dialog#hotkeys-modal {
-  padding: 0;
-  width: 30%;
-  min-width: 180px;
-  background-color: #252a34;
-  color: #eaeaea;
-  > div {
-    padding: 1em;
-  }
-
-  #hotkeys-modal-close-btn {
-    margin-top: 20px;
-  }
-
-  .toc .nav__title {
-    border-top-left-radius: 0;
-    border-top-right-radius: 0;
-  }
-
-  .toc__menu li {
-    margin-bottom: 0;
-    line-height: inherit;
-    border: #00adb5 solid 1px;
-    border-top: none;
-    padding: 0.5em;
-  }
-}
-
 div#hotkeys-popover {
   padding: 0;
   width: 30%;
