@@ -1,6 +1,7 @@
 import { detectOS, isMobile } from "./detectOS.js";
 import { setupFocusHotkeys } from "./setupFocusHotkeys.js";
 import { setupSearchHotkeys } from "./setupSearchHotkeys.js";
+import { setupHotkeysModalHotkeys } from "./setupHotkeysModalHotkeys.js";
 
 document.addEventListener("DOMContentLoaded", function () {
   // setup to search
@@ -17,21 +18,6 @@ document.addEventListener("DOMContentLoaded", function () {
   // Register focus hotkeys
   setupFocusHotkeys();
 
-  // setup to open hotkeys modal
-  const hotkeysModal = document.getElementById("hotkeys-modal");
-  const hotkeysModalCloseBtn = document.getElementById(
-    "hotkeys-modal-close-btn"
-  );
-
-  // Close modal
-  hotkeysModalCloseBtn.addEventListener("click", () => hotkeysModal.close());
-  hotkeysModal.addEventListener("click", (e) => {
-    const { target, currentTarget } = e;
-    if (target === currentTarget) {
-      hotkeysModal.close();
-    }
-  });
-
-  // Press '?' to open modal
-  hotkeys("shift+/", () => hotkeysModal.showModal());
+  // Setup hotkeys modal hotkeys
+  setupHotkeysModalHotkeys();
 });
