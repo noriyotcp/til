@@ -1,4 +1,4 @@
-import { moveFocusToPreviousItem, moveFocusToNextItem, focusedItemIndex, resetFocusedItemIndex } from "./focusNavigation.js";
+import { moveFocusToPreviousItem, moveFocusToNextItem, focusedItemIndex } from "./focusNavigation.js";
 
 export const setupFocusHotkeys = () => {
   const listItemLinks = [];
@@ -25,9 +25,6 @@ export const setupFocusHotkeys = () => {
 
   listItemLinks.forEach((link, index) => {
     link.addEventListener("focusout", (_event) => {
-      if (focusedItemIndex === index) {
-        resetFocusedItemIndex();
-      }
       console.log(`index link ${index} is unfocused`);
       console.log(`focusedItemIndex is ${focusedItemIndex}`);
     });
