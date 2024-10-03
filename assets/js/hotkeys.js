@@ -1,4 +1,4 @@
-import { detectOS, isMobile } from "./detectOS.js";
+import { isMobile } from "./detectOS.js";
 import { setupFocusHotkeys } from "./setupFocusHotkeys.js";
 import { setupSearchHotkeys } from "./setupSearchHotkeys.js";
 import { setupHotkeysPopoverHotkeys } from "./setupHotkeysPopoverHotKeys.js";
