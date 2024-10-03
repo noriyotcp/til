@@ -34,14 +34,26 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   // setup to move focus to next/previous item
+  const listItemLinks = [];
+  const taxonomy__indexes = document.querySelectorAll(".taxonomy__index");
   const entriesLists = document.querySelectorAll(".entries-list");
-  if (entriesLists.length > 0) {
-    const listItemLinks = [];
-    entriesLists.forEach((list) => {
-      list.querySelectorAll(".list__item h2 > a").forEach((item) => {
-        listItemLinks.push(item);
+
+  if (taxonomy__indexes.length > 0 || entriesLists.length > 0) {
+    if (taxonomy__indexes.length > 0) {
+      taxonomy__indexes.forEach((index) => {
+        index.querySelectorAll("li > a").forEach((item) => {
+          listItemLinks.push(item);
+        });
       });
-    });
+    }
+
+    if (entriesLists.length > 0) {
+      entriesLists.forEach((list) => {
+        list.querySelectorAll(".list__item h2 > a").forEach((item) => {
+          listItemLinks.push(item);
+        });
+      });
+    }
 
     console.log(listItemLinks);
 
@@ -50,7 +62,7 @@ document.addEventListener("DOMContentLoaded", function () {
         if (focusedItemIndex === index) {
           resetFocusedItemIndex();
         }
-        console.log(`listItem link ${index} is unfocused`);
+        console.log(`index link ${index} is unfocused`);
         console.log(`focusedItemIndex is ${focusedItemIndex}`);
       });
     });
