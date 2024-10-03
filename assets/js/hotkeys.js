@@ -1,5 +1,6 @@
 import { detectOS, isMobile } from "./detectOS.js";
 import { setupFocusHotkeys } from "./setupFocusHotkeys.js";
+import { setupSearchHotkeys } from "./setupSearchHotkeys.js";
 
 document.addEventListener("DOMContentLoaded", function () {
   // setup to search
@@ -10,27 +11,7 @@ document.addEventListener("DOMContentLoaded", function () {
       searchIcon.setAttribute("tooltip-position", "left");
     }
 
-    const os = detectOS();
-    console.log(os);
-
-    const openSearchForm = () => {
-      const isSearchOpen = document
-        .querySelector(".search-content")
-        ?.classList.contains("is--visible");
-
-      if (isSearchOpen) {
-        return false;
-      }
-
-      searchIcon.click();
-      return false;
-    };
-
-    if (os === "macOS") {
-      hotkeys("command+k", openSearchForm);
-    } else {
-      hotkeys("ctrl+k", openSearchForm);
-    }
+    setupSearchHotkeys(searchIcon);
   }
 
   // Register focus hotkeys
