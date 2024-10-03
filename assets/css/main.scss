@@ -675,6 +675,48 @@ dialog#hotkeys-modal {
   }
 }
 
+div#hotkeys-popover {
+  padding: 0;
+  width: 30%;
+  min-width: 180px;
+  background-color: #252a34;
+  color: #eaeaea;
+}
+
+div#hotkeys-popover>div {
+  padding: 1em;
+}
+
+div#hotkeys-popover #hotkeys-popover-close-btn {
+  margin-top: 20px;
+}
+
+div#hotkeys-popover .toc .nav__title {
+  border-top-left-radius: 0;
+  border-top-right-radius: 0;
+}
+
+div#hotkeys-popover .toc__menu li {
+  margin-bottom: 0;
+  line-height: inherit;
+  border: #00adb5 solid 1px;
+  border-top: none;
+  padding: 0.5em;
+}
+
+#hotkeys-popover-close-icon.close-icon {
+  position: absolute;
+  top: 0;
+  right: 0.5em;
+  font-size: 1.2em;
+  cursor: pointer;
+  color: #eaeaea;
+
+  &:hover {
+    color: #ff0000;
+  }
+}
+
 .unset {
   all: unset;
 }

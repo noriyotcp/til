@@ -1,7 +1,7 @@
 import { detectOS, isMobile } from "./detectOS.js";
 import { setupFocusHotkeys } from "./setupFocusHotkeys.js";
 import { setupSearchHotkeys } from "./setupSearchHotkeys.js";
-import { setupHotkeysModalHotkeys } from "./setupHotkeysModalHotkeys.js";
+import { setupHotkeysPopoverHotkeys } from "./setupHotkeysPopoverHotKeys.js";
 
 document.addEventListener("DOMContentLoaded", function () {
   // setup to search
@@ -18,6 +18,6 @@ document.addEventListener("DOMContentLoaded", function () {
   // Register focus hotkeys
   setupFocusHotkeys();
 
-  // Setup hotkeys modal hotkeys
-  setupHotkeysModalHotkeys();
+  // Setup hotkeys popover hotkeys
+  setupHotkeysPopoverHotkeys();
 });
