@@ -16,8 +16,7 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   // For debugging purpose
-  const isMobileDevice = isMobile();
-  if (isMobileDevice) {
+  if (/iphone|ipad|ipod/i.test(window.navigator.userAgent)) {
     const siteSubTitle = document.querySelector(".site-subtitle");
     siteSubTitle.innerHTML = "Noriyo Akita's Today I Learned (on Mobile)"
   }
