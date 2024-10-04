@@ -13,11 +13,8 @@ const openSearchForm = (searchIcon) => {
   return false;
 };
 
-export const setupSearchHotkeys = (searchIcon) => {
-  const os = detectOS();
-  console.log(os);
-
-  if (os === "macOS") {
+export const setupSearchHotkeys = (searchIcon, isMac) => {
+  if (isMac) {
     hotkeys("command+k", () => openSearchForm(searchIcon));
   } else {
     hotkeys("ctrl+k", () => openSearchForm(searchIcon));
