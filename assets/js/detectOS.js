@@ -1,5 +1,5 @@
 export function detectOS() {
-  const userAgent = window.navigator.userAgent.toLowerCase();
+  const userAgent = navigator.userAgent.toLowerCase();
 
   // Detect macOS
   if (
