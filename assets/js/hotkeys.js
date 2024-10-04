@@ -9,19 +9,22 @@ document.addEventListener("DOMContentLoaded", function () {
     userAgent.toLowerCase().indexOf("macintosh") !== -1 ||
     userAgent.toLowerCase().indexOf("mac os x") !== -1;
 
-  // setup to search
-  const searchIcon = document.querySelector("button.search__toggle");
-  if (searchIcon) {
-    if (!isMobile) {
+  if (!isMobile) {
+    // setup to search
+    const searchIcon = document.querySelector("button.search__toggle");
+    if (searchIcon) {
       searchIcon.setAttribute("tooltip", "cmd/ctrl + k to open, esc to close");
       searchIcon.setAttribute("tooltip-position", "left");
       setupSearchHotkeys(searchIcon, isMac);
     }
+    // Register focus hotkeys
+    setupFocusHotkeys();
+
+    // Setup hotkeys popover hotkeys
+    setupHotkeysPopoverHotkeys();
+  } else {
+    // Hide hotkeys popover on mobile
+    const hotkeysPopover = document.getElementById("hotkeys-popover");
+    hotkeysPopover.style.display = "none";
   }
-
-  // Register focus hotkeys
-  setupFocusHotkeys();
-
-  // Setup hotkeys popover hotkeys
-  setupHotkeysPopoverHotkeys();
 });
