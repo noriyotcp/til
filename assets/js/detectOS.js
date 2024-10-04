@@ -20,12 +20,12 @@ export function detectOS() {
   }
 
   // Detect iOS
-  if (/iphone|ipad|ipod/.test(userAgent)) {
+  if (/iphone|ipad|ipod/i.test(userAgent)) {
     return "iOS";
   }
 
   // Detect Android
-  if (/android/.test(userAgent)) {
+  if (/android/i.test(userAgent)) {
     return "Android";
   }
 
