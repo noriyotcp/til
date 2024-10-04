@@ -1,5 +1,3 @@
-import { detectOS } from "./detectOS.js";
-
 const openSearchForm = (searchIcon) => {
   const isSearchOpen = document
     .querySelector(".search-content")
