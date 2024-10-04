@@ -19,12 +19,6 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   }
 
-  // For debugging purpose
-  if (isMobile) {
-    const siteSubTitle = document.querySelector(".site-subtitle");
-    siteSubTitle.innerHTML = "Noriyo Akita's Today I Learned (on Mobile)";
-  }
-
   // Register focus hotkeys
   setupFocusHotkeys();
 
