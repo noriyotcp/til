@@ -32,6 +32,10 @@ export function detectOS() {
   return "Unknown";
 }
 
+export function isDesktop() {
+  return detectOS() === "macOS" || detectOS() === "Windows" || detectOS() === "Linux";
+}
+
 export function isMobile() {
   return detectOS() === "iOS" || detectOS() === "Android";
 }
