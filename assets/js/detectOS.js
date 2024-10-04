@@ -1,21 +1,21 @@
-export function detectOS() {
-  const userAgent = navigator.userAgent.toLowerCase();
+export function detectOS(userAgent) {
+  const userAgentLower = userAgent.toLowerCase();
 
   // Detect macOS
   if (
-    userAgent.indexOf("macintosh") !== -1 ||
-    userAgent.indexOf("mac os x") !== -1
+    userAgentLower.indexOf("macintosh") !== -1 ||
+    userAgentLower.indexOf("mac os x") !== -1
   ) {
     return "macOS";
   }
 
   // Detect Windows
-  if (userAgent.indexOf("windows") !== -1) {
+  if (userAgentLower.indexOf("windows") !== -1) {
     return "Windows";
   }
 
   // Detect Linux
-  if (userAgent.indexOf("linux") !== -1) {
+  if (userAgentLower.indexOf("linux") !== -1) {
     return "Linux";
   }
 
@@ -32,6 +32,6 @@ export function detectOS() {
   return "Unknown";
 }
 
-export function isMobile() {
-  return detectOS() === "iOS" || detectOS() === "Android";
+export function isMobile(userAgent) {
+  return detectOS(userAgent) === "iOS" || detectOS(userAgent) === "Android";
 }
