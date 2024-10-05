@@ -1,7 +1,10 @@
 ---
 date: "2024-09-13 00:37:48 +0900"
-last_modified_at: "2024-09-21 14:04:11 +0900"
+last_modified_at: "2024-10-06 01:02:06 +0900"
 title: "スタッフエンジニアの道~ Forkwell Library#66"
+tags:
+  - Forkwell Library
+  - Staff Engineer
 ---
 
 # スタッフエンジニアの道~ Forkwell Library#66
@@ -81,4 +84,3 @@ lastmanship でもやるんだよ！
 影響力を発揮することとやる気を維持することのいずれかが欠けても、長期的なキャリアは成り立たない
 
 自分やチームのやる気を出すことを優先させるのも大事  
-

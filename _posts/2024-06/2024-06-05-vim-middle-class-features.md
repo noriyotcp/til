@@ -1,7 +1,9 @@
 ---
 date: "2024-06-06 02:10:53 +0900"
-last_modified_at: "2024-09-26 01:22:08 +0900"
+last_modified_at: "2024-10-06 00:56:06 +0900"
 title: "https://zenn.dev/vim_jp/articles/2024-06-05-vim-middle-class-features"
+tags:
+  - Vim
 ---
 
 # https://zenn.dev/vim_jp/articles/2024-06-05-vim-middle-class-features
@@ -91,4 +93,3 @@ Shift + v で visual line というのだな。v で visual にしていたが�
 4. <CR> を押し、評価結果をバッファに挿入
 
 sum: 140635
-
