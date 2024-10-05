@@ -31,6 +31,10 @@ defaults:
       share: false
       related: true
       classes: wide
+tag_archive:
+  type: liquid
+  path: /tags/
+
 # locale: en-US
 locale: ja-JP
 title: "til"
