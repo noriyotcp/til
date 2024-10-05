@@ -22,9 +22,5 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // Setup hotkeys popover hotkeys
     setupHotkeysPopoverHotkeys();
-  } else {
-    // Hide hotkeys popover on mobile
-    const hotkeysPopover = document.getElementById("hotkeys-popover");
-    hotkeysPopover.style.display = "none";
   }
 });
