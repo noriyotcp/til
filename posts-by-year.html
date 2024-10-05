@@ -5,13 +5,7 @@ layout: archive
 author_profile: false
 ---
 
-<ul class="taxonomy__index">
-  <li>
-    <a href="{{ '/' | relative_url }}">
-      <strong>&larr; Home</strong>
-    </a>
-  </li>
-</ul>
+{% include go_back_home.html %}
 
 {% assign postsByYear = site.posts | where_exp: "item", "item.hidden != true" | group_by_exp: 'post', 'post.date | date:
 "%Y"' %}
