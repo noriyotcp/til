@@ -33,7 +33,7 @@ const focusListItem = (listItemLinks) => {
     return false;
   }
 
-  listItemLinks[focusedItemIndex].focus();
+  listItemLinks[focusedItemIndex]?.focus();
   console.log(focusedItemIndex);
 
   return false;
