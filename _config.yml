@@ -54,12 +54,6 @@ incremental: false #set incremental to true to speed things up. if changes arent
 paginate: 5
 paginate_path: /page:num/
 
-exclude:
-  - Gemfile
-  - Gemfile.lock
-  - vendor
-  - projects
-
 atom_feed:
   hide: true
 
@@ -95,4 +89,3 @@ footer:
     - label: "GitHub"
       icon: "fab fa-fw fa-github"
       url: "https://github.com/noriyotcp"
-
