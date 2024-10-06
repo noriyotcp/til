@@ -5,8 +5,6 @@ layout: archive
 author_profile: false
 ---
 
-{% include go_back_home.html %}
-
 {% assign postsByYear = site.posts | where_exp: "item", "item.hidden != true" | group_by_exp: 'post', 'post.date | date:
 "%Y"' %}
 
