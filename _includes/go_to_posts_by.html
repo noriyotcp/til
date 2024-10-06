@@ -1,12 +1,24 @@
-<ul class="taxonomy__index" id="{{ year.name }}">
-  <li>
-    <a href="{{ 'posts-by-year' | relative_url }}" data-hotkey="g y">
-      <strong>Posts by Year &rarr;</strong>
-    </a>
-  </li>
-  <li>
-    <a href="{{ 'tags' | relative_url }}" data-hotkey="g t">
-      <strong>Posts by Tag &rarr;</strong>
-    </a>
-  </li>
-</ul>
+<nav id="go-to-posts-by">
+  <ul class="taxonomy__index" id="{{ year.name }}">
+    <li>
+      <a href="{{ '/' | relative_url }}" data-hotkey="g h">
+        <strong>Home</strong>
+      </a>
+    </li>
+    <li>
+      <a href="{{ 'posts-by-year' | relative_url }}" data-hotkey="g y">
+        <strong>Posts by Year</strong>
+      </a>
+    </li>
+    <li>
+      <a href="{{ 'tags' | relative_url }}" data-hotkey="g t">
+        <strong>Posts by Tag</strong>
+      </a>
+    </li>
+    <li>
+      <a href="{{ 'categories' | relative_url }}" data-hotkey="g c">
+        <strong>Posts by Category</strong>
+      </a>
+    </li>
+  </ul>
+</nav>

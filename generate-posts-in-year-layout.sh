@@ -37,8 +37,6 @@ layout: archive
 author_profile: false
 ---
 
-{% include back_to_posts_by_year.html %}
-
 <ul class="taxonomy__index">
   {% assign postsByYearMonth = site.posts | where_exp: "item", "item.hidden != true" | group_by_exp: 'post', 'post.date | date: "%Y-%m"' %}
   {% assign postsIn$year = postsByYearMonth | where: 'name', '$year' %}
@@ -68,4 +66,3 @@ author_profile: false
   </section>
 {% endfor %}
 EOL
-

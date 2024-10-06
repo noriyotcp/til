@@ -45,7 +45,6 @@ search: false
   }
 }
 
-
 /* Custom Hacker Theme ========================================================================== */
 
 // https://github.com/pages-themes/hacker/blob/e3c8d1ad288894be216002a5bc29fc611aeab9ac/_sass/_default_colors.scss
@@ -524,6 +523,50 @@ a.site-title:hover {
     &:hover, &:focus-within {
       background-color: #3c4555;
       opacity: 0.8;
+    }
+  }
+}
+
+#go-to-posts-by {
+  padding: 0 1em;
+
+  .taxonomy__index {
+    column-gap: 0.5em;
+
+    /* Page taxonomy ========================================================================== */
+    /* Overwrite default style repeat(3, 1fr) */
+    @media (min-width: 64em) {
+      grid-template-columns: repeat(2, 1fr);
+      width: calc(100% - 6em);
+      padding-left: 6em;
+    }
+
+    @media (min-width: 1400px) {
+      width: calc(100% - 10em);
+      padding-left: 10em;
+    }
+
+    @media (min-width: 1536px) {
+      width: calc(100% - 14em);
+      padding-left: 14em;
+    }
+
+    @media (min-width: 1740px) {
+      width: calc(100% - 20em);
+      padding-left: 20em;
+    }
+
+    @media (min-width: 1950px) {
+      width: calc(100% - 22em);
+      padding-left: 22em;
+    }
+
+    li > a {
+      display: block;
+      text-align: center;
+      padding: 0.25em;
+      margin-bottom: 0.5em;
+      border: 1px solid #51555d;
     }
   }
 }
