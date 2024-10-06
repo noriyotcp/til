@@ -529,6 +529,8 @@ a.site-title:hover {
 }
 
 #go-to-posts-by {
+  padding: 0 1em;
+
   .taxonomy__index {
     column-gap: 0.5em;
 
@@ -536,6 +538,7 @@ a.site-title:hover {
       display: block;
       text-align: center;
       padding: 0.25em;
+      margin-bottom: 0.5em;
       border: 1px solid #51555d;
     }
   }
