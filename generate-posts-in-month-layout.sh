@@ -42,7 +42,6 @@ layout: archive
 author_profile: false
 ---
 
-{% include back_to_posts_by_year.html %}
 {% assign postsInYear = site.posts | where_exp: "item", "item.hidden != true" | group_by_exp: 'post', 'post.date | date: "%Y-%m"' %}
 {% assign postsIn$year$month_only = postsInYear | where: 'name', '$month' %}
 
@@ -59,4 +58,3 @@ author_profile: false
   </section>
 {% endfor %}
 EOL
-
