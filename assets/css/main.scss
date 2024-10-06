@@ -528,6 +528,19 @@ a.site-title:hover {
   }
 }
 
+#go-to-posts-by {
+  .taxonomy__index {
+    column-gap: 0.5em;
+
+    li > a {
+      display: block;
+      text-align: center;
+      padding: 0.25em;
+      border: 1px solid #51555d;
+    }
+  }
+}
+
 .site-subtitle {
   color: $grey;
   word-break: break-word;
