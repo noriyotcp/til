@@ -68,6 +68,7 @@ cat <<-EOD >> "$FILE_PATH"
 ---
 title: "${DATE}"
 date: "$(date +"%Y-%m-%d %H:%M:%S %z")"
+last_modified_at: "$(date +"%Y-%m-%d %H:%M:%S %z")"
 ---
 
 # ${DATE}
