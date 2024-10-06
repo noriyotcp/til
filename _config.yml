@@ -70,6 +70,8 @@ encoding: "utf-8"
 #   - vendor/cache/
 #   - vendor/gems/
 #   - vendor/ruby/
+exclude:
+  - projects
 
 # Plugins (previously gems:)
 plugins:
