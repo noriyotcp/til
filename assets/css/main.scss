@@ -528,37 +528,27 @@ a.site-title:hover {
 }
 
 #go-to-posts-by {
-  padding: 0 1em;
+  display: flex;
+  margin-left: auto;
+  margin-right: auto;
+  max-width: calc(100% - 2em);
+  justify-content: center;
+
+  @media (min-width: 64em) { // base 16px, 1024px = 64em
+    max-width: calc(100% - 12em);
+  }
+  @media (min-width: 1280px) {
+    max-width: 1016px;
+  }
 
   .taxonomy__index {
     column-gap: 0.5em;
+    width: 100%;
 
     /* Page taxonomy ========================================================================== */
     /* Overwrite default style repeat(3, 1fr) */
     @media (min-width: 64em) {
       grid-template-columns: repeat(2, 1fr);
-      width: calc(100% - 6em);
-      padding-left: 6em;
-    }
-
-    @media (min-width: 1400px) {
-      width: calc(100% - 10em);
-      padding-left: 10em;
-    }
-
-    @media (min-width: 1536px) {
-      width: calc(100% - 14em);
-      padding-left: 14em;
-    }
-
-    @media (min-width: 1740px) {
-      width: calc(100% - 20em);
-      padding-left: 20em;
-    }
-
-    @media (min-width: 1950px) {
-      width: calc(100% - 22em);
-      padding-left: 22em;
     }
 
     li > a {
