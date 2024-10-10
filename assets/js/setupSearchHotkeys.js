@@ -4,6 +4,7 @@ const openSearchForm = (searchIcon) => {
     ?.classList.contains("is--visible");
 
   if (isSearchOpen) {
+    document.getElementById("search").focus();
     return false;
   }
 
