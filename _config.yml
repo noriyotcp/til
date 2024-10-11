@@ -75,6 +75,7 @@ encoding: "utf-8"
 #   - vendor/ruby/
 exclude:
   - projects
+  - assets/js/**/*.test.js
 
 # Plugins (previously gems:)
 plugins:
