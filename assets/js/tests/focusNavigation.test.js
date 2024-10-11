@@ -4,7 +4,7 @@ import {
   resetFocusedItemIndex,
   moveFocusToNextItem,
   moveFocusToPreviousItem,
-} from "./focusNavigation";
+} from "../focusNavigation";
 
 describe("focusNavigation", () => {
   let listItemLinks;

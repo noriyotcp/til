@@ -1,6 +1,6 @@
 {
   "scripts": {
-    "test:assets:js": "vitest -r assets/js"
+    "test:assets:js": "vitest -r assets/js/tests"
   },
   "devDependencies": {
     "jsdom": "^25.0.1",
