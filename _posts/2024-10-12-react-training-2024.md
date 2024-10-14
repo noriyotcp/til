@@ -1,7 +1,7 @@
 ---
 title: "React 研修"
 date: "2024-10-12 16:33:38 +0900"
-last_modified_at: "2024-10-14 13:02:32 +0900"
+last_modified_at: "2024-10-15 02:23:50 +0900"
 tags:
   - React
 ---
@@ -71,4 +71,9 @@ StackBlitz がだいぶ重たいのでローカルでの開発にしようかな
 
 - ボタンに ref を張る
 - インプットの状態(state) によって `buttonRef.current.disabled = true;` みたいな感じ？
+
+### 10/14
+ひとまず演習5-3 までは進んだ。`useEffect()` が出てくる  
+やっぱり `useReducer()`, `useEffect()` から難易度がぐっと上がる感じだ  
+じっくり取り組んでいこう
 
