@@ -1,7 +1,7 @@
 ---
-title: "React 研修"
+title: "React 研修(2024)"
 date: "2024-10-12 16:33:38 +0900"
-last_modified_at: "2024-10-15 02:23:50 +0900"
+last_modified_at: "2024-10-15 02:25:52 +0900"
 tags:
   - React
 ---
