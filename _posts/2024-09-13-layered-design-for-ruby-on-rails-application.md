@@ -1,6 +1,6 @@
 ---
 date: "2024-09-13 00:37:58 +0900"
-last_modified_at: "2024-10-06 17:53:16 +0900"
+last_modified_at: "2024-10-24 12:57:39 +0900"
 tags:
   - Ruby
   - Ruby on Rails
@@ -44,3 +44,37 @@ ActiveJobは、さまざまなバックグラウンドジョブライブラリ�
 - **データベースアブストラクションの戦略**: 一貫性を保つためのビジネスロジックのデータベースレイヤーへの移行。
 
 以上が概要で、各コンポーネントがどのように連携してWebアプリケーションを構築し、効率的に動作させるかについて学びます。
+
+## Chapter 2: Active Models and Records
+
+
+### 以下 AI による要約
+
+この内容は、Ruby on Railsアプリケーションのモデル層に焦点を当てています。特にActive RecordおよびActive Modelの使用と潜在的な落とし穴に関する理解を深めることを目指しています。Active Recordは、データベーステーブルの名前で名付けられたクラスを使用することでプロセスを簡略化し、さらなる設定が不要です。一方、あまり知られていないActive Modelは、Active Recordのようなモデルを作成したり、Active Recordからドメインモデルを抽出するために使用できます。旧バージョンのソフトウェアに適用可能な様々なコードサンプルが提供されています。これには、状況遷移や整合性ルールのデモンストレーション、Active Recordの規約による設定(CoC)の利点などが含まれます。また、純粋なRubyオブジェクトがActive Modelにより強化されたクラスよりも優れているシナリオや、この知識をチャーン計算器と組み合わせて、チャーンと複雑さでトップNファイルを表示することが可能かどうかなど、重要な問いも提起します。
+
+### Data-mapper model についての説明
+Hanami での実装例が紹介されている。
+
+```rb
+class PostRepository < Hanami::Repository
+  associations do
+    has_many :comments
+  end
+  def latest_for_user(user_id)
+    posts.where(user_id:).order { id.desc }.limit(1).one
+  end
+end
+class CommentRepository < Hanami::Repository
+  def latest_for_post(post_id, count:)
+    comments.where(post_id:)
+            .order { id.desc }
+            .limit(count).to_a
+  end
+end
+latest_post = PostRepository.new.latest_for_user(user_id)
+latest_comments = CommentRepository.new.latest_for_post
+  (latest_post.id, count: 3)
+```
+
+基本的に、私たちはActive Recordが裏でやってくれていたすべてのことを、最初から書き直しました。一方では、より多くの（退屈な）コードを書く必要がありました。他方では、クエリの完全な制御を手に入れ、データベース通信APIについて考える必要があります。そして、考えることは決して損ではありません。
+
