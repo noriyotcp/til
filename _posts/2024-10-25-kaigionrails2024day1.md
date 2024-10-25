@@ -1,7 +1,7 @@
 ---
 title: "Kaigi on Rails 2024 Day1"
 date: "2024-10-25 11:26:42 +0900"
-last_modified_at: "2024-10-25 16:08:04 +0900"
+last_modified_at: "2024-10-25 16:41:35 +0900"
 ---
 
 # Kaigi on Rails 2024 Day1
@@ -143,7 +143,31 @@ CSV のインポートなどに使われる。1行に複数のエラーが発生
 ### Sidekiq Iteration
 まだベータだがある
 
+## リリース8年目のサービスの1800個のERBファイルをViewComponentに移行した方法とその結果
+[リリース8年目のサービスの1800個のERBファイルをViewComponentに移行した方法とその結果 | Kaigi on Rails 2024](https://kaigionrails.org/2024/talks/katty0324/)
 
+- パラメータ定義の曖昧さ
+  - 仕様に従って使うべきだがコードベースにそれらはない
+- 一貫性のないパラメータの渡し方
+  - インスタンス変数でもローカル変数でも渡せる
 
+### ViewComponent
 
+React インスパイアかどうかはワイはわからん
 
+テストは erb でもかけるんだなあ
+
+置き換えするためにパースして抽象構文木にした上で erb の render メソッドを探す
+
+ViewComponent では content が予約されているのか
+
+- 別系統の生成
+  - app/views2
+  - こちらが ViewComponent を使用した別系統
+- view_path の分岐
+
+prepend_viewpath を使って view_path の依存関係の一番トップに持ってくる
+
+- コンポーネント呼び出しのインターフェースがわかりやすい
+- コードジャンプがしやすい
+- View のテストが可能になり、実装ミスに気づきやすくなった
