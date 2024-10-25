@@ -1,7 +1,7 @@
 ---
 title: "Kaigi on Rails 2024 Day1"
 date: "2024-10-25 11:26:42 +0900"
-last_modified_at: "2024-10-25 14:28:17 +0900"
+last_modified_at: "2024-10-25 14:32:34 +0900"
 ---
 
 # Kaigi on Rails 2024 Day1
@@ -80,8 +80,8 @@ DB と違う検証をしたい時はフォームオブジェクト
 - `ActiveModel::Model`  
 
 `ActiveModel::Model` = `ActiveModel::API` + `ActiveModel::Access`
-## そのカラム追加、ちょっと待って！カラム追加で増えるActiveRecordのメモリサイズ、イメージできますか?
 
+## そのカラム追加、ちょっと待って！カラム追加で増えるActiveRecordのメモリサイズ、イメージできますか?
 [そのカラム追加、ちょっと待って！カラム追加で増えるActiveRecordのメモリサイズ、イメージできますか? | Kaigi on Rails 2024](https://kaigionrails.org/2024/talks/asayamakk/)
 
 AR instance ってどれくらいメモリ使ってるんだろなっと
@@ -91,5 +91,3 @@ AR instance ってどれくらいメモリ使ってるんだろなっと
 PK + timestamps の AR instance でも 3.4KB くらいかー
 
 4つのオブジェクトが増えている。ActiveModel::Attribute::FromDatabaseはDBからの結果をラップしている。typeを持っていて型変換もする
-
-
