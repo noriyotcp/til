@@ -1,7 +1,7 @@
 ---
 title: "Kaigi on Rails 2024 Day1"
 date: "2024-10-25 11:26:42 +0900"
-last_modified_at: "2024-10-25 16:41:59 +0900"
+last_modified_at: "2024-10-26 07:11:26 +0900"
 ---
 
 # Kaigi on Rails 2024 Day1
@@ -171,3 +171,91 @@ prepend_viewpath を使って view_path の依存関係の一番トップに持�
 - コンポーネント呼び出しのインターフェースがわかりやすい
 - コードジャンプがしやすい
 - View のテストが可能になり、実装ミスに気づきやすくなった
+
+## Rails APIモードのためのシンプルで効果的なCSRF対策
+[Rails APIモードのためのシンプルで効果的なCSRF対策 | Kaigi on Rails 2024](https://kaigionrails.org/2024/talks/corocn/)
+
+Cookie が自動送信されることに起因する
+
+### Rails での対策
+CSRF token を発行する
+
+Rails way に乗っかる場合は View, Controller の数行で終わる  
+
+### Rails API + SPA
+
+トークン送受を自前で書くことになる
+
+もっとシンプルに対策できないか？標準機能に引っ張られないように  
+
+- 許可したサイトからのリクエストのみ受け付ける
+- Cookie が自動で送られないようにする
+
+### 実際の対策
+- リクエストの出所を確認
+  - origin header の確認
+  - Form POST でオリジンが送られなかった時代もあった
+     - 現在では全てのブラウザで対応済み
+- Featch metadata
+  - Sec-FetchSite
+  - リクエスト発生元と先の関係性
+- Samesite
+  - Lax or Strict を指定する
+
+## 現実のRuby/Railsアップグレード
+[現実のRuby/Railsアップグレード | Kaigi on Rails 2024](https://kaigionrails.org/2024/talks/takeyuweb/)
+
+### 当時の課題
+テストカバレッジ0%
+
+- テストを書く
+  - まあそうですよね
+  - テストをパスしないとレビューに進めないようにする
+- エラーを通知する仕組みづくり
+- 非推奨警告をなくす
+- upgrade 作業は問題発生リスクがある
+  - ビジネス側との信頼関係を構築しておく
+- ここまでやってようやくアップグレード
+- Rails ごとにサポートしている Ruby のバージョンを確認する
+
+`rails app:update` は基本的に上書き
+
+### 保守されていない gem
+つら。。。
+
+### Rails をモンキーパッチしている gem
+一見標準ぽいインターフェースでオーバーライドしているものは辛いな
+
+### Ruby の非互換な変更
+
+### sprockets から propshaft
+#### Propshaft
+アセットファイルを扱うことに集中する
+
+JavaScript build は sprockets から独立させる
+-> build 時間を2分から2秒
+
+CSS のプリコンパイルも独立させる
+
+業務領域に対する理解って大切よね
+
+
+賢そうなコードを書かない -> はい。。。
+
+エンジニアの説明責任
+
+## Hotwire or React? 〜Reactの録画機能をHotwireに置き換えて得られた知見〜
+[Hotwire or React? 〜Reactの録画機能をHotwireに置き換えて得られた知見〜 | Kaigi on Rails 2024](https://kaigionrails.org/2024/talks/haruna-tsujita/)
+
+- RoR / 部分的に React で SPA
+
+React は本当に必要？ -> あるある
+
+Stimulus で実装していったが。。。ゴリゴリにJavaScript を書くことになった。じゃあ React でいいか。。。
+
+Hotwire ならゴリゴリ JS を書かずに済みそう
+
+「紙芝居」のように画面を切り替える
+
+Hotwireで実装できそうか？ -> 実装を CRUD に集中できそうか？
+
