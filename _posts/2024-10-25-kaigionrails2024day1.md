@@ -1,7 +1,7 @@
 ---
 title: "Kaigi on Rails 2024 Day1"
 date: "2024-10-25 11:26:42 +0900"
-last_modified_at: "2024-10-26 07:11:26 +0900"
+last_modified_at: "2024-10-26 10:37:59 +0900"
 ---
 
 # Kaigi on Rails 2024 Day1
@@ -92,7 +92,7 @@ PK + timestamps の AR instance でも 3.4KB くらいかー
 
 4つのオブジェクトが増えている。ActiveModel::Attribute::FromDatabaseはDBからの結果をラップしている。typeを持っていて型変換もする
 
-## Sidekiqで実現する長時間非同期処理の中断と再開 | Kaigi on Rails 2024
+## Sidekiqで実現する長時間非同期処理の中断と再開
 [Sidekiqで実現する長時間非同期処理の中断と再開 | Kaigi on Rails 2024](https://kaigionrails.org/2024/talks/hypermkt/)
 
 非同期処理の中断と再開、世間一般に意外と知見がないかもしれない  
