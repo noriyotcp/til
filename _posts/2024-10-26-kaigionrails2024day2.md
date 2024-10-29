@@ -1,7 +1,7 @@
 ---
 title: "Kaigi on Rails 2024 Day2"
 date: "2024-10-26 10:33:45 +0900"
-last_modified_at: "2024-10-27 19:57:59 +0900"
+last_modified_at: "2024-10-29 23:47:47 +0900"
 tags:
   - Ruby
   - Ruby on Rails
@@ -121,8 +121,9 @@ Hotwire は Rails との組み合わせで React っぽくなっている
 惰性でコントローラーを作らない  
 目的とかをちゃんと考える
 
-Ghost Form Pattern -> 万葉さんのプロブにあるそうな
+Ghost Form Pattern -> 万葉さんのブログにあるそうな
 
+[サーバ側だけでフォーム画面をインタラクティブに！　〜Hotwire を活用した「Ghost Formパターン」〜｜万葉](https://note.com/everyleaf/n/nfd52125907c1)
 - 設計段階で汎用的に考える
 - サーバーから与えられたものを使う
 
@@ -187,8 +188,8 @@ One-Person Framework は時代と逆行している
   - GUI がついているのか！  
   - Job が一時停止・再開が可能
 
-rails g script -> Rails 8 から  
-script/ に .rb ファイルが作られる
+`rails g script` -> Rails 8 から  
+`script/` に `.rb` ファイルが作られる
 
 Rails Guides 7.2 ~ データの変更とスキーマの変更を分離しましょう  
 
@@ -206,9 +207,9 @@ identify したい単位がユーザーである
 
 ユーザーアイデンティティ
 
-基本的には主キー id だけのテーブル
+基本的には主キー `id` だけのテーブル
 
-human_id 人間向け
+`human_id` 人間向け
 
 ### id  だけのテーブル
 ユーザーが「いる」ことを表現できる
@@ -282,4 +283,3 @@ users table 以外の情報を消せる
 [基調講演 | Kaigi on Rails 2024](https://kaigionrails.org/2024/talks/snoozer05/)
 
 これは感動しかなかった。よくプログラミング言語やフレームワークは単なる「道具」だと言われるが、それよりもはるかに大きいものになり得るのだ
-
