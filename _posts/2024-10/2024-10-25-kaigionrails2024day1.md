@@ -1,7 +1,7 @@
 ---
 title: "Kaigi on Rails 2024 Day1"
 date: "2024-10-25 11:26:42 +0900"
-last_modified_at: "2024-10-27 19:57:59 +0900"
+last_modified_at: "2024-11-13 22:32:57 +0900"
 tags:
   - Ruby
   - Ruby on Rails
