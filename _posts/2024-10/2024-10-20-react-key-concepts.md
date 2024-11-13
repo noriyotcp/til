@@ -1,7 +1,7 @@
 ---
 title: "React Key Concepts"
 date: "2024-10-20 10:35:45 +0900"
-last_modified_at: "2024-11-13 22:32:57 +0900"
+last_modified_at: "2024-11-13 23:34:14 +0900"
 tags:
   - React
 categories:
@@ -86,7 +86,7 @@ function Link({children, config}) {
 4. `<a {...config}`では、`config`の全てのプロパティを`<a>`タグのpropsとして展開します。もし`config`に`href`または`className`などのプロパティが含まれていたら、それらは`<a href={config.href} className={config.className}`に似たように`<a>`タグの属性として使用されます。
 5. `target="_blank"`は、リンクを新しいブラウザのタブまたはウィンドウで開くためのものです。
 6. `rel="noopener noreferrer"`は、新しく開かれたページがそれ自体を開いたページを制御することを防ぐための、一般的なセキュリティ対策の属性です。
-7. 開始タグと終了タグ`<a>`タグの間にある`{children}`は、このコンポーネントに渡された子要素が配置されることを意味します。例えば、このコンポーネントを`<Link config={{href: 'http://example.com'}}>Click me</Link>`のように使用すると、以下のようにレンダリングされます：`<a href='http://example.com' target="_blank" rel="noopener noreferrer">Click me</a>`これにより、新しいタブで'http://example.com'を開くクリック可能なハイパーリンクが作成されます。
+7. 開始タグと終了タグ`<a>`タグの間にある`{children}`は、このコンポーネントに渡された子要素が配置されることを意味します。例えば、このコンポーネントを`<Link config={% raw %}{{href: 'http://example.com'}}{% endraw %}>Click me</Link>`のように使用すると、以下のようにレンダリングされます：`<a href='http://example.com' target="_blank" rel="noopener noreferrer">Click me</a>`これにより、新しいタブで'http://example.com'を開くクリック可能なハイパーリンクが作成されます。
 
 Q:
 1. Which "problem" do props solve?
