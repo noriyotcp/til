@@ -1,6 +1,6 @@
 ---
 date: "2024-09-13 00:37:58 +0900"
-last_modified_at: "2024-10-24 20:34:31 +0900"
+last_modified_at: "2024-11-13 22:39:00 +0900"
 tags:
   - Ruby
   - Ruby on Rails
