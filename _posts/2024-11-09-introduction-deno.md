@@ -1,12 +1,12 @@
 ---
-title: "2024-11-09"
+title: "Deno入門"
 date: "2024-11-09 04:26:49 +0900"
 last_modified_at: "2024-11-24 23:30:09 +0900"
 tags:
   - Deno
 ---
 
-# 2024-11-09
+# Deno入門
 ## Deno
 突然だが Deno で CLI を作りたくなったよね
 
@@ -270,4 +270,4 @@ commands (sub commands) 主体でいくなら。。。
   - [ ] https://docs.deno.com/runtime/fundamentals/configuration/#custom-path-mappings
 - [ ] Knip 使ってみる
   - [ ] https://tech.basemachina.jp/entry/introduction-knip
-
+  - いや無理っぽいかなあ
