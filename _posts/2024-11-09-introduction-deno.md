@@ -1,7 +1,7 @@
 ---
 title: "2024-11-09"
 date: "2024-11-09 04:26:49 +0900"
-last_modified_at: "2024-11-21 21:03:13 +0900"
+last_modified_at: "2024-11-24 23:30:09 +0900"
 tags:
   - Deno
 ---
@@ -263,4 +263,11 @@ commands (sub commands) 主体でいくなら。。。
     - options.ts
 
 みたいな形になるのかなあ
+
+---
+
+- [ ] Custom path mappings の設定
+  - [ ] https://docs.deno.com/runtime/fundamentals/configuration/#custom-path-mappings
+- [ ] Knip 使ってみる
+  - [ ] https://tech.basemachina.jp/entry/introduction-knip
 
