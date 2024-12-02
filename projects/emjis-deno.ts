@@ -6,7 +6,7 @@ async function translateText(text: string, skinTone: string = "👋"): Promise<a
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      "Accept-Language": "ja", // 日本語を優先
+      "Accept-Language": "en-US", // 優先する言語
     },
     body: JSON.stringify({ text, skinTone }),
   });
@@ -20,7 +20,7 @@ async function translateText(text: string, skinTone: string = "👋"): Promise<a
 
 async function main() {
   try {
-    const originalText = "なるはやでお願いします";
+    const originalText = "Hello\nGood Morning!\nHow are you?";
     const translation = await translateText(originalText, "👋");
     console.log({ originalText, ...translation });
   } catch (error) {
