@@ -1,10 +1,12 @@
 ---
 title: "スタッフエンジニアの道"
 date: "2024-12-07 17:47:02 +0900"
-last_modified_at: "2024-12-07 19:11:26 +0900"
+last_modified_at: "2024-12-10 00:57:15 +0900"
 tags:
-  - Books
   - O'reilly
+  - スタッフエンジニア
+categories:
+  - Books
 ---
 
 # スタッフエンジニアの道
