@@ -1,7 +1,7 @@
 ---
-title: "Layered Design for Ruby on Rails Applications Chapter 6: Data Layer Abstractions"
+title: "Layered Design for Ruby on Rails Applications - Chapter 6: Data Layer Abstractions"
 date: "2024-12-21 18:10:37 +0900"
-last_modified_at: "2024-12-22 00:07:27 +0900"
+last_modified_at: "2024-12-22 00:51:42 +0900"
 tags:
   - Ruby
   - Ruby on Rails
