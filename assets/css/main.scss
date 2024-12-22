@@ -746,3 +746,35 @@ div#hotkeys-popover {
 .unset {
   all: unset;
 }
+
+.tabs {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.tabs__label {
+  padding: 0.8em;
+  cursor: pointer;
+}
+
+.tabs__radio {
+  display: none;
+}
+
+.tabs__content {
+  order: 1;
+  width: 100%;
+  display: none;
+  margin-top: 1em;
+}
+
+.tabs__radio:checked + .tabs__label {
+  font-weight: bold;
+  color: #009578;
+  border-bottom: 2px solid #009578;
+}
+
+.tabs__radio:checked + .tabs__label + .tabs__content {
+  display: initial;
+}
+

@@ -4,17 +4,29 @@ layout: archive
 
 {{ content }}
 
-<h3 class="archive__subtitle">{{ site.data.ui-text[site.locale].recent_posts | default: "Recent Posts" }}</h3>
+<!-- <h3 class="archive__subtitle">{{ site.data.ui-text[site.locale].recent_posts | default: "Recent Posts" }}</h3> -->
 
 {% if paginator %}
-  {% assign posts = paginator.posts | sort_natural: 'last_modified_at' | reverse %}
+  {% assign posts = paginator.posts %}
 {% else %}
-  {% assign posts = site.posts | sort_natural: 'last_modified_at' | reverse %}
+  {% assign posts = site.posts %}
 {% endif %}
 
 {% assign entries_layout = page.entries_layout | default: 'list' %}
 <div class="entries-{{ entries_layout }}">
-  {% include documents-collection.html entries=posts type=entries_layout %}
+  <div class="tabs">
+    <input type="radio" class="tabs__radio" name="tabs-example" id="tab1" checked>
+    <label for="tab1" class="tabs__label">Last Created</label>
+    <div class="tabs__content">
+      {% include documents-collection.html entries=posts type=entries_layout %}
+    </div>
+    <input type="radio" class="tabs__radio" name="tabs-example" id="tab2">
+    <label for="tab2" class="tabs__label">Last Updated</label>
+    <div class="tabs__content">
+      {% assign posts = site.posts | sort_natural: 'last_modified_at' | reverse %}
+      {% include documents-collection.html entries=posts type=entries_layout %}
+    </div>
+  </div>
 </div>
 
 {% include paginator.html %}
