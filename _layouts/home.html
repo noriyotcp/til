@@ -14,15 +14,20 @@ layout: archive
 
 {% assign entries_layout = page.entries_layout | default: 'list' %}
 <div class="entries-{{ entries_layout }}">
-  <div class="tabs">
-    <input type="radio" class="tabs__radio" name="tabs-example" id="tab1" checked>
+  <!-- タブナビゲーション部分 -->
+  <div class="tab-navigation">
+    <input type="radio" class="tabs__radio" name="tabs-example" id="tab1" checked  onclick="showContent('content1')">
     <label for="tab1" class="tabs__label">Last Created</label>
-    <div class="tabs__content">
+    <input type="radio" class="tabs__radio" name="tabs-example" id="tab2">
+    <label for="tab2" class="tabs__label"  onclick="showContent('content2')">Last Updated</label>
+  </div>
+
+  <!-- コンテンツ部分 -->
+  <div class="tabs">
+    <div id="content1" class="tabs__content">
       {% include documents-collection.html entries=posts type=entries_layout %}
     </div>
-    <input type="radio" class="tabs__radio" name="tabs-example" id="tab2">
-    <label for="tab2" class="tabs__label">Last Updated</label>
-    <div class="tabs__content">
+    <div id="content2" class="tabs__content">
       {% assign posts = site.posts | sort_natural: 'last_modified_at' | reverse %}
       {% include documents-collection.html entries=posts type=entries_layout %}
     </div>
@@ -31,3 +36,19 @@ layout: archive
 
 {% include paginator.html %}
 
+<script>
+  // 各タブのコンテンツを切り替える関数
+  function showContent(contentId) {
+    // すべてのコンテンツを非表示に設定
+    const contents = document.querySelectorAll('.tabs__content');
+    contents.forEach(function (content) {
+      content.style.display = 'none';
+    });
+
+    // 指定されたコンテンツのみを表示
+    document.getElementById(contentId).style.display = 'initial';
+  }
+
+  // 初期状態として content1 を表示
+  showContent('content1');
+</script>

@@ -747,9 +747,17 @@ div#hotkeys-popover {
   all: unset;
 }
 
-.tabs {
+.tab-navigation {
   display: flex;
   flex-wrap: wrap;
+  position: sticky;
+  top: 0;
+  background-color: #252a34;
+  z-index: 100;
+}
+
+.tabs {
+  margin-left: 1px;
 }
 
 .tabs__label {
@@ -762,9 +770,7 @@ div#hotkeys-popover {
 }
 
 .tabs__content {
-  order: 1;
   width: 100%;
-  display: none;
   margin-top: 1em;
 }
 
@@ -773,8 +779,3 @@ div#hotkeys-popover {
   color: #009578;
   border-bottom: 2px solid #009578;
 }
-
-.tabs__radio:checked + .tabs__label + .tabs__content {
-  display: initial;
-}
-
