@@ -1,7 +1,7 @@
 ---
 title: "Layered Design for Ruby on Rails Applications - Chapter 6: Data Layer Abstractions"
 date: "2024-12-21 18:10:37 +0900"
-last_modified_at: "2024-12-22 00:51:42 +0900"
+last_modified_at: "2024-12-22 16:58:58 +0900"
 tags:
   - Ruby
   - Ruby on Rails
@@ -148,5 +148,68 @@ class ApplicationQuery
   end
 end
 UserWithBookmarkedPostsQuery.resolve
+```
+
+### クエリオブジェクトに規約を導入する
+規約とは、もの (コードやファイルなど) に名前を付け、編成する方法に関する一連のルールであり、プログラムが機能を暗黙的に推測するために使用できる。言い換えれば、規則に従うことは、コードの量を削減し、設計プロセスを簡素化するのに役立つ (新しいエンティティを追加するたびに車輪の再発明をする必要がないため)。
+
+まず `UserWithBookmarkedPostsQuery` とそのコンストラクターを見る。
+
+```rb
+# before
+class UserWithBookmarkedPostsQuery < ApplicationQuery
+  def initialize(relation = User.all) = super(relation)
+  # …
+end
+```
+
+私たち人間は、クエリ オブジェクトのクラス名から、このクエリ オブジェクトがUserモデルを処理していると推測できる。いくつかの命名規則を追加することでそれを行うことができる。たとえば、クエリ オブジェクト クラスを対応するモデル名前空間に保存するように要求できる。
+
+```rb
+# after
+class User
+  class WithBookmarkedPostsQuery < ApplicationQuery
+  end
+end
+```
+
+次に、ベースクラスを更新してクラス名からデフォルトのリレーションを自動的に推測できるようにしている。
+
+```rb
+
+class ApplicationQuery
+  class << self
+    def query_model
+      name.sub(/::[^\:]+$/, "").safe_constantize
+    end
+  end
+  def initialize(relation = self.class.query_model.all)
+    @relation = relation
+  end
+end
+
+class User
+  class WithBookmarkedPostsQuery < ApplicationQuery
+    # …
+  end
+end
+
+User::WithBookmarkedPostsQuery.query_model
+=> User
+
+# うーん、別にこれでもいいのでは？ cf. https://www.writesoftwarewell.com/how-to-get-objects-class-name-in-ruby-rails/
+class ApplicationQuery
+  class << self
+    def query_model
+      name.split("::").first.safe_constantize
+    end
+  end
+  def initialize(relation = self.class.query_model.all)
+    @relation = relation
+  end
+end
+
+User::WithBookmarkedPostsQuery.query_model
+=> User
 ```
 
