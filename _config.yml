@@ -54,8 +54,8 @@ highlighter: rouge
 excerpt_separator: "<!--more-->"
 incremental: false #set incremental to true to speed things up. if changes arent showing set to false
 
-paginate: 5
-paginate_path: /page:num/
+# paginate: 5
+# paginate_path: /page:num/
 
 atom_feed:
   hide: true
