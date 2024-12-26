@@ -16,9 +16,9 @@ layout: archive
 <div class="entries-{{ entries_layout }}">
   <!-- タブナビゲーション部分 -->
   <div class="tab-navigation">
-    <input type="radio" class="tabs__radio" name="tabs-example" id="tab1" checked">
+    <input type="radio" class="tabs__radio" name="tabs-example" id="tab1" autocomplete="off">
     <label for="tab1" class="tabs__label">Last Created</label>
-    <input type="radio" class="tabs__radio" name="tabs-example" id="tab2">
+    <input type="radio" class="tabs__radio" name="tabs-example" id="tab2" autocomplete="off">
     <label for="tab2" class="tabs__label">Last Updated</label>
   </div>
 
@@ -47,6 +47,12 @@ layout: archive
       localStorage.setItem('noriyotcp:til:selectedContentTab', tabId);
     };
 
+    const uncheckedAllTabs = () => {
+      tabs.forEach(function (tab) {
+        tab.checked = false;
+      });
+    };
+
     const displayContent = (contentId) => {
       const content = document.getElementById(contentId);
       contents.forEach(function (c) {
@@ -55,8 +61,11 @@ layout: archive
       content.style.display = 'block';
     };
 
+    uncheckedAllTabs();
+
     // ローカルストレージから選択されたタブを復元
     const savedTabId = localStorage.getItem('noriyotcp:til:selectedContentTab');
+
     if (savedTabId) {
       const savedTab = document.getElementById(savedTabId);
       if (savedTab) {
