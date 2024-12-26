@@ -1,7 +1,7 @@
 ---
 title: "Ruby 3.4 リリースパーティー presented by STORES / アンドパッド"
 date: "2024-12-26 18:46:23 +0900"
-last_modified_at: "2024-12-26 18:46:23 +0900"
+last_modified_at: "2024-12-26 23:39:20 +0900"
 ---
 
 # Ruby 3.4 リリースパーティー presented by STORES / アンドパッド
