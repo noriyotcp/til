@@ -16,10 +16,10 @@ layout: archive
 <div class="entries-{{ entries_layout }}">
   <!-- タブナビゲーション部分 -->
   <div class="tab-navigation">
-    <input type="radio" class="tabs__radio" name="tabs-example" id="tab1" checked  onclick="showContent('content1')">
+    <input type="radio" class="tabs__radio" name="tabs-example" id="tab1" checked">
     <label for="tab1" class="tabs__label">Last Created</label>
     <input type="radio" class="tabs__radio" name="tabs-example" id="tab2">
-    <label for="tab2" class="tabs__label"  onclick="showContent('content2')">Last Updated</label>
+    <label for="tab2" class="tabs__label">Last Updated</label>
   </div>
 
   <!-- コンテンツ部分 -->
@@ -39,18 +39,48 @@ layout: archive
 {% endcomment %}
 
 <script>
-  // 各タブのコンテンツを切り替える関数
-  function showContent(contentId) {
-    // すべてのコンテンツを非表示に設定
+  document.addEventListener("DOMContentLoaded", function () {
+    const tabs = document.querySelectorAll('.tabs__radio');
     const contents = document.querySelectorAll('.tabs__content');
-    contents.forEach(function (content) {
-      content.style.display = 'none';
+
+    const saveSelectedTab = (tabId) => {
+      localStorage.setItem('noriyotcp:til:selectedContentTab', tabId);
+    };
+
+    const displayContent = (contentId) => {
+      const content = document.getElementById(contentId);
+      contents.forEach(function (c) {
+        c.style.display = 'none';
+      });
+      content.style.display = 'block';
+    };
+
+    // ローカルストレージから選択されたタブを復元
+    const savedTabId = localStorage.getItem('noriyotcp:til:selectedContentTab');
+    if (savedTabId) {
+      const savedTab = document.getElementById(savedTabId);
+      if (savedTab) {
+        savedTab.checked = true;
+        const contentId = savedTabId.replace('tab', 'content');
+        displayContent(contentId);
+      }
+    } else {
+      // 初期表示
+      const initialTab = document.getElementById('tab1');
+      if (initialTab) {
+        initialTab.checked = true;
+        displayContent('content1');
+      }
+    }
+
+    // タブが変更されたら、そのタブのコンテンツを表示し、選択されたタブをローカルストレージに保存
+    tabs.forEach(function (tab) {
+      tab.addEventListener('change', function () {
+        const tabId = tab.id;
+        const contentId = tabId.replace('tab', 'content');
+        displayContent(contentId);
+        saveSelectedTab(tabId);
+      });
     });
-
-    // 指定されたコンテンツのみを表示
-    document.getElementById(contentId).style.display = 'initial';
-  }
-
-  // 初期状態として content1 を表示
-  showContent('content1');
+  });
 </script>
