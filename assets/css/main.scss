@@ -756,10 +756,6 @@ div#hotkeys-popover {
   z-index: 100;
 }
 
-.contents__container {
-  margin-left: 1px;
-}
-
 .tabs__anchor {
   padding: 0.8em;
   cursor: pointer;
@@ -774,6 +770,10 @@ div#hotkeys-popover {
   font-weight: bold;
   color: #009578;
   border-bottom: 2px solid #009578;
+}
+
+.contents__container {
+  margin-left: 1px;
 }
 
 .content__list {
