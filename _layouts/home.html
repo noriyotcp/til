@@ -16,8 +16,8 @@ layout: archive
 <div class="entries-{{ entries_layout }}">
   <!-- タブナビゲーション部分 -->
   <div class="tab-navigation">
-    <a href="" class="tabs_anchor" id="tab1">Last Created</a>
-    <a href="" class="tabs_anchor" id="tab2">Last Updated</a>
+    <a href="" class="tabs__anchor" id="tab1">Last Created</a>
+    <a href="" class="tabs__anchor" id="tab2">Last Updated</a>
   </div>
 
   <!-- コンテンツ部分 -->
@@ -38,7 +38,7 @@ layout: archive
 
 <script>
   document.addEventListener("DOMContentLoaded", function () {
-    const tabs_anchors = document.querySelectorAll('.tabs_anchor');
+    const tabs_anchors = document.querySelectorAll('.tabs__anchor');
     const contents = document.querySelectorAll('.content__list');
 
     const saveSelectedTab = (tabId) => {
@@ -80,7 +80,7 @@ layout: archive
     tabs_anchors.forEach(function (tab_anchor) {
       tab_anchor.addEventListener('click', function (e) {
         e.preventDefault();
-        const tabId = tab_anchor.id.replace('tabs_anchor', 'tab');
+        const tabId = tab_anchor.id.replace('tabs__anchor', 'tab');
         const contentId = tabId.replace('tab', 'content');
         const tab = document.getElementById(tabId);
         // toggle class `active` for tab
