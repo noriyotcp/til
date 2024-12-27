@@ -756,8 +756,7 @@ div#hotkeys-popover {
   z-index: 100;
 }
 
-// .contents ?
-.tabs {
+.contents__container {
   margin-left: 1px;
 }
 
@@ -777,7 +776,7 @@ div#hotkeys-popover {
   border-bottom: 2px solid #009578;
 }
 
-.tabs__content {
+.content__list {
   width: 100%;
   margin-top: 1em;
 }

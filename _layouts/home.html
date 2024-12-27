@@ -21,11 +21,11 @@ layout: archive
   </div>
 
   <!-- コンテンツ部分 -->
-  <div class="tabs">
-    <div id="content1" class="tabs__content">
+  <div class="contents__container">
+    <div id="content1" class="content__list">
       {% include documents-collection.html entries=posts type=entries_layout %}
     </div>
-    <div id="content2" class="tabs__content">
+    <div id="content2" class="content__list">
       {% assign posts = site.posts | sort_natural: 'last_modified_at' | reverse %}
       {% include documents-collection.html entries=posts type=entries_layout %}
     </div>
@@ -39,7 +39,7 @@ layout: archive
 <script>
   document.addEventListener("DOMContentLoaded", function () {
     const tabs_anchors = document.querySelectorAll('.tabs_anchor');
-    const contents = document.querySelectorAll('.tabs__content');
+    const contents = document.querySelectorAll('.content__list');
 
     const saveSelectedTab = (tabId) => {
       localStorage.setItem('noriyotcp:til:selectedContentTab', tabId);
