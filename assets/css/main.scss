@@ -756,26 +756,28 @@ div#hotkeys-popover {
   z-index: 100;
 }
 
+// .contents ?
 .tabs {
   margin-left: 1px;
 }
 
-.tabs__label {
+.tabs_anchor {
   padding: 0.8em;
   cursor: pointer;
+  text-decoration: none;
 }
 
-.tabs__radio {
-  display: none;
+.tabs_anchor:visited {
+  color: inherit;
+}
+
+.tabs_anchor.active {
+  font-weight: bold;
+  color: #009578;
+  border-bottom: 2px solid #009578;
 }
 
 .tabs__content {
   width: 100%;
   margin-top: 1em;
-}
-
-.tabs__radio:checked + .tabs__label {
-  font-weight: bold;
-  color: #009578;
-  border-bottom: 2px solid #009578;
 }

@@ -16,10 +16,8 @@ layout: archive
 <div class="entries-{{ entries_layout }}">
   <!-- タブナビゲーション部分 -->
   <div class="tab-navigation">
-    <input type="radio" class="tabs__radio" name="tabs-example" id="tab1" autocomplete="off">
-    <label for="tab1" class="tabs__label">Last Created</label>
-    <input type="radio" class="tabs__radio" name="tabs-example" id="tab2" autocomplete="off">
-    <label for="tab2" class="tabs__label">Last Updated</label>
+    <a href="" class="tabs_anchor" id="tab1">Last Created</a>
+    <a href="" class="tabs_anchor" id="tab2">Last Updated</a>
   </div>
 
   <!-- コンテンツ部分 -->
@@ -40,17 +38,11 @@ layout: archive
 
 <script>
   document.addEventListener("DOMContentLoaded", function () {
-    const tabs = document.querySelectorAll('.tabs__radio');
+    const tabs_anchors = document.querySelectorAll('.tabs_anchor');
     const contents = document.querySelectorAll('.tabs__content');
 
     const saveSelectedTab = (tabId) => {
       localStorage.setItem('noriyotcp:til:selectedContentTab', tabId);
-    };
-
-    const uncheckedAllTabs = () => {
-      tabs.forEach(function (tab) {
-        tab.checked = false;
-      });
     };
 
     const displayContent = (contentId) => {
@@ -61,15 +53,17 @@ layout: archive
       content.style.display = 'block';
     };
 
-    uncheckedAllTabs();
-
     // ローカルストレージから選択されたタブを復元
     const savedTabId = localStorage.getItem('noriyotcp:til:selectedContentTab');
 
     if (savedTabId) {
+      tabs_anchors.forEach(function (anchor) {
+        anchor.classList.remove('active');
+      });
+
       const savedTab = document.getElementById(savedTabId);
       if (savedTab) {
-        savedTab.checked = true;
+        savedTab.classList.add('active');
         const contentId = savedTabId.replace('tab', 'content');
         displayContent(contentId);
       }
@@ -77,16 +71,23 @@ layout: archive
       // 初期表示
       const initialTab = document.getElementById('tab1');
       if (initialTab) {
-        initialTab.checked = true;
+        initialTab.classList.add('active');
         displayContent('content1');
+        saveSelectedTab('tab1');
       }
     }
 
-    // タブが変更されたら、そのタブのコンテンツを表示し、選択されたタブをローカルストレージに保存
-    tabs.forEach(function (tab) {
-      tab.addEventListener('change', function () {
-        const tabId = tab.id;
+    tabs_anchors.forEach(function (tab_anchor) {
+      tab_anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        const tabId = tab_anchor.id.replace('tabs_anchor', 'tab');
         const contentId = tabId.replace('tab', 'content');
+        const tab = document.getElementById(tabId);
+        // toggle class `active` for tab
+        tabs_anchors.forEach(function (anchor) {
+          anchor.classList.remove('active');
+        });
+        e.currentTarget.classList.add('active');
         displayContent(contentId);
         saveSelectedTab(tabId);
       });
