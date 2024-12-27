@@ -3,7 +3,8 @@ import { moveFocusToPreviousItem, moveFocusToNextItem, focusedItemIndex, resetFo
 export const setupFocusHotkeys = () => {
   const listItemLinks = [];
   const taxonomy__indexes = document.querySelectorAll(".taxonomy__index");
-  const entriesLists = document.querySelectorAll(".entries-list");
+  // Do not fetch entries-lists because contents is divided into two sections, I cannot handle this!
+  // const entriesLists = document.querySelectorAll(".entries-list");
 
   const backToTopLinks = document.querySelectorAll(".back-to-top");
 
@@ -15,13 +16,13 @@ export const setupFocusHotkeys = () => {
     });
   }
 
-  if (entriesLists.length > 0) {
-    entriesLists.forEach((list) => {
-      list.querySelectorAll(".list__item h2 > a").forEach((item) => {
-        listItemLinks.push(item);
-      });
-    });
-  }
+  // if (entriesLists.length > 0) {
+  //   entriesLists.forEach((list) => {
+  //     list.querySelectorAll(".list__item h2 > a").forEach((item) => {
+  //       listItemLinks.push(item);
+  //     });
+  //   });
+  // }
 
   console.log(listItemLinks);
 
