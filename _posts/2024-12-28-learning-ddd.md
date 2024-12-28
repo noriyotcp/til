@@ -1,7 +1,7 @@
 ---
 title: "ドメイン駆動設計をはじめよう"
 date: "2024-12-28 16:16:38 +0900"
-last_modified_at: "2024-12-28 19:50:33 +0900"
+last_modified_at: "2024-12-28 19:55:47 +0900"
 categories:
   - Books
 tags:
@@ -207,7 +207,7 @@ graph LR
     style C fill:#cfc,stroke:#333,stroke-width:2px
 ```
 
-![レイヤードアーキテクチャ](/assets/images/2024-12-28-learning-ddd-4-1.png)
+![レイヤードアーキテクチャ]({{ '/assets/images/2024-12-28-learning-ddd-4-1.png' | relative_url }})
 
 この図では、プレゼンテーション層が最上位に位置し、ユーザーとの対話を担当します。次に、業務ロジック層がビジネスロジックを処理し、最後にデータアクセス層がデータの永続化を行います。各層は独立しており、互いに疎結合です。
 
@@ -265,7 +265,7 @@ graph LR
     style C fill:#fcc,stroke:#333,stroke-width:2px
 ```
 
-![ポートとアダプターアーキテクチャ](/assets/images/2024-12-28-learning-ddd-4-2.png)
+![ポートとアダプターアーキテクチャ]({{ '/assets/images/2024-12-28-learning-ddd-4-2.png' | relative_url }})
 
 この図では、業務ロジック層が中心に位置し、ポートを介してアダプターとやり取りします。アダプターは、インフラストラクチャ層の具体的な技術との接続を担当します。
 各要素は独立しており、**疎結合**です。
@@ -333,7 +333,7 @@ end
     style D fill:#eee,stroke:#333,stroke-width:2px
 ```
 
-![データメッシュの概念図](/assets/images/2024-12-28-learning-ddd-5.png)
+![データメッシュの概念図]({{ '/assets/images/2024-12-28-learning-ddd-5.png' | relative_url }})
 
 この図では、**各データプロダクト（A、B、C）**が**独立したエンティティ**として存在し、**データインフラ（D）**を介して相互に連携します。
 各データプロダクトは、**それぞれのドメインが所有し、管理**します。
