@@ -1,7 +1,7 @@
 ---
 title: "ドメイン駆動設計をはじめよう"
 date: "2024-12-28 16:16:38 +0900"
-last_modified_at: "2024-12-28 20:05:09 +0900"
+last_modified_at: "2024-12-29 00:36:03 +0900"
 categories:
   - Books
 tags:
@@ -10,6 +10,8 @@ tags:
 ---
 
 # ドメイン駆動設計をはじめよう
+[O'Reilly Japan - ドメイン駆動設計をはじめよう](https://www.oreilly.co.jp/books/9784814400737/)
+
 以下の文章は NotebookLMによる概要を元に作成したものである
 
 ## 1. はじめに
