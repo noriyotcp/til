@@ -2,3 +2,5 @@ greeting.o
 greeting
 calculate.o
 calculate
+countdown.o
+countdown

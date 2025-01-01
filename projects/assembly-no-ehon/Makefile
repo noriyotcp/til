@@ -24,7 +24,20 @@ calculate.o: calculate.s
 		-o calculate.o \
 		calculate.s
 
+countdown: countdown.o
+	ld -o countdown \
+		-lSystem \
+		-syslibroot `xcrun -sdk macosx --show-sdk-path` \
+		-e _start \
+		-arch arm64 \
+		countdown.o
+
+countdown.o: countdown.s
+	as -arch arm64 \
+		-o countdown.o \
+		countdown.s
+
 clean:
-	rm -f greeting greeting.o calculate calculate.o
+	rm -f greeting greeting.o calculate calculate.o countdown countdown.o
 
 .PHONY: clean
