@@ -780,3 +780,18 @@ div#hotkeys-popover {
   width: 100%;
   margin-top: 1em;
 }
+
+// cf. https: //imagekit.io/blog/responsive-html5-video/
+.video-container {
+  max-width: 100%;
+  /* Set a pixel value instead if no parent container*/
+  margin: 0 auto;
+  /* Center the container */
+}
+
+.video-container video {
+  width: 100%;
+  /* Fill the available width */
+  height: auto;
+  /* Adjust height automatically */
+}
