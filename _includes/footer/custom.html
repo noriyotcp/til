@@ -30,6 +30,14 @@
     const backToTopButton = document.getElementById("back-to-top-button");
     let scrollTimeout;
 
+    const userAgent = window.navigator.userAgent;
+    const isMobile = /iphone|ipad|ipod|android/i.test(userAgent);
+
+    if (isMobile) {
+      backToTopButton.style.display = "none";
+      return;
+    }
+
     const handleScroll = () => {
       backToTopButton.classList.add("show");
     };
