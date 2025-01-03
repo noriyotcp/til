@@ -94,3 +94,47 @@ layout: archive
     });
   });
 </script>
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const backToTopButton = document.getElementById("back-to-top-button");
+    let scrollTimeout;
+
+    const userAgent = window.navigator.userAgent;
+    const isMobile = /iphone|ipad|ipod|android/i.test(userAgent);
+
+    if (isMobile) {
+      backToTopButton.style.display = "none";
+      return;
+    }
+
+    const handleScroll = () => {
+      backToTopButton.classList.add("show");
+    };
+
+    const handleScrollEnd = () => {
+      clearTimeout(scrollTimeout);
+      scrollTimeout = setTimeout(() => {
+        backToTopButton.classList.remove("show");
+      }, 2000); // 2000ms後に非表示にする
+    };
+
+    const scrollToTop = (e) => {
+      window.scrollTo({
+        top: 0,
+        behavior: "smooth",
+      });
+      e.currentTarget.blur();
+    };
+
+    backToTopButton.addEventListener("click", scrollToTop);
+    backToTopButton.addEventListener("mouseover", () => {
+      backToTopButton.classList.add("show-hover");
+    });
+    backToTopButton.addEventListener("mouseleave", () => {
+      backToTopButton.classList.remove("show-hover");
+    });
+
+    window.addEventListener("scroll", handleScroll);
+    window.addEventListener("scrollend", handleScrollEnd);
+  });
+</script>
