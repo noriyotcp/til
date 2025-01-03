@@ -98,6 +98,7 @@ layout: archive
   document.addEventListener("DOMContentLoaded", function () {
     const backToTopButton = document.getElementById("back-to-top-button");
     let scrollTimeout;
+    let isScrolling = false;
 
     const userAgent = window.navigator.userAgent;
     const isMobile = /iphone|ipad|ipod|android/i.test(userAgent);
@@ -108,13 +109,15 @@ layout: archive
     }
 
     const handleScroll = () => {
-      backToTopButton.classList.add("show");
-    };
+      if (!isScrolling) {
+        backToTopButton.classList.add("show");
+        isScrolling = true;
+      }
 
-    const handleScrollEnd = () => {
       clearTimeout(scrollTimeout);
       scrollTimeout = setTimeout(() => {
         backToTopButton.classList.remove("show");
+        isScrolling = false;
       }, 2000); // 2000ms後に非表示にする
     };
 
@@ -135,6 +138,5 @@ layout: archive
     });
 
     window.addEventListener("scroll", handleScroll);
-    window.addEventListener("scrollend", handleScrollEnd);
   });
 </script>
