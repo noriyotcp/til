@@ -1,3 +1,7 @@
+<button id="back-to-top-button">
+  <i class="fa-regular fa-circle-up"></i>
+</button>
+
 {% include hotkeys_popover.html %}
 
 <script src={{ 'assets/js/hotkeys.js' | relative_url }} type="module"></script>
@@ -19,5 +23,41 @@
     } else {
       importGhHotkeyInstall();
     }
+  });
+</script>
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const backToTopButton = document.getElementById("back-to-top-button");
+    let scrollTimeout;
+
+    const handleScroll = () => {
+      backToTopButton.classList.add("show");
+    };
+
+    const handleScrollEnd = () => {
+      clearTimeout(scrollTimeout);
+      scrollTimeout = setTimeout(() => {
+        backToTopButton.classList.remove("show");
+      }, 2000); // 2000ms後に非表示にする
+    };
+
+    const scrollToTop = (e) => {
+      window.scrollTo({
+        top: 0,
+        behavior: "smooth",
+      });
+      e.currentTarget.blur();
+    };
+
+    backToTopButton.addEventListener("click", scrollToTop);
+    backToTopButton.addEventListener("mouseover", () => {
+      backToTopButton.classList.add("show");
+    });
+    backToTopButton.addEventListener("mouseleave", () => {
+      backToTopButton.classList.remove("show");
+    });
+
+    window.addEventListener("scroll", handleScroll);
+    window.addEventListener("scrollend", handleScrollEnd);
   });
 </script>
