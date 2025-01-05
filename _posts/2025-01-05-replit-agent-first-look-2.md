@@ -1,7 +1,7 @@
 ---
 title: "Replit Agent 触ってみた2"
 date: "2025-01-05 23:07:21 +0900"
-last_modified_at: "2025-01-05 23:07:21 +0900"
+last_modified_at: "2025-01-05 23:52:12 +0900"
 tags:
   - Replit
   - Replit Agent
