@@ -1,7 +1,7 @@
 ---
 title: "Replit Agent 触ってみた"
 date: "2025-01-03 10:44:33 +0900"
-last_modified_at: "2025-01-03 17:25:24 +0900"
+last_modified_at: "2025-01-05 23:45:08 +0900"
 tags:
   - Replit
   - Replit Agent
@@ -407,5 +407,5 @@ ed24da8 Checkpoint after starting plan
     - 今回は emoji reaction の追加だけだったので `reactions` テーブルの追加やコンポーネントの作成くらいで済んだのだが
 - 初回の時点でログイン機能 (Firebase login) など各種機能は選べるようだ
   - ![スクリーンショット 2025-01-02 12.27.28]({{ '/assets/images/2025-01-03-replit-agent-first-look/スクリーンショット 2025-01-02 12.27.28.png' | relative_url }})
-- あらかじめ要件をある程度固めておくと良いのだろうなあ
+- あらかじめ要件や仕様をある程度固めておくと良いのだろうなあ
   - プロンプトは日本語でもいけるのかな？
