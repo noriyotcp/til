@@ -1,7 +1,7 @@
 ---
 title: "Replit Agent 触ってみた2"
 date: "2025-01-05 23:07:21 +0900"
-last_modified_at: "2025-01-05 23:52:12 +0900"
+last_modified_at: "2025-01-17 23:01:26 +0900"
 tags:
   - Replit
   - Replit Agent
@@ -13,7 +13,7 @@ tags:
 
 前回ビビって消してしまったので再作成する
 
-Detabase タブにて `Create Database` を押す
+Database タブにて `Create Database` を押す
 `See Database Contents` とあるので見てみると…ポスグレのクエリを打てっていうけど期待してたのとはちょっと違うかな
 
 ![スクリーンショット 2025-01-05 12.58.43]({{ '/assets/images/2025-01-05-replit-agent-first-look2/スクリーンショット 2025-01-05 12.58.43.png' | relative_url }})
