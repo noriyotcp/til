@@ -2,6 +2,9 @@
 title: "Replit Agent 触ってみた3"
 date: "2025-01-11 13:04:58 +0900"
 last_modified_at: "2025-01-11 13:04:58 +0900"
+tags:
+  - Replit
+  - Replit Agent
 ---
 
 前回： [Replit Agent 触ってみた2 - til](https://noriyotcp.github.io/til/2025/01/05/replit-agent-first-look-2.html)
