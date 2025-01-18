@@ -4,21 +4,7 @@ date: "2025-01-11 13:04:58 +0900"
 last_modified_at: "2025-01-11 13:04:58 +0900"
 ---
 
-# Replit Agent 触ってみた3
-
 前回： [Replit Agent 触ってみた2 - til](https://noriyotcp.github.io/til/2025/01/05/replit-agent-first-look-2.html)
-
-## 1. はじめに
-
-*   自己紹介とブログ記事の目的
-    *   Replit Agentに興味を持った背景
-    *   今回の記事で伝えたいこと
-*   Replit Agentとは？
-    *   Replit Agentの概要と特徴
-    *   AIエージェントが開発をどのように支援するのか
-*   今回の検証内容
-    *   ブログゲストブックアプリケーションを題材に、Replit Agentの機能を試す
-    *   ユーザープロフィールの実装とテストケース作成に焦点を当てる
 
 今回は気ままに機能を追加していくぞ
 
@@ -67,8 +53,6 @@ Would you like me to help implement any of these features to enhance the BlogGue
 必要な機能が過不足なく揃っているか、それが期待通りに動くか、などを確認しないといけないがどうすればいいだろうか？そしてめんどくさそう
 
 ## ユーザープロフィール画面の作成
-
-## 3. ユーザープロフィールの実装
 
 *   データベースとスキーマの変更
     *   `users` テーブルの作成
@@ -134,8 +118,6 @@ zod によるバリデーションから `name` に対するバリデーショ�
 
 ### エントリをフェッチする際のエラーの修正
 
-## 4. エラー発生と修正
-
 *   エントリフェッチ時のエラー
     *   エラーの原因分析
     *   Replit Agentによる修正提案
@@ -153,13 +135,6 @@ zod によるバリデーションから `name` に対するバリデーショ�
 ```
 4:19:20 AM [express] GET /api/entries 500 in 293ms :: {"message":"Failed to fetch entries"}
 ```
-
-The error occurs when trying to fetch entries. This is likely because we need to:
-
-1. Create the new users table first
-2. Modify the guestbook_entries table to add the user_id foreign key
-3. Update the reactions table schema
-
 
 ---
 
@@ -197,8 +172,7 @@ NOTICE:  relation "reactions" already exists, skipping
 
 ---
 
-### エントリ部分でのアバター画像のプレースホルダ表示
-## 5. ユーザープロフィールの表示と編集
+### ユーザープロフィールの表示と編集
 
 *   `UserProfile.tsx` の実装
     *   プロフィール表示機能の作成
@@ -247,7 +221,7 @@ NOTICE:  relation "reactions" already exists, skipping
 
 ![スクリーンショット 2025-01-11 13.51.06]({{ '/assets/images/2025-01-11-replit-agent-first-look-3/スクリーンショット 2025-01-11 13.51.06.png' | relative_url  }})
 
-## アバター画像付きのユーザープロフィールと編集可能なバイオセクションの追加
+### アバター画像付きのユーザープロフィールと編集可能なバイオセクションの追加
 
 これは2分くらいでできた
 
@@ -371,9 +345,9 @@ const formSchema = z.object({
 
 ## さらにテストを新規追加する
 
-- 1. UserProfile コンポーネント - プロフィールの表示と編集機能をテスト
-- 2. GuestbookForm コンポーネント - 既にテストファイルがあるが、新しいユーザーシステムに合わせて更新が必要
-- 3. GuestbookEntries コンポーネント - ユーザー情報を含むエントリのレンダリングをテスト
+1. UserProfile コンポーネント - プロフィールの表示と編集機能をテスト
+2. GuestbookForm コンポーネント - 既にテストファイルがあるが、新しいユーザーシステムに合わせて更新が必要
+3. GuestbookEntries コンポーネント - ユーザー情報を含むエントリのレンダリングをテスト
 
 途中で訳がわからなくなったので詳細は省くが、どうもテストが通らない。config などを更新させたのだが、無理だった  
 仕方ないのでポチってテストケース追加前まで戻した
@@ -383,7 +357,7 @@ const formSchema = z.object({
 
 ---
 
-### 既存テストケースの修正
+## 既存テストケースの修正
 
 `test/components/GuestbookForm.test.tsx`
 
@@ -394,7 +368,7 @@ const formSchema = z.object({
 
 ---
 
-### テストケースの警告に対応する
+## テストケースの警告に対応する
 
 ```tsx
 expect(screen.getByRole("button", { name: /sign/i })).toBeInTheDocument();
@@ -410,14 +384,6 @@ https://qiita.com/Sicut_study/items/6feb6e7a9a7450eeb509
 
 `CompilerOptions` に いくつか追加する
 
-現在の設定
-
-```
-    "types": ["node", "vite/client"],
-```
-
-このように修正してくれた
-
 ![スクリーンショット 2025-01-11 16.36.38]({{ '/assets/images/2025-01-11-replit-agent-first-look-3/スクリーンショット 2025-01-11 16.36.38.png' | relative_url  }})
 
 1. includeに `test/**/*` を追加
@@ -430,7 +396,7 @@ tsconfig.jsonの変更:
 
 これらの変更は、テストファイルで `toBeInTheDocument()` のような`@testing-library/jest-domのmatchers` を使用する際に、TypeScriptがそれらの型を認識できるようにするために必要でした。
 
-### 感想
+## 感想
 - うーむ、途中わけがわからなくなってしまったが、以前の checkpoint まで戻せるのは便利だ
 - テストケースの作成が意外とうまくいかない
   - watch mode で立ち上げておく
