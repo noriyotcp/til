@@ -11,7 +11,7 @@ int main() {
     s = l;
     c = l;
 
-    printf("long = %x\n", l);
+    printf("long = %lx\n", l);
     printf("short = %x\n", s);
     printf("char = %x\n", c);
 
