@@ -2,6 +2,9 @@
 title: "Replit Agent 触ってみた4"
 date: "2025-01-26 19:36:42 +0900"
 last_modified_at: "2025-01-26 19:36:42 +0900"
+tags:
+  - Replit
+  - Replit Agent
 ---
 
 # Replit Agent 触ってみた4
