@@ -916,3 +916,5 @@ Space と Agent に詳しくなることがゴールだよ。現在エージェ�
 ### Conclusion
 次のユニットは 2/18 だ！ Bonus Unit: Fine-tune your agent
 
+前回から大体ここまで50分くらい。合計5時間くらい
+
