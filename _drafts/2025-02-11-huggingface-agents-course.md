@@ -869,6 +869,50 @@ Final Answer: The weather in London is sunny with low temperatures.
 ここまで1時間半くらい。なんだかんだで4時間くらいかかったかな
 
 ### Let’s Create Our First Agent Using Smolagents
+#### 要約
+
+この内容は、smolagentsライブラリを使ってHugging Face Space上で動作するシンプルなコードエージェントを作成するチュートリアルです。
+
+**要点:**
+
+* **smolagents:** エージェント開発を簡素化する軽量ライブラリ。コードブロックの実行による「行動」と結果の「観察」を繰り返す`CodeAgent`に焦点を当てている。
+* **Hugging Face Spaceテンプレート:** 提供されたテンプレートを複製して、自分のSpaceでエージェントを作成する。
+* **`app.py`:** エージェントの動作を定義するメインのPythonファイル。ここを編集してツールを追加していく。
+* **ツール:** エージェントが持つ機能。`@tool`デコレータを使って定義する。テンプレートにはダミーのツールとタイムゾーン取得ツールが例として含まれている。`DuckDuckGoSearchTool`や`image_generation_tool`のような既存ツールも利用可能。
+* **LLM:** `Qwen/Qwen2.5-Coder-32B-Instruct`が使用されている。
+* **目標:** 提供されたテンプレートにツールを追加し、エージェントを実際に動作させてみる。既存のツールを使うだけでなく、独自のツールを作成してみるのも良い。完成したエージェントはdiscordの#agents-course-showcaseで共有することが推奨されている。
+
+チュートリアルでは、まずテンプレートを複製し、`app.py`内の`tools`パラメータにツールを追加することでエージェントに機能を追加していく流れとなっています。  最終的には、自分で作成したエージェントを公開・共有することが目標です。
+
+#### What is smolagents?
+https://youtu.be/PQDKcWiuln4?si=mWHHHX8g1TAmReUw
+
+#### Let’s build our Agent!
+https://huggingface.co/spaces/agents-course/First_agent_template これを複製する
+
+https://huggingface.co/spaces/noriyotcp/First_agent_template
+
+`app.py` を編集していく
+
+`CodeAgent` class from `smolagents` を使用する
+
+##### The Tools
+2つ提供されている
+
+1. ダミーツール
+2. 実際に動くツール。世界のどこかの現在時刻を取得する
+
+##### The Agent
+[Qwen/Qwen2.5-Coder-32B-Instruct](https://huggingface.co/Qwen/Qwen2.5-Coder-32B-Instruct) を使用する
+
+`CodeAgent` のパラメータである `tools` に新しいツールを追加していく
+
+Space と Agent に詳しくなることがゴールだよ。現在エージェントはなんのツールも使ってないので出来上がってるやつとか新しいツールとか追加していくよ
+
 ### Unit 1 Final Quiz
+80% 正解で certification がもらえる。最後 Submit ボタンを押さないといけないが本当に送信されてるかどうかわかりにくい
+
 ### Get Your Certificate
 ### Conclusion
+次のユニットは 2/18 だ！ Bonus Unit: Fine-tune your agent
+
