@@ -1,3 +1,5 @@
+// gcc -o charToCode charToCode.c -liconv -Wall -Wextra
+// This program converts UTF-8 input to Shift-JIS encoding.
 #include <stdio.h>
 #include <iconv.h>
 #include <string.h>
