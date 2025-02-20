@@ -650,10 +650,10 @@ The only values that should be in the "action" field are:
 get_weather: Get the current weather in a given location, args: {"location": {"type": "string"}}
 example use : 
 
-{{
+{
   "action": "get_weather",
   "action_input": {"location": "New York"}
-}}
+}
 
 ALWAYS use the following format:
 
@@ -713,10 +713,10 @@ The only values that should be in the "action" field are:
 get_weather: Get the current weather in a given location, args: {"location": {"type": "string"}}
 example use : 
 
-{{
+{
   "action": "get_weather",
   "action_input": {"location": "New York"}
-}}
+}
 
 ALWAYS use the following format:
 
@@ -822,10 +822,10 @@ The only values that should be in the "action" field are:
 get_weather: Get the current weather in a given location, args: {"location": {"type": "string"}}
 example use : 
 
-{{
+{
   "action": "get_weather",
   "action_input": {"location": "New York"}
-}}
+}
 
 ALWAYS use the following format:
 
@@ -849,7 +849,7 @@ What's the weather in London ?
 <|eot_id|><|start_header_id|>assistant<|end_header_id|>
 
 Action:
-\`\`\` （コードブロックがおかしくなるのでバックスラッシュを入れる）
+
 {
   "action": "get_weather",
   "action": {"location": {"type": "string", "value": "London"}
@@ -917,4 +917,3 @@ Space と Agent に詳しくなることがゴールだよ。現在エージェ�
 次のユニットは 2/18 だ！ Bonus Unit: Fine-tune your agent
 
 前回から大体ここまで50分くらい。合計5時間くらい
-
