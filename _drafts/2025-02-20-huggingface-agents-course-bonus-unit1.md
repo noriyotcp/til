@@ -108,6 +108,132 @@ LoRA は、リソース要件を管理可能な範囲に維持しながら、大
 
 ### Fine-Tuning a model for Function-calling
 これはColab ノートブックを使ってやっていくらしい
+https://huggingface.co/agents-course/notebooks/blob/main/bonus-unit1/bonus-unit1.ipynb
+
+To access Gemma on Hugging Face:
+
+1. Make sure you're signed in to your Hugging Face Account
+2. Go to https://huggingface.co/google/gemma-2-2b-it
+3. Click on Acknowledge license and fill the form.
+
+#### Step 1: Set the GPU
+Open in Colab を押してノートブックを開く  
+GPU は T4 GPU で  
+
+以降ノートブックで行う
+
+#### Step2: Install dependencies
+Notebook でポチって Python libraries をインストールする  
+
+- bitsandbytes for quantization
+- peftfor LoRA adapters
+- Transformersfor loading the model
+- datasetsfor loading and using the fine-tuning dataset
+- trlfor the trainer class
+
+#### Step 3: Create your Hugging Face Token to push your model to the Hub
+HF の認証トークンを作成する。https://huggingface.co/settings/tokens  
+Write role でトークンを作成する
+
+#### Step 4: Import the librairies
+これもポチってライブラリをインストールする
+先ほど作成したトークンを環境変数 `HF_TOKEN` にセットするのだが、直接書いちゃって大丈夫なのか？
+
+#### Step 5: Processing the dataset into inputs
+
+> このチュートリアルでは、deepseek-ai/DeepSeek-R1-Distill-Qwen-32Bから新しい思考ステップコンピュータを追加することで、関数呼び出しのための一般的なデータセット "NousResearch/hermes-function-calling-v1 "を拡張しました。 しかし、モデルが学習するためには、会話を正しくフォーマットする必要があります。 Unit 1に従ったのであれば、メッセージのリストからプロンプトへの移動はchat_templateによって処理されること、あるいは、gemma-2-2Bのデフォルトのchat_templateにはツールの呼び出しが含まれていないことを知っているだろう。 つまり、gemma-2-2Bのデフォルトのchat_templateにはツールの呼び出しが含まれていないので、それを修正する必要があります！これがプリプロセス関数の役割です。 メッセージのリストから、モデルが理解できるプロンプトに変換する。
+
+notebook を実行するのだが警告が出ている  
+The secret `HF_TOKEN` does not exist in your Colab secrets.
+
+うーん、設定はしたけどな？
+
+一応ブラウザをリロードする。Step3 までは終わっているようだから、Step4 を再度実行。トークンのセットも忘れずに
+そして Step5 でポチるがもう実行済みなので何も起こらないな
+
+#### Step 6: A Dedicated Dataset for This Unit
+
+このボーナスユニットでは、ファンクション・コーリングのデータセットのリファレンスとされているNousResearch/hermes-function-calling-v1をベースに、カスタムデータセットを作成した。 オリジナルのデータセットは素晴らしいが、「考える」ステップは含まれていない。
+
+関数呼び出しでは、このようなステップは任意であるが、deepseekモデルや論文 "Test-Time Compute "のような最近の研究では、LLMが答えを出す前（この場合はアクションを起こす前）に "考える "時間を与えることで、モデルの性能が大幅に向上することが示唆されている。 そこで私は、このデータセットのサブセットを計算し、関数呼び出しの前に思考トークン<think>を計算するために、deepseek-ai/DeepSeek-R1-Distill-Qwen-32Bに渡すことにした。 その結果、次のようなデータセットが得られた：
+（ここで画像が貼られているけどどうするんだ？） -> データセットがある  
+
+そして以下を実行した  
+
+```python
+dataset = dataset.map(preprocess, remove_columns="messages")
+dataset = dataset["train"].train_test_split(0.1)
+print(dataset)
+```
+
+```
+DatasetDict({
+    train: Dataset({
+        features: ['text'],
+        num_rows: 3213
+    })
+    test: Dataset({
+        features: ['text'],
+        num_rows: 357
+    })
+})
+```
+
+#### Step 7: Checking the inputs
+```
+入力がどのようなものか、手動で見てみよう！この例では、次のようなものがある： <tools></tools>の間に利用可能なツールのリストを含む必要な情報を含むユーザーメッセージ： 「<think></think>に含まれる "thinking "フェーズと<tool_call></tool_call>に含まれる "Act "フェーズです。 もしモデルが<tools_call>を含んでいれば、ツールからの答えと<tool_response></tool_response>を含む新しい "Tool "メッセージにこのアクションの結果を追加します。
+```
+
+なんか `<think>` のところで考えているんだなということがわかる
+
+`<tool_call>` でツールを読んでいる。そのタグの間には引数が記述されている
+
+```
+<tool_call>
+{'name': 'get_news_headlines', 'arguments': {'country': 'United States'}}
+</tool_call>
+```
+
+```
+<tool_response>
+{'headlines': ['French President announces new environmental policy', 'Paris Fashion Week highlights', 'France wins World Cup qualifier', 'New culinary trend sweeps across France', 'French tech startup raises millions in funding']}
+</tool_response>
+```
+
+`tool_response` があるのでそれをメッセージに追加している
+
+以下も行う。サニティチェックとな  
+
+```python
+# Sanity check
+print(tokenizer.pad_token)
+print(tokenizer.eos_token)
+```
+
+#### ステップ8：トークナイザーを修正する
+#### Step8: Let's Modify the Tokenizer
+
+> 確かに、ユニット1で見たように、トークナイザーはデフォルトでテキストをサブワードに分割します。 これは、私たちが新しい特別なトークンに望むことではありません！<think>、<tool_call>、<tool_response>を使用して私たちの例を分割しましたが、トークナイザーはまだそれらを全体のトークンとして扱いません。 さらに、プロンプト内のメッセージとして会話をフォーマットするために、プリプロセス関数のchat_templateを変更したので、これらの変更を反映するために、トークナイザーのchat_templateも変更する必要があります。
+
+#### Step 9: Let's configure the LoRA
+> This is we are going to define the parameter of our adapter. Those a the most important parameters in LoRA as they define the size and importance of the adapters we are training.
+> ここで、アダプターのパラメーターを定義します。 LoRAで最も重要なパラメータで、トレーニングするアダプタのサイズと重要性を定義する。
+#### ステップ10： TrainerとFine-Tuningハイパーパラメータを定義しよう
+#### Step 10: Let's define the Trainer and the Fine-Tuning hyperparameters
+
+> このステップでは、モデルを微調整するために使うクラスであるTrainerと、ハイパーパラメータを定義します。
+
+なんか設定とか事前準備をしてるみたいだ
+
+> As Trainer, we use the SFTTrainer which is a Supervised Fine-Tuning Trainer.
+
+なんかデータセットを色々いじっているようだ
+
+> Here, we launch the training 🔥. Perfect time for you to pause and grab a coffee ☕.
+
+いよいよトレーニングって感じか
+
+これが時間かかるから上限に達してしまった
 
 ## Conclusion
 なるほど、これだけ？ファインチューニングについての簡単な説明のみであとはチュートリアルを楽しんでね！ってことかな
