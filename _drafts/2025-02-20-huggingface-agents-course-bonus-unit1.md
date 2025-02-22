@@ -240,5 +240,21 @@ print(tokenizer.eos_token)
 
 もう一度初めからやるか
 
+#### Step 11: Let's push the Model and the Tokenizer to the Hub
+> モデルとトークナイザをハブにプッシュしてみましょう！ モデルは、ユーザー名と先ほど指定した `output_dir` の下にプッシュされます。
+
+`output_dir` は先ほどトレーニングした時に指定しているパス
+
+> トークナイザーに含まれている`chat_template`も修正したので、トークナイザーもモデルとともにプッシュしよう。
+
+```
+403 Forbidden: You don't have the rights to create a model under the namespace "Jofthomas".
+Cannot access content at: https://huggingface.co/api/repos/create.
+Make sure your token has the correct permissions.
+```
+Step 10 で username を Jofthomas じゃなくて自分の名前にしないといけないのか。でも `trainer.push_to_hub(f"{username}/{output_dir}")` で `Jofthomas/<output_dir>` にプッシュしてしまった
+
+もう一度初めからだ〜
+
 ## Conclusion
 なるほど、これだけ？ファインチューニングについての簡単な説明のみであとはチュートリアルを楽しんでね！ってことかな
