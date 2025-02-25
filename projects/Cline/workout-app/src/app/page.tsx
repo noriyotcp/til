@@ -1,5 +1,5 @@
 import HomePageContent from '@/components/HomePageContent';
-import { supabase } from '@/lib/supabaseClient';
+import { supabase } from '@/utils/supabase/client';
 
 async function getWorkouts() {
   const { data, error } = await supabase

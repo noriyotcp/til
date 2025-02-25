@@ -1,7 +1,8 @@
 "use client";
 
 import React, { useState, useEffect, createContext, useContext } from 'react';
-import { supabase } from '@/lib/supabaseClient';
+import { supabase } from '@/utils/supabase/client';
+import { AuthChangeEvent, Session } from '@supabase/supabase-js';
 
 interface AuthContextType {
   userId: string | null;
@@ -21,7 +22,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       setUserId(user?.id || null);
     });
 
-    supabase.auth.onAuthStateChange((event, session) => {
+    supabase.auth.onAuthStateChange((event: AuthChangeEvent, session: Session | null) => {
       setUserId(session?.user?.id || null);
     });
   }, []);

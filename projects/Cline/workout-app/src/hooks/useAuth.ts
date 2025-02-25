@@ -1,7 +1,8 @@
 "use client";
 
 import { useState, useEffect } from 'react';
-import { supabase } from '@/lib/supabaseClient';
+import { supabase } from '@/utils/supabase/client';
+import { AuthChangeEvent, Session } from '@supabase/supabase-js';
 
 const useAuth = () => {
   const [userId, setUserId] = useState<string | null>(null);
@@ -11,7 +12,7 @@ const useAuth = () => {
       setUserId(user?.id || null);
     });
 
-    supabase.auth.onAuthStateChange((event, session) => {
+    supabase.auth.onAuthStateChange((event: AuthChangeEvent, session: Session | null) => {
       setUserId(session?.user?.id || null);
     });
   }, []);
