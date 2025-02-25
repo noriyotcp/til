@@ -34,3 +34,21 @@ You can check out [the Next.js GitHub repository](https://github.com/vercel/next
 The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+
+## Supabase Auth Integration
+
+This application uses Supabase for authentication. The following steps were taken to integrate Supabase Auth:
+
+1.  Installed the `@supabase/supabase-js` and `@supabase/ssr` packages.
+2.  Set up the `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_ANON_KEY` environment variables in `.env.local`.
+3.  Created `src/utils/supabase/server.ts` and `src/utils/supabase/client.ts` for server-side and client-side Supabase clients, respectively.
+4.  Integrated middleware to refresh expired Auth tokens and store them in cookies.
+5.  Created a login page (`src/app/login/page.tsx`) with signup and login functionality using server actions (`src/app/login/actions.ts`).
+6.  Created an email confirmation route (`src/app/auth/confirm/route.ts`) to handle user verification.
+7.  Created a private page (`src/app/private/page.tsx`) to demonstrate accessing user information from a server component.
+
+**Important Security Notes:**
+
+*   Always use `supabase.auth.getUser()` in server components and middleware to ensure the Auth token is revalidated.
+*   Never trust `supabase.auth.getSession()` in server code.
+*   Protect sensitive data and API keys by using environment variables.
