@@ -1,28 +1,13 @@
 "use client";
 
-import React, { useEffect, useState } from 'react';
-import { supabase } from '@/lib/supabaseClient';
+import React from 'react';
 import { Workout } from '@/types/types';
 
-const WorkoutList = () => {
-  const [workouts, setWorkouts] = useState<Workout[]>([]);
+interface WorkoutListProps {
+  workouts: Workout[];
+}
 
-  useEffect(() => {
-    const fetchWorkouts = async () => {
-      const { data, error } = await supabase
-        .from('workouts')
-        .select('*');
-
-      if (error) {
-        console.error('Error fetching workouts:', error);
-      } else {
-        setWorkouts(data || []);
-      }
-    };
-
-    fetchWorkouts();
-  }, []);
-
+const WorkoutList = ({ workouts }: WorkoutListProps) => {
   return (
     <div>
       <h2>Workouts</h2>
