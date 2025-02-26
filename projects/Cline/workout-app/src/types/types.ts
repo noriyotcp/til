@@ -12,7 +12,7 @@ export type Exercise = {
 
 export type Goal = {
   id: string;
-  user_id: string;
+  workout_id: string;
   description: string;
   target: number;
   progress: number;

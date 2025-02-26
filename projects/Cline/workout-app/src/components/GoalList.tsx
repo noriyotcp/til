@@ -10,7 +10,7 @@ const GoalList = () => {
       <ul>
         {Array.isArray(goals) ? (
           goals.map((goal) => (
-            <li key={goal.id}>{goal.description}</li>
+            <li key={goal.id}>{goal.description} (Workout ID: {goal.workout_id})</li>
           ))
         ) : (
           <li>No goals yet!</li>

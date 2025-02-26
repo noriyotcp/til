@@ -17,13 +17,15 @@ export async function GET() {
 export async function POST(request: Request) {
   const supabase = await createClient();
 
-  const { user_id, description, target, progress } = await request.json();
+  const { workout_id, description, target, progress } = await request.json();
+
+  if (!workout_id) {
+    return NextResponse.json({ error: 'No workout selected' }, { status: 400 });
+  }
 
   const { data, error } = await supabase
     .from("goals")
-    .insert({ user_id, description, target, progress })
-    .select()
-    .single();
+    .insert({ workout_id, description, target, progress });
 
   if (error) {
     console.error(error);
