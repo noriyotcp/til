@@ -7,9 +7,9 @@ export async function updateSession(request: NextRequest) {
       headers: request.headers,
     },
   })
-  const supabase = createClient({ req: request, res: response })
+  const supabase = await createClient()
   try {
-    await supabase.auth.getSession()
+    await (await supabase).auth.getSession()
   } catch (error) {
     console.error('Error refreshing session:', error)
   }

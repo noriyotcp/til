@@ -12,7 +12,6 @@ We need to define a database schema for the workout app to store user data, exer
 
 We have decided to create the following tables:
 
-*   `users`: Stores user information (id, email, password, etc.).
 *   `exercises`: Stores information about exercises (id, name, description, etc.).
 *   `workouts`: Stores information about workouts (id, user_id, date, etc.).
 *   `workout_exercises`: Stores the relationship between workouts and exercises, as well as the sets, reps, and time for each exercise in a workout (workout_id, exercise_id, sets, reps, time).
@@ -21,11 +20,6 @@ Here's a Mermaid diagram that visualizes the database schema and relationships:
 
 ```mermaid
 erDiagram
-    users {
-        UUID id PK
-        VARCHAR email
-        VARCHAR password
-    }
     exercises {
         UUID id PK
         VARCHAR name
@@ -44,7 +38,6 @@ erDiagram
         INTEGER time
     }
 
-    workouts ||--|| users : "user_id"
     workout_exercises ||--|| workouts : "workout_id"
     workout_exercises ||--|| exercises : "exercise_id"
 ```
