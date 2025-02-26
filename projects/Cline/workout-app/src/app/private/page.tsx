@@ -1,14 +1,22 @@
+"use client";
+
 import { redirect } from 'next/navigation'
+import { logout } from '@/app/login/actions'
+import useAuth from '@/hooks/useAuth'
 
-import { createClient } from '@/utils/supabase/server'
+export default function PrivatePage() {
+  const { userId } = useAuth();
 
-export default async function PrivatePage() {
-  const supabase = await createClient()
-
-  const { data, error } = await supabase.auth.getUser()
-  if (error || !data?.user) {
-    redirect('/login')
+  if (!userId) {
+    redirect('/login');
   }
 
-  return <p>Hello {data.user.email}</p>
+  return (
+    <div>
+      <p>Hello {userId}</p>
+      <form action={logout}>
+        <button type="submit">Logout</button>
+      </form>
+    </div>
+  )
 }

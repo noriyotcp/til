@@ -11,6 +11,7 @@ import WorkoutForm from '@/components/WorkoutForm';
 import Link from 'next/link';
 import { useAuth } from '@/context/AuthContext';
 import { Workout } from '@/types/types';
+import { logout } from '@/app/login/actions';
 
 interface HomePageContentProps {
   workouts: Workout[];
@@ -24,6 +25,9 @@ const HomePageContent = ({ workouts }: HomePageContentProps) => {
       <Link href="/signup">Sign Up</Link>
       {userId ? (
         <>
+          <form action={logout}>
+            <button type="submit">Logout</button>
+          </form>
           <WorkoutForm />
           <WorkoutList workouts={workouts} />
           <ExerciseList />
