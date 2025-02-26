@@ -6,6 +6,7 @@ import { AuthChangeEvent, Session } from '@supabase/supabase-js';
 
 interface AuthContextType {
   userId: string | null;
+  setUserId: React.Dispatch<React.SetStateAction<string | null>>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -28,7 +29,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   }, []);
 
   return (
-    <AuthContext.Provider value={{ userId }}>
+    <AuthContext.Provider value={{ userId, setUserId }}>
       {children}
     </AuthContext.Provider>
   );

@@ -11,7 +11,7 @@ import WorkoutForm from '@/components/WorkoutForm';
 import Link from 'next/link';
 import { useAuth } from '@/context/AuthContext';
 import { Workout } from '@/types/types';
-import { logout } from '@/app/login/actions';
+import LogoutButton from './LogoutButton';
 
 interface HomePageContentProps {
   workouts: Workout[];
@@ -22,12 +22,9 @@ const HomePageContent = ({ workouts }: HomePageContentProps) => {
 
   return (
     <>
-      <Link href="/signup">Sign Up</Link>
       {userId ? (
         <>
-          <form action={logout}>
-            <button type="submit">Logout</button>
-          </form>
+          <LogoutButton />
           <WorkoutForm />
           <WorkoutList workouts={workouts} />
           <ExerciseList />
@@ -37,7 +34,11 @@ const HomePageContent = ({ workouts }: HomePageContentProps) => {
           <RecommendationList />
         </>
       ) : (
-        <p>Please sign up to add workouts.</p>
+        <>
+          <Link href="/login">Log In</Link>
+          <Link href="/signup">Sign Up</Link>
+          <p>Please sign up to add workouts.</p>
+        </>
       )}
     </>
   );

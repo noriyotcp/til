@@ -1,11 +1,17 @@
-"use client";
+import { signup } from '@/app/signup/actions';
 
-import SignUpForm from '@/components/SignUpForm';
-
-export default function SignUpPage() {
+export default function SignupPage() {
   return (
-    <main className="flex min-h-screen flex-col items-center justify-between p-24">
-      <SignUpForm />
-    </main>
-  );
+    <form>
+      <label htmlFor="email">Email:</label>
+      <input id="email" name="email" type="email" required />
+      <label htmlFor="firstName">First Name:</label>
+      <input id="firstName" name="firstName" type="text" required />
+      <label htmlFor="lastName">Last Name:</label>
+      <input id="lastName" name="lastName" type="text" required />
+      <label htmlFor="password">Password:</label>
+      <input id="password" name="password" type="password" required />
+      <button formAction={signup}>Sign up</button>
+    </form>
+  )
 }
