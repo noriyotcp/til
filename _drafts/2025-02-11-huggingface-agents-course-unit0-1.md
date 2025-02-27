@@ -1,10 +1,10 @@
 ---
-title: "huggingface の Agents Course"
+title: "Hugging Face Agents Course Unit1"
 date: "2025-02-11 10:03:40 +0900"
 last_modified_at: "2025-02-11 10:03:40 +0900"
 ---
 
-# huggingface の Agents Course
+## Hugging Face Agents Course Unit1
 2/10 から開講している  
 
 certification process の締切は 5/1 まで
