@@ -54,35 +54,46 @@ const GoalForm = () => {
   };
 
   return (
-    <div>
-      <h2>Add Goal</h2>
+    <div className="bg-gray-800 p-4 rounded-lg shadow-md">
+      <h2 className="text-xl font-bold">Add Goal</h2>
       <form onSubmit={handleSubmit}>
         <WorkoutSelector onWorkoutSelect={handleWorkoutSelect} />
-        <label>
+        <label className="block mt-2">
           Description:
           <input
             type="text"
             value={description}
             onChange={(e) => setDescription(e.target.value)}
+            className="mt-1 p-2 w-full bg-background text-foreground rounded"
           />
         </label>
-        <label>
+        <label className="block mt-2">
           Target:
           <input
             type="number"
             value={target}
             onChange={(e) => setTarget(Number(e.target.value))}
+            className="mt-1 p-2 w-full bg-background text-foreground rounded"
           />
         </label>
-        <label>
+        <label className="block mt-2">
           Progress:
           <input
             type="number"
             value={progress}
             onChange={(e) => setProgress(Number(e.target.value))}
+            className="mt-1 p-2 w-full bg-background text-foreground rounded"
           />
         </label>
-        <button type="submit" disabled={!workoutId}>Create Goal</button>
+        <button
+          type="submit"
+          disabled={!workoutId}
+          className={`mt-4 bg-accent text-white p-2 rounded ${
+            !workoutId ? 'opacity-50 cursor-not-allowed' : ''
+          }`}
+        >
+          Create Goal
+        </button>
       </form>
     </div>
   );
