@@ -19,7 +19,9 @@ export default async function Home() {
 
   return (
     <main className="flex min-h-screen flex-col items-center justify-between p-24">
-      <HomePageContent workouts={workouts} />
+      <div className="container max-w-3xl">
+        <HomePageContent workouts={workouts} />
+      </div>
     </main>
   );
 }
