@@ -107,3 +107,9 @@ Create ADRs in /docs/adr for:
 -   Unit tests required for business logic
 -   Integration tests for API endpoints
 -   E2E tests for critical user flows
+
+# Error Prevention
+
+-   Validate database interaction logic with the user before implementation.
+-   Ensure a thorough understanding of data structures and relationships before writing database queries.
+-   Ensure the proposed solution and implementation plan are explicitly approved by the user before switching to ACT MODE.
