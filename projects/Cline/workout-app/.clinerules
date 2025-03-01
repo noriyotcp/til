@@ -43,6 +43,10 @@ Commit description should:
 - Start with a verb.
 - Not use "I" or "We".
 
+Commit message should:
+- Be a single line.
+- Be created from the commit description.
+
 ## Commit Message Example
 - feat: Add user profile page
 - style: Update user profile page layout
