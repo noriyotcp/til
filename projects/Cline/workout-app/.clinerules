@@ -36,11 +36,23 @@ Example: 001_create_users_table.sql
 - After making changes, always test the application to ensure that all functionalities are working as expected.
 - Before completing a task, verify that all acceptance criteria have been met.
 
-## Commit Message Guidelines
-Commit messages should:
+## Commit Description Guidelines
+Commit description should:
+- Suggested before committing changes
 - Be a bullet list.
 - Start with a verb.
 - Not use "I" or "We".
+
+## Commit Message Example
+- feat: Add user profile page
+- style: Update user profile page layout
+- fix: Fix user profile page layout
+- refactor: Improve code readability in user authentication
+- docs: Update API documentation for user profile
+- test: Add unit tests for user registration
+- chore: Update dependencies
+- perf: Improve loading speed of user profile page
+- ci: Configure CI/CD pipeline
 
 # Security
 
