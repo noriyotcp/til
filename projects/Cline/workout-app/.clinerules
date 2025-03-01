@@ -24,11 +24,17 @@ SQL files in /supabase/migrations should:
 - Include descriptive names
 - Be reviewed by Cline before execution
 Example: 001_create_users_table.sql
+- Always create a new migration file for database schema changes. Never modify existing migration files.
+- Before pushing database changes, carefully review the schema and foreign key constraints to ensure they are correct.
 
 ## Development Workflow
 - Cline helps write and review code changes
 - Vercel automatically deploys from main branch
 - Database migrations reviewed by Cline before execution
+- Pay close attention to UI feedback from the user and address it promptly.
+- Before completing a task, thoroughly test the UI to ensure that all elements are displayed correctly and that all functionalities are working as expected.
+- After making changes, always test the application to ensure that all functionalities are working as expected.
+- Before completing a task, verify that all acceptance criteria have been met.
 
 # Security
 
