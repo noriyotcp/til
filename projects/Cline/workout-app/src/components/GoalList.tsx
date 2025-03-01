@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useGoals } from '@/context/GoalsContext';
 
 const GoalList = () => {
@@ -7,6 +7,34 @@ const GoalList = () => {
   const [editedDescription, setEditedDescription] = useState('');
   const [editedTarget, setEditedTarget] = useState(0);
   const [editedProgress, setEditedProgress] = useState(0);
+  const [workoutDates, setWorkoutDates] = useState<{ [workoutId: string]: string }>({});
+
+  useEffect(() => {
+    const fetchWorkoutDates = async () => {
+      if (goals && Array.isArray(goals)) {
+        const dates: { [workoutId: string]: string } = {};
+        for (const goal of goals) {
+          try {
+            const response = await fetch(`/api/workouts/${goal.workout_id}`);
+            if (response.ok) {
+              const workout = await response.json();
+              dates[goal.workout_id] = workout.date;
+            } else {
+              console.error('Failed to fetch workout date');
+              dates[goal.workout_id] = 'Date not found';
+            }
+          } catch (error) {
+            console.error('Error fetching workout date:', error);
+            dates[goal.workout_id] = 'Date not found';
+          }
+        }
+        setWorkoutDates(dates);
+      }
+    };
+
+    fetchWorkoutDates();
+  }, [goals]);
+
 
   const handleDelete = async (id: string) => {
     const response = await fetch(`/api/goals/${id}`, {
@@ -77,7 +105,7 @@ const GoalList = () => {
                     <p className="font-bold">{goal.description}</p>
                     <p>Target: {goal.target}</p>
                     <p>Progress: {goal.progress}</p>
-                    <p>Workout ID: {goal.workout_id}</p>
+                    <p>Workout date: {workoutDates[goal.workout_id] || 'Loading...'}</p>
                   </div>
                   <div>
                     <button onClick={() => {

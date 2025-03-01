@@ -1,6 +1,6 @@
 "use client";
 
-import React, { createContext, useState, useEffect, useContext } from 'react';
+import React, { createContext, useState, useEffect, useContext, useCallback } from 'react';
 import { Workout } from '@/types/types';
 import useAuth from '@/hooks/useAuth';
 
@@ -16,16 +16,16 @@ export const WorkoutsProvider = ({ children }: { children: React.ReactNode }) =>
   const [workouts, setWorkouts] = useState<Workout[]>([]);
   const { userId } = useAuth();
 
-  const fetchWorkouts = async () => {
+  const fetchWorkouts = useCallback(async () => {
     if (!userId) return;
     const response = await fetch('/api/workouts');
     const data = await response.json();
     setWorkouts(data);
-  };
+  }, [userId]);
 
   useEffect(() => {
     fetchWorkouts();
-  }, [userId]);
+  }, [userId, fetchWorkouts]);
 
   const value: WorkoutsContextType = {
     workouts,
