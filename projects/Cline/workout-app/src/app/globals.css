@@ -22,10 +22,10 @@ body {
   font-family: Arial, Helvetica, sans-serif;
 }
 
-button {
-  color: #FFFFFF; /* Set button text color to white */
-}
-
 input, optgroup, select, textarea {
   color: #000000; /* Keep input text color black */
+}
+
+.react-calendar {
+  color: #000000; /* Keep calendar text color black */
 }

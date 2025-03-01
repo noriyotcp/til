@@ -1,6 +1,6 @@
 "use client";
 
-import React from 'react';
+import React, { useState } from 'react';
 import WorkoutList from '@/components/WorkoutList';
 import ExerciseList from '@/components/ExerciseList';
 import GoalList from '@/components/GoalList';
@@ -19,6 +19,11 @@ interface HomePageContentProps {
 
 const HomePageContent = ({ workouts }: HomePageContentProps) => {
   const { userId } = useAuth();
+  const [selectedDate, setSelectedDate] = useState<Date | null>(null);
+
+  const handleDateSelect = (date: Date | null) => {
+    setSelectedDate(date);
+  };
 
   return (
     <>
@@ -26,9 +31,9 @@ const HomePageContent = ({ workouts }: HomePageContentProps) => {
         <>
           <LogoutButton />
           <WorkoutForm />
-          <WorkoutList workouts={workouts} />
+          <WorkoutList workouts={workouts} onDateSelect={handleDateSelect} />
           <ExerciseList />
-          <GoalList />
+          <GoalList selectedDate={selectedDate} />
           <GoalForm />
           <ProgressChart />
           <RecommendationList />

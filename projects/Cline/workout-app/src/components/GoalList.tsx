@@ -1,11 +1,14 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useGoals } from '@/context/GoalsContext';
 import { useWorkouts } from '@/context/WorkoutsContext';
 
-const GoalList = () => {
+interface GoalListProps {
+  selectedDate: Date | null;
+}
+
+const GoalList = ({ selectedDate }: GoalListProps) => {
   const { goals, fetchGoals } = useGoals();
   const { workouts } = useWorkouts();
-  const [selectedWorkoutDate, setSelectedWorkoutDate] = useState<string | null>(null);
   const [editingGoalId, setEditingGoalId] = useState<string | null>(null);
   const [editedDescription, setEditedDescription] = useState('');
   const [editedTarget, setEditedTarget] = useState(0);
@@ -17,7 +20,7 @@ const GoalList = () => {
     });
 
     if (response.ok) {
-      fetchGoals(selectedWorkoutDate);
+      fetchGoals(null);
     } else {
       console.error('Failed to delete goal');
     }
@@ -37,46 +40,31 @@ const GoalList = () => {
     });
 
     if (response.ok) {
-      fetchGoals(selectedWorkoutDate);
+      fetchGoals(null);
       setEditingGoalId(null);
     } else {
       console.error('Failed to update goal');
     }
   };
 
-  const handleWorkoutDateChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    setSelectedWorkoutDate(event.target.value === '-- All workouts --' ? null : event.target.value);
-  };
-
-  useEffect(() => {
-    fetchGoals(selectedWorkoutDate);
-  }, [selectedWorkoutDate, fetchGoals]);
+  const filteredGoals = selectedDate
+    ? goals.filter((goal) => {
+        const workout = workouts.find(workout => workout.id === goal.workout_id);
+        if (workout) {
+          const workoutDate = new Date(workout.date).toDateString();
+          return workoutDate === selectedDate.toDateString();
+        }
+        return false;
+      })
+    : goals;
 
   return (
     <div className="bg-gray-800 p-4 rounded-lg shadow-md">
       <h2 className="text-xl font-bold">Goals</h2>
 
-      <h2>Workouts</h2>
-      {workouts.length === 0 ? (
-        <p>No workouts yet!</p>
-      ) : (
-        <select
-          value={selectedWorkoutDate || '-- All workouts --'}
-          onChange={handleWorkoutDateChange}
-          className="bg-background text-foreground rounded mr-2"
-        >
-          <option>-- All workouts --</option>
-          {workouts.map((workout) => (
-            <option key={workout.id} value={workout.date}>
-              {workout.date}
-            </option>
-          ))}
-        </select>
-      )}
-
       <ul>
-        {Array.isArray(goals) ? (
-          goals.map((goal) => {
+        {Array.isArray(filteredGoals) ? (
+          filteredGoals.map((goal) => {
             const workout = workouts.find(workout => workout.id === goal.workout_id);
             return (
               <li key={goal.id} className="flex items-center justify-between py-2 border-b border-gray-700">
