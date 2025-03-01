@@ -1,12 +1,12 @@
 "use client";
 
-import React, { createContext, useState, useEffect, useContext } from 'react';
+import React, { createContext, useState, useEffect, useContext, useCallback } from 'react';
 import { Goal } from '@/types/types';
 
 interface GoalsContextType {
   goals: Goal[];
   setGoals: React.Dispatch<React.SetStateAction<Goal[]>>;
-  fetchGoals: () => Promise<void>;
+  fetchGoals: (workoutDate: string | null) => Promise<void>;
 }
 
 const GoalsContext = createContext<GoalsContextType | undefined>(undefined);
@@ -14,15 +14,19 @@ const GoalsContext = createContext<GoalsContextType | undefined>(undefined);
 export const GoalsProvider = ({ children }: { children: React.ReactNode }) => {
   const [goals, setGoals] = useState<Goal[]>([]);
 
-  const fetchGoals = async () => {
-    const response = await fetch('/api/goals');
+  const fetchGoals = useCallback(async (workoutDate: string | null) => {
+    let url = '/api/goals';
+    if (workoutDate) {
+      url += `?workoutDate=${workoutDate}`;
+    }
+    const response = await fetch(url);
     const data = await response.json();
     setGoals(data);
-  };
+  }, []);
 
   useEffect(() => {
-    fetchGoals();
-  }, []);
+    fetchGoals(null);
+  }, [fetchGoals]);
 
   const value: GoalsContextType = {
     goals,

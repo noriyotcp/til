@@ -1,10 +1,38 @@
 import { createClient } from "@/utils/supabase/server";
 import { NextResponse } from "next/server";
 
-export async function GET() {
+export async function GET(request: Request) {
   const supabase = await createClient();
+  const { searchParams } = new URL(request.url);
+  const workoutDate = searchParams.get('workoutDate');
 
-  const { data, error } = await supabase.from("goals").select("*");
+  let query = supabase.from("goals").select(`
+      *,
+      workouts (
+        date
+      )
+    `);
+
+  if (workoutDate) {
+    const { data: workouts, error: workoutError } = await supabase
+      .from("workouts")
+      .select("id")
+      .eq("date", workoutDate)
+      .single();
+
+    if (workoutError) {
+      console.error(workoutError);
+      return NextResponse.json({ error: workoutError.message }, { status: 500 });
+    }
+
+    if (workouts) {
+      query = query.eq("workout_id", workouts.id);
+    } else {
+      return NextResponse.json([], { status: 200 }); // No workout found for the given date
+    }
+  }
+
+  const { data, error } = await query;
 
   if (error) {
     console.error(error);

@@ -28,28 +28,29 @@ const GoalForm = () => {
       return;
     }
 
-    const response = await fetch('/api/goals', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        workout_id: workoutId,
-        description,
-        target,
-        progress,
-      }),
-    });
+    try {
+      const response = await fetch('/api/goals', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          workout_id: workoutId,
+          description,
+          target,
+          progress,
+        }),
+      });
 
-    if (response.ok) {
-      // Reset form
-      setDescription('');
-      setTarget(0);
-      setProgress(0);
-      // Fetch goals to update the list
-      fetchGoals();
-    } else {
-      console.error('Failed to create goal');
+      if (response.ok) {
+        setDescription('');
+        setTarget(0);
+        fetchGoals(null);
+      } else {
+        console.error('Failed to create goal');
+      }
+    } catch (error) {
+      console.error('Error creating goal:', error);
     }
   };
 
