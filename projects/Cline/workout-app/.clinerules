@@ -36,6 +36,12 @@ Example: 001_create_users_table.sql
 - After making changes, always test the application to ensure that all functionalities are working as expected.
 - Before completing a task, verify that all acceptance criteria have been met.
 
+## Commit Message Guidelines
+Commit messages should:
+- Be a bullet list.
+- Start with a verb.
+- Not use "I" or "We".
+
 # Security
 
 ## Sensitive Files
