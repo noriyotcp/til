@@ -1,23 +1,13 @@
-import React, { useState, useEffect } from 'react';
-import { Workout } from '@/types/types';
+import React, { useState } from 'react';
+import { useWorkouts } from '@/context/WorkoutsContext';
 
 interface WorkoutSelectorProps {
   onWorkoutSelect: (workoutId: string) => void;
 }
 
 const WorkoutSelector = ({ onWorkoutSelect }: WorkoutSelectorProps) => {
-  const [workouts, setWorkouts] = useState<Workout[]>([]);
+  const { workouts } = useWorkouts();
   const [selectedWorkout, setSelectedWorkout] = useState<string | null>(null);
-
-  useEffect(() => {
-    const fetchWorkouts = async () => {
-      const response = await fetch('/api/workouts');
-      const data = await response.json();
-      setWorkouts(data);
-    };
-
-    fetchWorkouts();
-  }, []);
 
   const handleWorkoutChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     const workoutId = event.target.value;
