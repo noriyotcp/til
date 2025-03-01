@@ -14,7 +14,7 @@ interface WorkoutListProps {
 
 const WorkoutList = ({ onDateSelect }: WorkoutListProps) => {
   const { workouts } = useWorkouts();
-  const [value, setValue] = useState<Value>(new Date());
+  const [value, setValue] = useState<Value>(null);
 
   const handleDateChange = useCallback((date: Value) => {
     if (date instanceof Date) {
@@ -29,11 +29,16 @@ const WorkoutList = ({ onDateSelect }: WorkoutListProps) => {
     }
   }, [onDateSelect]);
 
+  const handleClearDates = () => {
+    setValue(null);
+    onDateSelect(null);
+  };
+
   const tileClassName = ({ date, view }: { date: Date; view: string }) => {
     if (view === 'month') {
       const workoutDates = workouts.map(workout => new Date(workout.date).toDateString());
       if (workoutDates.includes(date.toDateString())) {
-        return 'has-workout ';
+        return 'has-workout';
       }
     }
     return null;
@@ -48,6 +53,7 @@ const WorkoutList = ({ onDateSelect }: WorkoutListProps) => {
           value={value}
           tileClassName={tileClassName}
         />
+        <button onClick={handleClearDates} className="bg-blue-500 text-white p-2 rounded">Clear Dates</button>
       </div>
     </div>
   );
