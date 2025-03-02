@@ -10,8 +10,9 @@ import RecommendationList from '@/components/RecommendationList';
 import WorkoutForm from '@/components/WorkoutForm';
 import Link from 'next/link';
 import { useAuth } from '@/context/AuthContext';
-import { Workout } from '@/types/types';
 import LogoutButton from './LogoutButton';
+
+import { Workout } from '@/types/types';
 
 interface HomePageContentProps {
   workouts: Workout[];
@@ -31,7 +32,7 @@ const HomePageContent = ({ workouts }: HomePageContentProps) => {
         <>
           <LogoutButton />
           <WorkoutForm />
-          <WorkoutList workouts={workouts} onDateSelect={handleDateSelect} />
+          <WorkoutList onDateSelect={handleDateSelect} workouts={workouts} />
           <ExerciseList />
           <GoalList selectedDate={selectedDate} />
           <GoalForm />
