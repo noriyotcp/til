@@ -21,13 +21,14 @@ const WorkoutList = ({ onDateSelect }: WorkoutListProps) => {
   );
 
   return (
-    <div>
-      <h2>Workouts</h2>
+    <div className="bg-gray-800 p-4 rounded-lg shadow-md">
+      <h2 className="text-xl font-bold">Workouts</h2>
       <div className="calendar-container">
         <input
           type="date"
           value={selectedDate || ""}
           onChange={handleDateChange}
+          className="mt-1 p-2 w-full rounded"
         />
       </div>
     </div>
