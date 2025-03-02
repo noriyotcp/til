@@ -3,17 +3,17 @@
 import React, { useState, useCallback } from 'react';
 import Calendar from 'react-calendar';
 import 'react-calendar/dist/Calendar.css';
-import { useWorkouts } from '@/context/WorkoutsContext';
+import { Workout } from '@/types/types';
 
 type ValuePiece = Date | null;
 type Value = ValuePiece | [ValuePiece, ValuePiece];
 
 interface WorkoutListProps {
+  workouts: Workout[];
   onDateSelect: (date: Date | null) => void;
 }
 
-const WorkoutList = ({ onDateSelect }: WorkoutListProps) => {
-  const { workouts } = useWorkouts();
+const WorkoutList: React.FC<WorkoutListProps> = ({ workouts, onDateSelect }) => {
   const [value, setValue] = useState<Value>(null);
 
   const handleDateChange = useCallback((date: Value) => {
