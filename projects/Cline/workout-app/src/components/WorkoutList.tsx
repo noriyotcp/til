@@ -13,21 +13,24 @@ interface WorkoutListProps {
   onDateSelect: (date: Date | null) => void;
 }
 
-const WorkoutList: React.FC<WorkoutListProps> = ({ workouts, onDateSelect }) => {
+const WorkoutList = ({ workouts, onDateSelect }: WorkoutListProps) => {
   const [value, setValue] = useState<Value>(null);
 
-  const handleDateChange = useCallback((date: Value) => {
-    if (date instanceof Date) {
-      setValue(date);
-      onDateSelect(date);
-    } else if (Array.isArray(date) && date.length > 0) {
-      setValue(date[0]);
-      onDateSelect(date[0]);
-    } else {
-      setValue(null);
-      onDateSelect(null);
-    }
-  }, [onDateSelect]);
+  const handleDateChange = useCallback(
+    (date: Value) => {
+      if (date instanceof Date) {
+        setValue(date);
+        onDateSelect(date);
+      } else if (Array.isArray(date) && date.length > 0) {
+        setValue(date[0]);
+        onDateSelect(date[0]);
+      } else {
+        setValue(null);
+        onDateSelect(null);
+      }
+    },
+    [onDateSelect]
+  );
 
   const handleClearDates = () => {
     setValue(null);
@@ -35,10 +38,12 @@ const WorkoutList: React.FC<WorkoutListProps> = ({ workouts, onDateSelect }) => 
   };
 
   const tileClassName = ({ date, view }: { date: Date; view: string }) => {
-    if (view === 'month') {
-      const workoutDates = workouts.map(workout => new Date(workout.date).toDateString());
+    if (view === "month") {
+      const workoutDates = workouts.map((workout) =>
+        new Date(workout.date).toDateString()
+      );
       if (workoutDates.includes(date.toDateString())) {
-        return 'has-workout';
+        return "has-workout";
       }
     }
     return null;
@@ -53,7 +58,12 @@ const WorkoutList: React.FC<WorkoutListProps> = ({ workouts, onDateSelect }) => 
           value={value}
           tileClassName={tileClassName}
         />
-        <button onClick={handleClearDates} className="bg-blue-500 text-white p-2 rounded">Clear Dates</button>
+        <button
+          onClick={handleClearDates}
+          className="bg-blue-500 text-white p-2 rounded"
+        >
+          Clear Dates
+        </button>
       </div>
     </div>
   );
