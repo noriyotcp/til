@@ -46,7 +46,7 @@ const WorkoutForm = () => {
             value={date}
             onChange={(event) => setDate(event.target.value)}
             required
-            className="mt-1 p-2 w-full bg-background text-foreground rounded"
+            className="mt-1 p-2 w-full rounded"
           />
         </label>
         <button type="submit" className="mt-4 bg-accent text-white p-2 rounded">Add Workout</button>
