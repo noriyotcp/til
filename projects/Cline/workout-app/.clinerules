@@ -35,6 +35,7 @@ Example: 001_create_users_table.sql
 - Before completing a task, thoroughly test the UI to ensure that all elements are displayed correctly and that all functionalities are working as expected.
 - After making changes, always test the application to ensure that all functionalities are working as expected.
 - Before completing a task, verify that all acceptance criteria have been met.
+- After completing a task, list up the mistakes we made and what we can learn from them.
 
 ## Commit Description Guidelines
 Commit description should:
@@ -108,11 +109,27 @@ Create ADRs in /docs/adr for:
 -   Integration tests for API endpoints
 -   E2E tests for critical user flows
 
+## Before updating .clinerules
+
+Before updating `.clinerules`, we should care about:
+
+-   Understanding the existing rules: We need to understand the existing rules in `.clinerules` to avoid duplication and ensure that the new rules are consistent with the existing rules.
+-   Understanding the problem: We need to understand the problem that we are trying to solve by updating `.clinerules`.
+-   Keeping it simple: We need to keep the rules simple and easy to understand.
+-   Avoiding duplication: We need to avoid duplicating existing rules.
+-   Following instructions: We need to follow the instructions carefully.
+-   Getting approval: We need to get the user's approval before updating `.clinerules`.
+
 # Error Prevention
 
 -   Validate database interaction logic with the user before implementation.
 -   Ensure a thorough understanding of data structures and relationships before writing database queries.
 -   Ensure the proposed solution and implementation plan are explicitly approved by the user before switching to ACT MODE.
+-   Understand the problem thoroughly: Read the error message carefully, examine the code, and understand the data flow.
+-   Read file content carefully: When using the `replace_in_file` tool, make sure the SEARCH block matches the content in the file exactly.
+-   Understand the data flow: Before making changes to the code, make sure you understand the data flow.
+-   Pay attention to user feedback: If the user denies a change, try to understand why they are denying the change.
+-   Follow instructions: Make sure you follow the instructions carefully.
 
 # Styling Guidelines
 
