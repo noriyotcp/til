@@ -32,10 +32,10 @@ const HomePageContent = ({ workouts }: HomePageContentProps) => {
         <>
           <LogoutButton />
           <WorkoutForm />
-          <WorkoutList onDateSelect={handleDateSelect} workouts={workouts} />
-          <ExerciseList />
-          <GoalList selectedDate={selectedDate} />
           <GoalForm />
+          <WorkoutList onDateSelect={handleDateSelect} workouts={workouts} />
+          <GoalList selectedDate={selectedDate} />
+          <ExerciseList />
           <ProgressChart />
           <RecommendationList />
         </>
