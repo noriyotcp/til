@@ -1,7 +1,7 @@
 ---
 title: "VS Code でターミナルとエディターを往復するキーバインディング"
 date: "2025-02-09 13:50:49 +0900"
-last_modified_at: "2025-03-08 01:17:37 +0900"
+last_modified_at: "2025-03-08 01:26:01 +0900"
 tags:
   - VS Code
 ---
@@ -55,7 +55,7 @@ Explorer: Focus on Open Editors View
 さらに `Open Editors` （サイドバー）からエディタに戻れるようにしたかったので `Cmd+k e` でスイッチできるようにした
 
 ## Copilot Chat にフォーカスを合わせる
-以下のように設定すると `cmd+k l` で Copilot Chat にフォーカスを合わせることができる(Cursor の Chat ではない)
+以下のように設定すると `cmd+k l` で Copilot Chat にフォーカスを合わせることができる(Cursor の場合は `cmd+y`)
 
 ```json
   {
