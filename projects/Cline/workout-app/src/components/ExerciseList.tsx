@@ -6,15 +6,19 @@ const ExerciseList = () => {
   const [exercises, setExercises] = useState<Exercise[]>([]);
   const [showForm, setShowForm] = useState(false);
 
-  useEffect(() => {
-    const fetchExercises = async () => {
-      const response = await fetch('/api/exercises');
-      const data = await response.json();
-      setExercises(data);
-    };
+  const fetchExercises = async () => {
+    const response = await fetch('/api/exercises');
+    const data = await response.json();
+    setExercises(data);
+  };
 
+  useEffect(() => {
     fetchExercises();
   }, []);
+
+  const handleExerciseCreated = () => {
+    fetchExercises();
+  };
 
   return (
     <div className="container mx-auto mt-8">
@@ -25,7 +29,7 @@ const ExerciseList = () => {
       >
         Create Exercise
       </button>
-      {showForm && <ExerciseForm />}
+      {showForm && <ExerciseForm onExerciseCreated={handleExerciseCreated} />}
       <ul>
         {exercises.map((exercise) => (
           <li key={exercise.id} className="mb-2 p-2 border rounded">

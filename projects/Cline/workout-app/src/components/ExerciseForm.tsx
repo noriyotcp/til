@@ -1,6 +1,10 @@
 import React, { useState } from 'react';
 
-const ExerciseForm = () => {
+interface ExerciseFormProps {
+  onExerciseCreated: () => void;
+}
+
+const ExerciseForm: React.FC<ExerciseFormProps> = ({ onExerciseCreated }) => {
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
 
@@ -20,6 +24,7 @@ const ExerciseForm = () => {
       console.log('Exercise created successfully');
       setName('');
       setDescription('');
+      onExerciseCreated();
     } else {
       // Handle error
       console.error('Failed to create exercise');
