@@ -133,6 +133,8 @@ Before updating `.clinerules`, we should care about:
 -   Ensure the proposed solution and implementation plan are explicitly approved by the user before switching to ACT MODE.
 -   Understand the problem thoroughly: Read the error message carefully, examine the code, and understand the data flow.
 -   Read file content carefully: When using the `replace_in_file` tool, make sure the SEARCH block matches the content in the file exactly.
+-   Always read the file first to get the current state before making changes.
+-   Use precise SEARCH blocks that include complete lines and match the file content exactly, including whitespace and indentation.
 -   Understand the data flow: Before making changes to the code, make sure you understand the data flow.
 -   Pay attention to user feedback: If the user denies a change, try to understand why they are denying the change.
 -   Follow instructions: Make sure you follow the instructions carefully.

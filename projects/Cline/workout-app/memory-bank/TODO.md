@@ -5,6 +5,7 @@
 - [x] Connect ExerciseList component to data source
 - [ ] Implement ProgressChart component
 - [ ] Implement RecommendationList component
+- [ ] Add data validation and error handling for workout and goal forms.
 - [ ] Add unit tests for components
 - [ ] Add unit tests for API endpoints
 - [ ] Add integration tests for API endpoints

@@ -10,12 +10,12 @@
 - Created the basic UI for adding workouts and goals.
 - Integrated Supabase for user authentication and data storage.
 - Implemented `WorkoutList` and `GoalList` components.
+- Implemented the functionality to add exercises to workouts. This involved creating the `AddExercisesToWorkout` component, the `src/app/api/workout_exercises/route.ts` API endpoint, and updating the `WorkoutDetails` component to display the exercises.
 
 ## Next Steps
 
-1.  Test the "add workout" and "add goal" functionalities thoroughly.
-2.  Implement data validation and error handling for workout and goal forms.
-3.  Implement progress tracking and visualization.
+1.  Implement data validation and error handling for workout and goal forms.
+2.  Implement progress tracking and visualization.
 
 ## Active Decisions and Considerations
 
