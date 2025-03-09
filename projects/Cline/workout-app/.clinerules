@@ -110,7 +110,11 @@ Create ADRs in memory-bank/adr for:
 -   Integration tests for API endpoints
 -   E2E tests for critical user flows
 
-## Before updating .clinerules
+## React.FC
+
+We don't need to use `React.FC` in our components. See https://fettblog.eu/typescript-react-why-i-dont-use-react-fc/ for more information.
+
+# Before updating .clinerules
 
 Before updating `.clinerules`, we should care about:
 
