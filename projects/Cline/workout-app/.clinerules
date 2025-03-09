@@ -87,13 +87,13 @@ DO NOT read or modify:
 
 ## Architecture Decision Records
 
-Create ADRs in /docs/adr for:
+Create ADRs in memory-bank/adr for:
 
 -   Major dependency changes
 -   Architectural pattern changes
 -   New integration patterns
 -   Database schema changes
-    Follow template in /docs/adr/template.md
+    Follow template in memory-bank/adr/template.md
 
 ## Code Style & Patterns
 
