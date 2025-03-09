@@ -36,6 +36,7 @@ Example: 001_create_users_table.sql
 - After making changes, always test the application to ensure that all functionalities are working as expected.
 - Before completing a task, verify that all acceptance criteria have been met.
 - After completing a task, list up the mistakes we made and what we can learn from them.
+- Memory bank files should be reviewed and updated when discovering new project patterns, after implementing significant changes, when the user requests with "update memory bank", and when context needs clarification.
 
 ## Commit Description Guidelines
 Commit description should:
