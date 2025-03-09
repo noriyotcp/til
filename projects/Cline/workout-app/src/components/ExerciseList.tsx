@@ -33,7 +33,8 @@ const ExerciseList = () => {
       <ul>
         {exercises.map((exercise) => (
           <li key={exercise.id} className="mb-2 p-2 border rounded">
-            {exercise.name}
+            <h4 className="font-bold">{exercise.name}</h4>
+            <p className="text-gray-400">{exercise.description}</p>
           </li>
         ))}
       </ul>
