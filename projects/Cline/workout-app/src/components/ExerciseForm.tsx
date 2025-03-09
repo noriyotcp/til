@@ -4,7 +4,7 @@ interface ExerciseFormProps {
   onExerciseCreated: () => void;
 }
 
-const ExerciseForm: React.FC<ExerciseFormProps> = ({ onExerciseCreated }) => {
+const ExerciseForm = ({ onExerciseCreated }: ExerciseFormProps) => {
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
 
