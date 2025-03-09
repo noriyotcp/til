@@ -4,7 +4,7 @@ import { redirect } from 'next/navigation'
 import { logout } from '@/app/login/actions'
 import useAuth from '@/hooks/useAuth'
 
-export default function PrivatePage() {
+const PrivatePage = () => {
   const { userId } = useAuth();
 
   if (!userId) {
@@ -20,3 +20,5 @@ export default function PrivatePage() {
     </div>
   )
 }
+
+export default PrivatePage;

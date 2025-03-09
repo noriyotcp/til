@@ -1,6 +1,6 @@
 import { signup } from '@/app/signup/actions';
 
-export default function SignupPage() {
+const SignupPage = () => {
   return (
     <form>
       <label htmlFor="email">Email:</label>
@@ -15,3 +15,5 @@ export default function SignupPage() {
     </form>
   )
 }
+
+export default SignupPage;

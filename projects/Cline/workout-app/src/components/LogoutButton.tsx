@@ -4,7 +4,7 @@ import { useRouter } from 'next/navigation';
 import { useAuth } from '@/context/AuthContext';
 import { logout } from '@/app/actions';
 
-export default function LogoutButton() {
+const LogoutButton = () => {
   const router = useRouter();
   const { setUserId } = useAuth();
 
@@ -18,3 +18,5 @@ export default function LogoutButton() {
     <button onClick={handleLogout}>Logout</button>
   );
 }
+
+export default LogoutButton;

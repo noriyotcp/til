@@ -14,7 +14,7 @@ async function getWorkouts() {
   return data;
 }
 
-export default async function Home() {
+const Home = async () => {
   const workouts = await getWorkouts();
 
   return (
@@ -25,3 +25,5 @@ export default async function Home() {
     </main>
   );
 }
+
+export default Home;

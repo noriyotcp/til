@@ -1,6 +1,6 @@
 import { login } from './actions'
 
-export default function LoginPage() {
+const LoginPage = () => {
   return (
     <form>
       <label htmlFor="email">Email:</label>
@@ -11,3 +11,5 @@ export default function LoginPage() {
     </form>
   )
 }
+
+export default LoginPage;
