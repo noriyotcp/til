@@ -17,3 +17,10 @@ export type Goal = {
   target: number;
   progress: number;
 };
+
+export type WorkoutExercise = {
+  workout_id: string;
+  exercise_id: string;
+  sets: number;
+  reps: number;
+};

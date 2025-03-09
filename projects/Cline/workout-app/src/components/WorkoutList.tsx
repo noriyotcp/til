@@ -2,13 +2,15 @@
 
 import React, { useState, useCallback } from 'react';
 import { Workout } from '@/types/types';
+import WorkoutDetails from './WorkoutDetails';
+import AddExercisesToWorkout from './AddExercisesToWorkout';
 
 interface WorkoutListProps {
   workouts: Workout[];
   onDateSelect: (date: Date | null) => void;
 }
 
-const WorkoutList = ({ onDateSelect }: WorkoutListProps) => {
+const WorkoutList = ({ workouts, onDateSelect }: WorkoutListProps) => {
   const [selectedDate, setSelectedDate] = useState<string | null>(null);
 
   const handleDateChange = useCallback(
@@ -31,6 +33,14 @@ const WorkoutList = ({ onDateSelect }: WorkoutListProps) => {
           className="mt-1 p-2 w-full rounded"
         />
       </div>
+      <ul>
+        {workouts.map((workout: Workout) => (
+          <li key={workout.id} className="py-2 border-b border-gray-700">
+            <WorkoutDetails workout={workout} />
+            <AddExercisesToWorkout workoutId={workout.id} />
+          </li>
+        ))}
+      </ul>
     </div>
   );
 };

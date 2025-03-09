@@ -4,12 +4,13 @@
 
 -   User authentication and data storage with Supabase.
 -   Basic UI for adding workouts and goals.
+-   `WorkoutList` and `GoalList` components.
 
 ## What's Left to Build
 
 -   Data validation and error handling for workout and goal forms.
--   Workout and goal listing functionality.
--   Progress tracking and visualization.
+-   Implement the display of workouts in the `WorkoutList` component.
+-   Implement progress tracking and visualization.
 -   Personalized workout recommendations.
 
 ## Current Status

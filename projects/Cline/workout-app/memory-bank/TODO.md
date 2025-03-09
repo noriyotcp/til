@@ -1,8 +1,8 @@
 # TODO
 
-- [ ] Create ExerciseList component
-- [ ] Add styling to ExerciseList component
-- [ ] Connect ExerciseList component to data source
+- [x] Create ExerciseList component
+- [x] Add styling to ExerciseList component
+- [x] Connect ExerciseList component to data source
 - [ ] Implement ProgressChart component
 - [ ] Implement RecommendationList component
 - [ ] Add unit tests for components

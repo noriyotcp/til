@@ -2,7 +2,6 @@
 
 ## Current Work Focus
 
-- Implementing the "add workout" and "add goal" functionalities.
 - Ensuring data persistence and retrieval from the Supabase database.
 - Improving the user interface and user experience.
 
@@ -10,13 +9,13 @@
 
 - Created the basic UI for adding workouts and goals.
 - Integrated Supabase for user authentication and data storage.
+- Implemented `WorkoutList` and `GoalList` components.
 
 ## Next Steps
 
 1.  Test the "add workout" and "add goal" functionalities thoroughly.
-2.  Implement data validation and error handling.
-3.  Implement the workout and goal listing functionality.
-4.  Implement progress tracking and visualization.
+2.  Implement data validation and error handling for workout and goal forms.
+3.  Implement progress tracking and visualization.
 
 ## Active Decisions and Considerations
 

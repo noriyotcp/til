@@ -33,20 +33,19 @@ export async function GET(
   { params }: { params: Params }
 ) {
   const supabase = await createClient();
-  const { id } = params;
+  const { id } = await params;
 
-  const { data, error } = await supabase
-    .from("workouts")
-    .select()
-    .eq("id", id)
-    .single();
+  const { data: exercises, error: exercisesError } = await supabase
+    .from("workout_exercises")
+    .select("exercise_id, sets, reps")
+    .eq("workout_id", id)
 
-  if (error) {
-    console.error(error);
-    return NextResponse.json({ error: error.message }, { status: 500 });
+  if (exercisesError) {
+    console.error(exercisesError);
+    return NextResponse.json({ error: exercisesError.message }, { status: 500 });
   }
 
-  return NextResponse.json(data);
+  return NextResponse.json(exercises);
 }
 
 export async function DELETE(
