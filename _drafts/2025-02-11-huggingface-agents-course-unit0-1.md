@@ -4,6 +4,8 @@ date: "2025-02-11 10:03:40 +0900"
 last_modified_at: "2025-02-11 10:03:40 +0900"
 ---
 
+まとめ直して公開した
+
 ## Hugging Face Agents Course Unit1
 2/10 から開講している  
 
