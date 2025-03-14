@@ -8,6 +8,8 @@ tags:
   - 体験記
 ---
 
+[Hugging Face Agents Course](https://huggingface.co/agents-course) が開講していたのでやってみることにしました、無料だし。
+
 ## はじめに
 
 昨今、AI エージェントという言葉が多くのプロジェクトで活用される中、Hugging Face が提供するこのコースは、実践的な開発スキルと最新技術の理解を深めるための絶好の機会となります。  
