@@ -26,8 +26,15 @@ https://huggingface.co/learn/agents-course/unit2/introduction
 `smolagents`ドキュメントや関連リソースへのリンクも提供されます。要するに、`smolagents`を使って様々な種類のエージェントを構築し、ツールや知識ベースと連携させ、複雑なタスクを実行する方法を学ぶことができます。
 
 #### When to Use an Agentic Framework
+> LLM を中心としたアプリケーションを構築する場合、エージェントフレームワークは必ずしも必要ではありません。エージェントフレームワークはワークフローに柔軟性をもたらし、特定のタスクを効率的に解決するのに役立ちますが、必ずしも必要というわけではありません。
+> 
+> 場合によっては、事前定義されたワークフローだけでユーザーのリクエストを満たすことができ、エージェントフレームワークは実際には必要ありません。エージェントの構築方法がプロンプトの連鎖のようにシンプルな場合は、プレーンコードで十分な場合もあります。その利点は、開発者が抽象化することなくシステムを完全に制御し、理解できることです。
+> 
+> ただし、LLM に関数を呼び出させたり、複数のエージェントを使用したりといったワークフローがより複雑になると、これらの抽象化が役立つようになります。
+
 #### Agentic Frameworks Units
 
+## Unit 2.1 The smolagents Framework
 ### Introduction to smolagents
 #### Module Overview
 #### Contents
@@ -106,6 +113,13 @@ smolagentsは、次のような場合に理想的です。
 エージェントがJSONでアクションを記述する他のフレームワークとは異なり、smolagentsはコードでのツール呼び出しにフォーカスし、実行プロセスを簡素化します。 これは、ツールを呼び出すコードをビルドするためにJSONをパースする必要がないからです。
 
 ##### Agent Types in smolagents
+Agents in smolagents operate as multi-step agents.
+
+Each MultiStepAgent performs:
+
+- One thought
+- One tool call and execution
+
 ##### Model Integration in smolagents
 #### Resources
 
