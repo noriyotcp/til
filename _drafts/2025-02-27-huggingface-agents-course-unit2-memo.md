@@ -258,12 +258,12 @@ https://langfuse.com/jp
 ### Writing actions as code snippets or JSON blobs
 またノートブックがあるよ
 
-#### How Do Tool Calling Agents Work?,
+#### How Do Tool Calling Agents Work?
 > 主な違いは、アクションの構造化方法にあります。実行可能コードの代わりに、ツール名と引数を指定する JSON オブジェクトを生成します。システムはこれらの命令を解析して、適切なツールを実行します。
 
 ツール呼び出しのためのエージェントが、ツールが理解できるような JSON オブジェクトを生成するってことか
 
-#### Example: Running a Tool Calling Agent,
+#### Example: Running a Tool Calling Agent
 [ノートブック](https://huggingface.co/agents-course/notebooks/blob/main/unit2/smolagents/tool_calling_agents.ipynb) でも試すことができる
 
 > The only difference is the agent type - the framework handles everything else:
@@ -293,17 +293,80 @@ https://langfuse.com/jp
 ---
 
 ### Tools
+https://huggingface.co/learn/agents-course/unit2/smolagents/tools
+
+このテキストは、smolagentsというフレームワークでLLM（大規模言語モデル）がツールを利用する方法について説明しています。
+
+**主な内容:**
+
+* **ツールの定義方法:**  シンプルな関数ベースのツールには`@tool`デコレータを使用し、複雑なツールには`Tool`クラスを継承します。どちらの方法も、LLMがツールを理解するために必要な情報（名前、説明、入力・出力タイプなど）を指定します。具体的な例として、ケータリングサービス検索ツールやスーパーヒーローをテーマにしたパーティーテーマ生成ツールが挙げられています。
+
+* **デフォルトツールボックス:** smolagentsには、`PythonInterpreterTool`, `FinalAnswerTool`, `UserInputTool`, `DuckDuckGoSearchTool`, `GoogleSearchTool`, `VisitWebpageTool`などのあらかじめ用意されたツールが用意されています。
+
+* **ツールの共有とインポート:** 作成したカスタムツールをHugging Face Hubで共有したり、Hub、HF Spaces、LangChain、MCPサーバーからツールをインポートして使用できます。これにより、コミュニティで作成されたツールを簡単に利用できます。  例として、画像生成ツールやエンターテインメント検索ツールのインポート方法が示されています。
+
+
+要するに、smolagentsはLLMを様々なツールと連携させることで、より高度なタスクを実行可能にするフレームワークであり、そのツールの作成、共有、利用方法について解説しているドキュメントです。
+
 #### Tool Creation Methods
+In smolagents, tools can be defined in two ways:
+
+1. Using the @tool decorator for simple function-based tools
+2. Creating a subclass of Tool for more complex functionality
+
 ##### The @tool Decorator
+Using this approach, we define a function with:
+
+- A clear and descriptive function name that helps the LLM understand its purpose.
+- Type hints for both inputs and outputs to ensure proper usage.
+- A detailed description, including an Args: section where each argument is explicitly described. These descriptions provide valuable context for the LLM, so it’s important to write them carefully.
+
 ###### Generating a tool that retrieves the highest-rated catering
 ##### Defining a Tool as a Python Class
 ###### Generating a tool to generate ideas about the superhero-themed party
 #### Default Toolbox
 #### Sharing and Importing Tools
+> スモルエージェントの最も強力な機能の1つは、ハブでカスタムツールを共有し、コミュニティが作成したツールをシームレスに統合できることです。これには、HF SpacesおよびLangChainツールとの接続が含まれ、ウェインマナーでの忘れられないパーティーを指揮するアルフレッドの能力が大幅に向上します。🎭
+
 ##### Sharing a Tool to the Hub
 ##### Importing a Tool from the Hub
 ##### Importing a Hugging Face Space as a Tool
 ##### Importing a LangChain Tool
+##### Importing a tool collection from any MCP Server
+MCP 来ました！これ前まではなかったような気もする？
+
+
 #### Resources
 
 ---
+
+### Retrieval Agents
+https://huggingface.co/learn/agents-course/unit2/smolagents/retrieval_agents
+
+このドキュメントは、エージェント型RAG（Retrieval-Augmented Generation）システムの構築方法について解説しています。従来のRAGシステムは検索結果に基づいてLLMが回答を生成するのに対し、エージェント型RAGは検索と生成のプロセスをインテリジェントに制御することで、効率と精度を向上させます。
+
+主なハイライトは以下の通りです。
+
+* **エージェント型RAGの利点:** 従来のRAGシステムの限界（単一の検索ステップ、クエリとの直接的な意味的類似性に依存）を克服し、エージェントが自律的に検索クエリを生成、検索結果を評価、複数回の検索を実行することで、より適切で包括的な出力を生成します。
+* **DuckDuckGoを用いた基本的な検索:**  `smolagents`ライブラリを用いて、DuckDuckGoでWeb検索を行い、情報を取得して回答を生成するシンプルなエージェントの構築方法を例示しています。
+* **カスタム知識ベースツール:** 特定のタスク向けに、ベクトルデータベースを用いたカスタム知識ベースツールを作成する方法を解説しています。意味検索を用いて関連性の高い情報を取得し、事前定義された知識と組み合わせて文脈に応じた解決策を提供します。BM25 retrieverとRecursiveCharacterTextSplitterを用いた具体的な実装例も示されています。
+* **高度な検索機能:**  クエリ再構成、複数ステップ検索、ソース統合、結果検証など、エージェント型RAGシステムで利用可能な高度な検索戦略を紹介しています。
+* **エージェント型RAGシステム構築の重要な側面:**  クエリの種類とコンテキストに基づいたツール選択、会話履歴を保持するためのメモリシステム、フォールバック戦略、取得情報の検証の重要性を説明しています。
+
+要するに、このドキュメントは、`smolagents`ライブラリを活用して、より高度で柔軟な情報検索と回答生成を実現するエージェント型RAGシステムの構築方法を、具体的なコード例とともに解説しています。
+
+#### Basic Retrieval with DuckDuckGo
+#### Custom Knowledge Base Tool
+#### Enhanced Retrieval Capabilities
+#### Resources
+
+### Multi-Agent Systems
+https://huggingface.co/learn/agents-course/unit2/smolagents/multi_agent_systems
+
+#### Multi-Agent Systems in Action
+#### Solving a complex task with a multi-agent hierarchy
+##### We first make a tool to get the cargo plane transfer time.
+##### Setting up the agent
+##### ✌️ Splitting the task between two agents
+
+#### Resources
