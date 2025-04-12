@@ -363,10 +363,312 @@ https://huggingface.co/learn/agents-course/unit2/smolagents/retrieval_agents
 ### Multi-Agent Systems
 https://huggingface.co/learn/agents-course/unit2/smolagents/multi_agent_systems
 
+**1. 複数エージェントシステム (Multi-Agent Systems)**
+
+**要約:** このセクションでは、複数エージェントシステム（MAS）の概念を導入すると思われます。  MASの基本的な定義、利点（モジュール性、スケーラビリティ、堅牢性など）、そして様々なタイプのエージェントとその相互作用について概説していると考えられます。  MASの適用範囲や、他のシステムとの比較なども含まれている可能性があります。
+
+---
+
+このドキュメントは、複数エージェントシステム (MAS) を用いた複雑なタスク解決を説明しています。特に、映画の撮影場所とスーパーカー工場の位置を特定し、ゴッサムからの輸送時間を計算して地図上に表示する例を詳細に示しています。
+
+**ハイライト:**
+
+* **MASの利点:** モジュール性、スケーラビリティ、堅牢性の向上。複数の専門エージェントが協力して複雑なタスクを処理します。
+* **エージェントの役割:** マネージャーエージェントはタスクを委任し、コードインタープリターエージェントはコードを実行し、ウェブ検索エージェントは情報を取得します。
+* **例題:** バットマンの撮影場所とスーパーカー工場の位置を特定し、ゴッサムからの航空輸送時間を計算、地図上に表示する。
+* **コード例:** `smolagents`ライブラリを用いたPythonコードが示され、エージェントの構築、タスクの委譲、結果の表示方法が説明されています。
+* **単一エージェント vs. 複数エージェント:** 複数エージェントを使用することで、各エージェントの専門性を高め、処理速度とコストの削減を実現します。
+* **結果:** 地図上に、場所とゴッサムからの輸送時間が色分けされて表示されます。
+
+要約すると、このドキュメントは、複雑な問題を効率的に解決するための複数エージェントシステムの設計と実装方法を示す、実践的なチュートリアルとなっています。`smolagents`ライブラリを用いた具体的なコード例と、複数エージェントによるタスク分割のメリットが強調されています。
+
+---
+
 #### Multi-Agent Systems in Action
+**2. 複数エージェントシステムの実践 (Multi-Agent Systems in Action)**
+
+**要約:**  このセクションでは、具体的な例を用いてMASの動作を示すでしょう。  様々なタスクを複数のエージェントがどのように協力して実行するかを説明し、MASの利点をより具体的に示すためのセクションだと考えられます。  具体的なアルゴリズムや、エージェント間の通信方法についても触れられる可能性があります。
+
 #### Solving a complex task with a multi-agent hierarchy
+**3. 複数エージェント階層を用いた複雑なタスク解決 (Solving a complex task with a multi-agent hierarchy)**
+
+**要約:**  このセクションでは、MASを用いて複雑な問題を解決する方法を、具体的な例を通して説明していると考えられます。  複数のエージェントを階層的に構成することで、複雑なタスクを効率的に分割・処理する手法が示されるでしょう。  エージェント間の連携、情報共有、意思決定プロセスなどが詳細に解説される可能性があります。
+
 ##### We first make a tool to get the cargo plane transfer time.
+**4. 貨物輸送時間の算出ツール作成 (We first make a tool to get the cargo plane transfer time.)**
+
+**要約:**  このサブセクションは、より大きなタスクの一部として、特定の機能（この場合は貨物輸送時間の算出）を実現するためのツールの作成過程を示していると考えられます。  ツール開発の具体的な手順、使用した技術、そしてそのツールが全体のシステムにどのように統合されるかが説明されるでしょう。  このツールは、後続のセクションで、他のエージェントによって利用されることが予想されます。
+
 ##### Setting up the agent
+**5. エージェントの設定 (Setting up the agent)**
+
+**要約:**  このサブセクションでは、MASを構成する個々のエージェントの設定方法について説明していると考えられます。  エージェントの役割、使用するアルゴリズム、パラメータの設定、そして他のエージェントとの連携方法などが詳細に記述されるでしょう。  特定のエージェントの種類、その構成要素、そしてその動作が説明される可能性があります。
+
 ##### ✌️ Splitting the task between two agents
+**6. 2つのエージェント間でのタスク分割 (✌️ Splitting the task between two agents)**
+
+**要約:**  このサブセクションは、複雑なタスクを複数のエージェントに効果的に分割する方法について説明しています。  2つのエージェントがどのような役割を担い、どのように協調してタスクを完了させるかを解説するでしょう。  タスク分割の戦略、エージェント間の通信方法、そしてタスクの完了判定などについて詳細な説明があると考えられます。
 
 #### Resources
+
+### Vision Agents with smolagents
+https://huggingface.co/learn/agents-course/unit2/smolagents/vision_agents
+
+smolagentsを使って、視覚機能を持つエージェントを作成する方法を解説した内容です。
+
+**主なポイント:**
+
+* **視覚言語モデル（VLM）との連携:**  強力なVLM（例：GPT-4o）とsmolagentsを組み合わせることで、エージェントは画像を処理・解釈できるようになります。
+* **画像の入力方法:**  エージェントへの画像入力は、実行開始時に`task_images`として渡す方法と、実行中に動的に取得・追加する方法があります。
+* **動的画像取得の仕組み:**  `MultiStepAgent`クラス（ReActフレームワークに基づく）の各ステップ（`SystemPromptStep`、`TaskStep`、`ActionStep`）で画像や情報をログに記録し、動的に処理します。ブラウジング中にスクリーンショットを`observation_images`として`ActionStep`に保存できます。
+* **ブラウジングエージェントの構築:** SeleniumとHeliumを使用してブラウザを自動化し、`search_item_ctrl_f`、`go_back`、`close_popups`などのツールをエージェントに提供することで、Webブラウジングを可能にします。`save_screenshot`関数で各ステップのスクリーンショットを保存します。
+* **DuckDuckGo検索ツール:**  `DuckDuckGoSearchTool`を使ってWeb検索を行い、画像や情報を取得できます。
+* **例：パーティーのゲスト確認:**  Wonder Womanのように、ゲストの身元を画像検索やWikipediaの情報に基づいて確認するエージェントの例が示されています。`helium_instructions`を使ってエージェントのブラウジングを制御します。
+
+**要約:**
+
+この記事では、smolagentsを用いて、画像を理解しWebブラウジングも可能なエージェントを作成する方法を、具体的な例を交えて解説しています。  動的な画像処理やブラウザ自動化ツールとの連携により、複雑なタスクをこなせる強力なエージェントを構築できます。
+
+#### Providing Images at the Start of the Agent’s Execution
+#### Providing Images with Dynamic Retrieval
+#### Further Reading
+
+### Unit2 smolagents quiz
+https://huggingface.co/spaces/agents-course/unit2_smolagents_quiz
+
+
+Code Review Complete! 📚
+
+This feedback should help you improve your skills.
+
+⛔️ The feedback uses Qwen/Qwen2.5-Coder-32B-Instruct to compare your response to a gold standard solution. As we know, LLMs are not perfect. You should compare your work against the assessment criteria if you doubt the feedback.
+
+Here's your detailed feedback:### Question 1: Create a Basic Code Agent with Web Search Capability
+
+#### Question 1: Create a Basic Code Agent with Web Search Capability
+Your Solution:
+
+```python
+# Create a CodeAgent with DuckDuckGo search capability
+
+from smolagents import CodeAgent, DuckDuckGoSearchTool, HfApiModel
+
+model = HfApiModel(model_id="Qwen/Qwen2.5-Coder-32B-Instruct", provider="together")
+agent = CodeAgent(
+    tools=[DuckDuckGoSearchTool()],  # Add search tool here
+    model=model,  # Add model here
+)
+```
+
+Reference Solution:
+
+```python
+from smolagents import CodeAgent, DuckDuckGoSearchTool, HfApiModel
+
+agent = CodeAgent(
+    tools=[DuckDuckGoSearchTool()],
+    model=HfApiModel("Qwen/Qwen2.5-Coder-32B-Instruct")
+)
+```
+
+##### Assessment Criteria:
+- Correct imports are included
+- DuckDuckGoSearchTool is added to tools list
+- HfApiModel is properly configured
+- Model ID is correctly specified
+
+##### Feedback:
+Overall Assessment
+The student's solution meets all the assessment criteria and demonstrates a good understanding of the task. Here is a detailed breakdown of the feedback for each criterion:
+
+##### Correct imports are included
+✅ The student correctly imported the necessary modules from the smolagents package.
+
+##### DuckDuckGoSearchTool is added to tools list
+✅ The student successfully added the DuckDuckGoSearchTool to the tools list in the CodeAgent initialization.
+
+##### HfApiModel is properly configured
+✅ The student properly configured the HfApiModel with the model_id and provider parameters.
+
+##### Model ID is correctly specified
+✅ The student correctly specified the model ID as 'Qwen/Qwen2.5-Coder-32B-Instruct'.
+
+#### Question 2: Set Up a Multi-Agent System with Manager and Web Search Agents
+Your Solution:
+
+```python
+# Create web agent and manager agent structure
+from smolagents import CodeAgent, GoogleSearchTool, HfApiModel
+
+model = HfApiModel(
+    model_id="Qwen/Qwen2.5-Coder-32B-Instruct", provider="together", max_tokens=8096
+)
+
+web_agent = ToolCallingAgent(
+    tools=[GoogleSearchTool("serper")],  # Add required tools
+    model=model,  # Add model
+    max_steps=10,  # Adjust steps
+    name="web_agent",  # Add name
+    description="Browses the web to find infomation",  # Add description
+)
+
+manager_agent = CodeAgent()
+```
+
+Reference Solution:
+
+```python
+web_agent = ToolCallingAgent(
+    tools=[DuckDuckGoSearchTool(), visit_webpage],
+    model=model,
+    max_steps=10,
+    name="search",
+    description="Runs web searches for you."
+)
+
+manager_agent = CodeAgent(
+    tools=[],
+    model=model,
+    managed_agents=[web_agent],
+    additional_authorized_imports=["time", "numpy", "pandas"]
+)
+```
+
+##### Assessment Criteria:
+- Web agent has correct tools configured
+- Manager agent properly references web agent
+- Appropriate max_steps value is set
+- Required imports are authorized
+
+##### Feedback:
+Overall Assessment
+
+The student's solution is a good start but has some issues that need to be addressed to fully meet the assessment criteria.
+
+Web agent has correct tools configured
+❌ The student used GoogleSearchTool instead of DuckDuckGoSearchTool and visit_webpage. The correct tools should be configured as per the reference solution.
+
+Manager agent properly references web agent
+❌ The manager agent is not properly configured to manage the web agent. The managed_agents parameter is missing in the manager agent's initialization.
+
+Appropriate max_steps value is set
+✅ The student set the max_steps value to 10, which is the same as the reference solution.
+
+Required imports are authorized
+❌ The student did not authorize the required imports (time, numpy, pandas) in the manager agent's initialization.
+
+#### Question 3: Configure Agent Security Settings
+Your Solution:
+
+```python
+# Set up secure code execution environment
+from smolagents import CodeAgent, DuckDuckGoSearchTool, HfApiModel
+
+model = HfApiModel()
+
+agent = CodeAgent(tools=[DuckDuckGoSearchTool()], model=model, executor_type="e2b")
+```
+
+Reference Solution:
+
+```python
+from smolagents import CodeAgent, E2BSandbox
+
+agent = CodeAgent(
+    tools=[],
+    model=model,
+    sandbox=E2BSandbox(),
+    additional_authorized_imports=["numpy"]
+)
+```
+
+##### Assessment Criteria:
+- E2B sandbox is properly configured
+- Authorized imports are appropriately limited
+- Security settings are correctly implemented
+- Basic agent configuration is maintained
+
+##### Feedback:
+Overall Assessment
+The student's solution has some strengths and areas for improvement. Let's break down the feedback based on the assessment criteria.
+
+#### Question 4: Implement a Tool-Calling Agent
+Your Solution:
+
+```python
+# Create a tool-calling agent
+from smolagents import ToolCallingAgent, DuckDuckGoSearchTool, HfApiModel
+
+agent = ToolCallingAgent(
+    # Add configuration here
+    tools=[DuckDuckGoSearchTool()],
+    model=HfApiModel(),
+    name="tool_calling_agent",
+    description="This is the tool-calling agent",
+)
+```
+
+Reference Solution:
+
+```python
+from smolagents import ToolCallingAgent
+
+agent = ToolCallingAgent(
+    tools=[custom_tool],
+    model=model,
+    max_steps=5,
+    name="tool_agent",
+    description="Executes specific tools based on input"
+)
+```
+
+##### Assessment Criteria:
+- Tools are properly configured
+- Step limit is set appropriately
+- Agent name and description are provided
+- Basic configuration is complete
+
+##### Feedback:
+Overall Assessment
+The student's solution meets the basic configuration requirements for the tool-calling agent. However, there are a few areas for improvement.
+
+Tools are properly configured
+✅ The student has used DuckDuckGoSearchTool, which is a valid tool. However, the reference solution uses a custom tool, which might be more specific to the task. The student's choice is acceptable as long as DuckDuckGoSearchTool is appropriate for the task.
+
+Step limit is set appropriately
+❌ The student's solution does not include a step limit, which is a crucial part of the configuration. The reference solution sets max_steps to 5, which is a reasonable default. The student should include this parameter in their configuration.
+
+Agent name and description are provided
+✅ The student has provided a name and description for the agent, which meets the requirement. However, the description could be more detailed to better reflect the agent's purpose.
+
+Basic configuration is complete
+❌ While the student has provided most of the necessary configuration, the missing step limit prevents the configuration from being considered complete.
+
+#### Question 5: Set Up Model Integration
+Your Solution:
+
+```python
+# Configure model integration
+from smolagents import HfApiModel
+
+model = HfApiModel(
+    model_id="Qwen/Qwen2.5-Coder-32B-Instruct", provider="together"
+)  # Add model configuration
+```
+Reference Solution:
+
+```python
+from smolagents import HfApiModel, LiteLLMModel
+
+# Hugging Face model
+hf_model = HfApiModel("Qwen/Qwen2.5-Coder-32B-Instruct")
+
+# Alternative model via LiteLLM
+other_model = LiteLLMModel("anthropic/claude-3-sonnet")
+```
+
+##### Assessment Criteria:
+- Correct model imports are included
+- Model is properly initialized
+- Model ID is correctly specified
+- Alternative model option is provided
