@@ -1,10 +1,10 @@
 ---
-title: "Hugging Face Agents Course Unit2"
+title: "Hugging Face Agents Course Unit2.1 - The smolagents Framework"
 date: "2025-02-27 21:45:44 +0900"
 last_modified_at: "2025-02-27 21:45:44 +0900"
 ---
 
-## Hugging Face Agents Course Unit2
+## Hugging Face Agents Course Unit2.1 - The smolagents Framework
 https://huggingface.co/learn/agents-course/unit2/introduction
 
 ### 要約
