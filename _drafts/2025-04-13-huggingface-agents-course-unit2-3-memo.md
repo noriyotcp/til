@@ -232,7 +232,7 @@ Alfred（執事）がWayne氏（バットマン）のドキュメント分析を
 * ドキュメント関連タスクのための明確なツールの定義。
 * ツール呼び出し間のコンテキストを維持するための堅牢な状態トラッカーの作成。
 * ツールの失敗に対するエラー処理。
-* 以前のやり取りのコンテキスト認識の維持 (add_messagesオペレータによって保証)。
+* 以前のやり取りのコンテキスト認識の維持 (`add_messages` オペレータによって保証)。
 
 
 Alfredは、これらの機能とワークフローにより、Wayne氏が必要とするドキュメント分析サービスを提供しています。
@@ -242,10 +242,168 @@ Alfredは、これらの機能とワークフローにより、Wayne氏が必要
 ### Defining Agent’s State
 何にせよまず状態の定義から始まる
 
+> この状態は、これまで見てきたものよりも少し複雑です。AnyMessage はメッセージを定義する langchain のクラスで、add_messages は最新のメッセージを最新の状態で上書きするのではなく追加する演算子です。これは LangGraph の新しい概念で、状態に演算子を追加することで、それらの相互作用方法を定義できます。
+
+```python
+class AgentState(TypedDict):
+    # The document provided
+    input_file: Optional[str]  # Contains file path (PDF/PNG)
+    messages: Annotated[list[AnyMessage], add_messages]
+```
+
 ### Preparing Tools
+
+```python
+vision_llm = ChatOpenAI(model="gpt-4o")
+
+def extract_text(img_path: str) -> str:
+    """
+    Extract text from an image file using a multimodal model.
+    
+    Master Wayne often leaves notes with his training regimen or meal plans.
+    This allows me to properly analyze the contents.
+    """
+    all_text = ""
+    try:
+        # Read image and encode as base64
+        # rb は Read Binary の略で、バイナリファイルを読み込むためのモード
+        with open(img_path, "rb") as image_file:
+            image_bytes = image_file.read()
+
+        image_base64 = base64.b64encode(image_bytes).decode("utf-8")
+
+        # Prepare the prompt including the base64 image data
+        message = [
+            HumanMessage( # このクラスがどこから来たのかわからないがメッセージを表すのだろう
+                content=[
+                    {
+                        "type": "text",
+                        "text": (
+                            "Extract all the text from this image. "
+                            "Return only the extracted text, no explanations."
+                        ),
+                    },
+                    {
+                        "type": "image_url",
+                        "image_url": {
+                            "url": f"data:image/png;base64,{image_base64}"
+                        },
+                    },
+                ]
+            )
+        ]
+
+        # Call the vision-capable model
+        response = vision_llm.invoke(message)
+
+        # Append extracted text
+        all_text += response.content + "\n\n"
+
+        return all_text.strip()
+    except Exception as e:
+        # A butler should handle errors gracefully
+        error_msg = f"Error extracting text: {str(e)}"
+        print(error_msg)
+        return ""
+
+def divide(a: int, b: int) -> float:
+    """Divide a and b - for Master Wayne's occasional calculations."""
+    return a / b
+
+# Equip the butler with tools
+tools = [
+    divide,
+    extract_text
+]
+
+llm = ChatOpenAI(model="gpt-4o")
+llm_with_tools = llm.bind_tools(tools, parallel_tool_calls=False)
+```
+
 ### The nodes
+
+```python
+def assistant(state: AgentState):
+    # System message
+    textual_description_of_tool="""
+extract_text(img_path: str) -> str:
+    Extract text from an image file using a multimodal model.
+
+    Args:
+        img_path: A local image file path (strings).
+
+    Returns:
+        A single string containing the concatenated text extracted from each image.
+divide(a: int, b: int) -> float:
+    Divide a and b
+"""
+    image=state["input_file"]
+    sys_msg = SystemMessage(content=f"You are an helpful butler named Alfred that serves Mr. Wayne and Batman. You can analyse documents and run computations with provided tools:\n{textual_description_of_tool} \n You have access to some optional images. Currently the loaded image is: {image}")
+
+    return {
+        "messages": [llm_with_tools.invoke([sys_msg] + state["messages"])],
+        "input_file": state["input_file"]
+    }
+```
+
 ### The ReAct Pattern: How I Assist Mr. Wayne
+
+1. Reason about his documents and requests
+2. Act by using appropriate tools
+3. Observe the results
+4. Repeat as necessary until I’ve fully addressed his needs
+
+```python
+# The graph
+builder = StateGraph(AgentState)
+
+# Define nodes: these do the work
+builder.add_node("assistant", assistant)
+builder.add_node("tools", ToolNode(tools))
+
+# Define edges: these determine how the control flow moves
+builder.add_edge(START, "assistant")
+builder.add_conditional_edges(
+    "assistant",
+    # If the latest message requires a tool, route to tools
+    # Otherwise, provide a direct response
+    tools_condition,
+)
+builder.add_edge("tools", "assistant")
+react_graph = builder.compile()
+
+# Show the butler's thought process
+display(Image(react_graph.get_graph(xray=True).draw_mermaid_png()))
+```
+
+We connect the tools node back to the assistant, forming a loop.
+
+- After the assistant node executes, tools_condition checks if the model’s output is a tool call.
+- If it is a tool call, the flow is directed to the tools node.
+- The tools node connects back to assistant.
+- This loop continues as long as the model decides to call tools.
+- If the model response is not a tool call, the flow is directed to END, terminating the process.
+
 ### The Butler in Action
 #### Example 1: Simple Calculations
+
+```python
+messages = [HumanMessage(content="Divide 6790 by 5")]
+messages = react_graph.invoke({"messages": messages, "input_file": None})
+
+# Show the messages
+for m in messages['messages']:
+    m.pretty_print()
+```
+
 #### Example 2: Analyzing Master Wayne’s Training Documents
+```python
+messages = [HumanMessage(content="According to the note provided by Mr. Wayne in the provided images. What's the list of items I should buy for the dinner menu?")]
+messages = react_graph.invoke({"messages": messages, "input_file": "Batman_training_and_meals.png"})
+```
+
 ### Key Takeaways
+1. Define clear tools for specific document-related tasks
+2. Create a robust state tracker to maintain context between tool calls
+3. Consider error handling for tools fails
+4. Maintain contextual awareness of previous interactions (ensured by the operator add_messages)
