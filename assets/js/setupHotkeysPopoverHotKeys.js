@@ -14,6 +14,10 @@ export const setupHotkeysPopoverHotkeys = () => {
     }
   });
 
-  // Press '?' to open popover
-  hotkeys("shift+/", () => hotkeysPopover.showPopover());
+  // Add native keydown listener for debugging Shift+? event
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "?" && e.shiftKey) {
+      hotkeysPopover.showPopover();
+    }
+  });
 };
