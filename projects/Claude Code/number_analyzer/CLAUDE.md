@@ -63,7 +63,11 @@ Lint実行: `rubocop` (RuboCop導入後)
 
 ## Architecture
 
-Project architecture will be documented as the codebase develops.
+現在のプロジェクト構成：
+- `number_analyzer.rb` - メインの統計計算スクリプト（初心者風コード）
+- `CLAUDE.md` - Claude Codeへの開発ガイダンス
+
+将来的にはリファクタリング後のバージョンやテストファイルが追加される予定。
 
 ## Future Improvements for CLAUDE.md
 
