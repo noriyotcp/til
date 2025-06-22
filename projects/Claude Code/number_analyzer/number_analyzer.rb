@@ -46,6 +46,37 @@ class NumberAnalyzer
     Math.sqrt(variance)
   end
 
+  def self.parse_input_numbers(argv = ARGV)
+    if argv.empty?
+      # デフォルト配列を使用
+      [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+    else
+      # コマンドライン引数から数値を取得
+      invalid_args = []
+      numbers = argv.map do |arg|
+        begin
+          Float(arg)
+        rescue ArgumentError
+          invalid_args << arg
+          nil
+        end
+      end.compact
+
+      unless invalid_args.empty?
+        puts "エラー: 無効な引数が見つかりました: #{invalid_args.join(', ')}"
+        puts "数値のみを入力してください。"
+        exit 1
+      end
+
+      if numbers.empty?
+        puts "エラー: 有効な数値が見つかりませんでした。"
+        exit 1
+      end
+
+      numbers
+    end
+  end
+
   private
 
   def display_results(stats)
@@ -65,7 +96,9 @@ class NumberAnalyzer
   end
 end
 
-# 実行部分
-numbers = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
-analyzer = NumberAnalyzer.new(numbers)
-analyzer.calculate_statistics
+# 実行部分（スクリプトとして実行された場合のみ）
+if __FILE__ == $0
+  numbers = NumberAnalyzer.parse_input_numbers
+  analyzer = NumberAnalyzer.new(numbers)
+  analyzer.calculate_statistics
+end
