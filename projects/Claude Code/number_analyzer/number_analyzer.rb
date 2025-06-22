@@ -1,31 +1,29 @@
 # 数値配列の統計を計算するプログラム
-arr = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+class NumberAnalyzer
+  def initialize(numbers)
+    @numbers = numbers
+  end
 
-# 合計を計算
-sum = 0
-arr.each do |val|
-  sum = sum + val
-end
-puts "合計: #{sum}"
+  def calculate_statistics
+    total = @numbers.sum
+    average = total.to_f / @numbers.length
+    maximum = @numbers.max
+    minimum = @numbers.min
 
-# 平均を計算
-avg = sum / arr.length
-puts "平均: #{avg}"
+    display_results(total, average, maximum, minimum)
+  end
 
-# 最大値を計算
-max = arr[0]
-arr.each do |val|
-  if val > max
-    max = val
+  private
+
+  def display_results(total, average, maximum, minimum)
+    puts "合計: #{total}"
+    puts "平均: #{average}"
+    puts "最大値: #{maximum}"
+    puts "最小値: #{minimum}"
   end
 end
-puts "最大値: #{max}"
 
-# 最小値を計算
-min = arr[0]
-arr.each do |val|
-  if val < min
-    min = val
-  end
-end
-puts "最小値: #{min}"
+# 実行部分
+numbers = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+analyzer = NumberAnalyzer.new(numbers)
+analyzer.calculate_statistics

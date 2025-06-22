@@ -64,10 +64,13 @@ Lint実行: `rubocop` (RuboCop導入後)
 ## Architecture
 
 現在のプロジェクト構成：
-- `number_analyzer.rb` - メインの統計計算スクリプト（初心者風コード）
+- `number_analyzer.rb` - 数値統計計算スクリプト（Ruby組み込みメソッドとクラス設計でリファクタリング完了）
 - `CLAUDE.md` - Claude Codeへの開発ガイダンス
 
-将来的にはリファクタリング後のバージョンやテストファイルが追加される予定。
+実装済み機能：
+- NumberAnalyzerクラスによる統計計算のカプセル化
+- Ruby組み込みメソッド（sum, max, min）の活用
+- 意味のある変数名とメソッド分割
 
 ## Future Improvements for CLAUDE.md
 
