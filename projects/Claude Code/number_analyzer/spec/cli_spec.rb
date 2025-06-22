@@ -1,10 +1,10 @@
 # frozen_string_literal: true
 
 require 'English'
-require_relative '../number_analyzer'
+require_relative '../cli'
 
-RSpec.describe 'CLI functionality' do
-  let(:script_path) { File.join(__dir__, '..', 'number_analyzer.rb') }
+RSpec.describe CLI do
+  let(:script_path) { File.join(__dir__, '..', 'cli.rb') }
 
   describe 'CLI.parse_arguments' do
     context 'with no arguments' do
