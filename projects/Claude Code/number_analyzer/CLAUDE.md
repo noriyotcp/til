@@ -100,6 +100,22 @@ Lint実行: `rubocop`
 
 高品質な統計分析ツールが完成しましたが、さらなる拡張が可能です：
 
+### 実用化への発展計画
+
+#### Phase 1: CLI機能追加（現在の構造維持）
+- [ ] コマンドライン引数での数値入力対応（`ruby number_analyzer.rb 1 2 3 4 5`）
+- [ ] 入力検証とエラーハンドリング（数値以外、空入力等）
+- [ ] デフォルト配列へのフォールバック機能
+- [ ] CLI機能の包括的テスト追加
+
+#### Phase 2: Ruby Gem構造化（ローカル配布用）
+- [ ] `lib/number_analyzer.rb`へのコード移動
+- [ ] `bin/number_analyzer`実行ファイル作成
+- [ ] `number_analyzer.gemspec`定義ファイル作成
+- [ ] 標準的なGem構造への再編成
+- [ ] `bundle exec number_analyzer`での実行対応
+- [ ] gemspec仕様に合わせたテスト構造更新
+
 ### 発展的な統計機能
 - [x] 中央値（median）の計算機能 ✅ 完了
 - [x] 最頻値（mode）の検出機能 ✅ 完了  
