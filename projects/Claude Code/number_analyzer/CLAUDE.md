@@ -57,22 +57,25 @@ Rubyを使い、リファクタリング対象のコード生成からClaude Cod
 
 ## Development Commands
 
-Ruby実行: `ruby cli.rb` (デフォルト) / `ruby cli.rb 1 2 3 4 5` (引数指定)
+Ruby実行: `bundle exec number_analyzer` (デフォルト) / `bundle exec number_analyzer 1 2 3 4 5` (引数指定)
 依存関係インストール: `bundle install`
 テスト実行: `rspec`
 Lint実行: `rubocop`
 
 ## Architecture
 
-現在のプロジェクト構成：
-- `number_analyzer.rb` - NumberAnalyzerクラス（純粋な統計計算ライブラリ）
-- `cli.rb` - CLIクラス + エントリーポイント（コマンドライン実行）
-- `Gemfile` - 依存関係管理（RSpec、RuboCop）
+現在のプロジェクト構成（Ruby Gem構造）：
+- `lib/number_analyzer.rb` - NumberAnalyzerクラス（純粋な統計計算ライブラリ）
+- `lib/number_analyzer/cli.rb` - NumberAnalyzer::CLIクラス（コマンドライン処理）
+- `bin/number_analyzer` - 実行可能ファイル（エントリーポイント）
+- `number_analyzer.gemspec` - Gem定義ファイル
+- `Gemfile` - gemspec参照による依存関係管理
 - `spec/number_analyzer_spec.rb` - NumberAnalyzerクラスのテストスイート（17のテストケース）
-- `spec/cli_spec.rb` - CLIクラスのテストスイート（10のテストケース）
+- `spec/number_analyzer/cli_spec.rb` - NumberAnalyzer::CLIクラスのテストスイート（10のテストケース）
 - `spec/spec_helper.rb` - RSpec設定ファイル
 - `.rspec` - RSpecコマンドライン設定
 - `.rubocop.yml` + `.rubocop_todo.yml` - コードスタイル設定
+- `README.md` - Gem使用方法とAPI説明
 - `CLAUDE.md` - Claude Codeへの開発ガイダンス
 
 実装済み統計機能：
@@ -82,23 +85,25 @@ Lint実行: `rubocop`
 - **標準偏差（standard deviation）**: 数学的に正確な計算
 
 技術的特徴：
+- **Ruby Gem準拠**: 標準的なGem構造（lib/, bin/, spec/）による配布可能なパッケージ
 - **SRP準拠**: 単一責任原則に従ったクラス分離（統計計算とCLI処理を分離）
-- **クラス設計**: NumberAnalyzerクラス（統計計算）+ CLIクラス（コマンドライン処理）
+- **名前空間設計**: NumberAnalyzer::CLIによる衝突回避とモジュール性
+- **クリーンアーキテクチャ**: bin → CLI → NumberAnalyzer の明確な依存関係
 - **Ruby言語活用**: 組み込みメソッド（sum, max, min, tally, sort）の効果的利用
 - **コード品質**: 意味のある変数名、適切なメソッド分割、ハッシュベースのデータ構造
 - **テスト戦略**: 包括的なRSpecテストスイート（統計機能17例 + CLI機能10例）
 - **スタイル準拠**: RuboCop完全準拠（specファイル除外設定、パラメータリスト最適化）
-- **依存関係管理**: Bundlerによるクリーンな環境構築
-- **アーキテクチャ**: ライブラリとエントリーポイントの明確な分離
+- **依存関係管理**: gemspecによる標準的なGem依存関係定義
 
 ## プロジェクト完成状況
 
-✅ **リファクタリングプロジェクト完全完了 + アーキテクチャ改善**
-- 初心者風コード → プロフェッショナルなRubyコード
+✅ **リファクタリング + Ruby Gem化 完全完了**
+- 初心者風コード → プロフェッショナルなRuby Gem
 - 7つの統計指標を計算・表示する完全な分析ツール
 - 27個のテストケース（統計17例 + CLI10例）で包括的品質保証
 - RuboCop完全準拠のクリーンなコードベース
-- SRP準拠のクリーンアーキテクチャ（統計計算とCLI処理の分離）
+- 標準的なRuby Gem構造による配布可能なパッケージ
+- `bundle exec number_analyzer`での実行対応完了
 
 ## Next Steps (Optional)
 
@@ -112,7 +117,7 @@ Lint実行: `rubocop`
 - [x] デフォルト配列へのフォールバック機能
 - [x] CLI機能の包括的テスト追加（10のテストケース）
 
-#### Phase 2: Ruby Gem構造化（ローカル配布用）
+#### Phase 2: Ruby Gem構造化（ローカル配布用）✅ 完了
 
 **最終的なディレクトリ構造：**
 ```
@@ -141,16 +146,33 @@ NumberAnalyzer::CLI (コマンドライン処理)
 NumberAnalyzer (純粋な統計計算ライブラリ)
 ```
 
-**実装ステップ：**
-- [ ] ステップ1: ディレクトリ構造作成（`lib/number_analyzer`, `bin`, `spec/number_analyzer`）
-- [ ] ステップ2: ファイル移動（`number_analyzer.rb` → `lib/`、`cli.rb` → `lib/number_analyzer/`）
-- [ ] ステップ3: 名前空間調整（`class CLI` → `class NumberAnalyzer::CLI`）
-- [ ] ステップ4: require文調整（相対パス、名前空間対応）
-- [ ] ステップ5: `bin/number_analyzer`実行ファイル作成
-- [ ] ステップ6: `number_analyzer.gemspec`定義ファイル作成
-- [ ] ステップ7: テスト構造更新（`spec/number_analyzer/cli_spec.rb`）
-- [ ] ステップ8: `bundle exec number_analyzer`での実行確認
-- [ ] ステップ9: README.md作成（Gemとしての使用方法）
+**実装ステップ：** ✅ 全完了
+- [x] ステップ1: ディレクトリ構造作成（`lib/number_analyzer`, `bin`, `spec/number_analyzer`）
+- [x] ステップ2: ファイル移動（`number_analyzer.rb` → `lib/`、`cli.rb` → `lib/number_analyzer/`）
+- [x] ステップ3: 名前空間調整（`class CLI` → `class NumberAnalyzer::CLI`）
+- [x] ステップ4: require文調整（相対パス、名前空間対応）
+- [x] ステップ5: `bin/number_analyzer`実行ファイル作成
+- [x] ステップ6: `number_analyzer.gemspec`定義ファイル作成
+- [x] ステップ7: テスト構造更新（`spec/number_analyzer/cli_spec.rb`）
+- [x] ステップ8: `bundle exec number_analyzer`での実行確認
+- [x] ステップ9: README.md作成（Gemとしての使用方法）
+
+#### Phase 3: 統計機能拡張（推奨次ステップ）
+**目標**: 数学的に完全な統計分析ツールへの発展
+
+**実装予定機能：**
+- [ ] 分散（variance）の計算と表示
+- [ ] 四分位数（Q1, Q2, Q3）の算出  
+- [ ] 四分位範囲（IQR: Interquartile Range）の計算
+- [ ] カスタムパーセンタイル計算機能
+- [ ] 度数分布とヒストグラム的な分析
+- [ ] 外れ値検出（IQRベース）
+
+**技術的改善：**
+- [ ] 統計結果のハッシュ構造を拡張
+- [ ] より詳細な出力フォーマット
+- [ ] 新機能の包括的テスト追加
+- [ ] README.mdに新機能の使用例追加
 
 ### 発展的な統計機能
 - [x] 中央値（median）の計算機能 ✅ 完了
