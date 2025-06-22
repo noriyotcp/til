@@ -1,9 +1,10 @@
 # frozen_string_literal: true
 
-require_relative 'number_analyzer'
+require_relative '../number_analyzer'
 
 # Command Line Interface for NumberAnalyzer
-class CLI
+class NumberAnalyzer
+  class CLI
   def self.parse_arguments(argv = ARGV)
     if argv.empty?
       # デフォルト配列を使用
@@ -32,11 +33,12 @@ class CLI
       numbers
     end
   end
+  end
 end
 
 # 実行部分（スクリプトとして実行された場合のみ）
 if __FILE__ == $PROGRAM_NAME
-  numbers = CLI.parse_arguments
+  numbers = NumberAnalyzer::CLI.parse_arguments
   analyzer = NumberAnalyzer.new(numbers)
   analyzer.calculate_statistics
 end

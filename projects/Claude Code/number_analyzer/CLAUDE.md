@@ -27,7 +27,7 @@ Rubyを使い、リファクタリング対象のコード生成からClaude Cod
 > *   その配列の合計、平均、最大値、最小値を計算して出力する
 > *   **重要：** Rubyの便利な組み込みメソッド（`sum`, `max`, `min`など）はあえて使わず、基本的なループ処理（`each`など）を使って計算ロジックを実装してください。変数名も `arr` や `val` のようなシンプルなものにしてください。
 
-このように依頼することで、意図的に冗長で、変数名も素っ気ない、リファクタリングのしがいがあるコードを生成させることができます。
+このように依頼することで、意図的に冗長で、変数名も素っ子なし、リファクタリングのしがいがあるコードを生成させることができます。
 
 ---
 
@@ -57,7 +57,7 @@ Rubyを使い、リファクタリング対象のコード生成からClaude Cod
 
 ## Development Commands
 
-Ruby実行: `ruby number_analyzer.rb`
+Ruby実行: `ruby cli.rb` (デフォルト) / `ruby cli.rb 1 2 3 4 5` (引数指定)
 依存関係インストール: `bundle install`
 テスト実行: `rspec`
 Lint実行: `rubocop`
@@ -65,9 +65,11 @@ Lint実行: `rubocop`
 ## Architecture
 
 現在のプロジェクト構成：
-- `number_analyzer.rb` - 完全な統計分析スクリプト（7つの統計指標を計算・表示）
+- `number_analyzer.rb` - NumberAnalyzerクラス（純粋な統計計算ライブラリ）
+- `cli.rb` - CLIクラス + エントリーポイント（コマンドライン実行）
 - `Gemfile` - 依存関係管理（RSpec、RuboCop）
-- `spec/number_analyzer_spec.rb` - 包括的RSpecテストスイート（17のテストケース）
+- `spec/number_analyzer_spec.rb` - NumberAnalyzerクラスのテストスイート（17のテストケース）
+- `spec/cli_spec.rb` - CLIクラスのテストスイート（10のテストケース）
 - `spec/spec_helper.rb` - RSpec設定ファイル
 - `.rspec` - RSpecコマンドライン設定
 - `.rubocop.yml` + `.rubocop_todo.yml` - コードスタイル設定
@@ -80,21 +82,23 @@ Lint実行: `rubocop`
 - **標準偏差（standard deviation）**: 数学的に正確な計算
 
 技術的特徴：
-- **クラス設計**: NumberAnalyzerクラスによる統計計算のカプセル化
+- **SRP準拠**: 単一責任原則に従ったクラス分離（統計計算とCLI処理を分離）
+- **クラス設計**: NumberAnalyzerクラス（統計計算）+ CLIクラス（コマンドライン処理）
 - **Ruby言語活用**: 組み込みメソッド（sum, max, min, tally, sort）の効果的利用
 - **コード品質**: 意味のある変数名、適切なメソッド分割、ハッシュベースのデータ構造
-- **テスト戦略**: 包括的なRSpecテストスイート（基本機能、エッジケース、高度統計）
+- **テスト戦略**: 包括的なRSpecテストスイート（統計機能17例 + CLI機能10例）
 - **スタイル準拠**: RuboCop完全準拠（specファイル除外設定、パラメータリスト最適化）
 - **依存関係管理**: Bundlerによるクリーンな環境構築
-- **リファクタリング**: 長いパラメータリストの解消、データ構造の改善
+- **アーキテクチャ**: ライブラリとエントリーポイントの明確な分離
 
 ## プロジェクト完成状況
 
-✅ **リファクタリングプロジェクト完全完了**
+✅ **リファクタリングプロジェクト完全完了 + アーキテクチャ改善**
 - 初心者風コード → プロフェッショナルなRubyコード
 - 7つの統計指標を計算・表示する完全な分析ツール
-- 17個のテストケースで包括的品質保証
+- 27個のテストケース（統計17例 + CLI10例）で包括的品質保証
 - RuboCop完全準拠のクリーンなコードベース
+- SRP準拠のクリーンアーキテクチャ（統計計算とCLI処理の分離）
 
 ## Next Steps (Optional)
 
@@ -102,19 +106,51 @@ Lint実行: `rubocop`
 
 ### 実用化への発展計画
 
-#### Phase 1: CLI機能追加（現在の構造維持）
-- [ ] コマンドライン引数での数値入力対応（`ruby number_analyzer.rb 1 2 3 4 5`）
-- [ ] 入力検証とエラーハンドリング（数値以外、空入力等）
-- [ ] デフォルト配列へのフォールバック機能
-- [ ] CLI機能の包括的テスト追加
+#### Phase 1: CLI機能追加（現在の構造維持）✅ 完了
+- [x] コマンドライン引数での数値入力対応（`ruby cli.rb 1 2 3 4 5`）
+- [x] 入力検証とエラーハンドリング（数値以外、空入力等）
+- [x] デフォルト配列へのフォールバック機能
+- [x] CLI機能の包括的テスト追加（10のテストケース）
 
 #### Phase 2: Ruby Gem構造化（ローカル配布用）
-- [ ] `lib/number_analyzer.rb`へのコード移動
-- [ ] `bin/number_analyzer`実行ファイル作成
-- [ ] `number_analyzer.gemspec`定義ファイル作成
-- [ ] 標準的なGem構造への再編成
-- [ ] `bundle exec number_analyzer`での実行対応
-- [ ] gemspec仕様に合わせたテスト構造更新
+
+**最終的なディレクトリ構造：**
+```
+number_analyzer/
+├── lib/
+│   ├── number_analyzer.rb          # NumberAnalyzerクラス（独立ライブラリ）
+│   └── number_analyzer/
+│       └── cli.rb                  # NumberAnalyzer::CLIクラス
+├── bin/
+│   └── number_analyzer             # 実行可能ファイル（shebang付き）
+├── spec/
+│   ├── number_analyzer_spec.rb     # NumberAnalyzer単体テスト
+│   ├── number_analyzer/
+│   │   └── cli_spec.rb             # NumberAnalyzer::CLI単体テスト
+│   └── spec_helper.rb
+├── number_analyzer.gemspec         # Gem定義
+└── README.md                       # Gem使用方法
+```
+
+**依存関係の方向：**
+```
+bin/number_analyzer (エントリーポイント)
+ ↓ requires
+NumberAnalyzer::CLI (コマンドライン処理)
+ ↓ requires  
+NumberAnalyzer (純粋な統計計算ライブラリ)
+```
+
+**実装ステップ：**
+- [ ] ステップ1: ディレクトリ構造作成（`lib/number_analyzer`, `bin`, `spec/number_analyzer`）
+- [ ] ステップ2: ファイル移動（`number_analyzer.rb` → `lib/`、`cli.rb` → `lib/number_analyzer/`）
+- [ ] ステップ3: 名前空間調整（`class CLI` → `class NumberAnalyzer::CLI`）
+- [ ] ステップ4: require文調整（相対パス、名前空間対応）
+- [ ] ステップ5: `bin/number_analyzer`実行ファイル作成
+- [ ] ステップ6: `number_analyzer.gemspec`定義ファイル作成
+- [ ] ステップ7: テスト構造更新（`spec/number_analyzer/cli_spec.rb`）
+- [ ] ステップ8: `bundle exec number_analyzer`での実行確認
+- [ ] ステップ9: README.md作成（Gemとしての使用方法）
 
 ### 発展的な統計機能
 - [x] 中央値（median）の計算機能 ✅ 完了
@@ -130,7 +166,7 @@ Lint実行: `rubocop`
 - [ ] 並列処理による高速化
 
 ### ユーザーインターフェース
-- [ ] コマンドライン引数からの数値入力
+- [x] コマンドライン引数からの数値入力 ✅ 完了
 - [ ] ファイルからのデータ読み込み機能
 - [ ] インタラクティブな操作モード
 
@@ -140,3 +176,7 @@ Lint実行: `rubocop`
 - [ ] グラフ生成ライブラリとの連携
 
 これらの機能追加により、より実用的な統計解析ツールへと発展させることができます。
+
+## Memories
+
+- この計画を @CLAUDE.md に書き込んでおくと良いでしょうか？それともその必要はなさそうでしょうか？

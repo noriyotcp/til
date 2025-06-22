@@ -1,3 +1,8 @@
+PATH
+  remote: .
+  specs:
+    number_analyzer (1.0.0)
+
 GEM
   remote: https://rubygems.org/
   specs:
@@ -51,8 +56,9 @@ PLATFORMS
   x86_64-darwin-24
 
 DEPENDENCIES
-  rspec (~> 3.12)
-  rubocop (~> 1.50)
+  number_analyzer!
+  rspec (~> 3.0)
+  rubocop (~> 1.0)
 
 RUBY VERSION
    ruby 3.4.1p0

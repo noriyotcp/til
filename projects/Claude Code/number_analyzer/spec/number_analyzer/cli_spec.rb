@@ -1,49 +1,49 @@
 # frozen_string_literal: true
 
 require 'English'
-require_relative '../cli'
+require_relative '../../lib/number_analyzer/cli'
 
-RSpec.describe CLI do
-  let(:script_path) { File.join(__dir__, '..', 'cli.rb') }
+RSpec.describe NumberAnalyzer::CLI do
+  let(:script_path) { File.join(__dir__, '..', '..', 'lib', 'number_analyzer', 'cli.rb') }
 
   describe 'CLI.parse_arguments' do
     context 'with no arguments' do
       it 'returns default array' do
-        result = CLI.parse_arguments([])
+        result = NumberAnalyzer::CLI.parse_arguments([])
         expect(result).to eq([1, 2, 3, 4, 5, 6, 7, 8, 9, 10])
       end
     end
 
     context 'with valid integer arguments' do
       it 'parses integers correctly' do
-        result = CLI.parse_arguments(%w[1 2 3 4 5])
+        result = NumberAnalyzer::CLI.parse_arguments(%w[1 2 3 4 5])
         expect(result).to eq([1.0, 2.0, 3.0, 4.0, 5.0])
       end
     end
 
     context 'with valid float arguments' do
       it 'parses floats correctly' do
-        result = CLI.parse_arguments(['1.5', '2.7', '3.2'])
+        result = NumberAnalyzer::CLI.parse_arguments(['1.5', '2.7', '3.2'])
         expect(result).to eq([1.5, 2.7, 3.2])
       end
     end
 
     context 'with mixed valid arguments' do
       it 'parses mixed integers and floats' do
-        result = CLI.parse_arguments(['1', '2.5', '3', '4.7'])
+        result = NumberAnalyzer::CLI.parse_arguments(['1', '2.5', '3', '4.7'])
         expect(result).to eq([1.0, 2.5, 3.0, 4.7])
       end
     end
 
     context 'with invalid arguments' do
       it 'exits with error message for non-numeric input' do
-        expect { CLI.parse_arguments(%w[1 abc 3]) }
+        expect { NumberAnalyzer::CLI.parse_arguments(%w[1 abc 3]) }
           .to output(/エラー: 無効な引数が見つかりました: abc/).to_stdout
           .and raise_error(SystemExit)
       end
 
       it 'exits with error message for all invalid input' do
-        expect { CLI.parse_arguments(%w[abc def]) }
+        expect { NumberAnalyzer::CLI.parse_arguments(%w[abc def]) }
           .to output(/エラー: 無効な引数が見つかりました: abc, def/).to_stdout
           .and raise_error(SystemExit)
       end
