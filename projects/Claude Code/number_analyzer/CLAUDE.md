@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-Rubyを使い、リファクタリング対象のコード生成からClaude Codeに任せるという進め方、素晴らしいですね。Claude Codeのコード生成能力とリファクタリング能力の両方を体験できる、とても良いプロジェクトになります。
+Rubyを使い、リファクタリング対象のコード生成からClaude Codeに任せる。Claude Codeのコード生成能力とリファクタリング能力の両方を体験できる、とても良いプロジェクトになります。
 
 では、具体的な手順を詰めていきましょう。
 
