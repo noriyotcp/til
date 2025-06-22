@@ -65,28 +65,39 @@ Lint実行: `rubocop`
 ## Architecture
 
 現在のプロジェクト構成：
-- `number_analyzer.rb` - 数値統計計算スクリプト（Ruby組み込みメソッドとクラス設計でリファクタリング完了）
+- `number_analyzer.rb` - 完全な統計分析スクリプト（7つの統計指標を計算・表示）
 - `Gemfile` - 依存関係管理（RSpec、RuboCop）
-- `spec/number_analyzer_spec.rb` - RSpecテストスイート（5つのテストケース）
+- `spec/number_analyzer_spec.rb` - 包括的RSpecテストスイート（17のテストケース）
 - `spec/spec_helper.rb` - RSpec設定ファイル
 - `.rspec` - RSpecコマンドライン設定
+- `.rubocop.yml` + `.rubocop_todo.yml` - コードスタイル設定
 - `CLAUDE.md` - Claude Codeへの開発ガイダンス
 
-実装済み機能：
+実装済み統計機能：
+- **基本統計**: 合計、平均、最大値、最小値
+- **中央値（median）**: 奇数/偶数要素対応、未ソート配列対応
+- **最頻値（mode）**: 単一/複数モード、モードなし検出
+- **標準偏差（standard deviation）**: 数学的に正確な計算
+
+技術的特徴：
 - NumberAnalyzerクラスによる統計計算のカプセル化
-- Ruby組み込みメソッド（sum, max, min）の活用
+- Ruby組み込みメソッド（sum, max, min, tally, sort）の活用
 - 意味のある変数名とメソッド分割
-- 包括的なRSpecテストスイート（基本機能、エッジケース対応）
+- 包括的なRSpecテストスイート（基本機能、エッジケース、高度統計）
+- RuboCopによるコードスタイル準拠
 - Bundler による依存関係管理
 
 ## Next Steps (Optional)
 
-リファクタリングプロジェクトは完了しましたが、さらなる拡張が可能です：
+基本的な統計分析ツールは完成しましたが、さらなる拡張が可能です：
 
 ### 発展的な統計機能
-- [ ] 中央値（median）の計算機能
-- [ ] 最頻値（mode）の検出機能
-- [ ] 標準偏差（standard deviation）の算出
+- [x] 中央値（median）の計算機能 ✅ 完了
+- [x] 最頻値（mode）の検出機能 ✅ 完了  
+- [x] 標準偏差（standard deviation）の算出 ✅ 完了
+- [ ] 分散（variance）の表示
+- [ ] 四分位範囲（IQR）の計算
+- [ ] 偏差値の算出
 
 ### パフォーマンス向上
 - [ ] 大規模データセットでの性能テスト
