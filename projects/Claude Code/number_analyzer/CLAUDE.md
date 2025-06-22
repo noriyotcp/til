@@ -58,19 +58,26 @@ Rubyを使い、リファクタリング対象のコード生成からClaude Cod
 ## Development Commands
 
 Ruby実行: `ruby number_analyzer.rb`
-テスト実行: `ruby -r minitest/autorun test_*.rb` (テストファイル作成後)
-Lint実行: `rubocop` (RuboCop導入後)
+依存関係インストール: `bundle install`
+テスト実行: `rspec`
+Lint実行: `rubocop`
 
 ## Architecture
 
 現在のプロジェクト構成：
 - `number_analyzer.rb` - 数値統計計算スクリプト（Ruby組み込みメソッドとクラス設計でリファクタリング完了）
+- `Gemfile` - 依存関係管理（RSpec、RuboCop）
+- `spec/number_analyzer_spec.rb` - RSpecテストスイート（5つのテストケース）
+- `spec/spec_helper.rb` - RSpec設定ファイル
+- `.rspec` - RSpecコマンドライン設定
 - `CLAUDE.md` - Claude Codeへの開発ガイダンス
 
 実装済み機能：
 - NumberAnalyzerクラスによる統計計算のカプセル化
 - Ruby組み込みメソッド（sum, max, min）の活用
 - 意味のある変数名とメソッド分割
+- 包括的なRSpecテストスイート（基本機能、エッジケース対応）
+- Bundler による依存関係管理
 
 ## Future Improvements for CLAUDE.md
 
