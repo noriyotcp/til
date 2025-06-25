@@ -19,16 +19,7 @@ class NumberAnalyzer
     display_results(stats)
   end
 
-  def median
-    sorted = @numbers.sort
-    length = sorted.length
-
-    if length.odd?
-      sorted[length / 2]
-    else
-      (sorted[(length / 2) - 1] + sorted[length / 2]).to_f / 2
-    end
-  end
+  def median = percentile(50)
 
   def mode
     frequency = @numbers.tally
