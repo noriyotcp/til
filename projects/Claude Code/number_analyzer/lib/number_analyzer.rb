@@ -38,6 +38,13 @@ class NumberAnalyzer
     frequency.select { |_, count| count == max_frequency }.keys
   end
 
+  def variance
+    return 0 if @numbers.length <= 1
+
+    mean = @numbers.sum.to_f / @numbers.length
+    @numbers.sum { |num| (num - mean)**2 } / @numbers.length
+  end
+
   def standard_deviation
     return 0 if @numbers.length <= 1
 

@@ -120,6 +120,40 @@ RSpec.describe NumberAnalyzer do
     end
   end
 
+  describe '#variance' do
+    context 'with known values' do
+      let(:known_analyzer) { NumberAnalyzer.new([2, 4, 4, 4, 5, 5, 7, 9]) }
+      
+      it 'calculates variance correctly' do
+        expect(known_analyzer.variance).to be_within(0.01).of(4.0)
+      end
+    end
+
+    context 'with single value' do
+      let(:single_analyzer) { NumberAnalyzer.new([5]) }
+      
+      it 'returns zero for single value' do
+        expect(single_analyzer.variance).to eq(0)
+      end
+    end
+
+    context 'with identical values' do
+      let(:identical_analyzer) { NumberAnalyzer.new([3, 3, 3, 3]) }
+      
+      it 'returns zero for identical values' do
+        expect(identical_analyzer.variance).to eq(0)
+      end
+    end
+
+    context 'with simple case' do
+      let(:simple_analyzer) { NumberAnalyzer.new([1, 2, 3, 4, 5]) }
+      
+      it 'calculates variance for simple sequence' do
+        expect(simple_analyzer.variance).to be_within(0.01).of(2.0)
+      end
+    end
+  end
+
   describe '#standard_deviation' do
     context 'with known values' do
       let(:known_analyzer) { NumberAnalyzer.new([2, 4, 4, 4, 5, 5, 7, 9]) }
