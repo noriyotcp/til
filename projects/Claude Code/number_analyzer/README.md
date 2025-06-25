@@ -11,8 +11,9 @@ NumberAnalyzer provides the following statistical calculations:
 - **Maximum** - Largest value
 - **Minimum** - Smallest value
 - **Median** - Middle value (handles both odd/even array lengths)
+- **Variance** - Measure of data variability (displayed to 2 decimal places)
 - **Mode** - Most frequently occurring value(s)
-- **Standard Deviation** - Measure of data spread
+- **Standard Deviation** - Square root of variance, measure of data spread
 
 ## Installation
 
@@ -69,6 +70,7 @@ analyzer.calculate_statistics
 
 # Or access individual methods
 puts analyzer.median          # => 5.5
+puts analyzer.variance        # => 8.25
 puts analyzer.mode            # => []
 puts analyzer.standard_deviation  # => 2.87
 ```
@@ -81,6 +83,7 @@ puts analyzer.standard_deviation  # => 2.87
 最大値: 10
 最小値: 1
 中央値: 5.5
+分散: 8.25
 最頻値: なし
 標準偏差: 2.87
 ```
