@@ -221,9 +221,9 @@ RSpec.describe NumberAnalyzer do
         result = quartiles_analyzer.quartiles
         
         expect(result).to be_a(Hash)
-        expect(result[:q1]).to be_within(0.01).of(3.25)
-        expect(result[:q2]).to be_within(0.01).of(5.5)
-        expect(result[:q3]).to be_within(0.01).of(7.75)
+        expect(result[:q1]).to eq(3.25)
+        expect(result[:q2]).to eq(5.5)
+        expect(result[:q3]).to eq(7.75)
       end
       
       it 'has q2 equal to median' do
