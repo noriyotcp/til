@@ -46,6 +46,24 @@ class NumberAnalyzer
     @numbers.sum { |num| (num - mean)**2 } / @numbers.length
   end
 
+  def percentile(p)
+    return nil if @numbers.empty?
+    return @numbers.first if @numbers.length == 1
+    
+    sorted = @numbers.sort
+    rank = (p / 100.0) * (sorted.length - 1)
+    
+    lower_index = rank.floor
+    upper_index = rank.ceil
+    
+    if lower_index == upper_index
+      sorted[lower_index]
+    else
+      weight = rank - lower_index
+      sorted[lower_index] * (1 - weight) + sorted[upper_index] * weight
+    end
+  end
+
   def standard_deviation
     Math.sqrt(variance)
   end

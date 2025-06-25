@@ -154,6 +154,65 @@ RSpec.describe NumberAnalyzer do
     end
   end
 
+  describe '#percentile' do
+    context 'with known dataset' do
+      let(:percentile_analyzer) { NumberAnalyzer.new([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]) }
+      
+      it 'calculates 25th percentile correctly' do
+        expect(percentile_analyzer.percentile(25)).to be_within(0.01).of(3.25)
+      end
+      
+      it 'calculates 50th percentile correctly (median)' do
+        expect(percentile_analyzer.percentile(50)).to be_within(0.01).of(5.5)
+      end
+      
+      it 'calculates 75th percentile correctly' do
+        expect(percentile_analyzer.percentile(75)).to be_within(0.01).of(7.75)
+      end
+      
+      it 'calculates 95th percentile correctly' do
+        expect(percentile_analyzer.percentile(95)).to be_within(0.01).of(9.55)
+      end
+    end
+
+    context 'with boundary values' do
+      let(:boundary_analyzer) { NumberAnalyzer.new([1, 2, 3, 4, 5]) }
+      
+      it 'returns minimum for 0th percentile' do
+        expect(boundary_analyzer.percentile(0)).to eq(1)
+      end
+      
+      it 'returns maximum for 100th percentile' do
+        expect(boundary_analyzer.percentile(100)).to eq(5)
+      end
+    end
+
+    context 'with edge cases' do
+      let(:single_analyzer) { NumberAnalyzer.new([42]) }
+      let(:two_analyzer) { NumberAnalyzer.new([1, 3]) }
+      
+      it 'handles single value correctly' do
+        expect(single_analyzer.percentile(25)).to eq(42)
+        expect(single_analyzer.percentile(50)).to eq(42)
+        expect(single_analyzer.percentile(75)).to eq(42)
+      end
+      
+      it 'handles two values correctly' do
+        expect(two_analyzer.percentile(25)).to eq(1.5)
+        expect(two_analyzer.percentile(50)).to eq(2.0)
+        expect(two_analyzer.percentile(75)).to eq(2.5)
+      end
+    end
+
+    context 'with unsorted data' do
+      let(:unsorted_analyzer) { NumberAnalyzer.new([5, 1, 9, 3, 7]) }
+      
+      it 'correctly sorts data before calculation' do
+        expect(unsorted_analyzer.percentile(50)).to eq(5)
+      end
+    end
+  end
+
   describe '#standard_deviation' do
     context 'with known values' do
       let(:known_analyzer) { NumberAnalyzer.new([2, 4, 4, 4, 5, 5, 7, 9]) }
