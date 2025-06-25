@@ -7,7 +7,7 @@ class NumberAnalyzer
   def calculate_statistics
     stats = {
       total: @numbers.sum,
-      average: @numbers.sum.to_f / @numbers.length,
+      average: average_value,
       maximum: @numbers.max,
       minimum: @numbers.min,
       median_value: median,
@@ -41,19 +41,19 @@ class NumberAnalyzer
   def variance
     return 0 if @numbers.length <= 1
 
-    mean = @numbers.sum.to_f / @numbers.length
+    mean = average_value
     @numbers.sum { |num| (num - mean)**2 } / @numbers.length
   end
 
   def standard_deviation
-    return 0 if @numbers.length <= 1
-
-    mean = @numbers.sum.to_f / @numbers.length
-    variance = @numbers.sum { |num| (num - mean)**2 } / @numbers.length
     Math.sqrt(variance)
   end
 
   private
+
+  def average_value
+    @numbers.sum.to_f / @numbers.length
+  end
 
   def display_results(stats)
     puts "合計: #{stats[:total]}"

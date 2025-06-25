@@ -16,7 +16,7 @@ RSpec.describe NumberAnalyzer do
     let(:single_analyzer) { NumberAnalyzer.new([42]) }
 
     it 'calculates statistics correctly' do
-      expected_output = "合計: 42\n平均: 42.0\n最大値: 42\n最小値: 42\n中央値: 42\n最頻値: なし\n標準偏差: 0\n"
+      expected_output = "合計: 42\n平均: 42.0\n最大値: 42\n最小値: 42\n中央値: 42\n最頻値: なし\n標準偏差: 0.0\n"
       
       expect { single_analyzer.calculate_statistics }.to output(expected_output).to_stdout
     end
