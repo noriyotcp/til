@@ -14,6 +14,8 @@ NumberAnalyzer provides the following statistical calculations:
 - **Variance** - Measure of data variability (displayed to 2 decimal places)
 - **Mode** - Most frequently occurring value(s)
 - **Standard Deviation** - Square root of variance, measure of data spread
+- **Percentile** - Any percentile value (0-100) using linear interpolation
+- **Quartiles** - Q1, Q2, Q3 values returned as a hash
 
 ## Installation
 
@@ -73,6 +75,11 @@ puts analyzer.median          # => 5.5
 puts analyzer.variance        # => 8.25
 puts analyzer.mode            # => []
 puts analyzer.standard_deviation  # => 2.87
+
+# New percentile and quartiles methods
+puts analyzer.percentile(25)  # => 3.25
+puts analyzer.percentile(95)  # => 9.55
+puts analyzer.quartiles       # => {q1: 3.25, q2: 5.5, q3: 7.75}
 ```
 
 ## Example Output
