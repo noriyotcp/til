@@ -11,6 +11,7 @@ class NumberAnalyzer
       maximum: @numbers.max,
       minimum: @numbers.min,
       median_value: median,
+      variance: variance,
       mode_values: mode,
       std_dev: standard_deviation
     }
@@ -39,7 +40,7 @@ class NumberAnalyzer
   end
 
   def variance
-    return 0 if @numbers.length <= 1
+    return 0.0 if @numbers.length <= 1
 
     mean = average_value
     @numbers.sum { |num| (num - mean)**2 } / @numbers.length
@@ -61,6 +62,7 @@ class NumberAnalyzer
     puts "最大値: #{stats[:maximum]}"
     puts "最小値: #{stats[:minimum]}"
     puts "中央値: #{stats[:median_value]}"
+    puts "分散: #{stats[:variance].round(2)}"
     puts "最頻値: #{format_mode(stats[:mode_values])}"
     puts "標準偏差: #{stats[:std_dev].round(2)}"
   end

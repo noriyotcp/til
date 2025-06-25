@@ -6,7 +6,7 @@ RSpec.describe NumberAnalyzer do
 
   describe '#calculate_statistics' do
     it 'outputs correct statistics for the given numbers' do
-      expected_output = "合計: 55\n平均: 5.5\n最大値: 10\n最小値: 1\n中央値: 5.5\n最頻値: なし\n標準偏差: 2.87\n"
+      expected_output = "合計: 55\n平均: 5.5\n最大値: 10\n最小値: 1\n中央値: 5.5\n分散: 8.25\n最頻値: なし\n標準偏差: 2.87\n"
       
       expect { analyzer.calculate_statistics }.to output(expected_output).to_stdout
     end
@@ -16,7 +16,7 @@ RSpec.describe NumberAnalyzer do
     let(:single_analyzer) { NumberAnalyzer.new([42]) }
 
     it 'calculates statistics correctly' do
-      expected_output = "合計: 42\n平均: 42.0\n最大値: 42\n最小値: 42\n中央値: 42\n最頻値: なし\n標準偏差: 0.0\n"
+      expected_output = "合計: 42\n平均: 42.0\n最大値: 42\n最小値: 42\n中央値: 42\n分散: 0.0\n最頻値: なし\n標準偏差: 0.0\n"
       
       expect { single_analyzer.calculate_statistics }.to output(expected_output).to_stdout
     end
@@ -26,7 +26,7 @@ RSpec.describe NumberAnalyzer do
     let(:negative_analyzer) { NumberAnalyzer.new([-5, -2, -10, -1]) }
 
     it 'handles negative numbers correctly' do
-      expected_output = "合計: -18\n平均: -4.5\n最大値: -1\n最小値: -10\n中央値: -3.5\n最頻値: なし\n標準偏差: 3.5\n"
+      expected_output = "合計: -18\n平均: -4.5\n最大値: -1\n最小値: -10\n中央値: -3.5\n分散: 12.25\n最頻値: なし\n標準偏差: 3.5\n"
       
       expect { negative_analyzer.calculate_statistics }.to output(expected_output).to_stdout
     end
@@ -36,7 +36,7 @@ RSpec.describe NumberAnalyzer do
     let(:mixed_analyzer) { NumberAnalyzer.new([-3, 0, 5, -1, 2]) }
 
     it 'calculates statistics correctly' do
-      expected_output = "合計: 3\n平均: 0.6\n最大値: 5\n最小値: -3\n中央値: 0\n最頻値: なし\n標準偏差: 2.73\n"
+      expected_output = "合計: 3\n平均: 0.6\n最大値: 5\n最小値: -3\n中央値: 0\n分散: 7.44\n最頻値: なし\n標準偏差: 2.73\n"
       
       expect { mixed_analyzer.calculate_statistics }.to output(expected_output).to_stdout
     end
@@ -46,7 +46,7 @@ RSpec.describe NumberAnalyzer do
     let(:duplicate_analyzer) { NumberAnalyzer.new([3, 3, 3, 3]) }
 
     it 'handles duplicate values correctly' do
-      expected_output = "合計: 12\n平均: 3.0\n最大値: 3\n最小値: 3\n中央値: 3.0\n最頻値: 3\n標準偏差: 0.0\n"
+      expected_output = "合計: 12\n平均: 3.0\n最大値: 3\n最小値: 3\n中央値: 3.0\n分散: 0.0\n最頻値: 3\n標準偏差: 0.0\n"
       
       expect { duplicate_analyzer.calculate_statistics }.to output(expected_output).to_stdout
     end
