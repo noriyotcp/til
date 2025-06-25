@@ -213,6 +213,64 @@ RSpec.describe NumberAnalyzer do
     end
   end
 
+  describe '#quartiles' do
+    context 'with known dataset' do
+      let(:quartiles_analyzer) { NumberAnalyzer.new([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]) }
+      
+      it 'returns hash with correct quartile values' do
+        result = quartiles_analyzer.quartiles
+        
+        expect(result).to be_a(Hash)
+        expect(result[:q1]).to be_within(0.01).of(3.25)
+        expect(result[:q2]).to be_within(0.01).of(5.5)
+        expect(result[:q3]).to be_within(0.01).of(7.75)
+      end
+      
+      it 'has q2 equal to median' do
+        result = quartiles_analyzer.quartiles
+        expect(result[:q2]).to eq(quartiles_analyzer.median)
+      end
+    end
+
+    context 'with different datasets' do
+      let(:small_analyzer) { NumberAnalyzer.new([1, 2, 3, 4, 5]) }
+      let(:even_analyzer) { NumberAnalyzer.new([2, 4, 6, 8]) }
+      
+      it 'calculates quartiles for small dataset' do
+        result = small_analyzer.quartiles
+        expect(result[:q1]).to eq(2.0)
+        expect(result[:q2]).to eq(3.0)
+        expect(result[:q3]).to eq(4.0)
+      end
+      
+      it 'calculates quartiles for even-length dataset' do
+        result = even_analyzer.quartiles
+        expect(result[:q1]).to eq(3.5)
+        expect(result[:q2]).to eq(5.0)
+        expect(result[:q3]).to eq(6.5)
+      end
+    end
+
+    context 'with edge cases' do
+      let(:single_analyzer) { NumberAnalyzer.new([42]) }
+      let(:identical_analyzer) { NumberAnalyzer.new([5, 5, 5, 5]) }
+      
+      it 'handles single value correctly' do
+        result = single_analyzer.quartiles
+        expect(result[:q1]).to eq(42)
+        expect(result[:q2]).to eq(42)
+        expect(result[:q3]).to eq(42)
+      end
+      
+      it 'handles identical values correctly' do
+        result = identical_analyzer.quartiles
+        expect(result[:q1]).to eq(5)
+        expect(result[:q2]).to eq(5)
+        expect(result[:q3]).to eq(5)
+      end
+    end
+  end
+
   describe '#standard_deviation' do
     context 'with known values' do
       let(:known_analyzer) { NumberAnalyzer.new([2, 4, 4, 4, 5, 5, 7, 9]) }

@@ -55,6 +55,14 @@ class NumberAnalyzer
     end
   end
 
+  def quartiles
+    {
+      q1: percentile(25),
+      q2: median,
+      q3: percentile(75)
+    }
+  end
+
   def standard_deviation
     Math.sqrt(variance)
   end
