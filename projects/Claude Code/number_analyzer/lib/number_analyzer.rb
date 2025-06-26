@@ -13,7 +13,8 @@ class NumberAnalyzer
       median_value: median,
       variance: variance,
       mode_values: mode,
-      std_dev: standard_deviation
+      std_dev: standard_deviation,
+      iqr: interquartile_range
     }
 
     display_results(stats)
@@ -89,6 +90,7 @@ class NumberAnalyzer
     puts "分散: #{stats[:variance].round(2)}"
     puts "最頻値: #{format_mode(stats[:mode_values])}"
     puts "標準偏差: #{stats[:std_dev].round(2)}"
+    puts "四分位範囲(IQR): #{stats[:iqr]&.round(2) || 'なし'}"
   end
 
   def format_mode(mode_values)
