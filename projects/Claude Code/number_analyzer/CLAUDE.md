@@ -61,6 +61,8 @@ Ruby実行: `bundle exec number_analyzer` (デフォルト) / `bundle exec numbe
 依存関係インストール: `bundle install`
 テスト実行: `rspec`
 Lint実行: `rubocop`
+コミットメッセージ生成: `/project:commit-message`
+Web検索: `/project:gemini-search`
 
 ## Architecture
 
@@ -77,6 +79,8 @@ Lint実行: `rubocop`
 - `.rubocop.yml` + `.rubocop_todo.yml` - コードスタイル設定
 - `README.md` - Gem使用方法とAPI説明
 - `CLAUDE.md` - Claude Codeへの開発ガイダンス
+- `.claude/commands/commit-message.md` - コミットメッセージ生成コマンド
+- `.claude/commands/gemini-search.md` - Web検索統合コマンド
 
 実装済み統計機能：
 - **基本統計**: 合計、平均、最大値、最小値
@@ -180,14 +184,14 @@ NumberAnalyzer (純粋な統計計算ライブラリ)
 - [x] より詳細な出力フォーマット ✅ 完了（分散表示追加）
 - [x] 新機能の包括的テスト追加 ✅ 完了（15のpercentile・quartilesテスト）
 - [x] 統一的な計算アーキテクチャ ✅ 完了（percentileベースの設計）
-- [ ] README.mdに新機能の使用例追加
+- [x] README.mdに新機能の使用例追加 ✅ 完了（IQR機能追加）
 
 ### 発展的な統計機能
 - [x] 中央値（median）の計算機能 ✅ 完了
 - [x] 最頻値（mode）の検出機能 ✅ 完了  
 - [x] 標準偏差（standard deviation）の算出 ✅ 完了
 - [x] 分散（variance）の表示 ✅ 完了
-- [ ] 四分位範囲（IQR）の計算
+- [x] 四分位範囲（IQR）の計算 ✅ 完了
 - [ ] 偏差値の算出
 
 ### パフォーマンス向上
@@ -209,7 +213,11 @@ NumberAnalyzer (純粋な統計計算ライブラリ)
 
 ## Important Reminders
 
-- **commit messages はマークダウンブロックの中に書くこと**
+- **commit messages はマークダウンブロックの中に書くこと** (推奨: `/project:commit-message` コマンド使用)
+- **新機能実装完了後は必ずREADME.mdの更新を確認すること**
+  - Features セクションへの機能追加
+  - Usage例の更新
+  - Example Output の更新
 - RSpec構文は `-e "pattern"` が基本（`::` は間違い）
 - TDDでは既存実装を理解してからテストを書く
 - 線形補間法を考慮したテスト期待値の設定

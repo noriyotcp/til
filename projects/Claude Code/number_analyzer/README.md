@@ -16,6 +16,7 @@ NumberAnalyzer provides the following statistical calculations:
 - **Standard Deviation** - Square root of variance, measure of data spread
 - **Percentile** - Any percentile value (0-100) using linear interpolation
 - **Quartiles** - Q1, Q2, Q3 values returned as a hash
+- **Interquartile Range (IQR)** - Q3-Q1, measure of data spread (middle 50%)
 
 ## Installation
 
@@ -76,10 +77,11 @@ puts analyzer.variance        # => 8.25
 puts analyzer.mode            # => []
 puts analyzer.standard_deviation  # => 2.87
 
-# New percentile and quartiles methods
+# New percentile, quartiles, and IQR methods
 puts analyzer.percentile(25)  # => 3.25
 puts analyzer.percentile(95)  # => 9.55
 puts analyzer.quartiles       # => {q1: 3.25, q2: 5.5, q3: 7.75}
+puts analyzer.interquartile_range  # => 4.5
 ```
 
 ## Example Output
@@ -93,6 +95,7 @@ puts analyzer.quartiles       # => {q1: 3.25, q2: 5.5, q3: 7.75}
 分散: 8.25
 最頻値: なし
 標準偏差: 2.87
+四分位範囲(IQR): 4.5
 ```
 
 ## Development
