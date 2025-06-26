@@ -63,6 +63,13 @@ class NumberAnalyzer
     }
   end
 
+  def interquartile_range
+    return nil if @numbers.empty?
+    
+    q = quartiles
+    q[:q3] - q[:q1]
+  end
+
   def standard_deviation
     Math.sqrt(variance)
   end

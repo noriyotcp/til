@@ -304,4 +304,46 @@ RSpec.describe NumberAnalyzer do
       end
     end
   end
+
+  describe '#interquartile_range' do
+    context 'with known dataset' do
+      let(:iqr_analyzer) { NumberAnalyzer.new([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]) }
+      
+      it 'calculates IQR correctly' do
+        # Q1 = 3.25, Q3 = 7.75, so IQR = 7.75 - 3.25 = 4.5
+        expect(iqr_analyzer.interquartile_range).to be_within(0.01).of(4.5)
+      end
+    end
+
+    context 'with simple sequence' do
+      let(:simple_analyzer) { NumberAnalyzer.new([1, 3, 5, 7, 9]) }
+      
+      it 'calculates IQR for odd number of values' do
+        # Q1 = 3, Q3 = 7, so IQR = 7 - 3 = 4
+        expect(simple_analyzer.interquartile_range).to eq(4)
+      end
+    end
+
+    context 'with edge cases' do
+      let(:single_analyzer) { NumberAnalyzer.new([42]) }
+      let(:two_analyzer) { NumberAnalyzer.new([1, 5]) }
+      
+      it 'handles single value' do
+        expect(single_analyzer.interquartile_range).to eq(0)
+      end
+      
+      it 'handles two values' do
+        # For [1, 5]: using linear interpolation, Q1 = 2, Q3 = 4, so IQR = 4 - 2 = 2
+        expect(two_analyzer.interquartile_range).to eq(2.0)
+      end
+    end
+
+    context 'with empty array' do
+      let(:empty_analyzer) { NumberAnalyzer.new([]) }
+      
+      it 'returns nil for empty array' do
+        expect(empty_analyzer.interquartile_range).to be_nil
+      end
+    end
+  end
 end
