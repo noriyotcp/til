@@ -17,6 +17,8 @@ NumberAnalyzer provides the following statistical calculations:
 - **Percentile** - Any percentile value (0-100) using linear interpolation
 - **Quartiles** - Q1, Q2, Q3 values returned as a hash
 - **Interquartile Range (IQR)** - Q3-Q1, measure of data spread (middle 50%)
+- **Outlier Detection** - Identifies outliers using IQR * 1.5 rule
+- **Deviation Scores** - Standardized scores with mean=50, showing relative position of each value
 
 ## Installation
 
@@ -82,6 +84,10 @@ puts analyzer.percentile(25)  # => 3.25
 puts analyzer.percentile(95)  # => 9.55
 puts analyzer.quartiles       # => {q1: 3.25, q2: 5.5, q3: 7.75}
 puts analyzer.interquartile_range  # => 4.5
+
+# Outlier detection and deviation scores
+puts analyzer.outliers        # => []
+puts analyzer.deviation_scores # => [34.33, 37.81, 41.3, 44.78, 48.26, 51.74, 55.22, 58.7, 62.19, 65.67]
 ```
 
 ## Example Output
@@ -96,6 +102,8 @@ puts analyzer.interquartile_range  # => 4.5
 最頻値: なし
 標準偏差: 2.87
 四分位範囲(IQR): 4.5
+外れ値: なし
+偏差値: 34.33, 37.81, 41.3, 44.78, 48.26, 51.74, 55.22, 58.7, 62.19, 65.67
 ```
 
 ## Development
