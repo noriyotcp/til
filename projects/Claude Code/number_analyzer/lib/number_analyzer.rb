@@ -17,7 +17,8 @@ class NumberAnalyzer
       mode_values: mode,
       std_dev: standard_deviation,
       iqr: interquartile_range,
-      outlier_values: outliers
+      outlier_values: outliers,
+      deviation_scores: deviation_scores
     }
 
     display_results(stats)
@@ -92,6 +93,20 @@ class NumberAnalyzer
     Math.sqrt(variance)
   end
 
+  def deviation_scores
+    return [] if @numbers.empty?
+
+    mean = average_value
+    std_dev = standard_deviation
+
+    # 標準偏差が0の場合は、全ての値を50とする
+    return Array.new(@numbers.length, 50.0) if std_dev.zero?
+
+    @numbers.map do |number|
+      ((((number - mean) / std_dev) * 10) + 50).round(2)
+    end
+  end
+
   private
 
   def average_value
@@ -109,6 +124,7 @@ class NumberAnalyzer
     puts "標準偏差: #{stats[:std_dev].round(2)}"
     puts "四分位範囲(IQR): #{stats[:iqr]&.round(2) || 'なし'}"
     puts "外れ値: #{format_outliers(stats[:outlier_values])}"
+    puts "偏差値: #{format_deviation_scores(stats[:deviation_scores])}"
   end
 
   def format_mode(mode_values)
@@ -121,5 +137,11 @@ class NumberAnalyzer
     return 'なし' if outlier_values.empty?
 
     outlier_values.join(', ')
+  end
+
+  def format_deviation_scores(deviation_scores)
+    return 'なし' if deviation_scores.empty?
+
+    deviation_scores.join(', ')
   end
 end

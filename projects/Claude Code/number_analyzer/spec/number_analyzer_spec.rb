@@ -6,7 +6,7 @@ RSpec.describe NumberAnalyzer do
 
   describe '#calculate_statistics' do
     it 'outputs correct statistics for the given numbers' do
-      expected_output = "合計: 55\n平均: 5.5\n最大値: 10\n最小値: 1\n中央値: 5.5\n分散: 8.25\n最頻値: なし\n標準偏差: 2.87\n四分位範囲(IQR): 4.5\n外れ値: なし\n"
+      expected_output = "合計: 55\n平均: 5.5\n最大値: 10\n最小値: 1\n中央値: 5.5\n分散: 8.25\n最頻値: なし\n標準偏差: 2.87\n四分位範囲(IQR): 4.5\n外れ値: なし\n偏差値: 34.33, 37.81, 41.3, 44.78, 48.26, 51.74, 55.22, 58.7, 62.19, 65.67\n"
       
       expect { analyzer.calculate_statistics }.to output(expected_output).to_stdout
     end
@@ -16,7 +16,7 @@ RSpec.describe NumberAnalyzer do
     let(:single_analyzer) { NumberAnalyzer.new([42]) }
 
     it 'calculates statistics correctly' do
-      expected_output = "合計: 42\n平均: 42.0\n最大値: 42\n最小値: 42\n中央値: 42\n分散: 0.0\n最頻値: なし\n標準偏差: 0.0\n四分位範囲(IQR): 0\n外れ値: なし\n"
+      expected_output = "合計: 42\n平均: 42.0\n最大値: 42\n最小値: 42\n中央値: 42\n分散: 0.0\n最頻値: なし\n標準偏差: 0.0\n四分位範囲(IQR): 0\n外れ値: なし\n偏差値: 50.0\n"
       
       expect { single_analyzer.calculate_statistics }.to output(expected_output).to_stdout
     end
@@ -26,7 +26,7 @@ RSpec.describe NumberAnalyzer do
     let(:negative_analyzer) { NumberAnalyzer.new([-5, -2, -10, -1]) }
 
     it 'handles negative numbers correctly' do
-      expected_output = "合計: -18\n平均: -4.5\n最大値: -1\n最小値: -10\n中央値: -3.5\n分散: 12.25\n最頻値: なし\n標準偏差: 3.5\n四分位範囲(IQR): 4.5\n外れ値: なし\n"
+      expected_output = "合計: -18\n平均: -4.5\n最大値: -1\n最小値: -10\n中央値: -3.5\n分散: 12.25\n最頻値: なし\n標準偏差: 3.5\n四分位範囲(IQR): 4.5\n外れ値: なし\n偏差値: 48.57, 57.14, 34.29, 60.0\n"
       
       expect { negative_analyzer.calculate_statistics }.to output(expected_output).to_stdout
     end
@@ -36,7 +36,7 @@ RSpec.describe NumberAnalyzer do
     let(:mixed_analyzer) { NumberAnalyzer.new([-3, 0, 5, -1, 2]) }
 
     it 'calculates statistics correctly' do
-      expected_output = "合計: 3\n平均: 0.6\n最大値: 5\n最小値: -3\n中央値: 0\n分散: 7.44\n最頻値: なし\n標準偏差: 2.73\n四分位範囲(IQR): 3\n外れ値: なし\n"
+      expected_output = "合計: 3\n平均: 0.6\n最大値: 5\n最小値: -3\n中央値: 0\n分散: 7.44\n最頻値: なし\n標準偏差: 2.73\n四分位範囲(IQR): 3\n外れ値: なし\n偏差値: 36.8, 47.8, 66.13, 44.13, 55.13\n"
       
       expect { mixed_analyzer.calculate_statistics }.to output(expected_output).to_stdout
     end
@@ -46,7 +46,7 @@ RSpec.describe NumberAnalyzer do
     let(:duplicate_analyzer) { NumberAnalyzer.new([3, 3, 3, 3]) }
 
     it 'handles duplicate values correctly' do
-      expected_output = "合計: 12\n平均: 3.0\n最大値: 3\n最小値: 3\n中央値: 3.0\n分散: 0.0\n最頻値: 3\n標準偏差: 0.0\n四分位範囲(IQR): 0.0\n外れ値: なし\n"
+      expected_output = "合計: 12\n平均: 3.0\n最大値: 3\n最小値: 3\n中央値: 3.0\n分散: 0.0\n最頻値: 3\n標準偏差: 0.0\n四分位範囲(IQR): 0.0\n外れ値: なし\n偏差値: 50.0, 50.0, 50.0, 50.0\n"
       
       expect { duplicate_analyzer.calculate_statistics }.to output(expected_output).to_stdout
     end
@@ -418,6 +418,89 @@ RSpec.describe NumberAnalyzer do
       
       it 'returns no outliers for identical values' do
         expect(identical_analyzer.outliers).to eq([])
+      end
+    end
+  end
+
+  describe '#deviation_scores' do
+    context 'with known dataset' do
+      # Dataset: [60, 70, 80, 90, 100]
+      # Mean = 80, Standard Deviation = 14.14
+      # Deviation scores:
+      # 60: (60-80)/14.14*10+50 = 35.86
+      # 70: (70-80)/14.14*10+50 = 42.93
+      # 80: (80-80)/14.14*10+50 = 50.0
+      # 90: (90-80)/14.14*10+50 = 57.07
+      # 100: (100-80)/14.14*10+50 = 64.14
+      let(:deviation_analyzer) { NumberAnalyzer.new([60, 70, 80, 90, 100]) }
+      
+      it 'calculates deviation scores correctly' do
+        scores = deviation_analyzer.deviation_scores
+        expect(scores).to be_a(Array)
+        expect(scores.length).to eq(5)
+        expect(scores[0]).to be_within(0.01).of(35.86)
+        expect(scores[1]).to be_within(0.01).of(42.93)
+        expect(scores[2]).to be_within(0.01).of(50.0)
+        expect(scores[3]).to be_within(0.01).of(57.07)
+        expect(scores[4]).to be_within(0.01).of(64.14)
+      end
+      
+      it 'has mean value as deviation score 50' do
+        scores = deviation_analyzer.deviation_scores
+        mean_score = scores[2] # 80 is the mean
+        expect(mean_score).to be_within(0.01).of(50.0)
+      end
+    end
+
+    context 'with simple sequence' do
+      # Dataset: [1, 2, 3, 4, 5]
+      # Mean = 3, Standard Deviation = 1.41
+      let(:simple_analyzer) { NumberAnalyzer.new([1, 2, 3, 4, 5]) }
+      
+      it 'calculates deviation scores for simple sequence' do
+        scores = simple_analyzer.deviation_scores
+        expect(scores.length).to eq(5)
+        expect(scores[2]).to be_within(0.01).of(50.0) # Middle value should be 50
+        expect(scores.first).to be < 50 # First value should be below 50
+        expect(scores.last).to be > 50 # Last value should be above 50
+      end
+    end
+
+    context 'with edge cases' do
+      let(:single_analyzer) { NumberAnalyzer.new([42]) }
+      let(:identical_analyzer) { NumberAnalyzer.new([5, 5, 5, 5]) }
+      
+      it 'handles single value' do
+        # Standard deviation is 0, so deviation score calculation is undefined
+        # Should return array with NaN or handle gracefully
+        expect { single_analyzer.deviation_scores }.not_to raise_error
+      end
+      
+      it 'handles identical values' do
+        # Standard deviation is 0, so deviation score calculation is undefined
+        expect { identical_analyzer.deviation_scores }.not_to raise_error
+      end
+    end
+
+    context 'with negative numbers' do
+      let(:negative_analyzer) { NumberAnalyzer.new([-10, -5, 0, 5, 10]) }
+      
+      it 'handles negative numbers correctly' do
+        scores = negative_analyzer.deviation_scores
+        expect(scores.length).to eq(5)
+        expect(scores[2]).to be_within(0.01).of(50.0) # Mean (0) should be 50
+      end
+    end
+
+    context 'with precision' do
+      let(:precision_analyzer) { NumberAnalyzer.new([1, 2, 3, 4, 5]) }
+      
+      it 'returns values rounded to 2 decimal places' do
+        scores = precision_analyzer.deviation_scores
+        scores.each do |score|
+          # Check that each score has at most 2 decimal places
+          expect(score).to eq(score.round(2))
+        end
       end
     end
   end
