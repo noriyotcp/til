@@ -14,7 +14,8 @@ class NumberAnalyzer
       variance: variance,
       mode_values: mode,
       std_dev: standard_deviation,
-      iqr: interquartile_range
+      iqr: interquartile_range,
+      outlier_values: outliers
     }
 
     display_results(stats)
@@ -71,6 +72,20 @@ class NumberAnalyzer
     q[:q3] - q[:q1]
   end
 
+  def outliers
+    return [] if @numbers.empty? || @numbers.length <= 2
+    
+    q = quartiles
+    iqr = interquartile_range
+    
+    return [] if iqr == 0  # 全て同じ値の場合
+    
+    lower_bound = q[:q1] - 1.5 * iqr
+    upper_bound = q[:q3] + 1.5 * iqr
+    
+    @numbers.select { |num| num < lower_bound || num > upper_bound }
+  end
+
   def standard_deviation
     Math.sqrt(variance)
   end
@@ -91,12 +106,19 @@ class NumberAnalyzer
     puts "最頻値: #{format_mode(stats[:mode_values])}"
     puts "標準偏差: #{stats[:std_dev].round(2)}"
     puts "四分位範囲(IQR): #{stats[:iqr]&.round(2) || 'なし'}"
+    puts "外れ値: #{format_outliers(stats[:outlier_values])}"
   end
 
   def format_mode(mode_values)
     return 'なし' if mode_values.empty?
 
     mode_values.join(', ')
+  end
+
+  def format_outliers(outlier_values)
+    return 'なし' if outlier_values.empty?
+
+    outlier_values.join(', ')
   end
 end
 

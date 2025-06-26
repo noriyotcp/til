@@ -6,7 +6,7 @@ RSpec.describe NumberAnalyzer do
 
   describe '#calculate_statistics' do
     it 'outputs correct statistics for the given numbers' do
-      expected_output = "合計: 55\n平均: 5.5\n最大値: 10\n最小値: 1\n中央値: 5.5\n分散: 8.25\n最頻値: なし\n標準偏差: 2.87\n四分位範囲(IQR): 4.5\n"
+      expected_output = "合計: 55\n平均: 5.5\n最大値: 10\n最小値: 1\n中央値: 5.5\n分散: 8.25\n最頻値: なし\n標準偏差: 2.87\n四分位範囲(IQR): 4.5\n外れ値: なし\n"
       
       expect { analyzer.calculate_statistics }.to output(expected_output).to_stdout
     end
@@ -16,7 +16,7 @@ RSpec.describe NumberAnalyzer do
     let(:single_analyzer) { NumberAnalyzer.new([42]) }
 
     it 'calculates statistics correctly' do
-      expected_output = "合計: 42\n平均: 42.0\n最大値: 42\n最小値: 42\n中央値: 42\n分散: 0.0\n最頻値: なし\n標準偏差: 0.0\n四分位範囲(IQR): 0\n"
+      expected_output = "合計: 42\n平均: 42.0\n最大値: 42\n最小値: 42\n中央値: 42\n分散: 0.0\n最頻値: なし\n標準偏差: 0.0\n四分位範囲(IQR): 0\n外れ値: なし\n"
       
       expect { single_analyzer.calculate_statistics }.to output(expected_output).to_stdout
     end
@@ -26,7 +26,7 @@ RSpec.describe NumberAnalyzer do
     let(:negative_analyzer) { NumberAnalyzer.new([-5, -2, -10, -1]) }
 
     it 'handles negative numbers correctly' do
-      expected_output = "合計: -18\n平均: -4.5\n最大値: -1\n最小値: -10\n中央値: -3.5\n分散: 12.25\n最頻値: なし\n標準偏差: 3.5\n四分位範囲(IQR): 4.5\n"
+      expected_output = "合計: -18\n平均: -4.5\n最大値: -1\n最小値: -10\n中央値: -3.5\n分散: 12.25\n最頻値: なし\n標準偏差: 3.5\n四分位範囲(IQR): 4.5\n外れ値: なし\n"
       
       expect { negative_analyzer.calculate_statistics }.to output(expected_output).to_stdout
     end
@@ -36,7 +36,7 @@ RSpec.describe NumberAnalyzer do
     let(:mixed_analyzer) { NumberAnalyzer.new([-3, 0, 5, -1, 2]) }
 
     it 'calculates statistics correctly' do
-      expected_output = "合計: 3\n平均: 0.6\n最大値: 5\n最小値: -3\n中央値: 0\n分散: 7.44\n最頻値: なし\n標準偏差: 2.73\n四分位範囲(IQR): 3\n"
+      expected_output = "合計: 3\n平均: 0.6\n最大値: 5\n最小値: -3\n中央値: 0\n分散: 7.44\n最頻値: なし\n標準偏差: 2.73\n四分位範囲(IQR): 3\n外れ値: なし\n"
       
       expect { mixed_analyzer.calculate_statistics }.to output(expected_output).to_stdout
     end
@@ -46,7 +46,7 @@ RSpec.describe NumberAnalyzer do
     let(:duplicate_analyzer) { NumberAnalyzer.new([3, 3, 3, 3]) }
 
     it 'handles duplicate values correctly' do
-      expected_output = "合計: 12\n平均: 3.0\n最大値: 3\n最小値: 3\n中央値: 3.0\n分散: 0.0\n最頻値: 3\n標準偏差: 0.0\n四分位範囲(IQR): 0.0\n"
+      expected_output = "合計: 12\n平均: 3.0\n最大値: 3\n最小値: 3\n中央値: 3.0\n分散: 0.0\n最頻値: 3\n標準偏差: 0.0\n四分位範囲(IQR): 0.0\n外れ値: なし\n"
       
       expect { duplicate_analyzer.calculate_statistics }.to output(expected_output).to_stdout
     end
@@ -343,6 +343,81 @@ RSpec.describe NumberAnalyzer do
       
       it 'returns nil for empty array' do
         expect(empty_analyzer.interquartile_range).to be_nil
+      end
+    end
+  end
+
+  describe '#outliers' do
+    context 'with typical outlier data' do
+      # Dataset: [1, 2, 3, 4, 5, 100]
+      # Q1 = 2.25, Q3 = 4.75, IQR = 2.5
+      # Lower bound = Q1 - 1.5*IQR = 2.25 - 3.75 = -1.5
+      # Upper bound = Q3 + 1.5*IQR = 4.75 + 3.75 = 8.5
+      # So 100 is an outlier (100 > 8.5)
+      let(:outlier_analyzer) { NumberAnalyzer.new([1, 2, 3, 4, 5, 100]) }
+      
+      it 'identifies upper outliers correctly' do
+        expect(outlier_analyzer.outliers).to contain_exactly(100)
+      end
+    end
+
+    context 'with lower outlier' do
+      # Dataset: [-50, 1, 2, 3, 4, 5]
+      # Q1 = 1.25, Q3 = 3.75, IQR = 2.5
+      # Lower bound = Q1 - 1.5*IQR = 1.25 - 3.75 = -2.5
+      # Upper bound = Q3 + 1.5*IQR = 3.75 + 3.75 = 7.5
+      # So -50 is an outlier (-50 < -2.5)
+      let(:lower_outlier_analyzer) { NumberAnalyzer.new([-50, 1, 2, 3, 4, 5]) }
+      
+      it 'identifies lower outliers correctly' do
+        expect(lower_outlier_analyzer.outliers).to contain_exactly(-50)
+      end
+    end
+
+    context 'with multiple outliers' do
+      # Dataset: [-100, 1, 2, 3, 4, 5, 200]
+      # Q1 = 1.25, Q3 = 3.75, IQR = 2.5
+      # Lower bound = Q1 - 1.5*IQR = 1.25 - 3.75 = -2.5
+      # Upper bound = Q3 + 1.5*IQR = 3.75 + 3.75 = 7.5
+      # So -100 and 200 are outliers
+      let(:multi_outlier_analyzer) { NumberAnalyzer.new([-100, 1, 2, 3, 4, 5, 200]) }
+      
+      it 'identifies multiple outliers correctly' do
+        expect(multi_outlier_analyzer.outliers).to contain_exactly(-100, 200)
+      end
+    end
+
+    context 'with no outliers' do
+      let(:no_outlier_analyzer) { NumberAnalyzer.new([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]) }
+      
+      it 'returns empty array when no outliers present' do
+        expect(no_outlier_analyzer.outliers).to eq([])
+      end
+    end
+
+    context 'with edge cases' do
+      let(:single_analyzer) { NumberAnalyzer.new([42]) }
+      let(:two_analyzer) { NumberAnalyzer.new([1, 5]) }
+      let(:empty_analyzer) { NumberAnalyzer.new([]) }
+      
+      it 'handles single value' do
+        expect(single_analyzer.outliers).to eq([])
+      end
+      
+      it 'handles two values' do
+        expect(two_analyzer.outliers).to eq([])
+      end
+      
+      it 'handles empty array' do
+        expect(empty_analyzer.outliers).to eq([])
+      end
+    end
+
+    context 'with identical values' do
+      let(:identical_analyzer) { NumberAnalyzer.new([5, 5, 5, 5, 5]) }
+      
+      it 'returns no outliers for identical values' do
+        expect(identical_analyzer.outliers).to eq([])
       end
     end
   end
