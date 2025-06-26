@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # 数値配列の統計を計算するプログラム
 class NumberAnalyzer
   def initialize(numbers)
@@ -39,21 +41,21 @@ class NumberAnalyzer
     @numbers.sum { |num| (num - mean)**2 } / @numbers.length
   end
 
-  def percentile(p)
+  def percentile(percentile_value)
     return nil if @numbers.empty?
     return @numbers.first if @numbers.length == 1
-    
+
     sorted = @numbers.sort
-    rank = (p / 100.0) * (sorted.length - 1)
-    
+    rank = (percentile_value / 100.0) * (sorted.length - 1)
+
     lower_index = rank.floor
     upper_index = rank.ceil
-    
+
     if lower_index == upper_index
       sorted[lower_index]
     else
       weight = rank - lower_index
-      sorted[lower_index] * (1 - weight) + sorted[upper_index] * weight
+      (sorted[lower_index] * (1 - weight)) + (sorted[upper_index] * weight)
     end
   end
 
@@ -67,22 +69,22 @@ class NumberAnalyzer
 
   def interquartile_range
     return nil if @numbers.empty?
-    
+
     q = quartiles
     q[:q3] - q[:q1]
   end
 
   def outliers
     return [] if @numbers.empty? || @numbers.length <= 2
-    
+
     q = quartiles
     iqr = interquartile_range
-    
-    return [] if iqr == 0  # 全て同じ値の場合
-    
-    lower_bound = q[:q1] - 1.5 * iqr
-    upper_bound = q[:q3] + 1.5 * iqr
-    
+
+    return [] if iqr.zero? # 全て同じ値の場合
+
+    lower_bound = q[:q1] - (1.5 * iqr)
+    upper_bound = q[:q3] + (1.5 * iqr)
+
     @numbers.select { |num| num < lower_bound || num > upper_bound }
   end
 
@@ -121,4 +123,3 @@ class NumberAnalyzer
     outlier_values.join(', ')
   end
 end
-

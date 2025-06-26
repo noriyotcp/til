@@ -9,3 +9,12 @@ Metrics/BlockLength:
 
 Metrics/MethodLength:
   Max: 25
+
+Metrics/AbcSize:
+  Exclude:
+    - 'lib/number_analyzer.rb'  # Statistical calculation methods have inherent complexity
+
+Layout/LineLength:
+  Exclude:
+    - 'number_analyzer.gemspec'  # Gemspec descriptions often exceed line length limits
+    - 'spec/**/*'               # Test files often have long expectation strings

@@ -4,3 +4,8 @@ source 'https://rubygems.org'
 gemspec
 
 ruby '~> 3.4.0'
+
+group :development do
+  gem 'rspec', '~> 3.0'
+  gem 'rubocop', '~> 1.0'
+end
