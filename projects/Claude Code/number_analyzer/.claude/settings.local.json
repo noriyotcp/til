@@ -2,7 +2,8 @@
   "permissions": {
     "allow": [
       "Bash(gemini:*)",
-      "Bash(ls:*)"
+      "Bash(ls:*)",
+      "Bash(rubocop:*)"
     ],
     "deny": []
   }
