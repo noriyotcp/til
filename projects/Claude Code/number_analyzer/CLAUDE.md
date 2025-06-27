@@ -84,7 +84,7 @@ Web検索: `/project:gemini-search`
 - `CLAUDE.md` - Claude Codeへの開発ガイダンス
 - `.claude/commands/commit-message.md` - コミットメッセージ生成コマンド
 - `.claude/commands/gemini-search.md` - Web検索統合コマンド
-- `sample_data.csv` / `sample_data.json` / `sample_data.txt` - サンプルデータファイル
+- `spec/fixtures/sample_data.csv` / `spec/fixtures/sample_data.json` / `spec/fixtures/sample_data.txt` - テスト用サンプルデータファイル
 
 実装済み統計機能：
 - **基本統計**: 合計、平均、最大値、最小値
