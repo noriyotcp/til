@@ -17,6 +17,10 @@ Gem::Specification.new do |spec|
   spec.metadata['changelog_uri'] = "#{spec.homepage}/CHANGELOG.md"
   spec.metadata['rubygems_mfa_required'] = 'true'
 
+  # Runtime dependencies
+  spec.add_dependency 'csv', '~> 3.0'
+  spec.add_dependency 'json', '~> 2.0'
+
   # Specify which files should be added to the gem when it is released.
   spec.files = Dir['lib/**/*.rb'] + Dir['bin/*'] + ['number_analyzer.gemspec', 'Gemfile', 'CLAUDE.md']
   spec.bindir = 'bin'
