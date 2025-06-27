@@ -10,7 +10,7 @@ class NumberAnalyzer
 
     def self.read_from_file(file_path)
       validate_file(file_path)
-      
+
       case File.extname(file_path).downcase
       when '.csv'
         read_csv(file_path)
@@ -31,12 +31,12 @@ class NumberAnalyzer
 
     private_class_method def self.read_csv(file_path)
       numbers = []
-      
+
       # まずはヘッダーなしで全ての行を数値として読み込みを試行
       CSV.foreach(file_path) do |row|
         value = row[0]
         next if value.nil? || value.strip.empty?
-        
+
         begin
           numbers << Float(value.strip)
         rescue ArgumentError
@@ -51,14 +51,14 @@ class NumberAnalyzer
           CSV.foreach(file_path, headers: true) do |row|
             value = row[0]
             next if value.nil? || value.strip.empty?
-            
+
             begin
               numbers << Float(value.strip)
             rescue ArgumentError
               next
             end
           end
-        rescue
+        rescue StandardError
           # ヘッダー処理でもエラーの場合は空配列のまま
         end
       end
@@ -88,7 +88,7 @@ class NumberAnalyzer
         # オブジェクト形式: {"numbers": [1, 2, 3, 4, 5]} または {"data": [1, 2, 3]}
         numbers_array = data['numbers'] || data['data'] || data.values.first
         raise ArgumentError, 'No numeric array found in JSON object' unless numbers_array.is_a?(Array)
-        
+
         numbers_array.map { |item| Float(item) }
       else
         raise ArgumentError, 'JSON must contain an array or object with numeric array'
@@ -102,17 +102,17 @@ class NumberAnalyzer
       raise ArgumentError, 'Text file is empty' if content.empty?
 
       numbers = []
-      
+
       # 各行を処理
       content.each_line do |line|
         line = line.strip
         next if line.empty?
-        
+
         # スペースまたはカンマ区切りをサポート
         values = line.split(/[,\s]+/)
         values.each do |value|
           next if value.empty?
-          
+
           begin
             numbers << Float(value)
           rescue ArgumentError
@@ -127,9 +127,9 @@ class NumberAnalyzer
     end
 
     private_class_method def self.validate_numbers(numbers, file_path)
-      if numbers.empty?
-        raise ArgumentError, "No valid numeric data found in file: #{file_path}"
-      end
+      return unless numbers.empty?
+
+      raise ArgumentError, "No valid numeric data found in file: #{file_path}"
     end
   end
 end

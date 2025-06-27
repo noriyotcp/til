@@ -53,11 +53,11 @@ RSpec.describe NumberAnalyzer::CLI do
   describe 'CLI file option' do
     it 'parses --file option correctly' do
       require 'tempfile'
-      
+
       Tempfile.create(['test', '.csv']) do |file|
         file.write("numbers\n1\n2\n3")
         file.rewind
-        
+
         result = NumberAnalyzer::CLI.parse_arguments(['--file', file.path])
         expect(result).to eq([1.0, 2.0, 3.0])
       end
@@ -65,28 +65,28 @@ RSpec.describe NumberAnalyzer::CLI do
 
     it 'parses -f option correctly' do
       require 'tempfile'
-      
+
       Tempfile.create(['test', '.json']) do |file|
         file.write('[4, 5, 6]')
         file.rewind
-        
+
         result = NumberAnalyzer::CLI.parse_arguments(['-f', file.path])
         expect(result).to eq([4.0, 5.0, 6.0])
       end
     end
 
     it 'exits with error when file path is missing after --file' do
-      expect {
+      expect do
         NumberAnalyzer::CLI.parse_arguments(['--file'])
-      }.to output(/エラー: --fileオプションにはファイルパスを指定してください/).to_stdout
-         .and raise_error(SystemExit)
+      end.to output(/エラー: --fileオプションにはファイルパスを指定してください/).to_stdout
+                                                        .and raise_error(SystemExit)
     end
 
     it 'exits with error when file does not exist' do
-      expect {
+      expect do
         NumberAnalyzer::CLI.parse_arguments(['--file', '/nonexistent/file.csv'])
-      }.to output(/ファイル読み込みエラー/).to_stdout
-         .and raise_error(SystemExit)
+      end.to output(/ファイル読み込みエラー/).to_stdout
+                                  .and raise_error(SystemExit)
     end
   end
 
@@ -122,11 +122,11 @@ RSpec.describe NumberAnalyzer::CLI do
 
     it 'runs with file input using --file option' do
       require 'tempfile'
-      
+
       Tempfile.create(['test', '.csv']) do |file|
         file.write("numbers\n10\n20\n30")
         file.rewind
-        
+
         output = `ruby "#{script_path}" --file "#{file.path}"`
         expect(output).to include('合計: 60')
         expect(output).to include('平均: 20')

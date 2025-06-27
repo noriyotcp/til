@@ -10,17 +10,17 @@ class NumberAnalyzer
     def self.parse_arguments(argv = ARGV)
       # ファイルオプションをチェック
       file_index = find_file_option_index(argv)
-      
+
       if file_index
         file_path = argv[file_index + 1]
         if file_path.nil? || file_path.start_with?('-')
           puts 'エラー: --fileオプションにはファイルパスを指定してください。'
           exit 1
         end
-        
+
         begin
           FileReader.read_from_file(file_path)
-        rescue => e
+        rescue StandardError => e
           puts "ファイル読み込みエラー: #{e.message}"
           exit 1
         end
@@ -35,7 +35,7 @@ class NumberAnalyzer
 
     private_class_method def self.find_file_option_index(argv)
       argv.each_with_index do |arg, index|
-        return index if arg == '--file' || arg == '-f'
+        return index if ['--file', '-f'].include?(arg)
       end
       nil
     end

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require_relative '../../lib/number_analyzer/file_reader'
 require 'tempfile'
 
@@ -7,7 +9,7 @@ RSpec.describe NumberAnalyzer::FileReader do
       let(:csv_content_with_header) do
         "numbers\n1\n2\n3\n4\n5"
       end
-      
+
       let(:csv_content_without_header) do
         "10\n20\n30\n40\n50"
       end
@@ -16,7 +18,7 @@ RSpec.describe NumberAnalyzer::FileReader do
         Tempfile.create(['test', '.csv']) do |file|
           file.write(csv_content_with_header)
           file.rewind
-          
+
           result = NumberAnalyzer::FileReader.read_from_file(file.path)
           expect(result).to eq([1.0, 2.0, 3.0, 4.0, 5.0])
         end
@@ -26,7 +28,7 @@ RSpec.describe NumberAnalyzer::FileReader do
         Tempfile.create(['test', '.csv']) do |file|
           file.write(csv_content_without_header)
           file.rewind
-          
+
           result = NumberAnalyzer::FileReader.read_from_file(file.path)
           expect(result).to eq([10.0, 20.0, 30.0, 40.0, 50.0])
         end
@@ -36,7 +38,7 @@ RSpec.describe NumberAnalyzer::FileReader do
         Tempfile.create(['test', '.csv']) do |file|
           file.write("numbers\n1\n\n2\n \n3")
           file.rewind
-          
+
           result = NumberAnalyzer::FileReader.read_from_file(file.path)
           expect(result).to eq([1.0, 2.0, 3.0])
         end
@@ -46,7 +48,7 @@ RSpec.describe NumberAnalyzer::FileReader do
         Tempfile.create(['test', '.csv']) do |file|
           file.write("numbers\n1\nabc\n2\nxyz\n3")
           file.rewind
-          
+
           result = NumberAnalyzer::FileReader.read_from_file(file.path)
           expect(result).to eq([1.0, 2.0, 3.0])
         end
@@ -58,7 +60,7 @@ RSpec.describe NumberAnalyzer::FileReader do
         Tempfile.create(['test', '.json']) do |file|
           file.write('[1, 2, 3, 4, 5]')
           file.rewind
-          
+
           result = NumberAnalyzer::FileReader.read_from_file(file.path)
           expect(result).to eq([1.0, 2.0, 3.0, 4.0, 5.0])
         end
@@ -68,7 +70,7 @@ RSpec.describe NumberAnalyzer::FileReader do
         Tempfile.create(['test', '.json']) do |file|
           file.write('{"numbers": [10, 20, 30, 40, 50]}')
           file.rewind
-          
+
           result = NumberAnalyzer::FileReader.read_from_file(file.path)
           expect(result).to eq([10.0, 20.0, 30.0, 40.0, 50.0])
         end
@@ -78,7 +80,7 @@ RSpec.describe NumberAnalyzer::FileReader do
         Tempfile.create(['test', '.json']) do |file|
           file.write('{"data": [100, 200, 300]}')
           file.rewind
-          
+
           result = NumberAnalyzer::FileReader.read_from_file(file.path)
           expect(result).to eq([100.0, 200.0, 300.0])
         end
@@ -88,7 +90,7 @@ RSpec.describe NumberAnalyzer::FileReader do
         Tempfile.create(['test', '.json']) do |file|
           file.write('{"values": [7, 8, 9]}')
           file.rewind
-          
+
           result = NumberAnalyzer::FileReader.read_from_file(file.path)
           expect(result).to eq([7.0, 8.0, 9.0])
         end
@@ -98,10 +100,10 @@ RSpec.describe NumberAnalyzer::FileReader do
         Tempfile.create(['test', '.json']) do |file|
           file.write('{invalid json}')
           file.rewind
-          
-          expect {
+
+          expect do
             NumberAnalyzer::FileReader.read_from_file(file.path)
-          }.to raise_error(ArgumentError, /Invalid JSON format/)
+          end.to raise_error(ArgumentError, /Invalid JSON format/)
         end
       end
 
@@ -109,10 +111,10 @@ RSpec.describe NumberAnalyzer::FileReader do
         Tempfile.create(['test', '.json']) do |file|
           file.write('{"text": "not an array"}')
           file.rewind
-          
-          expect {
+
+          expect do
             NumberAnalyzer::FileReader.read_from_file(file.path)
-          }.to raise_error(ArgumentError, /No numeric array found in JSON object/)
+          end.to raise_error(ArgumentError, /No numeric array found in JSON object/)
         end
       end
 
@@ -120,10 +122,10 @@ RSpec.describe NumberAnalyzer::FileReader do
         Tempfile.create(['test', '.json']) do |file|
           file.write('[1, "not a number", 3]')
           file.rewind
-          
-          expect {
+
+          expect do
             NumberAnalyzer::FileReader.read_from_file(file.path)
-          }.to raise_error(ArgumentError, /Invalid numeric data in JSON/)
+          end.to raise_error(ArgumentError, /Invalid numeric data in JSON/)
         end
       end
     end
@@ -133,7 +135,7 @@ RSpec.describe NumberAnalyzer::FileReader do
         Tempfile.create(['test', '.txt']) do |file|
           file.write('1 2 3 4 5')
           file.rewind
-          
+
           result = NumberAnalyzer::FileReader.read_from_file(file.path)
           expect(result).to eq([1.0, 2.0, 3.0, 4.0, 5.0])
         end
@@ -143,7 +145,7 @@ RSpec.describe NumberAnalyzer::FileReader do
         Tempfile.create(['test', '.txt']) do |file|
           file.write('10,20,30,40,50')
           file.rewind
-          
+
           result = NumberAnalyzer::FileReader.read_from_file(file.path)
           expect(result).to eq([10.0, 20.0, 30.0, 40.0, 50.0])
         end
@@ -153,7 +155,7 @@ RSpec.describe NumberAnalyzer::FileReader do
         Tempfile.create(['test', '.txt']) do |file|
           file.write("1 2 3\n4 5 6\n7,8,9")
           file.rewind
-          
+
           result = NumberAnalyzer::FileReader.read_from_file(file.path)
           expect(result).to eq([1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0])
         end
@@ -163,7 +165,7 @@ RSpec.describe NumberAnalyzer::FileReader do
         Tempfile.create(['test', '.txt']) do |file|
           file.write("1 2 3\n\n4 5 6\n \n")
           file.rewind
-          
+
           result = NumberAnalyzer::FileReader.read_from_file(file.path)
           expect(result).to eq([1.0, 2.0, 3.0, 4.0, 5.0, 6.0])
         end
@@ -173,7 +175,7 @@ RSpec.describe NumberAnalyzer::FileReader do
         Tempfile.create(['test', '.txt']) do |file|
           file.write('1 abc 2 xyz 3')
           file.rewind
-          
+
           result = NumberAnalyzer::FileReader.read_from_file(file.path)
           expect(result).to eq([1.0, 2.0, 3.0])
         end
@@ -183,41 +185,41 @@ RSpec.describe NumberAnalyzer::FileReader do
         Tempfile.create(['test', '.txt']) do |file|
           file.write('')
           file.rewind
-          
-          expect {
+
+          expect do
             NumberAnalyzer::FileReader.read_from_file(file.path)
-          }.to raise_error(ArgumentError, 'Text file is empty')
+          end.to raise_error(ArgumentError, 'Text file is empty')
         end
       end
     end
 
     context 'with file validation' do
       it 'raises error for empty file path' do
-        expect {
+        expect do
           NumberAnalyzer::FileReader.read_from_file('')
-        }.to raise_error(ArgumentError, 'File path cannot be empty')
+        end.to raise_error(ArgumentError, 'File path cannot be empty')
       end
 
       it 'raises error for nil file path' do
-        expect {
+        expect do
           NumberAnalyzer::FileReader.read_from_file(nil)
-        }.to raise_error(ArgumentError, 'File path cannot be empty')
+        end.to raise_error(ArgumentError, 'File path cannot be empty')
       end
 
       it 'raises error for non-existent file' do
-        expect {
+        expect do
           NumberAnalyzer::FileReader.read_from_file('/path/to/nonexistent/file.csv')
-        }.to raise_error(Errno::ENOENT, /File not found/)
+        end.to raise_error(Errno::ENOENT, /File not found/)
       end
 
       it 'raises error for unsupported file format' do
         Tempfile.create(['test', '.xml']) do |file|
           file.write('<data>1,2,3</data>')
           file.rewind
-          
-          expect {
+
+          expect do
             NumberAnalyzer::FileReader.read_from_file(file.path)
-          }.to raise_error(ArgumentError, /Unsupported file format/)
+          end.to raise_error(ArgumentError, /Unsupported file format/)
         end
       end
     end
@@ -227,10 +229,10 @@ RSpec.describe NumberAnalyzer::FileReader do
         Tempfile.create(['test', '.csv']) do |file|
           file.write("text\nabc\ndef\nghi")
           file.rewind
-          
-          expect {
+
+          expect do
             NumberAnalyzer::FileReader.read_from_file(file.path)
-          }.to raise_error(ArgumentError, /No valid numeric data found/)
+          end.to raise_error(ArgumentError, /No valid numeric data found/)
         end
       end
 
@@ -238,10 +240,10 @@ RSpec.describe NumberAnalyzer::FileReader do
         Tempfile.create(['test', '.txt']) do |file|
           file.write('abc def ghi')
           file.rewind
-          
-          expect {
+
+          expect do
             NumberAnalyzer::FileReader.read_from_file(file.path)
-          }.to raise_error(ArgumentError, /No valid numeric data found/)
+          end.to raise_error(ArgumentError, /No valid numeric data found/)
         end
       end
     end
