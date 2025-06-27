@@ -5,6 +5,8 @@ require 'json'
 
 # Handles reading numeric data from various file formats
 class NumberAnalyzer
+  # FileReader provides functionality to read numeric data from CSV, JSON, and TXT files.
+  # Supports automatic format detection and robust error handling for various data layouts.
   class FileReader
     SUPPORTED_FORMATS = %w[.csv .json .txt].freeze
 
