@@ -19,6 +19,7 @@ NumberAnalyzer provides the following statistical calculations:
 - **Interquartile Range (IQR)** - Q3-Q1, measure of data spread (middle 50%)
 - **Outlier Detection** - Identifies outliers using IQR * 1.5 rule
 - **Deviation Scores** - Standardized scores with mean=50, showing relative position of each value
+- **File Input Support** - Read data from CSV, JSON, and TXT files
 
 ## Installation
 
@@ -50,6 +51,11 @@ bundle exec number_analyzer
 # With custom numbers
 bundle exec number_analyzer 1 2 3 4 5
 bundle exec number_analyzer 10.5 20.3 15.7 8.2
+
+# From files (CSV, JSON, TXT formats supported)
+bundle exec number_analyzer --file data.csv
+bundle exec number_analyzer -f numbers.json
+bundle exec number_analyzer --file values.txt
 ```
 
 #### Using the bin file directly
@@ -88,6 +94,13 @@ puts analyzer.interquartile_range  # => 4.5
 # Outlier detection and deviation scores
 puts analyzer.outliers        # => []
 puts analyzer.deviation_scores # => [34.33, 37.81, 41.3, 44.78, 48.26, 51.74, 55.22, 58.7, 62.19, 65.67]
+
+# Or read data from files
+require 'number_analyzer/file_reader'
+
+numbers = NumberAnalyzer::FileReader.read_from_file('data.csv')
+analyzer = NumberAnalyzer.new(numbers)
+analyzer.calculate_statistics
 ```
 
 ## Example Output
@@ -105,6 +118,44 @@ puts analyzer.deviation_scores # => [34.33, 37.81, 41.3, 44.78, 48.26, 51.74, 55
 外れ値: なし
 偏差値: 34.33, 37.81, 41.3, 44.78, 48.26, 51.74, 55.22, 58.7, 62.19, 65.67
 ```
+
+## Supported File Formats
+
+### CSV Files
+```csv
+numbers
+1
+2
+3
+4
+5
+```
+- First column values are treated as numbers
+- Headers are automatically detected and skipped
+- Non-numeric rows are ignored
+
+### JSON Files
+```json
+[1, 2, 3, 4, 5]
+```
+or
+```json
+{
+  "numbers": [1, 2, 3, 4, 5]
+}
+```
+- Array format: Direct numeric array
+- Object format: Uses "numbers", "data", or first array value
+
+### TXT Files
+```
+1 2 3 4 5
+10, 20, 30
+100
+```
+- Space or comma-separated values
+- Multi-line support
+- Non-numeric values are ignored
 
 ## Development
 

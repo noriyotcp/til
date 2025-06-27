@@ -58,6 +58,7 @@ Rubyを使い、リファクタリング対象のコード生成からClaude Cod
 ## Development Commands
 
 Ruby実行: `bundle exec number_analyzer` (デフォルト) / `bundle exec number_analyzer 1 2 3 4 5` (引数指定)
+ファイル読み込み: `bundle exec number_analyzer --file data.csv` / `bundle exec number_analyzer -f data.json`
 依存関係インストール: `bundle install`
 テスト実行: `rspec`
 Lint実行: `rubocop`
@@ -69,11 +70,13 @@ Web検索: `/project:gemini-search`
 現在のプロジェクト構成（Ruby Gem構造）：
 - `lib/number_analyzer.rb` - NumberAnalyzerクラス（純粋な統計計算ライブラリ）
 - `lib/number_analyzer/cli.rb` - NumberAnalyzer::CLIクラス（コマンドライン処理）
+- `lib/number_analyzer/file_reader.rb` - NumberAnalyzer::FileReaderクラス（ファイル読み込み機能）
 - `bin/number_analyzer` - 実行可能ファイル（エントリーポイント）
 - `number_analyzer.gemspec` - Gem定義ファイル
 - `Gemfile` - gemspec参照による依存関係管理
 - `spec/number_analyzer_spec.rb` - NumberAnalyzerクラスのテストスイート（17のテストケース）
-- `spec/number_analyzer/cli_spec.rb` - NumberAnalyzer::CLIクラスのテストスイート（10のテストケース）
+- `spec/number_analyzer/cli_spec.rb` - NumberAnalyzer::CLIクラスのテストスイート（15のテストケース）
+- `spec/number_analyzer/file_reader_spec.rb` - NumberAnalyzer::FileReaderクラスのテストスイート（27のテストケース）
 - `spec/spec_helper.rb` - RSpec設定ファイル
 - `.rspec` - RSpecコマンドライン設定
 - `.rubocop.yml` + `.rubocop_todo.yml` - コードスタイル設定
@@ -81,6 +84,7 @@ Web検索: `/project:gemini-search`
 - `CLAUDE.md` - Claude Codeへの開発ガイダンス
 - `.claude/commands/commit-message.md` - コミットメッセージ生成コマンド
 - `.claude/commands/gemini-search.md` - Web検索統合コマンド
+- `sample_data.csv` / `sample_data.json` / `sample_data.txt` - サンプルデータファイル
 
 実装済み統計機能：
 - **基本統計**: 合計、平均、最大値、最小値
@@ -93,30 +97,32 @@ Web検索: `/project:gemini-search`
 - **四分位範囲（IQR）**: Q3-Q1による散布度測定、外れ値検出の基盤機能
 - **外れ値検出（outliers）**: IQR * 1.5ルールによる統計的外れ値判定、CLI表示対応
 - **偏差値（deviation scores）**: TDDによる完全実装、平均50基準の標準化値、エッジケース対応
+- **ファイル読み込み（file input）**: CSV/JSON/TXT形式対応、--file/-fオプション、包括的エラーハンドリング
 
 技術的特徴：
 - **Ruby Gem準拠**: 標準的なGem構造（lib/, bin/, spec/）による配布可能なパッケージ
-- **SRP準拠**: 単一責任原則に従ったクラス分離（統計計算とCLI処理を分離）
-- **名前空間設計**: NumberAnalyzer::CLIによる衝突回避とモジュール性
+- **SRP準拠**: 単一責任原則に従ったクラス分離（統計計算・CLI処理・ファイル読み込みを分離）
+- **名前空間設計**: NumberAnalyzer::CLI、NumberAnalyzer::FileReaderによる衝突回避とモジュール性
 - **クリーンアーキテクチャ**: bin → CLI → NumberAnalyzer の明確な依存関係
 - **Ruby言語活用**: 組み込みメソッド（sum, max, min, tally, sort）の効果的利用
 - **コード品質**: 意味のある変数名、適切なメソッド分割、ハッシュベースのデータ構造
-- **テスト戦略**: 包括的なRSpecテストスイート（統計機能41例 + CLI機能10例）
+- **テスト戦略**: 包括的なRSpecテストスイート（統計機能59例 + CLI機能15例 + ファイル読み込み27例）
 - **スタイル準拠**: RuboCop完全準拠（specファイル除外設定、パラメータリスト最適化）
 - **依存関係管理**: gemspecによる標準的なGem依存関係定義
 
 ## プロジェクト完成状況
 
-✅ **リファクタリング + Ruby Gem化 + パーセンタイル・四分位数・IQR・偏差値機能 完全完了**
+✅ **リファクタリング + Ruby Gem化 + パーセンタイル・四分位数・IQR・偏差値・ファイル読み込み機能 完全完了**
 - 初心者風コード → プロフェッショナルなRuby Gem
-- 13の統計指標を計算・表示する完全な分析ツール
-- 63個のテストケース（統計56例 + CLI7例）で包括的品質保証
+- 13の統計指標を計算・表示する完全な分析ツール + ファイル入力対応
+- 101個のテストケース（統計59例 + CLI15例 + ファイル読み込み27例）で包括的品質保証
 - TDD（Red-Green-Refactor）による統計機能の段階的実装
 - Endless Method（`def median = percentile(50)`）による美しい統一設計
 - 線形補間法による数学的に正確なパーセンタイル計算
 - RuboCop完全準拠のクリーンなコードベース
 - 標準的なRuby Gem構造による配布可能なパッケージ
 - `bundle exec number_analyzer`での実行対応完了
+- CSV/JSON/TXT形式ファイル読み込み機能完全実装
 
 ## Next Steps (Optional)
 
@@ -203,7 +209,7 @@ NumberAnalyzer (純粋な統計計算ライブラリ)
 
 ### ユーザーインターフェース
 - [x] コマンドライン引数からの数値入力 ✅ 完了
-- [ ] ファイルからのデータ読み込み機能
+- [x] ファイルからのデータ読み込み機能 ✅ 完了
 - [ ] インタラクティブな操作モード
 
 ### データ可視化
