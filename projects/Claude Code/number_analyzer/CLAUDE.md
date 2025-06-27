@@ -194,6 +194,45 @@ NumberAnalyzer (純粋な統計計算ライブラリ)
 - [x] 統一的な計算アーキテクチャ ✅ 完了（percentileベースの設計）
 - [x] README.mdに新機能の使用例追加 ✅ 完了（IQR機能追加）
 
+#### Phase 4: コード品質改善（RuboCop違反対応）
+**目標**: コードの可読性・保守性・テスタビリティ向上
+
+**現在のRuboCop違反:**
+- NumberAnalyzer クラス長違反 (107/100行)
+- FileReader.read_csv メソッド複雑性 (26行, 複雑度9)
+- FileReader.extract_numbers_from_json メソッド複雑性 (複雑度9)
+
+**改善計画:**
+
+**4.1 NumberAnalyzer責任分離リファクタリング**
+- [ ] `StatisticsPresenter`クラス新規作成
+- [ ] 表示責任の分離: `display_results`, `format_mode`, `format_outliers`, `format_deviation_scores`メソッドを移動
+- [ ] NumberAnalyzerを純粋な統計計算クラスに（約32行削減、107行→75行）
+- [ ] CLIクラスでPresenterクラス利用への変更
+- [ ] StatisticsPresenterの包括的テスト追加
+
+**4.2 FileReader.read_csv メソッド分割**
+- [ ] `try_read_without_header(file_path)` - ヘッダーなし読み込み処理
+- [ ] `try_read_with_header(file_path)` - ヘッダーあり読み込み処理  
+- [ ] `parse_csv_value(value)` - 数値変換とエラーハンドリング
+- [ ] メイン`read_csv`は戦略切り替えのみに（26行→各8-10行の3メソッド）
+
+**4.3 FileReader JSON処理メソッド分割**
+- [ ] `extract_from_json_array(data)` - 配列形式JSON処理
+- [ ] `extract_from_json_object(data)` - オブジェクト形式JSON処理
+- [ ] `find_numeric_array_in_object(hash)` - キー検索ロジック分離
+- [ ] 各メソッドの単一責任化と複雑度削減
+
+**期待効果:**
+- RuboCop違反の完全解消
+- メソッドの単一責任原則準拠
+- テスタビリティ向上（各責任の個別テスト容易化）
+- 可読性向上（メソッド名による処理内容の明確化）
+- 保守性向上（変更時の影響範囲限定）
+- Ruby慣例準拠（小さなメソッド、明確な責任分離）
+
+**実装優先度**: 中（現在の機能は完全動作、品質向上が目的）
+
 ### 発展的な統計機能
 - [x] 中央値（median）の計算機能 ✅ 完了
 - [x] 最頻値（mode）の検出機能 ✅ 完了  
