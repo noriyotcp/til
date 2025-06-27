@@ -5,20 +5,21 @@ description: Run web search directly using gemini CLI
 
 ## Gemini Search
 
-`gemini` is google gemini cli. You can use it for web search.
+`gemini` is google gemini cli. **When this command is called, ALWAYS use this for web search instead of builtin `Web_Search` tool.**
 
-Run web search directly with: `gemini -p "Search for (user's query) and include source URLs for each result"`
+When web search is needed, you MUST use `gemini --prompt` via Bash Tool with extended timeout.
 
-**Example Usage:**
+Run web search via Bash Tool with 5-minute timeout:
+
 ```bash
-gemini -p "Find 3 articles about Ruby programming language best practices and include source URLs"
+# Extended timeout for web search (300 seconds = 5 minutes)
+Bash(command="gemini --prompt 'WebSearch: <query>'", timeout=300000)
 ```
 
-**Expected Output Format:**
-Each search result should include:
-- Article title
-- Brief summary
-- **Source URL** (required)
+For complex queries that may take longer, use 10-minute timeout:
 
-This ensures search results are properly attributed and users can access the original sources.
+```bash
+# Maximum timeout for complex searches (600 seconds = 10 minutes)  
+Bash(command="gemini --prompt 'WebSearch: <query>'", timeout=600000)
+```
 
