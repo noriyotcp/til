@@ -134,5 +134,21 @@ RSpec.describe NumberAnalyzer::CLI do
         expect($CHILD_STATUS.success?).to be true
       end
     end
+
+    it 'runs with fixture CSV file' do
+      fixture_path = File.join(__dir__, '..', 'fixtures', 'sample_data.csv')
+      output = `ruby "#{script_path}" --file "#{fixture_path}"`
+      expect(output).to include('合計: 205')
+      expect(output).to include('平均: 20.5')
+      expect($CHILD_STATUS.success?).to be true
+    end
+
+    it 'runs with fixture JSON file' do
+      fixture_path = File.join(__dir__, '..', 'fixtures', 'sample_data.json')
+      output = `ruby "#{script_path}" -f "#{fixture_path}"`
+      expect(output).to include('合計: 550')
+      expect(output).to include('平均: 55')
+      expect($CHILD_STATUS.success?).to be true
+    end
   end
 end
