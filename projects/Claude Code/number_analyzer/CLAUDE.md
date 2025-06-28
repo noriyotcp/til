@@ -6,7 +6,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 NumberAnalyzer is a comprehensive statistical analysis tool built in Ruby. Originally started as a refactoring exercise from beginner-level code to professional Ruby Gem, it has evolved into an enterprise-ready statistical analysis library with data visualization capabilities.
 
-**Current Status**: ✅ **Production Ready** - 15 statistical functions, 162 test cases, full CLI subcommand suite, enterprise-level code quality
+**Current Status**: ✅ **Production Ready** - 15 statistical functions, 186 test cases, Phase 6.3 complete with advanced CLI options, enterprise-level code quality
 
 ## Development Commands
 
@@ -27,9 +27,16 @@ NumberAnalyzer is a comprehensive statistical analysis tool built in Ruby. Origi
 - `bundle exec number_analyzer quartiles 1 2 3 4 5` (detailed analysis)
 - Advanced commands: `outliers`, `percentile`, `quartiles`, `variance`, `std`, `deviation-scores`
 
+**Output Format & Options** (Phase 6.3):
+- `bundle exec number_analyzer median --format=json 1 2 3` (JSON output)
+- `bundle exec number_analyzer mean --precision=2 1.234 2.567` (precision control)
+- `bundle exec number_analyzer outliers --quiet 1 2 3 100` (script-friendly output)
+- `bundle exec number_analyzer variance --help` (command help)
+- All 13 subcommands support: `--format`, `--precision`, `--quiet`, `--help`, `--file`
+
 **Development Tools**:
 - `bundle install` - Install dependencies
-- `rspec` - Run test suite (162 tests)
+- `rspec` - Run test suite (186 tests)
 - `bundle exec rubocop` - Code style checking (MANDATORY: zero violations)
 - `bundle exec rubocop -a` - Auto-fix style violations (run first)
 - `bundle exec rubocop [file]` - Check specific file
@@ -44,9 +51,10 @@ NumberAnalyzer is a comprehensive statistical analysis tool built in Ruby. Origi
 lib/
 ├── number_analyzer.rb              # Core statistical calculations (69 tests)
 └── number_analyzer/
-    ├── cli.rb                      # CLI interface + 13 subcommands (56 tests)
+    ├── cli.rb                      # CLI interface + 13 subcommands (79 tests)
     ├── file_reader.rb              # File input handling (27 tests)
-    └── statistics_presenter.rb     # Output formatting (13 tests)
+    ├── statistics_presenter.rb     # Output formatting (13 tests)
+    └── output_formatter.rb         # Advanced output formatting (25 tests)
 ```
 
 **Key Classes**:
@@ -54,6 +62,7 @@ lib/
 - **NumberAnalyzer::CLI**: Command-line argument processing + 13 subcommand routing
 - **NumberAnalyzer::FileReader**: CSV/JSON/TXT file input
 - **NumberAnalyzer::StatisticsPresenter**: Output formatting and histogram display
+- **NumberAnalyzer::OutputFormatter**: Advanced output formatting (JSON, precision, quiet mode)
 
 ## Implemented Features
 
@@ -67,6 +76,7 @@ lib/
 **Output**: Comprehensive analysis OR individual statistics + visualization
 **CLI Modes**: Full analysis (default) OR 13 individual subcommands (Phases 6.1 & 6.2)
 **Subcommand Categories**: Basic statistics, advanced analysis, parameterized commands
+**Output Options (Phase 6.3)**: JSON format, precision control, quiet mode, help system
 
 ## Code Quality Standards
 
@@ -116,7 +126,7 @@ rspec                        # MUST be all tests passing
 2. **TDD** - Write failing tests first
 3. **Implement** - Follow existing patterns and Ruby conventions
 4. **RuboCop Check** - Run `bundle exec rubocop` after each significant change
-5. **Test** - Ensure all 162+ tests pass
+5. **Test** - Ensure all 186+ tests pass
 6. **Final RuboCop** - `bundle exec rubocop -a` then verify zero violations
 7. **Document** - Update README.md and relevant documentation
 
@@ -145,11 +155,12 @@ rspec                        # MUST be all tests passing
 
 ## Quick Reference
 
-**Current State**: ✅ Phase 6.2 Complete (Advanced Statistics Subcommands)
-**Next Phase**: Phase 6.3 - Output Format & Options (see `ai-docs/ROADMAP.md`)
-**Test Count**: 162 total (69 core + 56 CLI/subcommands + 27 file + 13 presenter)
+**Current State**: ✅ Phase 6.3 Complete (Output Format & Options)
+**Next Phase**: Phase 7 - Advanced Features (see `ai-docs/ROADMAP.md`)
+**Test Count**: 186 total (69 core + 79 CLI/subcommands + 27 file + 13 presenter + 25 formatter)
 **RuboCop Status**: Full compliance (zero violations policy enforced)
 **Subcommand Count**: 13 total (7 basic + 6 advanced statistical commands)
+**CLI Options**: 4 advanced options (JSON, precision, quiet, help) across all subcommands
 
 ## Documentation Structure
 

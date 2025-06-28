@@ -45,7 +45,9 @@ gem install ./number_analyzer-1.0.0.gem
 
 ### Command Line Interface
 
-#### Using bundle exec (recommended for development)
+#### Basic Usage
+
+**Using bundle exec (recommended for development)**
 ```bash
 # With default numbers (1-10)
 bundle exec number_analyzer
@@ -68,6 +70,85 @@ ruby -Ilib bin/number_analyzer 1 2 3 4 5
 #### As an installed gem
 ```bash
 number_analyzer 1 2 3 4 5
+```
+
+#### Advanced Usage with Options (Phase 6.3)
+
+NumberAnalyzer supports advanced output formatting and control options for all 13 subcommands:
+
+**JSON Output Format**
+```bash
+# Get JSON output for API integration
+bundle exec number_analyzer median --format=json 1 2 3 4 5
+#=> {"value":3.0,"dataset_size":5}
+
+bundle exec number_analyzer quartiles --format=json 1 2 3 4 5
+#=> {"q1":2.0,"q2":3.0,"q3":4.0,"dataset_size":5}
+
+bundle exec number_analyzer outliers --format=json 1 2 3 100
+#=> {"outliers":[100.0],"dataset_size":4}
+```
+
+**Precision Control**
+```bash
+# Control decimal places for output
+bundle exec number_analyzer mean --precision=2 1.23456 2.34567
+#=> 1.79
+
+bundle exec number_analyzer variance --precision=1 1.1111 2.2222 3.3333
+#=> 0.8
+
+# Works with JSON format
+bundle exec number_analyzer median --format=json --precision=1 1.234 2.567
+#=> {"value":1.9,"dataset_size":2}
+```
+
+**Quiet Mode (Script-Friendly)**
+```bash
+# Minimal output for scripting
+bundle exec number_analyzer median --quiet 1 2 3 4 5
+#=> 3.0
+
+bundle exec number_analyzer quartiles --quiet 1 2 3 4 5
+#=> 2.0 3.0 4.0
+
+bundle exec number_analyzer outliers --quiet 1 2 3 100
+#=> 100.0
+```
+
+**Help System**
+```bash
+# Get help for any subcommand
+bundle exec number_analyzer median --help
+bundle exec number_analyzer percentile --help
+bundle exec number_analyzer histogram --help
+```
+
+**Subcommands with Options**
+
+All 13 subcommands support the new options:
+
+```bash
+# Basic Statistics with Options
+bundle exec number_analyzer sum --format=json 1 2 3 4 5
+bundle exec number_analyzer min --precision=3 1.123456 2.654321
+bundle exec number_analyzer max --quiet 10 20 30 40 50
+
+# Advanced Statistics with Options  
+bundle exec number_analyzer variance --format=json --precision=2 1 2 3 4 5
+bundle exec number_analyzer std --quiet 1.5 2.5 3.5 4.5
+bundle exec number_analyzer deviation-scores --precision=1 60 70 80 90
+
+# Specialized Commands with Options
+bundle exec number_analyzer percentile 75 --format=json 1 2 3 4 5
+bundle exec number_analyzer histogram --quiet 1 2 2 3 3 3
+```
+
+**Combined Options**
+```bash
+# Multiple options can be combined
+bundle exec number_analyzer mean --format=json --precision=2 --file data.csv
+bundle exec number_analyzer outliers --quiet --precision=1 1 2 3 4 5 100
 ```
 
 ### As a Ruby Library
@@ -239,17 +320,19 @@ number_analyzer/
 ├── lib/
 │   ├── number_analyzer.rb          # Core statistical calculations
 │   └── number_analyzer/
-│       ├── cli.rb                  # Command line interface
+│       ├── cli.rb                  # Command line interface + 13 subcommands
 │       ├── file_reader.rb          # File input support (CSV/JSON/TXT)
-│       └── statistics_presenter.rb # Display and formatting logic
+│       ├── statistics_presenter.rb # Display and formatting logic
+│       └── output_formatter.rb     # Advanced output formatting (JSON, precision, quiet)
 ├── bin/
 │   └── number_analyzer             # Executable file
 ├── spec/
-│   ├── number_analyzer_spec.rb     # Core functionality tests
+│   ├── number_analyzer_spec.rb     # Core functionality tests (69 tests)
 │   └── number_analyzer/
-│       ├── cli_spec.rb             # CLI functionality tests
-│       ├── file_reader_spec.rb     # File reader functionality tests
-│       └── statistics_presenter_spec.rb # Presentation logic tests
+│       ├── cli_spec.rb             # CLI functionality tests (79 tests)
+│       ├── file_reader_spec.rb     # File reader functionality tests (27 tests)
+│       ├── statistics_presenter_spec.rb # Presentation logic tests (13 tests)
+│       └── output_formatter_spec.rb # Output formatting tests (25 tests)
 ├── number_analyzer.gemspec         # Gem specification
 └── README.md                       # This file
 ```
@@ -259,12 +342,13 @@ number_analyzer/
 The project follows clean architecture principles with separation of concerns:
 
 - **NumberAnalyzer** - Pure statistical calculation library (no dependencies)
-- **NumberAnalyzer::CLI** - Command line interface and argument parsing
+- **NumberAnalyzer::CLI** - Command line interface and argument parsing with 13 subcommands
 - **NumberAnalyzer::FileReader** - File input handling (CSV/JSON/TXT support)
-- **NumberAnalyzer::StatisticsPresenter** - Display and formatting logic
+- **NumberAnalyzer::StatisticsPresenter** - Display and formatting logic for full analysis
+- **NumberAnalyzer::OutputFormatter** - Advanced output formatting (JSON, precision, quiet mode)
 - **bin/number_analyzer** - Executable entry point
 
-This modular design allows the core statistical functionality to be used independently, while maintaining clear responsibilities for each component.
+This modular design allows the core statistical functionality to be used independently, while maintaining clear responsibilities for each component. The Phase 6.3 additions provide enterprise-level CLI capabilities with flexible output formatting for API integration and scripting automation.
 
 ## License
 
