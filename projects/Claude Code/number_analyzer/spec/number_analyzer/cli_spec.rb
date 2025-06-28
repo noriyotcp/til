@@ -424,5 +424,154 @@ RSpec.describe NumberAnalyzer::CLI do
           .to output(/合計: 55/).to_stdout
       end
     end
+
+    context 'Phase 6.3: Output Format & Options' do
+      context 'JSON format output' do
+        it 'outputs JSON for median command' do
+          expect { NumberAnalyzer::CLI.run(%w[median --format=json 1 2 3 4 5]) }
+            .to output("{\"value\":3.0,\"dataset_size\":5}\n").to_stdout
+        end
+
+        it 'outputs JSON for quartiles command' do
+          output = capture_stdout { NumberAnalyzer::CLI.run(%w[quartiles --format=json 1 2 3 4 5]) }
+          parsed = JSON.parse(output)
+          expect(parsed).to include('q1' => 2.0, 'q2' => 3.0, 'q3' => 4.0, 'dataset_size' => 5)
+        end
+
+        it 'outputs JSON for outliers command' do
+          expect { NumberAnalyzer::CLI.run(%w[outliers --format=json 1 2 3 100]) }
+            .to output("{\"outliers\":[100.0],\"dataset_size\":4}\n").to_stdout
+        end
+
+        it 'outputs JSON for mode command with values' do
+          expect { NumberAnalyzer::CLI.run(%w[mode --format=json 1 2 2 3]) }
+            .to output(/"mode":\[2.0\]/).to_stdout
+        end
+
+        it 'outputs JSON for mode command with no mode' do
+          expect { NumberAnalyzer::CLI.run(%w[mode --format=json 1 2 3]) }
+            .to output(/"mode":null/).to_stdout
+        end
+
+        it 'outputs JSON for histogram command' do
+          output = capture_stdout { NumberAnalyzer::CLI.run(%w[histogram --format=json 1 2 2 3]) }
+          parsed = JSON.parse(output)
+          expect(parsed).to include('histogram', 'dataset_size')
+          expect(parsed['histogram']).to eq({ '1.0' => 1, '2.0' => 2, '3.0' => 1 })
+        end
+      end
+
+      context 'precision control' do
+        it 'rounds output to specified decimal places' do
+          expect { NumberAnalyzer::CLI.run(%w[median --precision=2 1.23456 2.34567 3.45678]) }
+            .to output("2.35\n").to_stdout
+        end
+
+        it 'works with JSON format' do
+          output = capture_stdout { NumberAnalyzer::CLI.run(%w[mean --format=json --precision=1 1.234 2.567]) }
+          parsed = JSON.parse(output)
+          expect(parsed['value']).to eq(1.9)
+        end
+
+        it 'applies to quartiles output' do
+          expect { NumberAnalyzer::CLI.run(%w[quartiles --precision=1 1.1111 2.2222 3.3333 4.4444]) }
+            .to output("Q1: 1.9\nQ2: 2.8\nQ3: 3.6\n").to_stdout
+        end
+      end
+
+      context 'quiet mode' do
+        it 'outputs only the value for median' do
+          expect { NumberAnalyzer::CLI.run(%w[median --quiet 1 2 3 4 5]) }
+            .to output("3.0\n").to_stdout
+        end
+
+        it 'outputs space-separated values for quartiles' do
+          expect { NumberAnalyzer::CLI.run(%w[quartiles --quiet 1 2 3 4 5]) }
+            .to output("2.0 3.0 4.0\n").to_stdout
+        end
+
+        it 'outputs empty string for no outliers' do
+          expect { NumberAnalyzer::CLI.run(%w[outliers --quiet 1 2 3 4 5]) }
+            .to output("\n").to_stdout
+        end
+
+        it 'outputs space-separated outliers when present' do
+          expect { NumberAnalyzer::CLI.run(%w[outliers --quiet 1 2 3 4 5 100]) }
+            .to output("100.0\n").to_stdout
+        end
+
+        it 'outputs space-separated values for histogram' do
+          expect { NumberAnalyzer::CLI.run(%w[histogram --quiet 1 2 2]) }
+            .to output("1.0:1 2.0:2\n").to_stdout
+        end
+      end
+
+      context 'help system' do
+        it 'shows help for median command' do
+          expect { NumberAnalyzer::CLI.run(%w[median --help]) }
+            .to output(/Usage: bundle exec number_analyzer median/).to_stdout
+        end
+
+        it 'shows help for percentile command' do
+          expect { NumberAnalyzer::CLI.run(%w[percentile --help]) }
+            .to output(/Calculate percentile value/).to_stdout
+        end
+
+        it 'shows examples in help output' do
+          expect { NumberAnalyzer::CLI.run(%w[mean --help]) }
+            .to output(/Examples:/).to_stdout
+        end
+
+        it 'shows options in help output' do
+          expect { NumberAnalyzer::CLI.run(%w[variance --help]) }
+            .to output(/--format json/).to_stdout
+        end
+      end
+
+      context 'combined options' do
+        it 'supports JSON format with precision' do
+          output = capture_stdout { NumberAnalyzer::CLI.run(%w[median --format=json --precision=1 1.234 2.567 3.890]) }
+          parsed = JSON.parse(output)
+          expect(parsed['value']).to eq(2.6)
+        end
+
+        it 'supports file input with JSON format' do
+          fixture_path = File.join(__dir__, '..', 'fixtures', 'sample_data.csv')
+          output = capture_stdout { NumberAnalyzer::CLI.run(['mean', '--format=json', '--file', fixture_path]) }
+          parsed = JSON.parse(output)
+          expect(parsed).to include('value', 'dataset_size')
+        end
+
+        it 'supports file input with precision' do
+          fixture_path = File.join(__dir__, '..', 'fixtures', 'sample_data.json')
+          expect { NumberAnalyzer::CLI.run(['mean', '--precision=1', '-f', fixture_path]) }
+            .to output("55.0\n").to_stdout
+        end
+      end
+
+      context 'error handling for new options' do
+        it 'handles invalid format option gracefully' do
+          expect { NumberAnalyzer::CLI.run(%w[median --format=xml 1 2 3]) }
+            .to output("2.0\n").to_stdout
+        end
+
+        it 'exits with error for invalid precision value' do
+          expect { NumberAnalyzer::CLI.run(%w[median --precision=abc 1 2 3]) }
+            .to output(/invalid value for Integer/).to_stderr
+            .and raise_error(SystemExit)
+        end
+      end
+    end
+  end
+
+  private
+
+  def capture_stdout
+    original_stdout = $stdout
+    $stdout = StringIO.new
+    yield
+    $stdout.string
+  ensure
+    $stdout = original_stdout
   end
 end
