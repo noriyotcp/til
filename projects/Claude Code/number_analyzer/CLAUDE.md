@@ -18,7 +18,9 @@ NumberAnalyzer is a comprehensive statistical analysis tool built in Ruby. Origi
 **Development Tools**:
 - `bundle install` - Install dependencies
 - `rspec` - Run test suite (121 tests)
-- `rubocop` - Code style checking
+- `bundle exec rubocop` - Code style checking (MANDATORY: zero violations)
+- `bundle exec rubocop -a` - Auto-fix style violations (run first)
+- `bundle exec rubocop [file]` - Check specific file
 - `/project:commit-message` - Generate commit messages
 - `/project:gemini-search` - Web search integration
 
@@ -60,20 +62,49 @@ lib/
 - **Ruby Idioms**: Effective use of `sum`, `tally`, `sort`, endless methods
 - **TDD Practice**: Red-Green-Refactor cycle for all new features
 
-**Quality Checklist**:
-1. **RuboCop compliance** - Run `rubocop` after changes
-2. **Test coverage** - All new features require comprehensive tests
-3. **Documentation updates** - Update relevant docs (README.md, etc.)
-4. **Mathematical accuracy** - Verify statistical correctness
+**Code Quality Enforcement (ZERO TOLERANCE)**:
+- **RuboCop Gate**: No code changes allowed without zero RuboCop violations
+- **Style Consistency**: All code must conform to project's .rubocop.yml configuration
+- **Auto-correction First**: Always apply `bundle exec rubocop -a` before manual fixes
+- **Configuration Changes**: RuboCop config modifications require documentation update
+
+**Quality Checklist** (MANDATORY - Zero Tolerance Policy):
+1. **RuboCop compliance** - REQUIRED: `bundle exec rubocop` must show zero violations
+2. **Auto-correction applied** - REQUIRED: `bundle exec rubocop -a` before manual review
+3. **Test coverage** - All new features require comprehensive tests
+4. **Documentation updates** - Update relevant docs (README.md, etc.)
+5. **Mathematical accuracy** - Verify statistical correctness
 
 ## Development Guidelines
+
+### Mandatory RuboCop Workflow (REQUIRED FOR ALL CHANGES)
+**Pre-Development Check**:
+```bash
+bundle exec rubocop  # Must show zero violations before starting
+```
+
+**During Development** (after each change):
+```bash
+bundle exec rubocop          # Check violations
+bundle exec rubocop -a       # Auto-fix correctable issues
+bundle exec rubocop          # Verify zero violations
+rspec                        # Ensure tests pass
+```
+
+**Pre-Commit Gate** (MANDATORY):
+```bash
+bundle exec rubocop          # MUST be zero violations
+rspec                        # MUST be all tests passing
+```
 
 ### New Feature Implementation
 1. **Plan** - Document in `ai-docs/ROADMAP.md` if significant
 2. **TDD** - Write failing tests first
 3. **Implement** - Follow existing patterns and Ruby conventions
-4. **Test** - Ensure all 121+ tests pass
-5. **Document** - Update README.md and relevant documentation
+4. **RuboCop Check** - Run `bundle exec rubocop` after each significant change
+5. **Test** - Ensure all 121+ tests pass
+6. **Final RuboCop** - `bundle exec rubocop -a` then verify zero violations
+7. **Document** - Update README.md and relevant documentation
 
 ### File Organization
 - **Core logic**: `lib/number_analyzer.rb`
@@ -90,6 +121,8 @@ lib/
 
 ## Important Reminders
 
+- **RuboCop compliance**: MANDATORY `bundle exec rubocop` with zero violations before any commit
+- **Auto-correction workflow**: Always run `bundle exec rubocop -a` first, then manual review
 - **Commit messages**: Use markdown code blocks (recommend `/project:commit-message`)
 - **Documentation**: Update README.md features/usage after changes
 - **RSpec syntax**: Use `-e "pattern"` for test filtering
