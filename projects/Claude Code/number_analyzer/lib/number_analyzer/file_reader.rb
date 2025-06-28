@@ -32,41 +32,43 @@ class NumberAnalyzer
     end
 
     private_class_method def self.read_csv(file_path)
-      numbers = []
-
-      # まずはヘッダーなしで全ての行を数値として読み込みを試行
-      CSV.foreach(file_path) do |row|
-        value = row[0]
-        next if value.nil? || value.strip.empty?
-
-        begin
-          numbers << Float(value.strip)
-        rescue ArgumentError
-          # 数値でない行はスキップ
-          next
-        end
-      end
-
-      # 数値が見つからなかった場合、ヘッダーありで試行
-      if numbers.empty?
-        begin
-          CSV.foreach(file_path, headers: true) do |row|
-            value = row[0]
-            next if value.nil? || value.strip.empty?
-
-            begin
-              numbers << Float(value.strip)
-            rescue ArgumentError
-              next
-            end
-          end
-        rescue StandardError
-          # ヘッダー処理でもエラーの場合は空配列のまま
-        end
-      end
+      numbers = try_read_without_header(file_path)
+      numbers = try_read_with_header(file_path) if numbers.empty?
 
       validate_numbers(numbers, file_path)
       numbers
+    end
+
+    private_class_method def self.try_read_without_header(file_path)
+      numbers = []
+
+      CSV.foreach(file_path) do |row|
+        parsed_value = parse_csv_value(row[0])
+        numbers << parsed_value if parsed_value
+      end
+
+      numbers
+    end
+
+    private_class_method def self.try_read_with_header(file_path)
+      numbers = []
+
+      begin
+        CSV.foreach(file_path, headers: true) do |row|
+          parsed_value = parse_csv_value(row[0])
+          numbers << parsed_value if parsed_value
+        end
+      rescue StandardError
+        # ヘッダー処理でもエラーの場合は空配列のまま
+      end
+
+      numbers
+    end
+
+    private_class_method def self.parse_csv_value(value)
+      return nil if value.nil? || value.strip.empty?
+
+      Float(value.strip, exception: false)
     end
 
     private_class_method def self.read_json(file_path)
@@ -84,19 +86,31 @@ class NumberAnalyzer
     private_class_method def self.extract_numbers_from_json(data)
       case data
       when Array
-        # 配列形式: [1, 2, 3, 4, 5]
-        data.map { |item| Float(item) }
+        extract_from_json_array(data)
       when Hash
-        # オブジェクト形式: {"numbers": [1, 2, 3, 4, 5]} または {"data": [1, 2, 3]}
-        numbers_array = data['numbers'] || data['data'] || data.values.first
-        raise ArgumentError, 'No numeric array found in JSON object' unless numbers_array.is_a?(Array)
-
-        numbers_array.map { |item| Float(item) }
+        extract_from_json_object(data)
       else
         raise ArgumentError, 'JSON must contain an array or object with numeric array'
       end
     rescue ArgumentError => e
       raise ArgumentError, "Invalid numeric data in JSON: #{e.message}"
+    end
+
+    private_class_method def self.extract_from_json_array(data)
+      # 配列形式: [1, 2, 3, 4, 5]
+      data.map { |item| Float(item) }
+    end
+
+    private_class_method def self.extract_from_json_object(data)
+      # オブジェクト形式: {"numbers": [1, 2, 3, 4, 5]} または {"data": [1, 2, 3]}
+      numbers_array = find_numeric_array_in_object(data)
+      raise ArgumentError, 'No numeric array found in JSON object' unless numbers_array.is_a?(Array)
+
+      numbers_array.map { |item| Float(item) }
+    end
+
+    private_class_method def self.find_numeric_array_in_object(data)
+      data['numbers'] || data['data'] || data.values.first
     end
 
     private_class_method def self.read_txt(file_path)
