@@ -545,7 +545,7 @@ RSpec.describe NumberAnalyzer do
       
       it 'handles single value' do
         freq_dist = single_analyzer.frequency_distribution
-        expect(freq_dist).to eq({42 => 1})
+        expect(freq_dist).to eq({ 42 => 1 })
       end
       
       it 'handles empty array' do
@@ -555,7 +555,7 @@ RSpec.describe NumberAnalyzer do
       
       it 'handles identical values' do
         freq_dist = identical_analyzer.frequency_distribution
-        expect(freq_dist).to eq({5 => 4})
+        expect(freq_dist).to eq({ 5 => 4 })
       end
     end
 

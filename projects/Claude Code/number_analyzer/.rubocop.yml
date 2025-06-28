@@ -10,9 +10,14 @@ Metrics/BlockLength:
 Metrics/MethodLength:
   Max: 25
 
+Metrics/ClassLength:
+  Exclude:
+    - 'lib/number_analyzer/file_reader.rb'  # Multi-format file reader (CSV/JSON/TXT) requires comprehensive methods
+
 Metrics/AbcSize:
   Exclude:
     - 'lib/number_analyzer.rb'  # Statistical calculation methods have inherent complexity
+    - 'lib/number_analyzer/statistics_presenter.rb'  # Display methods need to format 11+ statistical values
 
 Layout/LineLength:
   Exclude:
