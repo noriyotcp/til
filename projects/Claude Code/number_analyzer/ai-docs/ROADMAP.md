@@ -33,7 +33,7 @@
 - [x] StatisticsPresenterへの自動統合
 - [x] 包括的テストスイート（12テストケース）
 
-**現在の成果**: 186テストケース、15統計指標、Phase 6完全実装、企業レベル品質
+**現在の成果**: 193テストケース、16統計指標、Phase 7.1完全実装、企業レベル品質
 
 ### Phase 6: CLI Subcommands Implementation ✅ 完了
 - [x] 13個の統計サブコマンド実装 (median, mean, mode, sum, min, max, histogram, outliers, percentile, quartiles, variance, std, deviation-scores)
@@ -45,21 +45,42 @@
 - [x] 下位互換性完全保持
 - [x] 包括的テストスイート（23新規テスト追加）
 
+### Phase 7.1: Correlation Analysis ✅ 完了
+- [x] ピアソン相関係数計算メソッド実装（数学的正確性）
+- [x] `correlation` サブコマンド追加（14個目の統計コマンド）
+- [x] デュアルデータセット入力対応（数値直接入力/ファイル入力）
+- [x] 相関強度解釈機能（強い正の相関、中程度の負の相関など）
+- [x] 既存CLI オプション完全対応（JSON、精度、quiet、help）
+- [x] TDD実装（Red-Green-Refactor サイクル）
+- [x] 包括的テストスイート（7新規テスト追加）
+- [x] エッジケース対応（空配列、長さ不一致、同値データ）
+
 ---
 
 ## Next Development Phase
 
-## Phase 7: Advanced Features 🔮 計画段階
+## Phase 7.2: Time Series Analysis 🔮 計画段階
 
-### Plugin System Architecture
+### Time Series Features
+- **Trend analysis**: `bundle exec number_analyzer trend data.csv --column=sales`
+- **Moving averages**: `bundle exec number_analyzer moving-average data.csv --window=7`
+- **Seasonal decomposition**: Basic trend/seasonal pattern detection
+- **Growth rate calculation**: Period-over-period analysis
+
+## Phase 7.3: Statistical Tests 🔮 計画段階
+
+### Hypothesis Testing
+- **T-test**: `bundle exec number_analyzer t-test group1.csv group2.csv`
+- **Chi-square test**: Independence testing for categorical data
+- **ANOVA**: Analysis of variance for multiple groups
+- **Confidence intervals**: Statistical significance testing
+
+## Phase 7.4: Plugin System Architecture 🔮 計画段階
+
+### Plugin System Features
 - Dynamic command loading
 - Third-party extension support
 - Configuration-based plugin management
-
-### Advanced Features
-- **Correlation analysis**: `bundle exec number_analyzer correlation x.csv y.csv`
-- **Time series**: `bundle exec number_analyzer trend data.csv --column=sales`
-- **Statistical tests**: `bundle exec number_analyzer t-test group1.csv group2.csv`
 
 ### Integration Possibilities
 - R/Python interoperability

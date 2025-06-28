@@ -19,6 +19,7 @@ NumberAnalyzer provides the following statistical calculations:
 - **Interquartile Range (IQR)** - Q3-Q1, measure of data spread (middle 50%)
 - **Outlier Detection** - Identifies outliers using IQR * 1.5 rule
 - **Deviation Scores** - Standardized scores with mean=50, showing relative position of each value
+- **Correlation Analysis** - Pearson correlation coefficient between two datasets with strength interpretation
 - **Frequency Distribution** - Count occurrences of each value for data distribution analysis
 - **Histogram Display** - ASCII art visualization of frequency distribution with automatic scaling
 - **File Input Support** - Read data from CSV, JSON, and TXT files
@@ -60,6 +61,10 @@ bundle exec number_analyzer 10.5 20.3 15.7 8.2
 bundle exec number_analyzer --file data.csv
 bundle exec number_analyzer -f numbers.json
 bundle exec number_analyzer --file values.txt
+
+# Correlation analysis with files
+bundle exec number_analyzer correlation file1.csv file2.csv
+bundle exec number_analyzer correlation --format=json file1.csv file2.csv
 ```
 
 #### Using the bin file directly
@@ -74,7 +79,7 @@ number_analyzer 1 2 3 4 5
 
 #### Advanced Usage with Options (Phase 6.3)
 
-NumberAnalyzer supports advanced output formatting and control options for all 13 subcommands:
+NumberAnalyzer supports advanced output formatting and control options for all 14 subcommands:
 
 **JSON Output Format**
 ```bash
@@ -126,7 +131,7 @@ bundle exec number_analyzer histogram --help
 
 **Subcommands with Options**
 
-All 13 subcommands support the new options:
+All 14 subcommands support the new options:
 
 ```bash
 # Basic Statistics with Options
@@ -138,6 +143,8 @@ bundle exec number_analyzer max --quiet 10 20 30 40 50
 bundle exec number_analyzer variance --format=json --precision=2 1 2 3 4 5
 bundle exec number_analyzer std --quiet 1.5 2.5 3.5 4.5
 bundle exec number_analyzer deviation-scores --precision=1 60 70 80 90
+bundle exec number_analyzer correlation 1 2 3 2 4 6
+bundle exec number_analyzer correlation --format=json --precision=3 1 2 3 2 4 6
 
 # Specialized Commands with Options
 bundle exec number_analyzer percentile 75 --format=json 1 2 3 4 5
@@ -177,6 +184,10 @@ puts analyzer.interquartile_range  # => 4.5
 # Outlier detection and deviation scores
 puts analyzer.outliers        # => []
 puts analyzer.deviation_scores # => [34.33, 37.81, 41.3, 44.78, 48.26, 51.74, 55.22, 58.7, 62.19, 65.67]
+
+# Correlation analysis
+other_data = [2, 4, 6, 8, 10, 12, 14, 16, 18, 20]
+puts analyzer.correlation(other_data)  # => 1.0 (perfect positive correlation)
 
 # Frequency distribution for data analysis (programmatic access)
 puts analyzer.frequency_distribution # => {1=>1, 2=>1, 3=>1, 4=>1, 5=>1, 6=>1, 7=>1, 8=>1, 9=>1, 10=>1}
@@ -320,7 +331,7 @@ number_analyzer/
 ├── lib/
 │   ├── number_analyzer.rb          # Core statistical calculations
 │   └── number_analyzer/
-│       ├── cli.rb                  # Command line interface + 13 subcommands
+│       ├── cli.rb                  # Command line interface + 14 subcommands
 │       ├── file_reader.rb          # File input support (CSV/JSON/TXT)
 │       ├── statistics_presenter.rb # Display and formatting logic
 │       └── output_formatter.rb     # Advanced output formatting (JSON, precision, quiet)
@@ -342,7 +353,7 @@ number_analyzer/
 The project follows clean architecture principles with separation of concerns:
 
 - **NumberAnalyzer** - Pure statistical calculation library (no dependencies)
-- **NumberAnalyzer::CLI** - Command line interface and argument parsing with 13 subcommands
+- **NumberAnalyzer::CLI** - Command line interface and argument parsing with 14 subcommands
 - **NumberAnalyzer::FileReader** - File input handling (CSV/JSON/TXT support)
 - **NumberAnalyzer::StatisticsPresenter** - Display and formatting logic for full analysis
 - **NumberAnalyzer::OutputFormatter** - Advanced output formatting (JSON, precision, quiet mode)
