@@ -585,10 +585,10 @@ RSpec.describe NumberAnalyzer do
       
       it 'displays histogram with ASCII art bars' do
         expected_output = [
-          "度数分布ヒストグラム:",
-          "1: ■ (1)",
-          "2: ■■ (2)",
-          "3: ■■■ (3)"
+          '度数分布ヒストグラム:',
+          '1: ■ (1)',
+          '2: ■■ (2)',
+          '3: ■■■ (3)'
         ].join("\n") + "\n"
 
         expect { basic_analyzer.display_histogram }.to output(expected_output).to_stdout
@@ -600,8 +600,8 @@ RSpec.describe NumberAnalyzer do
       
       it 'displays single bar histogram' do
         expected_output = [
-          "度数分布ヒストグラム:",
-          "42: ■ (1)"
+          '度数分布ヒストグラム:',
+          '42: ■ (1)'
         ].join("\n") + "\n"
 
         expect { single_analyzer.display_histogram }.to output(expected_output).to_stdout
@@ -624,9 +624,9 @@ RSpec.describe NumberAnalyzer do
       
       it 'scales bars correctly based on frequency' do
         expected_output = [
-          "度数分布ヒストグラム:",
-          "1: ■ (1)",
-          "2: ■■■■■ (5)"
+          '度数分布ヒストグラム:',
+          '1: ■ (1)',
+          '2: ■■■■■ (5)'
         ].join("\n") + "\n"
 
         expect { varied_analyzer.display_histogram }.to output(expected_output).to_stdout
@@ -638,10 +638,10 @@ RSpec.describe NumberAnalyzer do
       
       it 'handles decimal values correctly' do
         expected_output = [
-          "度数分布ヒストグラム:",
-          "1.5: ■■ (2)",
-          "2.0: ■ (1)",
-          "2.5: ■ (1)"
+          '度数分布ヒストグラム:',
+          '1.5: ■■ (2)',
+          '2.0: ■ (1)',
+          '2.5: ■ (1)'
         ].join("\n") + "\n"
 
         expect { decimal_analyzer.display_histogram }.to output(expected_output).to_stdout

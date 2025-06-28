@@ -18,7 +18,7 @@ RSpec.describe NumberAnalyzer::StatisticsPresenter do
         iqr: 2.0,
         outlier_values: [10],
         deviation_scores: [31.65, 43.29, 50.0, 56.71, 68.35],
-        frequency_distribution: {1 => 1, 2 => 2, 3 => 1, 5 => 1}
+        frequency_distribution: { 1 => 1, 2 => 2, 3 => 1, 5 => 1 }
       }
     end
 

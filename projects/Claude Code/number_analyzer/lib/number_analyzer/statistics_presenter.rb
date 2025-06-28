@@ -21,15 +21,15 @@ class NumberAnalyzer
     end
 
     def self.display_histogram(frequency_distribution)
-      puts "度数分布ヒストグラム:"
-      
+      puts '度数分布ヒストグラム:'
+
       if frequency_distribution.nil? || frequency_distribution.empty?
-        puts "(データが空です)"
+        puts '(データが空です)'
         return
       end
-      
+
       frequency_distribution.sort.each do |value, count|
-        bar = "■" * count
+        bar = '■' * count
         puts "#{value}: #{bar} (#{count})"
       end
     end

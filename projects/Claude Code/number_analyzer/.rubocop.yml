@@ -23,3 +23,6 @@ Layout/LineLength:
   Exclude:
     - 'number_analyzer.gemspec'  # Gemspec descriptions often exceed line length limits
     - 'spec/**/*'               # Test files often have long expectation strings
+
+Style/EndlessMethod:
+  EnforcedStyle: allow_single_line

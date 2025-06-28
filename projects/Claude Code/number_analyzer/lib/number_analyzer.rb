@@ -92,9 +92,7 @@ class NumberAnalyzer
     @numbers.select { |num| num < lower_bound || num > upper_bound }
   end
 
-  def standard_deviation
-    Math.sqrt(variance)
-  end
+  def standard_deviation = Math.sqrt(variance)
 
   def deviation_scores
     return [] if @numbers.empty?
@@ -110,29 +108,25 @@ class NumberAnalyzer
     end
   end
 
-  def frequency_distribution
-    @numbers.tally
-  end
+  def frequency_distribution = @numbers.tally
 
   def display_histogram
-    puts "度数分布ヒストグラム:"
-    
+    puts '度数分布ヒストグラム:'
+
     freq_dist = frequency_distribution
-    
+
     if freq_dist.empty?
-      puts "(データが空です)"
+      puts '(データが空です)'
       return
     end
-    
+
     freq_dist.sort.each do |value, count|
-      bar = "■" * count
+      bar = '■' * count
       puts "#{value}: #{bar} (#{count})"
     end
   end
 
   private
 
-  def average_value
-    @numbers.sum.to_f / @numbers.length
-  end
+  def average_value = @numbers.sum.to_f / @numbers.length
 end
