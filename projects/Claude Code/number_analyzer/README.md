@@ -218,6 +218,16 @@ bundle exec rspec
 bundle exec rubocop
 ```
 
+## Documentation
+
+### Complete Documentation
+- **[FEATURES.md](ai-docs/FEATURES.md)** - Comprehensive feature documentation and technical specifications
+- **[ARCHITECTURE.md](ai-docs/ARCHITECTURE.md)** - Technical architecture, design patterns, and system structure  
+- **[ROADMAP.md](ai-docs/ROADMAP.md)** - Development phases, future plans, and Phase 6 CLI subcommands design
+
+### For Developers
+- **[CLAUDE.md](CLAUDE.md)** - Development guidance for Claude Code integration
+
 ## Project Structure
 
 ```
