@@ -3,7 +3,9 @@
     "allow": [
       "Bash(gemini:*)",
       "Bash(ls:*)",
-      "Bash(rubocop:*)"
+      "Bash(rubocop:*)",
+      "Bash(rspec:*)",
+      "Bash(bundle exec:*)"
     ],
     "deny": []
   }
