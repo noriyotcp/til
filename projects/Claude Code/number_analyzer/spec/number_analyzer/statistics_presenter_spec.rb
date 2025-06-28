@@ -1,0 +1,93 @@
+# frozen_string_literal: true
+
+require 'spec_helper'
+require 'number_analyzer/statistics_presenter'
+
+RSpec.describe NumberAnalyzer::StatisticsPresenter do
+  describe '.display_results' do
+    let(:stats) do
+      {
+        total: 15,
+        average: 3.0,
+        maximum: 5,
+        minimum: 1,
+        median_value: 3.0,
+        variance: 2.5,
+        mode_values: [2, 3],
+        std_dev: 1.58,
+        iqr: 2.0,
+        outlier_values: [10],
+        deviation_scores: [31.65, 43.29, 50.0, 56.71, 68.35]
+      }
+    end
+
+    it 'displays all statistical results correctly' do
+      expected_output = [
+        '合計: 15',
+        '平均: 3.0',
+        '最大値: 5',
+        '最小値: 1',
+        '中央値: 3.0',
+        '分散: 2.5',
+        '最頻値: 2, 3',
+        '標準偏差: 1.58',
+        '四分位範囲(IQR): 2.0',
+        '外れ値: 10',
+        '偏差値: 31.65, 43.29, 50.0, 56.71, 68.35'
+      ].join("\n")
+      expected_output = "#{expected_output}\n"
+
+      expect { described_class.display_results(stats) }.to output(expected_output).to_stdout
+    end
+
+    context 'when IQR is nil' do
+      it 'displays "なし" for IQR' do
+        stats_with_nil_iqr = stats.merge(iqr: nil)
+
+        expect { described_class.display_results(stats_with_nil_iqr) }.to output(/四分位範囲\(IQR\): なし/).to_stdout
+      end
+    end
+  end
+
+  describe '.format_mode' do
+    it 'returns "なし" for empty mode values' do
+      expect(described_class.send(:format_mode, [])).to eq('なし')
+    end
+
+    it 'formats single mode value' do
+      expect(described_class.send(:format_mode, [5])).to eq('5')
+    end
+
+    it 'formats multiple mode values with comma separation' do
+      expect(described_class.send(:format_mode, [2, 3, 5])).to eq('2, 3, 5')
+    end
+  end
+
+  describe '.format_outliers' do
+    it 'returns "なし" for empty outlier values' do
+      expect(described_class.send(:format_outliers, [])).to eq('なし')
+    end
+
+    it 'formats single outlier value' do
+      expect(described_class.send(:format_outliers, [10])).to eq('10')
+    end
+
+    it 'formats multiple outlier values with comma separation' do
+      expect(described_class.send(:format_outliers, [1, 10, 15])).to eq('1, 10, 15')
+    end
+  end
+
+  describe '.format_deviation_scores' do
+    it 'returns "なし" for empty deviation scores' do
+      expect(described_class.send(:format_deviation_scores, [])).to eq('なし')
+    end
+
+    it 'formats single deviation score' do
+      expect(described_class.send(:format_deviation_scores, [50.0])).to eq('50.0')
+    end
+
+    it 'formats multiple deviation scores with comma separation' do
+      expect(described_class.send(:format_deviation_scores, [31.65, 50.0, 68.35])).to eq('31.65, 50.0, 68.35')
+    end
+  end
+end
