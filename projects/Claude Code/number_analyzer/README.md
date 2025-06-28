@@ -104,6 +104,10 @@ puts analyzer.frequency_distribution # => {1=>1, 2=>1, 3=>1, 4=>1, 5=>1, 6=>1, 7
 scores = NumberAnalyzer.new([85, 90, 85, 92, 88, 85, 90])
 puts scores.frequency_distribution  # => {85=>3, 90=>2, 92=>1, 88=>1}
 
+# Example with outliers
+outlier_data = NumberAnalyzer.new([1, 2, 3, 4, 5, 100])
+puts outlier_data.outliers  # => [100.0]
+
 # Histogram display (automatically included in calculate_statistics output)
 scores.display_histogram
 # => 度数分布ヒストグラム:
