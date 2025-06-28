@@ -504,4 +504,73 @@ RSpec.describe NumberAnalyzer do
       end
     end
   end
+
+  describe '#frequency_distribution' do
+    context 'with basic dataset' do
+      # Dataset: [1, 2, 2, 3, 3, 3] 
+      # Expected: {1=>1, 2=>2, 3=>3}
+      let(:basic_analyzer) { NumberAnalyzer.new([1, 2, 2, 3, 3, 3]) }
+      
+      it 'counts frequency of each value correctly' do
+        freq_dist = basic_analyzer.frequency_distribution
+        expect(freq_dist).to be_a(Hash)
+        expect(freq_dist[1]).to eq(1)
+        expect(freq_dist[2]).to eq(2)
+        expect(freq_dist[3]).to eq(3)
+      end
+      
+      it 'includes all unique values as keys' do
+        freq_dist = basic_analyzer.frequency_distribution
+        expect(freq_dist.keys).to contain_exactly(1, 2, 3)
+      end
+    end
+
+    context 'with mixed data types' do
+      # Dataset: [1.5, 2.5, 1.5, 3.0]
+      # Expected: {1.5=>2, 2.5=>1, 3.0=>1}
+      let(:float_analyzer) { NumberAnalyzer.new([1.5, 2.5, 1.5, 3.0]) }
+      
+      it 'handles float values correctly' do
+        freq_dist = float_analyzer.frequency_distribution
+        expect(freq_dist[1.5]).to eq(2)
+        expect(freq_dist[2.5]).to eq(1)
+        expect(freq_dist[3.0]).to eq(1)
+      end
+    end
+
+    context 'with edge cases' do
+      let(:single_analyzer) { NumberAnalyzer.new([42]) }
+      let(:empty_analyzer) { NumberAnalyzer.new([]) }
+      let(:identical_analyzer) { NumberAnalyzer.new([5, 5, 5, 5]) }
+      
+      it 'handles single value' do
+        freq_dist = single_analyzer.frequency_distribution
+        expect(freq_dist).to eq({42 => 1})
+      end
+      
+      it 'handles empty array' do
+        freq_dist = empty_analyzer.frequency_distribution
+        expect(freq_dist).to eq({})
+      end
+      
+      it 'handles identical values' do
+        freq_dist = identical_analyzer.frequency_distribution
+        expect(freq_dist).to eq({5 => 4})
+      end
+    end
+
+    context 'with unsorted data' do
+      # Dataset: [5, 1, 3, 1, 5, 2]
+      # Expected: {1=>2, 2=>1, 3=>1, 5=>2}
+      let(:unsorted_analyzer) { NumberAnalyzer.new([5, 1, 3, 1, 5, 2]) }
+      
+      it 'works correctly with unsorted data' do
+        freq_dist = unsorted_analyzer.frequency_distribution
+        expect(freq_dist[1]).to eq(2)
+        expect(freq_dist[2]).to eq(1)
+        expect(freq_dist[3]).to eq(1)
+        expect(freq_dist[5]).to eq(2)
+      end
+    end
+  end
 end

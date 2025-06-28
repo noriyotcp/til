@@ -109,6 +109,10 @@ class NumberAnalyzer
     end
   end
 
+  def frequency_distribution
+    @numbers.tally
+  end
+
   private
 
   def average_value
