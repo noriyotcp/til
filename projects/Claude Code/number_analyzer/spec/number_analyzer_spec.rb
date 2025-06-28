@@ -584,12 +584,12 @@ RSpec.describe NumberAnalyzer do
       let(:basic_analyzer) { NumberAnalyzer.new([1, 2, 2, 3, 3, 3]) }
       
       it 'displays histogram with ASCII art bars' do
-        expected_output = [
-          '度数分布ヒストグラム:',
-          '1: ■ (1)',
-          '2: ■■ (2)',
-          '3: ■■■ (3)'
-        ].join("\n") + "\n"
+        expected_output = <<~OUTPUT
+          度数分布ヒストグラム:
+          1: ■ (1)
+          2: ■■ (2)
+          3: ■■■ (3)
+        OUTPUT
 
         expect { basic_analyzer.display_histogram }.to output(expected_output).to_stdout
       end
@@ -599,10 +599,10 @@ RSpec.describe NumberAnalyzer do
       let(:single_analyzer) { NumberAnalyzer.new([42]) }
       
       it 'displays single bar histogram' do
-        expected_output = [
-          '度数分布ヒストグラム:',
-          '42: ■ (1)'
-        ].join("\n") + "\n"
+        expected_output = <<~OUTPUT
+          度数分布ヒストグラム:
+          42: ■ (1)
+        OUTPUT
 
         expect { single_analyzer.display_histogram }.to output(expected_output).to_stdout
       end
@@ -623,11 +623,11 @@ RSpec.describe NumberAnalyzer do
       let(:varied_analyzer) { NumberAnalyzer.new([1, 2, 2, 2, 2, 2]) }
       
       it 'scales bars correctly based on frequency' do
-        expected_output = [
-          '度数分布ヒストグラム:',
-          '1: ■ (1)',
-          '2: ■■■■■ (5)'
-        ].join("\n") + "\n"
+        expected_output = <<~OUTPUT
+          度数分布ヒストグラム:
+          1: ■ (1)
+          2: ■■■■■ (5)
+        OUTPUT
 
         expect { varied_analyzer.display_histogram }.to output(expected_output).to_stdout
       end
@@ -637,12 +637,12 @@ RSpec.describe NumberAnalyzer do
       let(:decimal_analyzer) { NumberAnalyzer.new([1.5, 1.5, 2.0, 2.5]) }
       
       it 'handles decimal values correctly' do
-        expected_output = [
-          '度数分布ヒストグラム:',
-          '1.5: ■■ (2)',
-          '2.0: ■ (1)',
-          '2.5: ■ (1)'
-        ].join("\n") + "\n"
+        expected_output = <<~OUTPUT
+          度数分布ヒストグラム:
+          1.5: ■■ (2)
+          2.0: ■ (1)
+          2.5: ■ (1)
+        OUTPUT
 
         expect { decimal_analyzer.display_histogram }.to output(expected_output).to_stdout
       end
