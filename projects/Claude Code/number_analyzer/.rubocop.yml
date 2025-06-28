@@ -13,6 +13,7 @@ Metrics/MethodLength:
 Metrics/ClassLength:
   Exclude:
     - 'lib/number_analyzer/file_reader.rb'  # Multi-format file reader (CSV/JSON/TXT) requires comprehensive methods
+    - 'lib/number_analyzer/cli.rb'          # CLI class requires all subcommand implementations
 
 Metrics/AbcSize:
   Exclude:

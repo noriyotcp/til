@@ -4,6 +4,4 @@
 require_relative '../lib/number_analyzer/cli'
 
 # 実行部分
-numbers = NumberAnalyzer::CLI.parse_arguments(ARGV)
-analyzer = NumberAnalyzer.new(numbers)
-analyzer.calculate_statistics
+NumberAnalyzer::CLI.run(ARGV)

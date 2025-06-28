@@ -151,4 +151,143 @@ RSpec.describe NumberAnalyzer::CLI do
       expect($CHILD_STATUS.success?).to be true
     end
   end
+
+  describe 'CLI.run with subcommands' do
+    context 'median subcommand' do
+      it 'returns median value' do
+        expect { NumberAnalyzer::CLI.run(%w[median 1 2 3 4 5]) }
+          .to output("3.0\n").to_stdout
+      end
+
+      it 'handles even number of values' do
+        expect { NumberAnalyzer::CLI.run(%w[median 1 2 3 4]) }
+          .to output("2.5\n").to_stdout
+      end
+    end
+
+    context 'mean subcommand' do
+      it 'returns mean value' do
+        expect { NumberAnalyzer::CLI.run(%w[mean 1 2 3 4 5]) }
+          .to output("3.0\n").to_stdout
+      end
+
+      it 'handles decimal values' do
+        expect { NumberAnalyzer::CLI.run(['mean', '1.5', '2.5', '3.5']) }
+          .to output("2.5\n").to_stdout
+      end
+    end
+
+    context 'mode subcommand' do
+      it 'returns mode value' do
+        expect { NumberAnalyzer::CLI.run(%w[mode 1 2 2 3]) }
+          .to output("2.0\n").to_stdout
+      end
+
+      it 'returns multiple modes' do
+        expect { NumberAnalyzer::CLI.run(%w[mode 1 1 2 2]) }
+          .to output("1.0, 2.0\n").to_stdout
+      end
+
+      it 'returns no mode message when no mode exists' do
+        expect { NumberAnalyzer::CLI.run(%w[mode 1 2 3]) }
+          .to output("モードなし\n").to_stdout
+      end
+    end
+
+    context 'sum subcommand' do
+      it 'returns sum value' do
+        expect { NumberAnalyzer::CLI.run(%w[sum 1 2 3 4 5]) }
+          .to output("15.0\n").to_stdout
+      end
+
+      it 'handles decimal values' do
+        expect { NumberAnalyzer::CLI.run(['sum', '1.5', '2.5']) }
+          .to output("4.0\n").to_stdout
+      end
+    end
+
+    context 'min subcommand' do
+      it 'returns minimum value' do
+        expect { NumberAnalyzer::CLI.run(%w[min 5 1 3 2 4]) }
+          .to output("1.0\n").to_stdout
+      end
+
+      it 'handles negative values' do
+        expect { NumberAnalyzer::CLI.run(['min', '-1', '5', '-3']) }
+          .to output("-3.0\n").to_stdout
+      end
+    end
+
+    context 'max subcommand' do
+      it 'returns maximum value' do
+        expect { NumberAnalyzer::CLI.run(%w[max 5 1 3 2 4]) }
+          .to output("5.0\n").to_stdout
+      end
+
+      it 'handles negative values' do
+        expect { NumberAnalyzer::CLI.run(['max', '-1', '-5', '-3']) }
+          .to output("-1.0\n").to_stdout
+      end
+    end
+
+    context 'histogram subcommand' do
+      it 'displays histogram' do
+        expected_output = <<~OUTPUT
+          度数分布ヒストグラム:
+          1.0: ■ (1)
+          2.0: ■■ (2)
+          3.0: ■■■ (3)
+        OUTPUT
+
+        expect { NumberAnalyzer::CLI.run(%w[histogram 1 2 2 3 3 3]) }
+          .to output(expected_output).to_stdout
+      end
+    end
+
+    context 'subcommands with file input' do
+      it 'handles median with CSV file' do
+        fixture_path = File.join(__dir__, '..', 'fixtures', 'sample_data.csv')
+        expect { NumberAnalyzer::CLI.run(['median', '--file', fixture_path]) }
+          .to output("10.0\n").to_stdout
+      end
+
+      it 'handles mean with JSON file' do
+        fixture_path = File.join(__dir__, '..', 'fixtures', 'sample_data.json')
+        expect { NumberAnalyzer::CLI.run(['mean', '-f', fixture_path]) }
+          .to output("55.0\n").to_stdout
+      end
+    end
+
+    context 'subcommand error handling' do
+      it 'exits with error for subcommand without arguments' do
+        expect { NumberAnalyzer::CLI.run(['median']) }
+          .to output(/エラー: 数値または --file オプションを指定してください。/).to_stdout
+          .and raise_error(SystemExit)
+      end
+
+      it 'exits with error for invalid file path' do
+        expect { NumberAnalyzer::CLI.run(['mean', '--file', 'nonexistent.csv']) }
+          .to output(/ファイル読み込みエラー/).to_stdout
+          .and raise_error(SystemExit)
+      end
+
+      it 'exits with error for invalid numeric arguments' do
+        expect { NumberAnalyzer::CLI.run(%w[sum 1 abc 3]) }
+          .to output(/エラー: 無効な引数が見つかりました: abc/).to_stdout
+          .and raise_error(SystemExit)
+      end
+    end
+
+    context 'backward compatibility' do
+      it 'runs full analysis when no subcommand provided' do
+        expect { NumberAnalyzer::CLI.run(%w[1 2 3]) }
+          .to output(/合計: 6/).to_stdout
+      end
+
+      it 'runs with default values when no arguments' do
+        expect { NumberAnalyzer::CLI.run([]) }
+          .to output(/合計: 55/).to_stdout
+      end
+    end
+  end
 end
