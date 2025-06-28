@@ -110,6 +110,36 @@ class NumberAnalyzer
 
   def frequency_distribution = @numbers.tally
 
+  def correlation(other_dataset)
+    return nil if @numbers.empty? || other_dataset.empty?
+    return nil if @numbers.length != other_dataset.length
+
+    # Calculate means
+    mean_x = @numbers.sum.to_f / @numbers.length
+    mean_y = other_dataset.sum.to_f / other_dataset.length
+
+    # Calculate numerator and denominators for Pearson correlation
+    numerator = 0.0
+    sum_sq_x = 0.0
+    sum_sq_y = 0.0
+
+    @numbers.length.times do |i|
+      diff_x = @numbers[i] - mean_x
+      diff_y = other_dataset[i] - mean_y
+
+      numerator += diff_x * diff_y
+      sum_sq_x += diff_x * diff_x
+      sum_sq_y += diff_y * diff_y
+    end
+
+    # Avoid division by zero
+    denominator = Math.sqrt(sum_sq_x * sum_sq_y)
+    return 0.0 if denominator.zero?
+
+    # Return Pearson correlation coefficient
+    (numerator / denominator).round(10)
+  end
+
   def display_histogram
     puts '度数分布ヒストグラム:'
 

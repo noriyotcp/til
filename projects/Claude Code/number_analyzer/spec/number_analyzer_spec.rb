@@ -648,4 +648,65 @@ RSpec.describe NumberAnalyzer do
       end
     end
   end
+
+  describe '#correlation' do
+    context 'with perfect positive correlation' do
+      let(:analyzer) { NumberAnalyzer.new([1, 2, 3, 4, 5]) }
+      let(:other_dataset) { [2, 4, 6, 8, 10] }
+      
+      it 'calculates perfect positive correlation' do
+        result = analyzer.correlation(other_dataset)
+        expect(result).to eq(1.0)
+      end
+    end
+
+    context 'with perfect negative correlation' do
+      let(:analyzer) { NumberAnalyzer.new([1, 2, 3, 4, 5]) }
+      let(:other_dataset) { [10, 8, 6, 4, 2] }
+      
+      it 'calculates perfect negative correlation' do
+        result = analyzer.correlation(other_dataset)
+        expect(result).to eq(-1.0)
+      end
+    end
+
+    context 'with no correlation' do
+      let(:analyzer) { NumberAnalyzer.new([1, 2, 3, 4, 5]) }
+      let(:other_dataset) { [5, 1, 3, 2, 4] }
+      
+      it 'calculates near-zero correlation' do
+        result = analyzer.correlation(other_dataset)
+        expect(result).to be_within(0.3).of(0.0)
+      end
+    end
+
+    context 'with edge cases' do
+      let(:analyzer) { NumberAnalyzer.new([1, 2, 3]) }
+      
+      it 'returns nil for empty dataset' do
+        result = analyzer.correlation([])
+        expect(result).to be_nil
+      end
+      
+      it 'returns nil for mismatched lengths' do
+        result = analyzer.correlation([1, 2])
+        expect(result).to be_nil
+      end
+      
+      it 'handles identical values' do
+        identical_analyzer = NumberAnalyzer.new([5, 5, 5])
+        result = identical_analyzer.correlation([5, 5, 5])
+        expect(result).to eq(0.0)
+      end
+    end
+
+    context 'with empty analyzer' do
+      let(:empty_analyzer) { NumberAnalyzer.new([]) }
+      
+      it 'returns nil for empty analyzer' do
+        result = empty_analyzer.correlation([1, 2, 3])
+        expect(result).to be_nil
+      end
+    end
+  end
 end

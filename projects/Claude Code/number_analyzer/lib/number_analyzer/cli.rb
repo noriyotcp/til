@@ -23,7 +23,8 @@ class NumberAnalyzer
       'quartiles' => :run_quartiles,
       'variance' => :run_variance,
       'std' => :run_standard_deviation,
-      'deviation-scores' => :run_deviation_scores
+      'deviation-scores' => :run_deviation_scores,
+      'correlation' => :run_correlation
     }.freeze
 
     # Main entry point for CLI
@@ -398,6 +399,70 @@ class NumberAnalyzer
 
       options[:dataset_size] = numbers.size
       puts OutputFormatter.format_array(deviation_scores, options)
+    end
+
+    private_class_method def self.run_correlation(args, options = {})
+      if options[:help]
+        show_help('correlation', 'Calculate Pearson correlation coefficient between two datasets')
+        return
+      end
+
+      validate_correlation_args(args, options)
+      dataset1, dataset2 = parse_correlation_datasets(args, options)
+
+      analyzer = NumberAnalyzer.new(dataset1)
+      result = analyzer.correlation(dataset2)
+
+      options[:dataset_size] = dataset1.size
+      puts OutputFormatter.format_correlation(result, options)
+    end
+
+    private_class_method def self.validate_correlation_args(args, options = {})
+      if options[:file]
+        # File mode: expect one or two file paths
+        return if args.length.between?(1, 2)
+      elsif args.length >= 4 && args.length.even?
+        # CLI mode: expect at least two numbers for each dataset
+        return
+      end
+
+      puts 'エラー: correlationコマンドには2つのデータセットが必要です。'
+      puts 'ファイル: bundle exec number_analyzer correlation file1.csv file2.csv'
+      puts '数値: bundle exec number_analyzer correlation 1 2 3 4 5 6'
+      exit 1
+    end
+
+    private_class_method def self.parse_correlation_datasets(args, options = {})
+      if options[:file]
+        parse_correlation_file_datasets(args, options)
+      else
+        parse_correlation_numeric_datasets(args)
+      end
+    end
+
+    private_class_method def self.parse_correlation_file_datasets(args, options)
+      if args.length == 2
+        # Two separate files
+        dataset1 = FileReader.read_from_file(args[0])
+        dataset2 = FileReader.read_from_file(args[1])
+      else
+        # Single file mode - split in half
+        combined_data = FileReader.read_from_file(options[:file])
+        mid = combined_data.length / 2
+        dataset1 = combined_data[0...mid]
+        dataset2 = combined_data[mid..]
+      end
+      [dataset1, dataset2]
+    rescue StandardError => e
+      puts "ファイル読み込みエラー: #{e.message}"
+      exit 1
+    end
+
+    private_class_method def self.parse_correlation_numeric_datasets(args)
+      mid = args.length / 2
+      dataset1 = parse_numeric_arguments(args[0...mid])
+      dataset2 = parse_numeric_arguments(args[mid..])
+      [dataset1, dataset2]
     end
 
     private_class_method def self.parse_numeric_arguments(argv)

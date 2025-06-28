@@ -91,6 +91,24 @@ class NumberAnalyzer
       end
     end
 
+    # Format correlation coefficient output
+    def self.format_correlation(correlation_value, options = {})
+      case options[:format]
+      when 'json'
+        formatted_correlation = correlation_value.nil? ? nil : apply_precision(correlation_value, options[:precision])
+        JSON.generate({ correlation: formatted_correlation }.merge(dataset_metadata(options)))
+      when 'quiet'
+        correlation_value.nil? ? '' : apply_precision(correlation_value, options[:precision]).to_s
+      else
+        if correlation_value.nil?
+          'エラー: データセットが無効です'
+        else
+          formatted_value = apply_precision(correlation_value, options[:precision])
+          "相関係数: #{formatted_value} (#{interpret_correlation(formatted_value)})"
+        end
+      end
+    end
+
     private_class_method def self.apply_precision(value, precision)
       return value unless precision && value.is_a?(Numeric)
 
@@ -113,6 +131,20 @@ class NumberAnalyzer
       metadata = {}
       metadata[:dataset_size] = options[:dataset_size] if options[:dataset_size]
       metadata
+    end
+
+    private_class_method def self.interpret_correlation(value)
+      abs_value = value.abs
+      case abs_value
+      when 0.8..1.0
+        value.positive? ? '強い正の相関' : '強い負の相関'
+      when 0.5..0.8
+        value.positive? ? '中程度の正の相関' : '中程度の負の相関'
+      when 0.3..0.5
+        value.positive? ? '弱い正の相関' : '弱い負の相関'
+      else
+        'ほぼ無相関'
+      end
     end
   end
 end
