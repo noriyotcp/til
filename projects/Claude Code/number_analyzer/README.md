@@ -19,6 +19,7 @@ NumberAnalyzer provides the following statistical calculations:
 - **Interquartile Range (IQR)** - Q3-Q1, measure of data spread (middle 50%)
 - **Outlier Detection** - Identifies outliers using IQR * 1.5 rule
 - **Deviation Scores** - Standardized scores with mean=50, showing relative position of each value
+- **Frequency Distribution** - Count occurrences of each value for data distribution analysis
 - **File Input Support** - Read data from CSV, JSON, and TXT files
 
 ## Installation
@@ -94,6 +95,13 @@ puts analyzer.interquartile_range  # => 4.5
 # Outlier detection and deviation scores
 puts analyzer.outliers        # => []
 puts analyzer.deviation_scores # => [34.33, 37.81, 41.3, 44.78, 48.26, 51.74, 55.22, 58.7, 62.19, 65.67]
+
+# Frequency distribution for data analysis (programmatic access)
+puts analyzer.frequency_distribution # => {1=>1, 2=>1, 3=>1, 4=>1, 5=>1, 6=>1, 7=>1, 8=>1, 9=>1, 10=>1}
+
+# Example with repeated values
+scores = NumberAnalyzer.new([85, 90, 85, 92, 88, 85, 90])
+puts scores.frequency_distribution  # => {85=>3, 90=>2, 92=>1, 88=>1}
 
 # Or read data from files
 require 'number_analyzer/file_reader'
@@ -178,26 +186,32 @@ number_analyzer/
 ├── lib/
 │   ├── number_analyzer.rb          # Core statistical calculations
 │   └── number_analyzer/
-│       └── cli.rb                  # Command line interface
+│       ├── cli.rb                  # Command line interface
+│       ├── file_reader.rb          # File input support (CSV/JSON/TXT)
+│       └── statistics_presenter.rb # Display and formatting logic
 ├── bin/
 │   └── number_analyzer             # Executable file
 ├── spec/
 │   ├── number_analyzer_spec.rb     # Core functionality tests
 │   └── number_analyzer/
-│       └── cli_spec.rb             # CLI functionality tests
+│       ├── cli_spec.rb             # CLI functionality tests
+│       ├── file_reader_spec.rb     # File reader functionality tests
+│       └── statistics_presenter_spec.rb # Presentation logic tests
 ├── number_analyzer.gemspec         # Gem specification
 └── README.md                       # This file
 ```
 
 ## Architecture
 
-The project follows clean architecture principles:
+The project follows clean architecture principles with separation of concerns:
 
 - **NumberAnalyzer** - Pure statistical calculation library (no dependencies)
-- **NumberAnalyzer::CLI** - Command line interface (depends on NumberAnalyzer)
-- **bin/number_analyzer** - Executable entry point (depends on CLI)
+- **NumberAnalyzer::CLI** - Command line interface and argument parsing
+- **NumberAnalyzer::FileReader** - File input handling (CSV/JSON/TXT support)
+- **NumberAnalyzer::StatisticsPresenter** - Display and formatting logic
+- **bin/number_analyzer** - Executable entry point
 
-This separation allows the core statistical functionality to be used independently of the command line interface.
+This modular design allows the core statistical functionality to be used independently, while maintaining clear responsibilities for each component.
 
 ## License
 
