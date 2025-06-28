@@ -278,6 +278,141 @@ RSpec.describe NumberAnalyzer::CLI do
       end
     end
 
+    context 'advanced statistics subcommands' do
+      context 'outliers subcommand' do
+        it 'returns outlier values' do
+          expect { NumberAnalyzer::CLI.run(%w[outliers 1 2 3 100]) }
+            .to output("100.0\n").to_stdout
+        end
+
+        it 'returns no outliers message when none exist' do
+          expect { NumberAnalyzer::CLI.run(%w[outliers 1 2 3 4 5]) }
+            .to output("なし\n").to_stdout
+        end
+
+        it 'handles multiple outliers' do
+          expect { NumberAnalyzer::CLI.run(%w[outliers 1 2 3 4 100 200]) }
+            .to output("200.0\n").to_stdout
+        end
+      end
+
+      context 'percentile subcommand' do
+        it 'calculates specified percentile' do
+          expect { NumberAnalyzer::CLI.run(%w[percentile 75 1 2 3 4 5]) }
+            .to output("4.0\n").to_stdout
+        end
+
+        it 'calculates median as 50th percentile' do
+          expect { NumberAnalyzer::CLI.run(%w[percentile 50 1 2 3 4 5]) }
+            .to output("3.0\n").to_stdout
+        end
+
+        it 'handles boundary percentiles' do
+          expect { NumberAnalyzer::CLI.run(%w[percentile 0 1 2 3 4 5]) }
+            .to output("1.0\n").to_stdout
+        end
+
+        it 'exits with error for missing percentile value' do
+          expect { NumberAnalyzer::CLI.run(%w[percentile]) }
+            .to output(/エラー: percentileコマンドには percentile値と数値が必要です。/).to_stdout
+            .and raise_error(SystemExit)
+        end
+
+        it 'exits with error for invalid percentile range' do
+          expect { NumberAnalyzer::CLI.run(%w[percentile 150 1 2 3]) }
+            .to output(/エラー: percentile値は0-100の範囲で指定してください。/).to_stdout
+            .and raise_error(SystemExit)
+        end
+
+        it 'exits with error for non-numeric percentile' do
+          expect { NumberAnalyzer::CLI.run(%w[percentile abc 1 2 3]) }
+            .to output(/エラー: 無効なpercentile値です。/).to_stdout
+            .and raise_error(SystemExit)
+        end
+
+        it 'handles file input with percentile' do
+          fixture_path = File.join(__dir__, '..', 'fixtures', 'sample_data.csv')
+          expect { NumberAnalyzer::CLI.run(['percentile', '25', '--file', fixture_path]) }
+            .to output("3.25\n").to_stdout
+        end
+      end
+
+      context 'quartiles subcommand' do
+        it 'displays formatted quartiles' do
+          expected_output = <<~OUTPUT
+            Q1: 2.0
+            Q2: 3.0
+            Q3: 4.0
+          OUTPUT
+
+          expect { NumberAnalyzer::CLI.run(%w[quartiles 1 2 3 4 5]) }
+            .to output(expected_output).to_stdout
+        end
+
+        it 'handles even number of values' do
+          expected_output = <<~OUTPUT
+            Q1: 1.75
+            Q2: 2.5
+            Q3: 3.25
+          OUTPUT
+
+          expect { NumberAnalyzer::CLI.run(%w[quartiles 1 2 3 4]) }
+            .to output(expected_output).to_stdout
+        end
+      end
+
+      context 'variance subcommand' do
+        it 'calculates variance' do
+          expect { NumberAnalyzer::CLI.run(%w[variance 1 2 3 4 5]) }
+            .to output("2.0\n").to_stdout
+        end
+
+        it 'handles single value' do
+          expect { NumberAnalyzer::CLI.run(%w[variance 42]) }
+            .to output("0.0\n").to_stdout
+        end
+      end
+
+      context 'std subcommand' do
+        it 'calculates standard deviation' do
+          # sqrt(2.0) ≈ 1.4142135623730951
+          expect { NumberAnalyzer::CLI.run(%w[std 1 2 3 4 5]) }
+            .to output("1.4142135623730951\n").to_stdout
+        end
+
+        it 'handles identical values' do
+          expect { NumberAnalyzer::CLI.run(%w[std 3 3 3 3]) }
+            .to output("0.0\n").to_stdout
+        end
+      end
+
+      context 'deviation-scores subcommand' do
+        it 'calculates deviation scores' do
+          expect { NumberAnalyzer::CLI.run(%w[deviation-scores 1 2 3 4 5]) }
+            .to output("35.86, 42.93, 50.0, 57.07, 64.14\n").to_stdout
+        end
+
+        it 'handles identical values with score 50' do
+          expect { NumberAnalyzer::CLI.run(%w[deviation-scores 5 5 5 5]) }
+            .to output("50.0, 50.0, 50.0, 50.0\n").to_stdout
+        end
+      end
+
+      context 'advanced subcommands with file input' do
+        it 'handles outliers with CSV file' do
+          fixture_path = File.join(__dir__, '..', 'fixtures', 'sample_data.csv')
+          expect { NumberAnalyzer::CLI.run(['outliers', '--file', fixture_path]) }
+            .to output("100.0\n").to_stdout
+        end
+
+        it 'handles variance with JSON file' do
+          fixture_path = File.join(__dir__, '..', 'fixtures', 'sample_data.json')
+          expect { NumberAnalyzer::CLI.run(['variance', '-f', fixture_path]) }
+            .to output("825.0\n").to_stdout
+        end
+      end
+    end
+
     context 'backward compatibility' do
       it 'runs full analysis when no subcommand provided' do
         expect { NumberAnalyzer::CLI.run(%w[1 2 3]) }

@@ -6,7 +6,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 NumberAnalyzer is a comprehensive statistical analysis tool built in Ruby. Originally started as a refactoring exercise from beginner-level code to professional Ruby Gem, it has evolved into an enterprise-ready statistical analysis library with data visualization capabilities.
 
-**Current Status**: ✅ **Production Ready** - 15 statistical functions, 142 test cases, CLI subcommands, enterprise-level code quality
+**Current Status**: ✅ **Production Ready** - 15 statistical functions, 162 test cases, full CLI subcommand suite, enterprise-level code quality
 
 ## Development Commands
 
@@ -15,15 +15,21 @@ NumberAnalyzer is a comprehensive statistical analysis tool built in Ruby. Origi
 - `bundle exec number_analyzer 1 2 3 4 5` (custom numbers - full analysis)
 - `bundle exec number_analyzer --file data.csv` (file input - full analysis)
 
-**Subcommand Usage** (Phase 6.1):
-- `bundle exec number_analyzer median 1 2 3 4 5` (single statistic)
+**Basic Subcommands** (Phase 6.1):
+- `bundle exec number_analyzer median 1 2 3 4 5` (central tendency)
 - `bundle exec number_analyzer histogram --file data.csv` (visualization)
-- `bundle exec number_analyzer mean 10 20 30` (individual calculations)
-- Available subcommands: `median`, `mean`, `mode`, `sum`, `min`, `max`, `histogram`
+- `bundle exec number_analyzer mean 10 20 30` (basic statistics)
+- Basic commands: `median`, `mean`, `mode`, `sum`, `min`, `max`, `histogram`
+
+**Advanced Subcommands** (Phase 6.2):
+- `bundle exec number_analyzer outliers 1 2 3 100` (outlier detection)
+- `bundle exec number_analyzer percentile 75 1 2 3 4 5` (parameterized statistics)
+- `bundle exec number_analyzer quartiles 1 2 3 4 5` (detailed analysis)
+- Advanced commands: `outliers`, `percentile`, `quartiles`, `variance`, `std`, `deviation-scores`
 
 **Development Tools**:
 - `bundle install` - Install dependencies
-- `rspec` - Run test suite (142 tests)
+- `rspec` - Run test suite (162 tests)
 - `bundle exec rubocop` - Code style checking (MANDATORY: zero violations)
 - `bundle exec rubocop -a` - Auto-fix style violations (run first)
 - `bundle exec rubocop [file]` - Check specific file
@@ -38,14 +44,14 @@ NumberAnalyzer is a comprehensive statistical analysis tool built in Ruby. Origi
 lib/
 ├── number_analyzer.rb              # Core statistical calculations (69 tests)
 └── number_analyzer/
-    ├── cli.rb                      # Command-line interface + subcommands (36 tests)
+    ├── cli.rb                      # CLI interface + 13 subcommands (56 tests)
     ├── file_reader.rb              # File input handling (27 tests)
     └── statistics_presenter.rb     # Output formatting (13 tests)
 ```
 
 **Key Classes**:
 - **NumberAnalyzer**: Pure statistical calculations (15 functions)
-- **NumberAnalyzer::CLI**: Command-line argument processing + subcommand routing
+- **NumberAnalyzer::CLI**: Command-line argument processing + 13 subcommand routing
 - **NumberAnalyzer::FileReader**: CSV/JSON/TXT file input
 - **NumberAnalyzer::StatisticsPresenter**: Output formatting and histogram display
 
@@ -57,9 +63,10 @@ lib/
 - Advanced: percentiles, quartiles, outliers, deviation scores
 - Visualization: frequency distribution, ASCII histogram
 
-**Input Support**: CLI arguments, CSV/JSON/TXT files (both full analysis and subcommands)
-**Output**: Comprehensive analysis OR individual statistics + ASCII histogram
-**CLI Modes**: Full analysis (default) OR individual subcommands (Phase 6.1)
+**Input Support**: CLI arguments, CSV/JSON/TXT files (both full analysis and all subcommands)
+**Output**: Comprehensive analysis OR individual statistics + visualization
+**CLI Modes**: Full analysis (default) OR 13 individual subcommands (Phases 6.1 & 6.2)
+**Subcommand Categories**: Basic statistics, advanced analysis, parameterized commands
 
 ## Code Quality Standards
 
@@ -109,7 +116,7 @@ rspec                        # MUST be all tests passing
 2. **TDD** - Write failing tests first
 3. **Implement** - Follow existing patterns and Ruby conventions
 4. **RuboCop Check** - Run `bundle exec rubocop` after each significant change
-5. **Test** - Ensure all 142+ tests pass
+5. **Test** - Ensure all 162+ tests pass
 6. **Final RuboCop** - `bundle exec rubocop -a` then verify zero violations
 7. **Document** - Update README.md and relevant documentation
 
@@ -138,10 +145,11 @@ rspec                        # MUST be all tests passing
 
 ## Quick Reference
 
-**Current State**: ✅ Phase 6.1 Complete (Basic CLI Subcommands)
-**Next Phase**: Phase 6.2 - Advanced Statistics Subcommands (see `ai-docs/ROADMAP.md`)
-**Test Count**: 142 total (69 core + 36 CLI/subcommands + 27 file + 13 presenter)
+**Current State**: ✅ Phase 6.2 Complete (Advanced Statistics Subcommands)
+**Next Phase**: Phase 6.3 - Output Format & Options (see `ai-docs/ROADMAP.md`)
+**Test Count**: 162 total (69 core + 56 CLI/subcommands + 27 file + 13 presenter)
 **RuboCop Status**: Full compliance (zero violations policy enforced)
+**Subcommand Count**: 13 total (7 basic + 6 advanced statistical commands)
 
 ## Documentation Structure
 
