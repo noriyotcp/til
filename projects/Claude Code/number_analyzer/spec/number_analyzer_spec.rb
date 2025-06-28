@@ -6,7 +6,7 @@ RSpec.describe NumberAnalyzer do
 
   describe '#calculate_statistics' do
     it 'outputs correct statistics for the given numbers' do
-      expected_output = "合計: 55\n平均: 5.5\n最大値: 10\n最小値: 1\n中央値: 5.5\n分散: 8.25\n最頻値: なし\n標準偏差: 2.87\n四分位範囲(IQR): 4.5\n外れ値: なし\n偏差値: 34.33, 37.81, 41.3, 44.78, 48.26, 51.74, 55.22, 58.7, 62.19, 65.67\n"
+      expected_output = "合計: 55\n平均: 5.5\n最大値: 10\n最小値: 1\n中央値: 5.5\n分散: 8.25\n最頻値: なし\n標準偏差: 2.87\n四分位範囲(IQR): 4.5\n外れ値: なし\n偏差値: 34.33, 37.81, 41.3, 44.78, 48.26, 51.74, 55.22, 58.7, 62.19, 65.67\n\n度数分布ヒストグラム:\n1: ■ (1)\n2: ■ (1)\n3: ■ (1)\n4: ■ (1)\n5: ■ (1)\n6: ■ (1)\n7: ■ (1)\n8: ■ (1)\n9: ■ (1)\n10: ■ (1)\n"
       
       expect { analyzer.calculate_statistics }.to output(expected_output).to_stdout
     end
@@ -16,7 +16,7 @@ RSpec.describe NumberAnalyzer do
     let(:single_analyzer) { NumberAnalyzer.new([42]) }
 
     it 'calculates statistics correctly' do
-      expected_output = "合計: 42\n平均: 42.0\n最大値: 42\n最小値: 42\n中央値: 42\n分散: 0.0\n最頻値: なし\n標準偏差: 0.0\n四分位範囲(IQR): 0\n外れ値: なし\n偏差値: 50.0\n"
+      expected_output = "合計: 42\n平均: 42.0\n最大値: 42\n最小値: 42\n中央値: 42\n分散: 0.0\n最頻値: なし\n標準偏差: 0.0\n四分位範囲(IQR): 0\n外れ値: なし\n偏差値: 50.0\n\n度数分布ヒストグラム:\n42: ■ (1)\n"
       
       expect { single_analyzer.calculate_statistics }.to output(expected_output).to_stdout
     end
@@ -26,7 +26,7 @@ RSpec.describe NumberAnalyzer do
     let(:negative_analyzer) { NumberAnalyzer.new([-5, -2, -10, -1]) }
 
     it 'handles negative numbers correctly' do
-      expected_output = "合計: -18\n平均: -4.5\n最大値: -1\n最小値: -10\n中央値: -3.5\n分散: 12.25\n最頻値: なし\n標準偏差: 3.5\n四分位範囲(IQR): 4.5\n外れ値: なし\n偏差値: 48.57, 57.14, 34.29, 60.0\n"
+      expected_output = "合計: -18\n平均: -4.5\n最大値: -1\n最小値: -10\n中央値: -3.5\n分散: 12.25\n最頻値: なし\n標準偏差: 3.5\n四分位範囲(IQR): 4.5\n外れ値: なし\n偏差値: 48.57, 57.14, 34.29, 60.0\n\n度数分布ヒストグラム:\n-10: ■ (1)\n-5: ■ (1)\n-2: ■ (1)\n-1: ■ (1)\n"
       
       expect { negative_analyzer.calculate_statistics }.to output(expected_output).to_stdout
     end
@@ -36,7 +36,7 @@ RSpec.describe NumberAnalyzer do
     let(:mixed_analyzer) { NumberAnalyzer.new([-3, 0, 5, -1, 2]) }
 
     it 'calculates statistics correctly' do
-      expected_output = "合計: 3\n平均: 0.6\n最大値: 5\n最小値: -3\n中央値: 0\n分散: 7.44\n最頻値: なし\n標準偏差: 2.73\n四分位範囲(IQR): 3\n外れ値: なし\n偏差値: 36.8, 47.8, 66.13, 44.13, 55.13\n"
+      expected_output = "合計: 3\n平均: 0.6\n最大値: 5\n最小値: -3\n中央値: 0\n分散: 7.44\n最頻値: なし\n標準偏差: 2.73\n四分位範囲(IQR): 3\n外れ値: なし\n偏差値: 36.8, 47.8, 66.13, 44.13, 55.13\n\n度数分布ヒストグラム:\n-3: ■ (1)\n-1: ■ (1)\n0: ■ (1)\n2: ■ (1)\n5: ■ (1)\n"
       
       expect { mixed_analyzer.calculate_statistics }.to output(expected_output).to_stdout
     end
@@ -46,7 +46,7 @@ RSpec.describe NumberAnalyzer do
     let(:duplicate_analyzer) { NumberAnalyzer.new([3, 3, 3, 3]) }
 
     it 'handles duplicate values correctly' do
-      expected_output = "合計: 12\n平均: 3.0\n最大値: 3\n最小値: 3\n中央値: 3.0\n分散: 0.0\n最頻値: 3\n標準偏差: 0.0\n四分位範囲(IQR): 0.0\n外れ値: なし\n偏差値: 50.0, 50.0, 50.0, 50.0\n"
+      expected_output = "合計: 12\n平均: 3.0\n最大値: 3\n最小値: 3\n中央値: 3.0\n分散: 0.0\n最頻値: 3\n標準偏差: 0.0\n四分位範囲(IQR): 0.0\n外れ値: なし\n偏差値: 50.0, 50.0, 50.0, 50.0\n\n度数分布ヒストグラム:\n3: ■■■■ (4)\n"
       
       expect { duplicate_analyzer.calculate_statistics }.to output(expected_output).to_stdout
     end
@@ -570,6 +570,81 @@ RSpec.describe NumberAnalyzer do
         expect(freq_dist[2]).to eq(1)
         expect(freq_dist[3]).to eq(1)
         expect(freq_dist[5]).to eq(2)
+      end
+    end
+  end
+
+  describe '#display_histogram' do
+    context 'with basic dataset' do
+      # Dataset: [1, 2, 2, 3, 3, 3] 
+      # Expected histogram:
+      # 1: ■ (1)
+      # 2: ■■ (2)
+      # 3: ■■■ (3)
+      let(:basic_analyzer) { NumberAnalyzer.new([1, 2, 2, 3, 3, 3]) }
+      
+      it 'displays histogram with ASCII art bars' do
+        expected_output = [
+          "度数分布ヒストグラム:",
+          "1: ■ (1)",
+          "2: ■■ (2)",
+          "3: ■■■ (3)"
+        ].join("\n") + "\n"
+
+        expect { basic_analyzer.display_histogram }.to output(expected_output).to_stdout
+      end
+    end
+
+    context 'with single value' do
+      let(:single_analyzer) { NumberAnalyzer.new([42]) }
+      
+      it 'displays single bar histogram' do
+        expected_output = [
+          "度数分布ヒストグラム:",
+          "42: ■ (1)"
+        ].join("\n") + "\n"
+
+        expect { single_analyzer.display_histogram }.to output(expected_output).to_stdout
+      end
+    end
+
+    context 'with empty array' do
+      let(:empty_analyzer) { NumberAnalyzer.new([]) }
+      
+      it 'displays empty histogram message' do
+        expected_output = "度数分布ヒストグラム:\n(データが空です)\n"
+
+        expect { empty_analyzer.display_histogram }.to output(expected_output).to_stdout
+      end
+    end
+
+    context 'with varied frequencies' do
+      # Dataset: [1, 2, 2, 2, 2, 2] (1 appears 1 time, 2 appears 5 times)
+      let(:varied_analyzer) { NumberAnalyzer.new([1, 2, 2, 2, 2, 2]) }
+      
+      it 'scales bars correctly based on frequency' do
+        expected_output = [
+          "度数分布ヒストグラム:",
+          "1: ■ (1)",
+          "2: ■■■■■ (5)"
+        ].join("\n") + "\n"
+
+        expect { varied_analyzer.display_histogram }.to output(expected_output).to_stdout
+      end
+    end
+
+    context 'with decimal values' do
+      let(:decimal_analyzer) { NumberAnalyzer.new([1.5, 1.5, 2.0, 2.5]) }
+      
+      it 'handles decimal values correctly' do
+        expected_output = [
+          "度数分布ヒストグラム:",
+          "1.5: ■■ (2)",
+          "2.0: ■ (1)",
+          "2.5: ■ (1)"
+        ].join("\n") + "\n"
+
+        expect { decimal_analyzer.display_histogram }.to output(expected_output).to_stdout
       end
     end
   end

@@ -17,7 +17,8 @@ RSpec.describe NumberAnalyzer::StatisticsPresenter do
         std_dev: 1.58,
         iqr: 2.0,
         outlier_values: [10],
-        deviation_scores: [31.65, 43.29, 50.0, 56.71, 68.35]
+        deviation_scores: [31.65, 43.29, 50.0, 56.71, 68.35],
+        frequency_distribution: {1 => 1, 2 => 2, 3 => 1, 5 => 1}
       }
     end
 
@@ -33,7 +34,13 @@ RSpec.describe NumberAnalyzer::StatisticsPresenter do
         '標準偏差: 1.58',
         '四分位範囲(IQR): 2.0',
         '外れ値: 10',
-        '偏差値: 31.65, 43.29, 50.0, 56.71, 68.35'
+        '偏差値: 31.65, 43.29, 50.0, 56.71, 68.35',
+        '',
+        '度数分布ヒストグラム:',
+        '1: ■ (1)',
+        '2: ■■ (2)',
+        '3: ■ (1)',
+        '5: ■ (1)'
       ].join("\n")
       expected_output = "#{expected_output}\n"
 
@@ -45,6 +52,22 @@ RSpec.describe NumberAnalyzer::StatisticsPresenter do
         stats_with_nil_iqr = stats.merge(iqr: nil)
 
         expect { described_class.display_results(stats_with_nil_iqr) }.to output(/四分位範囲\(IQR\): なし/).to_stdout
+      end
+    end
+
+    context 'when frequency_distribution is nil' do
+      it 'displays empty data message for histogram' do
+        stats_with_nil_freq = stats.merge(frequency_distribution: nil)
+
+        expect { described_class.display_results(stats_with_nil_freq) }.to output(/\(データが空です\)/).to_stdout
+      end
+    end
+
+    context 'when frequency_distribution is empty' do
+      it 'displays empty data message for histogram' do
+        stats_with_empty_freq = stats.merge(frequency_distribution: {})
+
+        expect { described_class.display_results(stats_with_empty_freq) }.to output(/\(データが空です\)/).to_stdout
       end
     end
   end

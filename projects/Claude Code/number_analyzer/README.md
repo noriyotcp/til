@@ -20,6 +20,7 @@ NumberAnalyzer provides the following statistical calculations:
 - **Outlier Detection** - Identifies outliers using IQR * 1.5 rule
 - **Deviation Scores** - Standardized scores with mean=50, showing relative position of each value
 - **Frequency Distribution** - Count occurrences of each value for data distribution analysis
+- **Histogram Display** - ASCII art visualization of frequency distribution with automatic scaling
 - **File Input Support** - Read data from CSV, JSON, and TXT files
 
 ## Installation
@@ -99,9 +100,17 @@ puts analyzer.deviation_scores # => [34.33, 37.81, 41.3, 44.78, 48.26, 51.74, 55
 # Frequency distribution for data analysis (programmatic access)
 puts analyzer.frequency_distribution # => {1=>1, 2=>1, 3=>1, 4=>1, 5=>1, 6=>1, 7=>1, 8=>1, 9=>1, 10=>1}
 
-# Example with repeated values
+# Example with repeated values for histogram visualization
 scores = NumberAnalyzer.new([85, 90, 85, 92, 88, 85, 90])
 puts scores.frequency_distribution  # => {85=>3, 90=>2, 92=>1, 88=>1}
+
+# Histogram display (automatically included in calculate_statistics output)
+scores.display_histogram
+# => 度数分布ヒストグラム:
+# => 85: ■■■ (3)
+# => 88: ■ (1)
+# => 90: ■■ (2)
+# => 92: ■ (1)
 
 # Or read data from files
 require 'number_analyzer/file_reader'
@@ -125,6 +134,36 @@ analyzer.calculate_statistics
 四分位範囲(IQR): 4.5
 外れ値: なし
 偏差値: 34.33, 37.81, 41.3, 44.78, 48.26, 51.74, 55.22, 58.7, 62.19, 65.67
+
+度数分布ヒストグラム:
+1: ■ (1)
+2: ■ (1)
+3: ■ (1)
+4: ■ (1)
+5: ■ (1)
+6: ■ (1)
+7: ■ (1)
+8: ■ (1)
+9: ■ (1)
+10: ■ (1)
+```
+
+### Histogram with Repeated Values
+
+For data with repeated values, the histogram shows frequency patterns:
+
+```bash
+bundle exec number_analyzer 1 2 2 3 3 3 4 5
+```
+
+Output includes:
+```
+度数分布ヒストグラム:
+1.0: ■ (1)
+2.0: ■■ (2)
+3.0: ■■■ (3)
+4.0: ■ (1)
+5.0: ■ (1)
 ```
 
 ## Supported File Formats

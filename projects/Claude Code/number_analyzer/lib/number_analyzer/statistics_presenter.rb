@@ -16,6 +16,22 @@ class NumberAnalyzer
       puts "四分位範囲(IQR): #{stats[:iqr]&.round(2) || 'なし'}"
       puts "外れ値: #{format_outliers(stats[:outlier_values])}"
       puts "偏差値: #{format_deviation_scores(stats[:deviation_scores])}"
+      puts # 空行を追加
+      display_histogram(stats[:frequency_distribution])
+    end
+
+    def self.display_histogram(frequency_distribution)
+      puts "度数分布ヒストグラム:"
+      
+      if frequency_distribution.nil? || frequency_distribution.empty?
+        puts "(データが空です)"
+        return
+      end
+      
+      frequency_distribution.sort.each do |value, count|
+        bar = "■" * count
+        puts "#{value}: #{bar} (#{count})"
+      end
     end
 
     def self.format_mode(mode_values)
@@ -36,6 +52,6 @@ class NumberAnalyzer
       deviation_scores.join(', ')
     end
 
-    private_class_method :format_mode, :format_outliers, :format_deviation_scores
+    private_class_method :format_mode, :format_outliers, :format_deviation_scores, :display_histogram
   end
 end

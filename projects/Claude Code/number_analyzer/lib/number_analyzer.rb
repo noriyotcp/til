@@ -20,7 +20,8 @@ class NumberAnalyzer
       std_dev: standard_deviation,
       iqr: interquartile_range,
       outlier_values: outliers,
-      deviation_scores: deviation_scores
+      deviation_scores: deviation_scores,
+      frequency_distribution: frequency_distribution
     }
 
     StatisticsPresenter.display_results(stats)
@@ -111,6 +112,22 @@ class NumberAnalyzer
 
   def frequency_distribution
     @numbers.tally
+  end
+
+  def display_histogram
+    puts "度数分布ヒストグラム:"
+    
+    freq_dist = frequency_distribution
+    
+    if freq_dist.empty?
+      puts "(データが空です)"
+      return
+    end
+    
+    freq_dist.sort.each do |value, count|
+      bar = "■" * count
+      puts "#{value}: #{bar} (#{count})"
+    end
   end
 
   private

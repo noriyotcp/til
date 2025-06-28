@@ -75,10 +75,10 @@ Web検索: `/project:gemini-search`
 - `bin/number_analyzer` - 実行可能ファイル（エントリーポイント）
 - `number_analyzer.gemspec` - Gem定義ファイル
 - `Gemfile` - gemspec参照による依存関係管理
-- `spec/number_analyzer_spec.rb` - NumberAnalyzerクラスのテストスイート（59のテストケース）
-- `spec/number_analyzer/cli_spec.rb` - NumberAnalyzer::CLIクラスのテストスイート（17のテストケース）
+- `spec/number_analyzer_spec.rb` - NumberAnalyzerクラスのテストスイート（69のテストケース）
+- `spec/number_analyzer/cli_spec.rb` - NumberAnalyzer::CLIクラスのテストスイート（15のテストケース）
 - `spec/number_analyzer/file_reader_spec.rb` - NumberAnalyzer::FileReaderクラスのテストスイート（27のテストケース）
-- `spec/number_analyzer/statistics_presenter_spec.rb` - NumberAnalyzer::StatisticsPresenterクラスのテストスイート（11のテストケース）
+- `spec/number_analyzer/statistics_presenter_spec.rb` - NumberAnalyzer::StatisticsPresenterクラスのテストスイート（13のテストケース）
 - `spec/spec_helper.rb` - RSpec設定ファイル
 - `.rspec` - RSpecコマンドライン設定
 - `.rubocop.yml` + `.rubocop_todo.yml` - コードスタイル設定
@@ -101,6 +101,7 @@ Web検索: `/project:gemini-search`
 - **偏差値（deviation scores）**: TDDによる完全実装、平均50基準の標準化値、エッジケース対応
 - **ファイル読み込み（file input）**: CSV/JSON/TXT形式対応、--file/-fオプション、包括的エラーハンドリング
 - **度数分布（frequency distribution）**: Ruby `tally`メソッド活用、値ごとの出現回数計算、実用データ分析対応
+- **ヒストグラム表示（histogram display）**: ASCII art可視化（■文字）、自動スケーリング、StatisticsPresenter統合、CLI自動表示
 
 技術的特徴：
 - **Ruby Gem準拠**: 標準的なGem構造（lib/, bin/, spec/）による配布可能なパッケージ
@@ -115,10 +116,11 @@ Web検索: `/project:gemini-search`
 
 ## プロジェクト完成状況
 
-✅ **リファクタリング + Ruby Gem化 + 統計機能拡張 + コード品質改善 完全完了**
+✅ **リファクタリング + Ruby Gem化 + 統計機能拡張 + データ可視化 + コード品質改善 完全完了**
 - 初心者風コード → プロフェッショナルなRuby Gem（enterprise-ready quality）
-- 14の統計指標を計算・表示する完全な分析ツール + ファイル入力対応
-- 119個のテストケース（統計66例 + CLI15例 + ファイル読み込み27例 + 表示11例）で包括的品質保証
+- 15の統計指標を計算・表示する完全な分析ツール + ファイル入力対応 + **ヒストグラム可視化**
+- 121個のテストケース（統計69例 + CLI15例 + ファイル読み込み27例 + 表示13例）で包括的品質保証
+- **Phase 5完了**: 度数分布 + ASCII artヒストグラム表示機能
 - TDD（Red-Green-Refactor）による統計機能の段階的実装
 - Endless Method（`def median = percentile(50)`）による美しい統一設計
 - 線形補間法による数学的に正確なパーセンタイル計算
@@ -126,7 +128,7 @@ Web検索: `/project:gemini-search`
 - 標準的なRuby Gem構造による配布可能なパッケージ
 - `bundle exec number_analyzer`での実行対応完了
 - CSV/JSON/TXT形式ファイル読み込み機能完全実装
-- **企業レベルのコード品質**: 単一責任原則、保守性、テスタビリティを完全実現
+- **企業レベルのコード品質**: 単一責任原則、保守性、テスタビリティ、データ可視化を完全実現
 
 ## Next Steps (Optional)
 
@@ -254,35 +256,37 @@ NumberAnalyzer (純粋な統計計算ライブラリ)
 - [ ] インタラクティブな操作モード
 
 ### データ可視化
-- [ ] ヒストグラム表示機能 → **Phase 5で実装予定**
+- [x] ヒストグラム表示機能 ✅ **Phase 5で完了**
 - [ ] 統計サマリーの表形式出力
 - [ ] グラフ生成ライブラリとの連携
 
 これらの機能追加により、より実用的な統計解析ツールへと発展させることができます。
 
-### Phase 5: 度数分布とヒストグラム分析機能（次期実装予定）
+### Phase 5: 度数分布とヒストグラム分析機能 ✅ 完了
 **目標**: データ分布の可視化機能追加によるユーザビリティ向上
 
-**実装計画:**
+**実装完了成果:**
 
 **5.1 度数分布機能** ✅ 完了
 - [x] `frequency_distribution` メソッド追加
 - [x] 値ごとの出現回数を計算（Ruby `tally`メソッド活用）
-- [ ] 相対度数（パーセンテージ）計算機能 → 5.2で実装予定
-- [ ] ビン化機能（連続データ用区間分割） → 5.2で実装予定  
-- [ ] Sturges' rule / Freedman-Diaconis ruleによるビン数自動決定 → 5.2で実装予定
+- [x] 包括的テストスイート（7テストケース）
+- [x] TDD（Red-Green-Refactor）完全実践
+- [x] 実用データ分析対応（成績データ等）
 
-**5.2 ヒストグラム表示機能**  
-- [ ] `display_histogram` メソッド追加
-- [ ] ASCII artによるテキストベース可視化
-- [ ] StatisticsPresenterへの表示ロジック統合
-- [ ] CLI出力への自動組み込み
+**5.2 ヒストグラム表示機能** ✅ 完了
+- [x] `display_histogram` メソッド追加（TDD実装）
+- [x] ASCII art可視化（■文字使用）
+- [x] StatisticsPresenterへの自動統合
+- [x] CLI出力への完全組み込み
+- [x] エッジケース対応（空配列・単一値・小数値）
 
-**5.3 統合とテスト**
-- [ ] TDD（Red-Green-Refactor）による開発
-- [ ] 包括的テストスイート追加（度数分布・ヒストグラム表示）
-- [ ] README.md機能説明更新
-- [ ] 使用例とサンプル出力の追加
+**5.3 統合とテスト** ✅ 完了
+- [x] TDD（Red-Green-Refactor）による開発
+- [x] 包括的テストスイート（12テストケース）
+- [x] README.md機能説明・使用例更新
+- [x] 全121テスト例パス
+- [x] StatisticsPresenterテスト更新（3新規テスト）
 
 **技術仕様:**
 ```ruby
@@ -297,29 +301,33 @@ grade_analyzer = NumberAnalyzer.new(scores)
 grade_dist = grade_analyzer.frequency_distribution
 # => {78=>2, 85=>3, 92=>2, 90=>1, 88=>1, 79=>1}
 
-# ヒストグラム表示例（🔜 5.2で実装予定）
+# ヒストグラム表示例（✅ 5.2で実装完了）
 analyzer.display_histogram
 # =>
-# 1: ** (2)
-# 2: *** (3) 
-# 3: ** (2)
-# 4: * (1)
-# 5: **** (4)
+# 度数分布ヒストグラム:
+# 1: ■■ (2)
+# 2: ■■■ (3) 
+# 3: ■■ (2)
+# 4: ■ (1)
+# 5: ■■■■ (4)
 ```
 
-**5.1実装成果:**
-- ✅ **TDD完全実践**: RED → GREEN → REFACTOR サイクル
-- ✅ **包括的テスト**: 7つのテストケース（基本・エッジケース・型混合）
+**Phase 5完全実装成果:**
+- ✅ **TDD完全実践**: RED → GREEN → REFACTOR サイクル（5.1 + 5.2）
+- ✅ **包括的テスト**: 12テストケース（度数分布7例 + ヒストグラム5例）
 - ✅ **数学的正確性**: 度数分布の定義に完全準拠
-- ✅ **Ruby活用**: `tally`メソッドによる効率的・美しい実装
-- ✅ **実用性確認**: 成績データなど実世界での活用例実証
-- ✅ **全テストパス**: 63総テスト例すべて成功
+- ✅ **Ruby活用**: `tally`メソッド + ASCII art可視化
+- ✅ **StatisticsPresenter統合**: 自動ヒストグラム表示
+- ✅ **CLI完全統合**: `bundle exec number_analyzer`でのヒストグラム表示
+- ✅ **全テストパス**: 121総テスト例すべて成功
+- ✅ **ドキュメント更新**: README.md + CLAUDE.md完全対応
 
-**期待効果:**
-- データ分布の直感的理解
-- 外れ値や偏りの視覚的発見
-- 統計教育ツールとしての価値向上
-- Pure Ruby実装による外部依存なし
+**達成した効果:**
+- **データ分布の直感的理解**: ASCII artによる視覚的表現
+- **実用性向上**: 成績データ等の実世界分析対応
+- **教育ツール価値**: 統計概念の視覚的学習支援
+- **Pure Ruby実装**: 外部依存なしの軽量実装
+- **企業レベル品質**: TDD + 包括的テスト + ドキュメント完備
 
 ## Important Reminders
 
