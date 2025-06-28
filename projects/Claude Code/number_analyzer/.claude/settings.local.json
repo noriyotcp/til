@@ -5,7 +5,10 @@
       "Bash(ls:*)",
       "Bash(rubocop:*)",
       "Bash(rspec:*)",
-      "Bash(bundle exec:*)"
+      "Bash(bundle exec:*)",
+      "WebFetch(domain:docs.rubocop.org)",
+      "WebFetch(domain:www.rubydoc.info)",
+      "Bash(grep:*)"
     ],
     "deny": []
   }
