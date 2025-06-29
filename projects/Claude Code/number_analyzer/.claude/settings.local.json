@@ -8,7 +8,9 @@
       "Bash(bundle exec:*)",
       "WebFetch(domain:docs.rubocop.org)",
       "WebFetch(domain:www.rubydoc.info)",
-      "Bash(grep:*)"
+      "Bash(grep:*)",
+      "Bash(find:*)",
+      "Bash(git add:*)"
     ],
     "deny": []
   }
