@@ -30,7 +30,8 @@ class NumberAnalyzer
       'growth-rate' => :run_growth_rate,
       'seasonal' => :run_seasonal,
       't-test' => :run_t_test,
-      'confidence-interval' => :run_confidence_interval
+      'confidence-interval' => :run_confidence_interval,
+      'chi-square' => :run_chi_square
     }.freeze
 
     # Main entry point for CLI
@@ -100,7 +101,10 @@ class NumberAnalyzer
         one_sample: false,
         population_mean: nil,
         mu: nil,
-        confidence_level: 95
+        confidence_level: 95,
+        independence: false,
+        goodness_of_fit: false,
+        uniform: false
       }
     end
 
@@ -123,6 +127,9 @@ class NumberAnalyzer
         end
         opts.on('--mu MEAN', Float, 'Population mean for one-sample t-test (alias)') { |mean| options[:mu] = mean }
         opts.on('--level LEVEL', Float, 'Confidence level (default: 95)') { |level| options[:confidence_level] = level }
+        opts.on('--independence', 'Perform independence test for chi-square') { options[:independence] = true }
+        opts.on('--goodness-of-fit', 'Perform goodness-of-fit test for chi-square') { options[:goodness_of_fit] = true }
+        opts.on('--uniform', 'Use uniform distribution for goodness-of-fit test') { options[:uniform] = true }
       end
     end
 
@@ -845,6 +852,137 @@ class NumberAnalyzer
       end
 
       numbers
+    end
+
+    private_class_method def self.run_chi_square(args, options = {})
+      if options[:help]
+        show_help('chi-square', 'Perform chi-square test for independence or goodness-of-fit')
+        return
+      end
+
+      # Determine test type
+      test_type = determine_chi_square_test_type(options)
+
+      case test_type
+      when :independence
+        run_chi_square_independence_test(args, options)
+      when :goodness_of_fit
+        run_chi_square_goodness_of_fit_test(args, options)
+      else
+        puts 'エラー: カイ二乗検定のタイプを指定してください。'
+        puts '使用例: bundle exec number_analyzer chi-square --independence contingency.csv'
+        puts '       bundle exec number_analyzer chi-square --goodness-of-fit observed.csv expected.csv'
+        exit 1
+      end
+    end
+
+    private_class_method def self.determine_chi_square_test_type(options)
+      return :independence if options[:independence]
+      return :goodness_of_fit if options[:goodness_of_fit] || options[:uniform]
+
+      # Default to independence if contingency table data is provided
+      # Default to goodness-of-fit if two datasets are provided
+      nil
+    end
+
+    private_class_method def self.run_chi_square_independence_test(args, options)
+      # For independence test, we expect a 2D contingency table
+      if options[:file]
+        # Read contingency table from file
+        data = parse_numbers_with_options(args, options)
+        # Convert flat array to 2D contingency table (assume square for now)
+        dimension = Math.sqrt(data.length).to_i
+        if dimension * dimension != data.length
+          puts 'エラー: 独立性検定には正方形の分割表が必要です。'
+          exit 1
+        end
+        contingency_table = data.each_slice(dimension).to_a
+      else
+        # Parse contingency table from command line arguments
+        # Expected format: rows separated by '--'
+        contingency_table = parse_contingency_table_from_args(args)
+      end
+
+      analyzer = NumberAnalyzer.new(contingency_table.flatten)
+      result = analyzer.chi_square_test(contingency_table, type: :independence)
+
+      if result.nil?
+        puts 'エラー: カイ二乗検定を実行できませんでした。データを確認してください。'
+        exit 1
+      end
+
+      options[:dataset_size] = contingency_table.flatten.size
+      puts OutputFormatter.format_chi_square(result, options)
+    end
+
+    private_class_method def self.run_chi_square_goodness_of_fit_test(args, options)
+      if options[:uniform]
+        # Uniform distribution test with single dataset
+        observed = parse_numbers_with_options(args, options)
+        analyzer = NumberAnalyzer.new(observed)
+        result = analyzer.chi_square_test(nil, type: :goodness_of_fit) # nil = uniform distribution
+      else
+        # Two datasets: observed and expected
+        if args.length == 2 && args.all? { |arg| arg.end_with?('.csv', '.json', '.txt') }
+          # Two files provided
+          observed = FileReader.read_from_file(args[0])
+          expected = FileReader.read_from_file(args[1])
+        elsif options[:file]
+          # Single file with interleaved data
+          combined_data = parse_numbers_with_options([], options)
+          mid = combined_data.length / 2
+          observed = combined_data[0...mid]
+          expected = combined_data[mid..]
+        else
+          # Command line arguments: first half observed, second half expected
+          mid = args.length / 2
+          observed = parse_numeric_arguments(args[0...mid])
+          expected = parse_numeric_arguments(args[mid..])
+        end
+
+        analyzer = NumberAnalyzer.new(observed)
+        result = analyzer.chi_square_test(expected, type: :goodness_of_fit)
+      end
+
+      if result.nil?
+        puts 'エラー: カイ二乗検定を実行できませんでした。データを確認してください。'
+        exit 1
+      end
+
+      options[:dataset_size] = result[:observed_frequencies].size
+      puts OutputFormatter.format_chi_square(result, options)
+    end
+
+    private_class_method def self.parse_contingency_table_from_args(args)
+      # Parse contingency table where rows are separated by '--'
+      # Example: 30 20 -- 15 35 (creates [[30, 20], [15, 35]])
+
+      rows = []
+      current_row = []
+
+      args.each do |arg|
+        if arg == '--'
+          rows << current_row.map(&:to_f) unless current_row.empty?
+          current_row = []
+        else
+          current_row << arg
+        end
+      end
+
+      # Add the last row
+      rows << current_row.map(&:to_f) unless current_row.empty?
+
+      if rows.empty? || rows.any?(&:empty?)
+        puts 'エラー: 有効な分割表を作成できませんでした。'
+        puts '使用例: bundle exec number_analyzer chi-square --independence 30 20 -- 15 35'
+        exit 1
+      end
+
+      rows
+    rescue ArgumentError
+      puts 'エラー: 無効な数値が含まれています。'
+      puts '使用例: bundle exec number_analyzer chi-square --independence 30 20 -- 15 35'
+      exit 1
     end
   end
 end

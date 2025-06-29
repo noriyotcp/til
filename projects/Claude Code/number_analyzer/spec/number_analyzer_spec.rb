@@ -1349,4 +1349,147 @@ RSpec.describe NumberAnalyzer do
       end
     end
   end
+
+  describe '#chi_square_test' do
+    context 'with independence test data' do
+      # Classic 2x2 contingency table example: Gender vs Product Preference
+      # Male: Product A=30, Product B=20 (total=50)
+      # Female: Product A=15, Product B=35 (total=50)
+      # Expected: χ² = 9.091, df = 1, p ≈ 0.0026
+      let(:contingency_data) { [[30, 20], [15, 35]] }
+      let(:independence_analyzer) { NumberAnalyzer.new(contingency_data.flatten) }
+
+      it 'calculates independence test correctly for 2x2 table' do
+        result = independence_analyzer.chi_square_test(contingency_data, type: :independence)
+        
+        expect(result).to be_a(Hash)
+        expect(result[:test_type]).to eq('independence')
+        expect(result[:chi_square_statistic]).to be_within(0.01).of(9.091)
+        expect(result[:degrees_of_freedom]).to eq(1)
+        expect(result[:p_value]).to be < 0.01 # p < 0.01 for significance
+        expect(result[:significant]).to be true
+        expect(result[:cramers_v]).to be_within(0.01).of(0.302)
+        expect(result[:expected_frequencies_valid]).to be true
+      end
+
+      it 'includes expected frequencies in result' do
+        result = independence_analyzer.chi_square_test(contingency_data, type: :independence)
+        
+        expect(result[:expected_frequencies]).to eq([[22.5, 27.5], [22.5, 27.5]])
+        expect(result[:observed_frequencies]).to eq([[30, 20], [15, 35]])
+      end
+    end
+
+    context 'with 3x3 contingency table' do
+      # Larger table: Education Level vs Voting Preference
+      let(:larger_table) { [[20, 30, 25], [15, 20, 30], [10, 25, 40]] }
+      let(:larger_analyzer) { NumberAnalyzer.new(larger_table.flatten) }
+
+      it 'calculates independence test for larger tables' do
+        result = larger_analyzer.chi_square_test(larger_table, type: :independence)
+        
+        expect(result[:test_type]).to eq('independence')
+        expect(result[:degrees_of_freedom]).to eq(4) # (3-1) × (3-1)
+        expect(result[:chi_square_statistic]).to be > 0
+        expect(result[:p_value]).to be_between(0, 1)
+        expect(result[:cramers_v]).to be_between(0, 1)
+      end
+    end
+
+    context 'with goodness-of-fit test data' do
+      # Dice fairness test: observed frequencies for faces 1-6
+      # Expected: uniform distribution (10 each)
+      # Observed: [8, 12, 10, 15, 9, 6]
+      # Expected: χ² = 4.0, df = 5
+      let(:dice_observed) { [8, 12, 10, 15, 9, 6] }
+      let(:dice_expected) { [10, 10, 10, 10, 10, 10] }
+      let(:dice_analyzer) { NumberAnalyzer.new(dice_observed) }
+
+      it 'calculates goodness-of-fit test correctly' do
+        result = dice_analyzer.chi_square_test(dice_expected, type: :goodness_of_fit)
+        
+        expect(result[:test_type]).to eq('goodness_of_fit')
+        expect(result[:chi_square_statistic]).to be_within(0.01).of(5.0)
+        expect(result[:degrees_of_freedom]).to eq(5) # categories - 1
+        expect(result[:p_value]).to eq(0.4) # Based on our critical value table
+        expect(result[:significant]).to be false
+        expect(result[:observed_frequencies]).to eq(dice_observed)
+        expect(result[:expected_frequencies]).to eq(dice_expected)
+      end
+
+      it 'handles uniform distribution assumption' do
+        result = dice_analyzer.chi_square_test(nil, type: :goodness_of_fit)
+        
+        expected_uniform = [10, 10, 10, 10, 10, 10] # 60/6 = 10 each
+        expect(result[:expected_frequencies]).to eq(expected_uniform)
+        expect(result[:test_type]).to eq('goodness_of_fit')
+      end
+    end
+
+    context 'with edge cases and validation' do
+      let(:empty_analyzer) { NumberAnalyzer.new([]) }
+      let(:single_analyzer) { NumberAnalyzer.new([42]) }
+      let(:test_analyzer) { NumberAnalyzer.new([8, 12, 10, 15, 9, 6]) }
+
+      it 'returns nil for empty data' do
+        result = empty_analyzer.chi_square_test([[1, 2], [3, 4]], type: :independence)
+        expect(result).to be_nil
+      end
+
+      it 'returns nil for insufficient data' do
+        result = single_analyzer.chi_square_test([5], type: :goodness_of_fit)
+        expect(result).to be_nil
+      end
+
+      it 'validates expected frequency conditions' do
+        # Low expected frequencies (< 5 in some cells)
+        low_freq_data = [[2, 1], [1, 2]]
+        low_freq_analyzer = NumberAnalyzer.new(low_freq_data.flatten)
+        
+        result = low_freq_analyzer.chi_square_test(low_freq_data, type: :independence)
+        expect(result[:expected_frequencies_valid]).to be false
+        expect(result[:warning]).to include('期待度数')
+      end
+
+      it 'raises error for invalid test type' do
+        expect do
+          test_analyzer.chi_square_test([1, 2, 3], type: :invalid)
+        end.to raise_error(ArgumentError, /Invalid chi-square test type/)
+      end
+
+      it 'raises error for mismatched dimensions' do
+        expect do
+          test_analyzer.chi_square_test([1, 2], type: :goodness_of_fit)
+        end.to raise_error(ArgumentError, /Observed and expected frequencies must have same length/)
+      end
+    end
+
+    context 'with different significance levels' do
+      let(:marginal_data) { [[15, 10], [10, 15]] } # Weaker association
+      let(:marginal_analyzer) { NumberAnalyzer.new(marginal_data.flatten) }
+
+      it 'correctly identifies non-significant results' do
+        result = marginal_analyzer.chi_square_test(marginal_data, type: :independence)
+        
+        expect(result[:significant]).to be false
+        expect(result[:p_value]).to be > 0.05
+        expect(result[:cramers_v]).to be < 0.3 # Weak effect size
+      end
+    end
+
+    context 'with perfect independence' do
+      # Perfectly independent data (no association)
+      let(:perfect_data) { [[25, 25], [25, 25]] }
+      let(:perfect_analyzer) { NumberAnalyzer.new(perfect_data.flatten) }
+
+      it 'identifies perfect independence' do
+        result = perfect_analyzer.chi_square_test(perfect_data, type: :independence)
+        
+        expect(result[:chi_square_statistic]).to be_within(0.001).of(0.0)
+        expect(result[:p_value]).to be_within(0.001).of(1.0)
+        expect(result[:significant]).to be false
+        expect(result[:cramers_v]).to be_within(0.001).of(0.0)
+      end
+    end
+  end
 end

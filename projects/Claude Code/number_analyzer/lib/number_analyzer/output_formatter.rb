@@ -608,5 +608,106 @@ class NumberAnalyzer
         sample_size: ci_data[:sample_size]
       }
     end
+
+    # Format chi-square test data based on options
+    def self.format_chi_square(chi_square_data, options = {})
+      return '' if chi_square_data.nil?
+
+      case options[:format]
+      when 'json'
+        format_chi_square_json(chi_square_data, options)
+      when 'quiet'
+        format_chi_square_quiet(chi_square_data, options)
+      else
+        format_chi_square_default(chi_square_data, options)
+      end
+    end
+
+    private_class_method def self.format_chi_square_default(chi_square_data, options)
+      formatted_data = build_formatted_chi_square_data(chi_square_data, options)
+      build_chi_square_result_lines(formatted_data).join("\n")
+    end
+
+    private_class_method def self.build_chi_square_result_lines(formatted_data)
+      test_type_names = {
+        'independence' => '独立性検定',
+        'goodness_of_fit' => '適合度検定'
+      }
+
+      test_name = test_type_names[formatted_data[:test_type]] || formatted_data[:test_type]
+
+      lines = [
+        'カイ二乗検定結果:',
+        "検定タイプ: #{test_name}",
+        "統計量: χ² = #{formatted_data[:chi_square_statistic]}",
+        "自由度: df = #{formatted_data[:degrees_of_freedom]}",
+        "p値: #{formatted_data[:p_value]}",
+        build_significance_conclusion_chi_square(formatted_data[:significant])
+      ]
+
+      # Add effect size for independence tests
+      if formatted_data[:test_type] == 'independence' && formatted_data[:cramers_v]
+        lines << "効果サイズ (Cramér's V): #{formatted_data[:cramers_v]}"
+      end
+
+      # Add frequency validation warning if needed
+      lines << (formatted_data[:warning] || '期待度数条件: 満たしている')
+
+      lines
+    end
+
+    private_class_method def self.build_significance_conclusion_chi_square(significant)
+      alpha_level = 0.05
+      if significant
+        "結論: 有意水準#{(alpha_level * 100).to_i}%で有意差あり"
+      else
+        "結論: 有意水準#{(alpha_level * 100).to_i}%で有意差なし"
+      end
+    end
+
+    private_class_method def self.format_chi_square_json(chi_square_data, options)
+      formatted_data = build_formatted_chi_square_data(chi_square_data, options)
+      formatted_data[:dataset_size] = options[:dataset_size] if options[:dataset_size]
+
+      JSON.generate(formatted_data)
+    end
+
+    private_class_method def self.format_chi_square_quiet(chi_square_data, options)
+      formatted_data = build_formatted_chi_square_data(chi_square_data, options)
+      chi_square = formatted_data[:chi_square_statistic]
+      df = formatted_data[:degrees_of_freedom]
+      p_value = formatted_data[:p_value]
+      significant = formatted_data[:significant]
+
+      "#{chi_square} #{df} #{p_value} #{significant}"
+    end
+
+    private_class_method def self.build_formatted_chi_square_data(chi_square_data, options)
+      formatted_data = {
+        test_type: chi_square_data[:test_type],
+        chi_square_statistic: apply_precision(chi_square_data[:chi_square_statistic], options[:precision]),
+        degrees_of_freedom: chi_square_data[:degrees_of_freedom],
+        p_value: apply_precision(chi_square_data[:p_value], options[:precision]),
+        significant: chi_square_data[:significant],
+        expected_frequencies_valid: chi_square_data[:expected_frequencies_valid],
+        warning: chi_square_data[:warning]
+      }
+
+      # Add effect size for independence tests
+      if chi_square_data[:cramers_v]
+        formatted_data[:cramers_v] = apply_precision(chi_square_data[:cramers_v], options[:precision])
+      end
+
+      # Add frequency data for detailed analysis
+      if chi_square_data[:observed_frequencies]
+        formatted_data[:observed_frequencies] = chi_square_data[:observed_frequencies]
+      end
+
+      if chi_square_data[:expected_frequencies]
+        formatted_data[:expected_frequencies] = chi_square_data[:expected_frequencies]
+      end
+
+      formatted_data
+    end
   end
 end

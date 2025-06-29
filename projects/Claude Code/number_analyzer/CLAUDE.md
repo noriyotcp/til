@@ -6,7 +6,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 NumberAnalyzer is a comprehensive statistical analysis tool built in Ruby. Originally started as a refactoring exercise from beginner-level code to professional Ruby Gem, it has evolved into an enterprise-ready statistical analysis library with data visualization capabilities.
 
-**Current Status**: ✅ **Production Ready** - 26 statistical functions, 38 test examples (17 t-test + 10 confidence interval + 11 others), Phase 7.3 Step 2 complete with Confidence Interval analysis, enterprise-level code quality
+**Current Status**: ✅ **Production Ready** - 27 statistical functions, 50 test examples (17 t-test + 10 confidence interval + 12 chi-square + 11 others), Phase 7.3 Step 3 complete with Chi-square Test analysis, enterprise-level code quality
 
 ## Development Commands
 
@@ -61,15 +61,24 @@ NumberAnalyzer is a comprehensive statistical analysis tool built in Ruby. Origi
 - `bundle exec number_analyzer confidence-interval 95 1 2 3 4 5` (95% confidence interval for mean)
 - `bundle exec number_analyzer confidence-interval --level=90 --file data.csv` (90% confidence interval from file)
 - `bundle exec number_analyzer confidence-interval --format=json --precision=2 data.csv` (JSON output with precision)
+- `bundle exec number_analyzer chi-square --independence 30 20 -- 15 35` (independence test with 2x2 contingency table)
+- `bundle exec number_analyzer chi-square --goodness-of-fit 8 12 10 15 9 6 10 10 10 10 10 10` (goodness-of-fit test with observed/expected)
+- `bundle exec number_analyzer chi-square --uniform 8 12 10 15 9 6` (goodness-of-fit test with uniform distribution)
+- `bundle exec number_analyzer chi-square --format=json --precision=3 data.csv` (JSON output with precision)
 
 **Development Tools**:
 - `bundle install` - Install dependencies
-- `rspec` - Run test suite (38 examples including 17 t-test + 10 confidence interval cases)
+- `rspec` - Run test suite (50 examples including 17 t-test + 10 confidence interval + 12 chi-square cases)
 - `bundle exec rubocop` - Code style checking (MANDATORY: zero violations)
 - `bundle exec rubocop -a` - Auto-fix style violations (run first)
 - `bundle exec rubocop [file]` - Check specific file
-- `/project:commit-message` - Generate commit messages
+- `/project:commit-message` - Generate commit messages **ONLY** (no auto-commit)
 - `/project:gemini-search` - Web search integration
+
+**Git Command Usage**:
+- `/commit-message` = Message generation only (no commit execution)
+- Explicit user request like "commit", "コミット", "コミットして" = Actual commit
+- Settings prohibit auto-commits for stability
 
 ## Current Architecture
 
@@ -79,7 +88,7 @@ NumberAnalyzer is a comprehensive statistical analysis tool built in Ruby. Origi
 lib/
 ├── number_analyzer.rb              # Core statistical calculations
 └── number_analyzer/
-    ├── cli.rb                      # CLI interface + 20 subcommands
+    ├── cli.rb                      # CLI interface + 21 subcommands
     ├── file_reader.rb              # File input handling
     ├── statistics_presenter.rb     # Output formatting
     └── output_formatter.rb         # Advanced output formatting
@@ -94,23 +103,23 @@ lib/
 
 ## Implemented Features
 
-**Statistical Functions (26)**:
+**Statistical Functions (27)**:
 - Basic: sum, mean, min, max, median, mode
 - Variability: variance, standard deviation, IQR
 - Advanced: percentiles, quartiles, outliers, deviation scores
 - Relationships: Pearson correlation coefficient
 - Time Series: linear trend analysis (slope, intercept, R², direction), moving averages, growth rate analysis (period-over-period, CAGR, average growth rate), seasonal pattern analysis (decomposition, period detection, seasonal strength)
-- Statistical Tests: independent samples t-test (Welch's t-test), paired samples t-test, one-sample t-test with p-value and significance testing, confidence intervals for population mean (t-distribution and normal approximation)
+- Statistical Tests: independent samples t-test (Welch's t-test), paired samples t-test, one-sample t-test with p-value and significance testing, confidence intervals for population mean (t-distribution and normal approximation), chi-square test for independence and goodness-of-fit with Cramér's V effect size
 - Visualization: frequency distribution, ASCII histogram
 
 **Input Support**: CLI arguments, CSV/JSON/TXT files (both full analysis and all subcommands)
 **Output**: Comprehensive analysis OR individual statistics + visualization
-**CLI Modes**: Full analysis (default) OR 20 individual subcommands (Phases 6.1, 6.2, 7.1, 7.2, 7.3)
+**CLI Modes**: Full analysis (default) OR 21 individual subcommands (Phases 6.1, 6.2, 7.1, 7.2, 7.3)
 **Subcommand Categories**: Basic statistics, advanced analysis, parameterized commands, correlation analysis, time series analysis, statistical inference
 **Output Options (Phase 6.3)**: JSON format, precision control, quiet mode, help system
 **Correlation Analysis (Phase 7.1)**: Dual dataset input, mathematical interpretation, file/numeric support
 **Time Series Analysis (Phase 7.2)**: Linear trend analysis, moving averages with customizable window sizes, growth rate analysis with CAGR calculation, seasonal pattern analysis with automatic period detection
-**Statistical Tests (Phase 7.3)**: T-test analysis with all three types (independent, paired, one-sample), confidence intervals for population mean using t-distribution, mathematical accuracy with Welch's formula, two-tailed p-values and significance interpretation
+**Statistical Tests (Phase 7.3)**: T-test analysis with all three types (independent, paired, one-sample), confidence intervals for population mean using t-distribution, chi-square test for independence and goodness-of-fit with categorical data analysis, mathematical accuracy with Welch's formula and chi-square distribution, two-tailed p-values and significance interpretation
 
 ## Code Quality Standards
 
@@ -181,20 +190,29 @@ rspec                        # MUST be all tests passing
 
 - **RuboCop compliance**: MANDATORY `bundle exec rubocop` with zero violations before any commit
 - **Auto-correction workflow**: Always run `bundle exec rubocop -a` first, then manual review
-- **Commit messages**: Use markdown code blocks (recommend `/project:commit-message`)
+- **Commit messages**: Use `/project:commit-message` to generate messages ONLY - DO NOT auto-commit
+- **Manual commits**: Only commit when user explicitly requests "commit" or "コミット"
 - **Documentation**: Update README.md features/usage after changes
 - **RSpec syntax**: Use `-e "pattern"` for test filtering
 - **Mathematical precision**: Consider floating-point accuracy in tests
 - **Japanese output**: Maintain Japanese labels for user-facing output
 
+## Git Workflow Guidelines
+
+**IMPORTANT: Commit Control**
+- `/project:commit-message` or `/commit-message` = **Generate commit message ONLY**
+- **NEVER auto-commit** unless user explicitly says "commit", "コミット", or "コミットして"
+- Settings prohibit `git commit` commands for stability
+- User must manually run `git commit` with generated message
+
 ## Quick Reference
 
-**Current State**: ✅ Phase 7.3 Step 2 Complete (Confidence Intervals)
-**Next Phase**: Phase 7.3 Step 3 - Chi-square Test (see `ai-docs/ROADMAP.md`)
-**Test Count**: 38 examples total (17 t-test + 10 confidence interval + 11 existing statistical tests)
+**Current State**: ✅ Phase 7.3 Step 3 Complete (Chi-square Test)
+**Next Phase**: Phase 7.3 Step 4 - ANOVA (see `ai-docs/ROADMAP.md`)
+**Test Count**: 50 examples total (17 t-test + 10 confidence interval + 12 chi-square + 11 existing statistical tests)
 **RuboCop Status**: Full compliance (zero violations policy enforced)
-**Subcommand Count**: 20 total (7 basic + 6 advanced + 1 correlation + 4 time series + 2 statistical test commands)
-**CLI Options**: 11 advanced options (JSON, precision, quiet, help, window, period, paired, one-sample, population-mean, mu, level) across all subcommands
+**Subcommand Count**: 21 total (7 basic + 6 advanced + 1 correlation + 4 time series + 3 statistical test commands)
+**CLI Options**: 14 advanced options (JSON, precision, quiet, help, window, period, paired, one-sample, population-mean, mu, level, independence, goodness-of-fit, uniform) across all subcommands
 
 ## Documentation Structure
 
