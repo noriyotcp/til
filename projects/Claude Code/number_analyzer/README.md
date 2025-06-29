@@ -24,6 +24,7 @@ NumberAnalyzer provides the following statistical calculations:
 - **Moving Average Analysis** - Time series smoothing with customizable window sizes
 - **Growth Rate Analysis** - Period-over-period growth rates, CAGR, and average growth rate calculation  
 - **Seasonal Pattern Analysis** - Seasonal decomposition, period detection, and seasonal strength measurement
+- **T-Test Analysis** - Independent samples t-test (Welch's t-test), paired samples t-test, and one-sample t-test with statistical significance testing
 - **Frequency Distribution** - Count occurrences of each value for data distribution analysis
 - **Histogram Display** - ASCII art visualization of frequency distribution with automatic scaling
 - **File Input Support** - Read data from CSV, JSON, and TXT files
@@ -76,6 +77,11 @@ bundle exec number_analyzer trend --format=json --file sales.csv
 bundle exec number_analyzer moving-average --window=5 1 2 3 4 5 6 7
 bundle exec number_analyzer growth-rate 100 110 121 133
 bundle exec number_analyzer seasonal 10 20 15 25 12 22 17 27
+
+# Statistical hypothesis testing
+bundle exec number_analyzer t-test group1.csv group2.csv
+bundle exec number_analyzer t-test --paired before.csv after.csv
+bundle exec number_analyzer t-test --one-sample --population-mean=100 data.csv
 ```
 
 #### Using the bin file directly
@@ -90,7 +96,7 @@ number_analyzer 1 2 3 4 5
 
 #### Advanced Usage with Options (Phase 6.3)
 
-NumberAnalyzer supports advanced output formatting and control options for all 18 subcommands:
+NumberAnalyzer supports advanced output formatting and control options for all 19 subcommands:
 
 **JSON Output Format**
 ```bash
@@ -142,7 +148,7 @@ bundle exec number_analyzer histogram --help
 
 **Subcommands with Options**
 
-All 18 subcommands support the new options:
+All 19 subcommands support the new options:
 
 ```bash
 # Basic Statistics with Options
@@ -162,6 +168,11 @@ bundle exec number_analyzer trend 1 2 3 4 5
 bundle exec number_analyzer moving-average --window=5 1 2 3 4 5 6 7 8
 bundle exec number_analyzer growth-rate --format=json 100 110 121 133
 bundle exec number_analyzer seasonal --period=4 10 20 15 25 12 22 17 27
+
+# Statistical Tests
+bundle exec number_analyzer t-test --format=json group1.csv group2.csv
+bundle exec number_analyzer t-test --paired --precision=3 before.csv after.csv
+bundle exec number_analyzer t-test --one-sample --population-mean=50 --quiet data.csv
 
 # Specialized Commands with Options
 bundle exec number_analyzer percentile 75 --format=json 1 2 3 4 5
@@ -205,6 +216,21 @@ puts analyzer.deviation_scores # => [34.33, 37.81, 41.3, 44.78, 48.26, 51.74, 55
 # Correlation analysis
 other_data = [2, 4, 6, 8, 10, 12, 14, 16, 18, 20]
 puts analyzer.correlation(other_data)  # => 1.0 (perfect positive correlation)
+
+# T-test analysis (statistical hypothesis testing)
+group1 = NumberAnalyzer.new([1, 2, 3, 4, 5])
+group2 = [6, 7, 8, 9, 10]
+puts group1.t_test(group2, type: :independent)
+# => {test_type: "independent_samples", t_statistic: -5.0, degrees_of_freedom: 8.0, p_value: 0.0001794861, significant: true, ...}
+
+# Paired t-test
+before = NumberAnalyzer.new([10, 12, 14, 16, 18])
+after = [11, 14, 15, 18, 22]
+puts before.t_test(after, type: :paired)
+
+# One-sample t-test
+sample = NumberAnalyzer.new([18, 20, 22, 24, 26])
+puts sample.t_test(nil, type: :one_sample, population_mean: 20)
 
 # Frequency distribution for data analysis (programmatic access)
 puts analyzer.frequency_distribution # => {1=>1, 2=>1, 3=>1, 4=>1, 5=>1, 6=>1, 7=>1, 8=>1, 9=>1, 10=>1}
@@ -348,7 +374,7 @@ number_analyzer/
 ├── lib/
 │   ├── number_analyzer.rb          # Core statistical calculations
 │   └── number_analyzer/
-│       ├── cli.rb                  # Command line interface + 18 subcommands
+│       ├── cli.rb                  # Command line interface + 19 subcommands
 │       ├── file_reader.rb          # File input support (CSV/JSON/TXT)
 │       ├── statistics_presenter.rb # Display and formatting logic
 │       └── output_formatter.rb     # Advanced output formatting (JSON, precision, quiet)
@@ -370,7 +396,7 @@ number_analyzer/
 The project follows clean architecture principles with separation of concerns:
 
 - **NumberAnalyzer** - Pure statistical calculation library (no dependencies)
-- **NumberAnalyzer::CLI** - Command line interface and argument parsing with 18 subcommands
+- **NumberAnalyzer::CLI** - Command line interface and argument parsing with 19 subcommands
 - **NumberAnalyzer::FileReader** - File input handling (CSV/JSON/TXT support)
 - **NumberAnalyzer::StatisticsPresenter** - Display and formatting logic for full analysis
 - **NumberAnalyzer::OutputFormatter** - Advanced output formatting (JSON, precision, quiet mode)

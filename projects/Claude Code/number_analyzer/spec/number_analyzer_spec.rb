@@ -1078,4 +1078,171 @@ RSpec.describe NumberAnalyzer do
       end
     end
   end
+
+  describe '#t_test' do
+    context 'independent samples t-test' do
+      let(:group1) { NumberAnalyzer.new([20, 22, 24, 26, 28]) }
+      let(:group2) { [18, 20, 22, 24, 26] }
+
+      it 'performs independent samples t-test correctly' do
+        result = group1.t_test(group2, type: :independent)
+        
+        expect(result).not_to be_nil
+        expect(result[:test_type]).to eq('independent_samples')
+        expect(result[:t_statistic]).to be_a(Float)
+        expect(result[:degrees_of_freedom]).to be_a(Float)
+        expect(result[:p_value]).to be_a(Float)
+        expect(result[:mean1]).to eq(24.0)
+        expect(result[:mean2]).to eq(22.0)
+        expect(result[:n1]).to eq(5)
+        expect(result[:n2]).to eq(5)
+        expect(result).to have_key(:significant)
+      end
+
+      it 'handles equal groups with known result' do
+        equal_group1 = NumberAnalyzer.new([1, 2, 3, 4, 5])
+        equal_group2 = [1, 2, 3, 4, 5]
+        
+        result = equal_group1.t_test(equal_group2, type: :independent)
+        
+        expect(result[:t_statistic]).to be_within(0.001).of(0.0)
+        expect(result[:p_value]).to be > 0.05
+        expect(result[:significant]).to be false
+      end
+
+      it 'returns nil for empty other_data' do
+        result = group1.t_test([], type: :independent)
+        expect(result).to be_nil
+      end
+
+      it 'returns nil for nil other_data' do
+        result = group1.t_test(nil, type: :independent)
+        expect(result).to be_nil
+      end
+    end
+
+    context 'paired samples t-test' do
+      let(:before) { NumberAnalyzer.new([20, 22, 24, 26, 28]) }
+      let(:after) { [21, 24, 25, 28, 32] }
+
+      it 'performs paired samples t-test correctly' do
+        result = before.t_test(after, type: :paired)
+        
+        expect(result).not_to be_nil
+        expect(result[:test_type]).to eq('paired_samples')
+        expect(result[:t_statistic]).to be_a(Float)
+        expect(result[:degrees_of_freedom]).to eq(4)
+        expect(result[:p_value]).to be_a(Float)
+        expect(result[:mean_difference]).to be_a(Float)
+        expect(result[:n]).to eq(5)
+        expect(result).to have_key(:significant)
+      end
+
+      it 'handles identical pairs with known result' do
+        identical = NumberAnalyzer.new([1, 2, 3, 4, 5])
+        
+        result = identical.t_test([1, 2, 3, 4, 5], type: :paired)
+        
+        # When all differences are zero, standard error is zero, so result is nil
+        expect(result).to be_nil
+      end
+
+      it 'returns nil for mismatched array lengths' do
+        result = before.t_test([1, 2, 3], type: :paired)
+        expect(result).to be_nil
+      end
+
+      it 'returns nil for empty other_data' do
+        result = before.t_test([], type: :paired)
+        expect(result).to be_nil
+      end
+
+      it 'returns nil for nil other_data' do
+        result = before.t_test(nil, type: :paired)
+        expect(result).to be_nil
+      end
+    end
+
+    context 'one sample t-test' do
+      let(:sample) { NumberAnalyzer.new([18, 20, 22, 24, 26]) }
+
+      it 'performs one sample t-test correctly' do
+        result = sample.t_test(nil, type: :one_sample, population_mean: 20)
+        
+        expect(result).not_to be_nil
+        expect(result[:test_type]).to eq('one_sample')
+        expect(result[:t_statistic]).to be_a(Float)
+        expect(result[:degrees_of_freedom]).to eq(4)
+        expect(result[:p_value]).to be_a(Float)
+        expect(result[:sample_mean]).to eq(22.0)
+        expect(result[:population_mean]).to eq(20.0)
+        expect(result[:n]).to eq(5)
+        expect(result).to have_key(:significant)
+      end
+
+      it 'handles sample mean equal to population mean' do
+        equal_sample = NumberAnalyzer.new([20, 20, 20, 20, 20])
+        
+        result = equal_sample.t_test(nil, type: :one_sample, population_mean: 20)
+        
+        expect(result).to be_nil # Standard error is zero
+      end
+
+      it 'returns nil for nil population_mean' do
+        result = sample.t_test(nil, type: :one_sample, population_mean: nil)
+        expect(result).to be_nil
+      end
+
+      it 'returns nil for insufficient sample size' do
+        single_sample = NumberAnalyzer.new([20])
+        
+        result = single_sample.t_test(nil, type: :one_sample, population_mean: 20)
+        expect(result).to be_nil
+      end
+    end
+
+    context 'invalid test types' do
+      let(:data) { NumberAnalyzer.new([1, 2, 3, 4, 5]) }
+
+      it 'raises error for invalid test type' do
+        expect { data.t_test([1, 2, 3], type: :invalid) }.to raise_error(ArgumentError)
+      end
+    end
+
+    context 'empty dataset' do
+      let(:empty_data) { NumberAnalyzer.new([]) }
+
+      it 'returns nil for empty dataset' do
+        result = empty_data.t_test([1, 2, 3], type: :independent)
+        expect(result).to be_nil
+      end
+    end
+
+    context 'mathematical accuracy verification' do
+      it 'produces expected t-statistic for known data' do
+        # Known test case: group1 mean = 3, group2 mean = 2, with specific variances
+        group1_data = NumberAnalyzer.new([1, 3, 5])
+        group2_data = [0, 2, 4]
+        
+        result = group1_data.t_test(group2_data, type: :independent)
+        
+        # With these specific values, we expect a t-statistic around 0.612
+        expect(result[:t_statistic]).to be_within(0.1).of(0.612)
+        expect(result[:mean1]).to eq(3.0)
+        expect(result[:mean2]).to eq(2.0)
+      end
+
+      it 'produces expected results for paired test with known differences' do
+        before_data = NumberAnalyzer.new([10, 12, 14, 16, 18])
+        after_data = [11, 14, 15, 18, 22]
+        
+        result = before_data.t_test(after_data, type: :paired)
+        
+        # Should have negative mean difference and t-statistic
+        expect(result).not_to be_nil
+        expect(result[:mean_difference]).to be < 0
+        expect(result[:t_statistic]).to be < 0
+      end
+    end
+  end
 end

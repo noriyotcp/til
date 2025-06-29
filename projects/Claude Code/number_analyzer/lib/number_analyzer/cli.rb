@@ -28,7 +28,8 @@ class NumberAnalyzer
       'trend' => :run_trend,
       'moving-average' => :run_moving_average,
       'growth-rate' => :run_growth_rate,
-      'seasonal' => :run_seasonal
+      'seasonal' => :run_seasonal,
+      't-test' => :run_t_test
     }.freeze
 
     # Main entry point for CLI
@@ -93,7 +94,11 @@ class NumberAnalyzer
         help: false,
         file: nil,
         window: nil,
-        period: nil
+        period: nil,
+        paired: false,
+        one_sample: false,
+        population_mean: nil,
+        mu: nil
       }
     end
 
@@ -109,6 +114,12 @@ class NumberAnalyzer
         opts.on('--file FILE', '-f FILE', 'Read numbers from file') { |file| options[:file] = file }
         opts.on('--window N', Integer, 'Window size for moving average') { |window| options[:window] = window }
         opts.on('--period N', Integer, 'Period for seasonal analysis') { |period| options[:period] = period }
+        opts.on('--paired', 'Perform paired samples t-test') { options[:paired] = true }
+        opts.on('--one-sample', 'Perform one-sample t-test') { options[:one_sample] = true }
+        opts.on('--population-mean MEAN', Float, 'Population mean for one-sample t-test') do |mean|
+          options[:population_mean] = mean
+        end
+        opts.on('--mu MEAN', Float, 'Population mean for one-sample t-test (alias)') { |mean| options[:mu] = mean }
       end
     end
 
@@ -570,6 +581,184 @@ class NumberAnalyzer
 
       options[:dataset_size] = numbers.size
       puts OutputFormatter.format_seasonal(result, options)
+    end
+
+    private_class_method def self.run_t_test(args, options = {})
+      if options[:help]
+        show_help('t-test', 'Perform statistical t-test analysis')
+        return
+      end
+
+      test_type = determine_t_test_type(options)
+      execute_t_test_by_type(test_type, args, options)
+    end
+
+    private_class_method def self.determine_t_test_type(options)
+      return :paired if options[:paired]
+      return :one_sample if options[:one_sample] || options[:population_mean]
+
+      :independent
+    end
+
+    private_class_method def self.execute_t_test_by_type(test_type, args, options)
+      case test_type
+      when :independent
+        run_independent_t_test(args, options)
+      when :paired
+        run_paired_t_test(args, options)
+      when :one_sample
+        run_one_sample_t_test(args, options)
+      end
+    end
+
+    private_class_method def self.run_independent_t_test(args, options)
+      validate_independent_t_test_args(args)
+      dataset1, dataset2 = parse_independent_t_test_datasets(args)
+      execute_independent_t_test(dataset1, dataset2, options)
+    end
+
+    private_class_method def self.run_paired_t_test(args, options)
+      validate_paired_t_test_args(args)
+      dataset1, dataset2 = parse_paired_t_test_datasets(args)
+      execute_paired_t_test(dataset1, dataset2, options)
+    end
+
+    private_class_method def self.run_one_sample_t_test(args, options)
+      # Need population mean
+      population_mean = options[:population_mean] || options[:mu]
+      unless population_mean
+        puts 'エラー: 一標本t検定には母集団平均が必要です。'
+        puts '使用例: bundle exec number_analyzer t-test --one-sample --population-mean=100 data.csv'
+        exit 1
+      end
+
+      begin
+        population_mean = Float(population_mean)
+      rescue ArgumentError
+        puts "エラー: 無効な母集団平均です: #{population_mean}"
+        exit 1
+      end
+
+      numbers = parse_numbers_with_options(args, options)
+      analyzer = NumberAnalyzer.new(numbers)
+      result = analyzer.t_test(nil, type: :one_sample, population_mean: population_mean)
+
+      if result.nil?
+        puts 'エラー: 一標本t検定を実行できませんでした。データを確認してください。'
+        exit 1
+      end
+
+      options[:dataset_size] = numbers.size
+      puts OutputFormatter.format_t_test(result, options)
+    end
+
+    private_class_method def self.validate_independent_t_test_args(args)
+      return unless args.length < 2
+
+      puts 'エラー: 独立2標本t検定には2つのデータセットが必要です。'
+      puts '使用例: bundle exec number_analyzer t-test group1.csv group2.csv'
+      puts '       bundle exec number_analyzer t-test 1 2 3 -- 4 5 6'
+      exit 1
+    end
+
+    private_class_method def self.parse_independent_t_test_datasets(args)
+      if args.any? { |arg| arg.end_with?('.csv', '.json', '.txt') }
+        parse_file_datasets(args)
+      else
+        parse_numeric_datasets(args)
+      end
+    end
+
+    private_class_method def self.parse_file_datasets(args)
+      unless args.length == 2 && args.all? { |arg| arg.end_with?('.csv', '.json', '.txt') }
+        puts 'エラー: ファイル入力モードでは2つのファイルが必要です。'
+        exit 1
+      end
+
+      dataset1 = FileReader.read_from_file(args[0])
+      dataset2 = FileReader.read_from_file(args[1])
+      [dataset1, dataset2]
+    end
+
+    private_class_method def self.parse_numeric_datasets(args)
+      separator_index = args.index('--')
+      if separator_index.nil?
+        puts 'エラー: 2つのデータセットを区切るために "--" を使用してください。'
+        puts '使用例: bundle exec number_analyzer t-test 1 2 3 -- 4 5 6'
+        exit 1
+      end
+
+      dataset1_args = args[0...separator_index]
+      dataset2_args = args[(separator_index + 1)..]
+
+      if dataset1_args.empty? || dataset2_args.empty?
+        puts 'エラー: 両方のデータセットに値が必要です。'
+        exit 1
+      end
+
+      dataset1 = parse_numeric_arguments(dataset1_args)
+      dataset2 = parse_numeric_arguments(dataset2_args)
+      [dataset1, dataset2]
+    end
+
+    private_class_method def self.execute_independent_t_test(dataset1, dataset2, options)
+      analyzer = NumberAnalyzer.new(dataset1)
+      result = analyzer.t_test(dataset2, type: :independent)
+
+      if result.nil?
+        puts 'エラー: t検定を実行できませんでした。データを確認してください。'
+        exit 1
+      end
+
+      options[:dataset1_size] = dataset1.size
+      options[:dataset2_size] = dataset2.size
+      puts OutputFormatter.format_t_test(result, options)
+    end
+
+    private_class_method def self.validate_paired_t_test_args(args)
+      return unless args.length < 2
+
+      puts 'エラー: 対応ありt検定には2つのデータセットが必要です。'
+      puts '使用例: bundle exec number_analyzer t-test --paired before.csv after.csv'
+      exit 1
+    end
+
+    private_class_method def self.parse_paired_t_test_datasets(args)
+      if args.any? { |arg| arg.end_with?('.csv', '.json', '.txt') }
+        parse_file_datasets(args)
+      else
+        parse_paired_numeric_datasets(args)
+      end
+    end
+
+    private_class_method def self.parse_paired_numeric_datasets(args)
+      separator_index = args.index('--')
+      if separator_index.nil?
+        puts 'エラー: 2つのデータセットを区切るために "--" を使用してください。'
+        puts '使用例: bundle exec number_analyzer t-test --paired 1 2 3 -- 1.5 2.5 3.5'
+        exit 1
+      end
+
+      dataset1_args = args[0...separator_index]
+      dataset2_args = args[(separator_index + 1)..]
+
+      dataset1 = parse_numeric_arguments(dataset1_args)
+      dataset2 = parse_numeric_arguments(dataset2_args)
+      [dataset1, dataset2]
+    end
+
+    private_class_method def self.execute_paired_t_test(dataset1, dataset2, options)
+      analyzer = NumberAnalyzer.new(dataset1)
+      result = analyzer.t_test(dataset2, type: :paired)
+
+      if result.nil?
+        puts 'エラー: 対応ありt検定を実行できませんでした。データを確認してください。'
+        exit 1
+      end
+
+      options[:dataset1_size] = dataset1.size
+      options[:dataset2_size] = dataset2.size
+      puts OutputFormatter.format_t_test(result, options)
     end
 
     private_class_method def self.parse_numeric_arguments(argv)

@@ -389,6 +389,152 @@ class NumberAnalyzer
       end
     end
 
+    # Format t-test output based on options
+    def self.format_t_test(t_test_data, options = {})
+      case options[:format]
+      when 'json'
+        format_t_test_json(t_test_data, options)
+      when 'quiet'
+        format_t_test_quiet(t_test_data, options)
+      else
+        format_t_test_default(t_test_data, options)
+      end
+    end
+
+    private_class_method def self.format_t_test_json(t_test_data, options)
+      formatted_data = build_base_json_data(t_test_data, options)
+      add_test_specific_json_fields(formatted_data, t_test_data, options)
+      add_dataset_size_info(formatted_data, options)
+      JSON.pretty_generate(formatted_data)
+    end
+
+    private_class_method def self.format_t_test_quiet(t_test_data, options)
+      t_stat = apply_precision(t_test_data[:t_statistic], options[:precision])
+      df = apply_precision(t_test_data[:degrees_of_freedom], options[:precision])
+      p_val = apply_precision(t_test_data[:p_value], options[:precision])
+      significant = t_test_data[:significant]
+
+      "#{t_stat} #{df} #{p_val} #{significant}"
+    end
+
+    private_class_method def self.format_t_test_default(t_test_data, options)
+      result = build_default_header(t_test_data, options)
+      result += build_test_specific_details(t_test_data, options)
+      result += build_significance_conclusion(t_test_data)
+      result
+    end
+
+    private_class_method def self.build_base_json_data(t_test_data, options)
+      {
+        test_type: t_test_data[:test_type],
+        t_statistic: apply_precision(t_test_data[:t_statistic], options[:precision]),
+        degrees_of_freedom: apply_precision(t_test_data[:degrees_of_freedom], options[:precision]),
+        p_value: apply_precision(t_test_data[:p_value], options[:precision]),
+        significant: t_test_data[:significant]
+      }
+    end
+
+    private_class_method def self.add_test_specific_json_fields(formatted_data, t_test_data, options)
+      case t_test_data[:test_type]
+      when 'independent_samples'
+        add_independent_samples_json_fields(formatted_data, t_test_data, options)
+      when 'paired_samples'
+        add_paired_samples_json_fields(formatted_data, t_test_data, options)
+      when 'one_sample'
+        add_one_sample_json_fields(formatted_data, t_test_data, options)
+      end
+    end
+
+    private_class_method def self.add_independent_samples_json_fields(formatted_data, t_test_data, options)
+      formatted_data[:mean1] = apply_precision(t_test_data[:mean1], options[:precision])
+      formatted_data[:mean2] = apply_precision(t_test_data[:mean2], options[:precision])
+      formatted_data[:n1] = t_test_data[:n1]
+      formatted_data[:n2] = t_test_data[:n2]
+    end
+
+    private_class_method def self.add_paired_samples_json_fields(formatted_data, t_test_data, options)
+      formatted_data[:mean_difference] = apply_precision(t_test_data[:mean_difference], options[:precision])
+      formatted_data[:n] = t_test_data[:n]
+    end
+
+    private_class_method def self.add_one_sample_json_fields(formatted_data, t_test_data, options)
+      formatted_data[:sample_mean] = apply_precision(t_test_data[:sample_mean], options[:precision])
+      formatted_data[:population_mean] = apply_precision(t_test_data[:population_mean], options[:precision])
+      formatted_data[:n] = t_test_data[:n]
+    end
+
+    private_class_method def self.add_dataset_size_info(formatted_data, options)
+      if options[:dataset1_size]
+        formatted_data[:dataset1_size] = options[:dataset1_size]
+        formatted_data[:dataset2_size] = options[:dataset2_size]
+      elsif options[:dataset_size]
+        formatted_data[:dataset_size] = options[:dataset_size]
+      end
+    end
+
+    private_class_method def self.build_default_header(t_test_data, options)
+      test_type_names = {
+        'independent_samples' => '独立2標本t検定',
+        'paired_samples' => '対応ありt検定',
+        'one_sample' => '一標本t検定'
+      }
+
+      test_name = test_type_names[t_test_data[:test_type]] || t_test_data[:test_type]
+      t_stat = apply_precision(t_test_data[:t_statistic], options[:precision])
+      df = apply_precision(t_test_data[:degrees_of_freedom], options[:precision])
+      p_val = apply_precision(t_test_data[:p_value], options[:precision])
+
+      result = "T検定結果:\n"
+      result += "検定タイプ: #{test_name}\n"
+      result += "統計量: t = #{t_stat}\n"
+      result += "自由度: df = #{df}\n"
+      result += "p値: #{p_val}\n"
+      result
+    end
+
+    private_class_method def self.build_test_specific_details(t_test_data, options)
+      case t_test_data[:test_type]
+      when 'independent_samples'
+        build_independent_samples_details(t_test_data, options)
+      when 'paired_samples'
+        build_paired_samples_details(t_test_data, options)
+      when 'one_sample'
+        build_one_sample_details(t_test_data, options)
+      else
+        ''
+      end
+    end
+
+    private_class_method def self.build_independent_samples_details(t_test_data, options)
+      mean1 = apply_precision(t_test_data[:mean1], options[:precision])
+      mean2 = apply_precision(t_test_data[:mean2], options[:precision])
+      "グループ1: 平均 = #{mean1}, n = #{t_test_data[:n1]}\n" \
+        "グループ2: 平均 = #{mean2}, n = #{t_test_data[:n2]}\n"
+    end
+
+    private_class_method def self.build_paired_samples_details(t_test_data, options)
+      mean_diff = apply_precision(t_test_data[:mean_difference], options[:precision])
+      "平均差: #{mean_diff}\n" \
+        "サンプルサイズ: n = #{t_test_data[:n]}\n"
+    end
+
+    private_class_method def self.build_one_sample_details(t_test_data, options)
+      sample_mean = apply_precision(t_test_data[:sample_mean], options[:precision])
+      pop_mean = apply_precision(t_test_data[:population_mean], options[:precision])
+      "標本平均: #{sample_mean}\n" \
+        "母集団平均: #{pop_mean}\n" \
+        "サンプルサイズ: n = #{t_test_data[:n]}\n"
+    end
+
+    private_class_method def self.build_significance_conclusion(t_test_data)
+      alpha_level = 0.05
+      if t_test_data[:significant]
+        "結論: 有意水準#{(alpha_level * 100).to_i}%で有意差あり"
+      else
+        "結論: 有意水準#{(alpha_level * 100).to_i}%で有意差なし"
+      end
+    end
+
     private_class_method def self.format_percentage(value)
       if value == value.to_i # Check if it's a whole number
         format('%+d%%', value.to_i)

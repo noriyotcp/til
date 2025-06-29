@@ -289,6 +289,21 @@ class NumberAnalyzer
     decomposition[:seasonal_strength]
   end
 
+  def t_test(other_data, type: :independent, population_mean: nil)
+    return nil if @numbers.empty?
+
+    case type
+    when :independent
+      independent_t_test(other_data)
+    when :paired
+      paired_t_test(other_data)
+    when :one_sample
+      one_sample_t_test(population_mean)
+    else
+      raise ArgumentError, "Invalid t-test type: #{type}. Use :independent, :paired, or :one_sample"
+    end
+  end
+
   private
 
   def average_value = @numbers.sum.to_f / @numbers.length
@@ -417,5 +432,181 @@ class NumberAnalyzer
 
     # If variance is low and average difference is significant, it's trending
     diff_variance < 0.1 && avg_diff.abs > 0.1
+  end
+
+  def independent_t_test(other_data)
+    return nil if invalid_data_for_independent_test?(other_data)
+
+    stats1 = calculate_sample_statistics(@numbers)
+    stats2 = calculate_sample_statistics(other_data)
+
+    welch_test_result(stats1, stats2)
+  end
+
+  def paired_t_test(other_data)
+    return nil if invalid_data_for_paired_test?(other_data)
+
+    differences = calculate_paired_differences(other_data)
+    return nil if differences.length < 2
+
+    paired_test_result(differences)
+  end
+
+  def one_sample_t_test(population_mean)
+    return nil if population_mean.nil?
+
+    n = @numbers.length
+    return nil if n < 2
+
+    sample_mean = @numbers.sum.to_f / n
+    sample_var = @numbers.sum { |x| (x - sample_mean)**2 } / (n - 1)
+    standard_error = Math.sqrt(sample_var / n)
+
+    return nil if standard_error.zero?
+
+    t_statistic = (sample_mean - population_mean) / standard_error
+    df = n - 1
+    p_value = calculate_two_tailed_p_value(t_statistic, df)
+
+    {
+      test_type: 'one_sample',
+      t_statistic: t_statistic.round(10),
+      degrees_of_freedom: df,
+      p_value: p_value.round(10),
+      sample_mean: sample_mean.round(10),
+      population_mean: population_mean.round(10),
+      n: n,
+      significant: p_value < 0.05
+    }
+  end
+
+  def welch_degrees_of_freedom(variance1, count1, variance2, count2)
+    numerator = ((variance1 / count1) + (variance2 / count2))**2
+    term1 = ((variance1 / count1)**2) / (count1 - 1)
+    term2 = ((variance2 / count2)**2) / (count2 - 1)
+    denominator = term1 + term2
+
+    return count1 + count2 - 2 if denominator.zero?
+
+    numerator / denominator
+  end
+
+  def calculate_two_tailed_p_value(t_statistic, degrees_of_freedom)
+    # Approximation for t-distribution CDF using normal approximation for large df
+    # For small df, this is less accurate but sufficient for basic statistical testing
+    abs_t = t_statistic.abs
+
+    if degrees_of_freedom >= 30
+      # Use normal approximation for large samples
+      z_score = abs_t
+      p_one_tail = 1.0 - standard_normal_cdf(z_score)
+    else
+      # Simple approximation for small samples
+      # This is not as accurate as proper t-distribution but provides reasonable estimates
+      p_one_tail = approximate_t_distribution_cdf(abs_t, degrees_of_freedom)
+    end
+
+    # Two-tailed test
+    2.0 * p_one_tail
+  end
+
+  def standard_normal_cdf(z_score)
+    # Approximation of standard normal CDF using error function approximation
+    # This is reasonably accurate for most practical purposes
+    0.5 * (1.0 + erf(z_score / Math.sqrt(2.0)))
+  end
+
+  def erf(value)
+    # Approximation of error function using Abramowitz and Stegun formula
+    # Maximum error: 1.5 × 10^−7
+    a1 = 0.254829592
+    a2 = -0.284496736
+    a3 = 1.421413741
+    a4 = -1.453152027
+    a5 = 1.061405429
+    p = 0.3275911
+
+    sign = value >= 0 ? 1 : -1
+    value = value.abs
+
+    t = 1.0 / (1.0 + (p * value))
+    y = 1.0 - (((((((((a5 * t) + a4) * t) + a3) * t) + a2) * t) + a1) * t * Math.exp(-value * value))
+
+    sign * y
+  end
+
+  def approximate_t_distribution_cdf(t_value, degrees_of_freedom)
+    # Simple approximation for t-distribution
+    # Not highly accurate but sufficient for basic statistical testing
+    return 0.5 - (Math.atan(t_value) / Math::PI) if degrees_of_freedom <= 1
+
+    # For df > 1, use approximation that converges to normal distribution
+    adjustment = 1.0 + ((t_value * t_value) / (4.0 * degrees_of_freedom))
+    normal_approx = standard_normal_cdf(t_value / Math.sqrt(adjustment))
+    1.0 - normal_approx
+  end
+
+  def invalid_data_for_independent_test?(other_data)
+    other_data.nil? || other_data.empty?
+  end
+
+  def invalid_data_for_paired_test?(other_data)
+    other_data.nil? || other_data.empty? || @numbers.length != other_data.length
+  end
+
+  def calculate_sample_statistics(data)
+    n = data.length
+    mean = data.sum.to_f / n
+    variance = n > 1 ? data.sum { |x| (x - mean)**2 } / (n - 1) : 0.0
+
+    { n: n, mean: mean, variance: variance }
+  end
+
+  def welch_test_result(stats1, stats2)
+    standard_error = Math.sqrt((stats1[:variance] / stats1[:n]) + (stats2[:variance] / stats2[:n]))
+    return nil if standard_error.zero?
+
+    t_statistic = (stats1[:mean] - stats2[:mean]) / standard_error
+    df = welch_degrees_of_freedom(stats1[:variance], stats1[:n], stats2[:variance], stats2[:n])
+    p_value = calculate_two_tailed_p_value(t_statistic, df)
+
+    {
+      test_type: 'independent_samples',
+      t_statistic: t_statistic.round(10),
+      degrees_of_freedom: df.round(2),
+      p_value: p_value.round(10),
+      mean1: stats1[:mean].round(10),
+      mean2: stats2[:mean].round(10),
+      n1: stats1[:n],
+      n2: stats2[:n],
+      significant: p_value < 0.05
+    }
+  end
+
+  def calculate_paired_differences(other_data)
+    @numbers.zip(other_data).map { |a, b| a - b }
+  end
+
+  def paired_test_result(differences)
+    n = differences.length
+    mean_diff = differences.sum.to_f / n
+    var_diff = differences.sum { |d| (d - mean_diff)**2 } / (n - 1)
+    standard_error = Math.sqrt(var_diff / n)
+
+    return nil if standard_error.zero?
+
+    t_statistic = mean_diff / standard_error
+    df = n - 1
+    p_value = calculate_two_tailed_p_value(t_statistic, df)
+
+    {
+      test_type: 'paired_samples',
+      t_statistic: t_statistic.round(10),
+      degrees_of_freedom: df,
+      p_value: p_value.round(10),
+      mean_difference: mean_diff.round(10),
+      n: n,
+      significant: p_value < 0.05
+    }
   end
 end
