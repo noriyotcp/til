@@ -6,7 +6,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 NumberAnalyzer is a comprehensive statistical analysis tool built in Ruby. Originally started as a refactoring exercise from beginner-level code to professional Ruby Gem, it has evolved into an enterprise-ready statistical analysis library with data visualization capabilities.
 
-**Current Status**: ✅ **Production Ready** - 24 statistical functions, 251 test cases, Phase 7.2 Step 4 complete with seasonal pattern analysis, enterprise-level code quality
+**Current Status**: ✅ **Production Ready** - 24 statistical functions, 28 test examples (340 test definitions), Phase 7.2 Step 4 complete with seasonal pattern analysis, enterprise-level code quality
 
 ## Development Commands
 
@@ -32,7 +32,7 @@ NumberAnalyzer is a comprehensive statistical analysis tool built in Ruby. Origi
 - `bundle exec number_analyzer mean --precision=2 1.234 2.567` (precision control)
 - `bundle exec number_analyzer outliers --quiet 1 2 3 100` (script-friendly output)
 - `bundle exec number_analyzer variance --help` (command help)
-- All 17 subcommands support: `--format`, `--precision`, `--quiet`, `--help`, `--file`
+- All 18 subcommands support: `--format`, `--precision`, `--quiet`, `--help`, `--file`
 
 **Correlation Analysis** (Phase 7.1):
 - `bundle exec number_analyzer correlation 1 2 3 2 4 6` (Pearson correlation)
@@ -55,7 +55,7 @@ NumberAnalyzer is a comprehensive statistical analysis tool built in Ruby. Origi
 
 **Development Tools**:
 - `bundle install` - Install dependencies
-- `rspec` - Run test suite (251 tests)
+- `rspec` - Run test suite (28 examples, 340 test definitions)
 - `bundle exec rubocop` - Code style checking (MANDATORY: zero violations)
 - `bundle exec rubocop -a` - Auto-fix style violations (run first)
 - `bundle exec rubocop [file]` - Check specific file
@@ -68,17 +68,17 @@ NumberAnalyzer is a comprehensive statistical analysis tool built in Ruby. Origi
 
 ```
 lib/
-├── number_analyzer.rb              # Core statistical calculations (69 tests)
+├── number_analyzer.rb              # Core statistical calculations
 └── number_analyzer/
-    ├── cli.rb                      # CLI interface + 13 subcommands (79 tests)
-    ├── file_reader.rb              # File input handling (27 tests)
-    ├── statistics_presenter.rb     # Output formatting (13 tests)
-    └── output_formatter.rb         # Advanced output formatting (25 tests)
+    ├── cli.rb                      # CLI interface + 18 subcommands
+    ├── file_reader.rb              # File input handling
+    ├── statistics_presenter.rb     # Output formatting
+    └── output_formatter.rb         # Advanced output formatting
 ```
 
 **Key Classes**:
 - **NumberAnalyzer**: Pure statistical calculations (18 functions)
-- **NumberAnalyzer::CLI**: Command-line argument processing + 16 subcommand routing
+- **NumberAnalyzer::CLI**: Command-line argument processing + 18 subcommand routing
 - **NumberAnalyzer::FileReader**: CSV/JSON/TXT file input
 - **NumberAnalyzer::StatisticsPresenter**: Output formatting and histogram display
 - **NumberAnalyzer::OutputFormatter**: Advanced output formatting (JSON, precision, quiet mode)

@@ -21,6 +21,9 @@ NumberAnalyzer provides the following statistical calculations:
 - **Deviation Scores** - Standardized scores with mean=50, showing relative position of each value
 - **Correlation Analysis** - Pearson correlation coefficient between two datasets with strength interpretation
 - **Trend Analysis** - Linear regression analysis with slope, intercept, R², and direction (上昇/下降/横ばい)
+- **Moving Average Analysis** - Time series smoothing with customizable window sizes
+- **Growth Rate Analysis** - Period-over-period growth rates, CAGR, and average growth rate calculation  
+- **Seasonal Pattern Analysis** - Seasonal decomposition, period detection, and seasonal strength measurement
 - **Frequency Distribution** - Count occurrences of each value for data distribution analysis
 - **Histogram Display** - ASCII art visualization of frequency distribution with automatic scaling
 - **File Input Support** - Read data from CSV, JSON, and TXT files
@@ -67,10 +70,12 @@ bundle exec number_analyzer --file values.txt
 bundle exec number_analyzer correlation file1.csv file2.csv
 bundle exec number_analyzer correlation --format=json file1.csv file2.csv
 
-# Time series trend analysis
+# Time series analysis
 bundle exec number_analyzer trend 1 2 3 4 5
 bundle exec number_analyzer trend --format=json --file sales.csv
-bundle exec number_analyzer trend --precision=2 1.1 2.3 3.2 4.8
+bundle exec number_analyzer moving-average --window=5 1 2 3 4 5 6 7
+bundle exec number_analyzer growth-rate 100 110 121 133
+bundle exec number_analyzer seasonal 10 20 15 25 12 22 17 27
 ```
 
 #### Using the bin file directly
@@ -85,7 +90,7 @@ number_analyzer 1 2 3 4 5
 
 #### Advanced Usage with Options (Phase 6.3)
 
-NumberAnalyzer supports advanced output formatting and control options for all 14 subcommands:
+NumberAnalyzer supports advanced output formatting and control options for all 18 subcommands:
 
 **JSON Output Format**
 ```bash
@@ -137,7 +142,7 @@ bundle exec number_analyzer histogram --help
 
 **Subcommands with Options**
 
-All 14 subcommands support the new options:
+All 18 subcommands support the new options:
 
 ```bash
 # Basic Statistics with Options
@@ -154,8 +159,9 @@ bundle exec number_analyzer correlation --format=json --precision=3 1 2 3 2 4 6
 
 # Time Series Analysis
 bundle exec number_analyzer trend 1 2 3 4 5
-bundle exec number_analyzer trend --format=json 5 4 3 2 1
-bundle exec number_analyzer trend --precision=3 --quiet 1.1 2.2 3.3 4.4
+bundle exec number_analyzer moving-average --window=5 1 2 3 4 5 6 7 8
+bundle exec number_analyzer growth-rate --format=json 100 110 121 133
+bundle exec number_analyzer seasonal --period=4 10 20 15 25 12 22 17 27
 
 # Specialized Commands with Options
 bundle exec number_analyzer percentile 75 --format=json 1 2 3 4 5
@@ -330,7 +336,7 @@ bundle exec rubocop
 ### Complete Documentation
 - **[FEATURES.md](ai-docs/FEATURES.md)** - Comprehensive feature documentation and technical specifications
 - **[ARCHITECTURE.md](ai-docs/ARCHITECTURE.md)** - Technical architecture, design patterns, and system structure  
-- **[ROADMAP.md](ai-docs/ROADMAP.md)** - Development phases, future plans, and Phase 6 CLI subcommands design
+- **[ROADMAP.md](ai-docs/ROADMAP.md)** - Development phases, future plans, and completed Phase 7.2 time series analysis features
 
 ### For Developers
 - **[CLAUDE.md](CLAUDE.md)** - Development guidance for Claude Code integration
@@ -342,19 +348,19 @@ number_analyzer/
 ├── lib/
 │   ├── number_analyzer.rb          # Core statistical calculations
 │   └── number_analyzer/
-│       ├── cli.rb                  # Command line interface + 14 subcommands
+│       ├── cli.rb                  # Command line interface + 18 subcommands
 │       ├── file_reader.rb          # File input support (CSV/JSON/TXT)
 │       ├── statistics_presenter.rb # Display and formatting logic
 │       └── output_formatter.rb     # Advanced output formatting (JSON, precision, quiet)
 ├── bin/
 │   └── number_analyzer             # Executable file
 ├── spec/
-│   ├── number_analyzer_spec.rb     # Core functionality tests (69 tests)
+│   ├── number_analyzer_spec.rb     # Core functionality tests
 │   └── number_analyzer/
-│       ├── cli_spec.rb             # CLI functionality tests (79 tests)
-│       ├── file_reader_spec.rb     # File reader functionality tests (27 tests)
-│       ├── statistics_presenter_spec.rb # Presentation logic tests (13 tests)
-│       └── output_formatter_spec.rb # Output formatting tests (25 tests)
+│       ├── cli_spec.rb             # CLI functionality tests
+│       ├── file_reader_spec.rb     # File reader functionality tests
+│       ├── statistics_presenter_spec.rb # Presentation logic tests
+│       └── output_formatter_spec.rb # Output formatting tests
 ├── number_analyzer.gemspec         # Gem specification
 └── README.md                       # This file
 ```
@@ -364,7 +370,7 @@ number_analyzer/
 The project follows clean architecture principles with separation of concerns:
 
 - **NumberAnalyzer** - Pure statistical calculation library (no dependencies)
-- **NumberAnalyzer::CLI** - Command line interface and argument parsing with 14 subcommands
+- **NumberAnalyzer::CLI** - Command line interface and argument parsing with 18 subcommands
 - **NumberAnalyzer::FileReader** - File input handling (CSV/JSON/TXT support)
 - **NumberAnalyzer::StatisticsPresenter** - Display and formatting logic for full analysis
 - **NumberAnalyzer::OutputFormatter** - Advanced output formatting (JSON, precision, quiet mode)
