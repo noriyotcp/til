@@ -117,6 +117,67 @@
 - [x] 包括的テストスイート（10新規テスト追加）
 - [x] エッジケース対応（小サンプル、大サンプル、無効信頼度）
 
+### Phase 7.3 Step 3: Chi-square Test 🟡 部分完了（CLI改善必要）
+- [x] カイ二乗検定メソッド実装（独立性検定、適合度検定）
+- [x] Cramér's V効果サイズ計算とp値推定
+- [x] `chi-square` サブコマンド追加（21個目の統計コマンド）
+- [x] 数学的正確性保証（カイ二乗分布表、期待度数検証）
+- [x] 統計的解釈機能（有意差判定、警告表示）
+- [x] 既存CLI オプション完全対応（JSON、精度、quiet、help、file）
+- [x] TDD実装（Red-Green-Refactor サイクル）
+- [x] 包括的テストスイート（12新規テスト追加）
+- [ ] **🚨 CLI分割表解析の改善必要**: 現在χ² = 0.0, df = 0を返す問題
+
+### Phase 7.3 Step 3.5: Chi-square CLI Improvements 🔧 改善予定
+**現在の問題**: CLI独立性検定で「χ² = 0.0, df = 0」を返すため実用性に欠ける
+
+#### 主要改善項目
+- [ ] **分割表パース機能の強化**
+  - `parse_contingency_table_from_args`メソッドの全面見直し
+  - `--` 区切りパースロジックの堅牢性向上
+  - エラー処理とユーザーフィードバック改善
+
+- [ ] **ファイル入力処理の拡張**
+  - 非正方形分割表（2x3, 3x4など）完全サポート
+  - CSVファイル形式の柔軟な認識
+  - ファイル内分割表構造の自動検出
+
+- [ ] **テストタイプ判定の改善**
+  - データ形状に基づく自動判定ロジック
+  - 直感的なCLIオプション設計
+  - エラーメッセージとガイダンス強化
+
+#### 技術課題詳細
+1. **`parse_contingency_table_from_args`の限界**
+   - Line 956-986: `--` 区切りロジックの不完全性
+   - 非正方形分割表への対応不足
+   - エラーハンドリングの基本レベル
+
+2. **ファイル入力の制約**
+   - Line 893-899: 正方形分割表仮定の制限
+   ```ruby
+   # 現在の問題あるコード
+   dimension = Math.sqrt(data.length).to_i
+   if dimension * dimension != data.length
+     puts 'エラー: 独立性検定には正方形の分割表が必要です。'
+   ```
+
+3. **テストタイプ判定の曖昧さ**
+   - `determine_chi_square_test_type`の自動判定不足
+
+#### 実装計画
+1. **問題特定**: 現在失敗するケースのテストケース作成
+2. **パース強化**: `parse_contingency_table_from_args`全面書き直し
+3. **ファイル拡張**: 非正方形分割表対応
+4. **統合テスト**: 包括的検証の実施
+5. **エラー改善**: ユーザビリティ向上
+
+#### 期待成果
+- χ² = 0.0, df = 0 問題の完全解決
+- あらゆる形状の分割表対応
+- エンタープライズレベルの信頼性
+- 実用的なchi-square CLI機能の実現
+
 ---
 
 ## Next Development Phase
@@ -129,12 +190,12 @@
 - ✅ **Growth rate calculation**: `bundle exec number_analyzer growth-rate 100 110 121 133` (完了)
 - ✅ **Seasonal decomposition**: `bundle exec number_analyzer seasonal 10 20 15 25` (完了)
 
-## Phase 7.3: Statistical Tests 🚧 進行中 (Step 1 完了)
+## Phase 7.3: Statistical Tests 🟡 部分完了 (Step 3 CLI改善必要)
 
 ### Hypothesis Testing  
 - ✅ **T-test**: `bundle exec number_analyzer t-test group1.csv group2.csv` (完了)
-- 🔮 **Confidence intervals**: `bundle exec number_analyzer confidence-interval 95 data.csv` (計画中)
-- 🔮 **Chi-square test**: Independence testing for categorical data (計画中)
+- ✅ **Confidence intervals**: `bundle exec number_analyzer confidence-interval 95 data.csv` (完了)
+- 🟡 **Chi-square test**: `bundle exec number_analyzer chi-square --independence 30 20 -- 15 35` (コア完了、CLI改善必要)
 - 🔮 **ANOVA**: Analysis of variance for multiple groups (計画中)
 
 ## Phase 7.4: Plugin System Architecture 🔮 計画段階
