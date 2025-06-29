@@ -121,6 +121,18 @@ class NumberAnalyzer
       end
     end
 
+    # Format moving average output
+    def self.format_moving_average(moving_avg_data, options = {})
+      case options[:format]
+      when 'json'
+        format_moving_average_json(moving_avg_data, options)
+      when 'quiet'
+        format_moving_average_quiet(moving_avg_data, options)
+      else
+        format_moving_average_default(moving_avg_data, options)
+      end
+    end
+
     private_class_method def self.format_trend_json(trend_data, options)
       return JSON.generate({ trend: nil }.merge(dataset_metadata(options))) if trend_data.nil?
 
@@ -193,6 +205,40 @@ class NumberAnalyzer
         value.positive? ? '弱い正の相関' : '弱い負の相関'
       else
         'ほぼ無相関'
+      end
+    end
+
+    private_class_method def self.format_moving_average_json(moving_avg_data, options)
+      if moving_avg_data.nil?
+        return JSON.generate({ moving_average: nil, error: 'データが不十分です' }.merge(dataset_metadata(options)))
+      end
+
+      formatted_values = moving_avg_data.map { |value| apply_precision(value, options[:precision]) }
+      result = {
+        moving_average: formatted_values,
+        window_size: options[:window_size]
+      }
+      result.merge!(dataset_metadata(options))
+      JSON.generate(result)
+    end
+
+    private_class_method def self.format_moving_average_quiet(moving_avg_data, options)
+      return '' if moving_avg_data.nil?
+
+      formatted_values = moving_avg_data.map { |value| apply_precision(value, options[:precision]) }
+      formatted_values.join(' ')
+    end
+
+    private_class_method def self.format_moving_average_default(moving_avg_data, options)
+      if moving_avg_data.nil?
+        'エラー: データが不十分です（ウィンドウサイズがデータ長を超えています）'
+      else
+        formatted_values = moving_avg_data.map { |value| apply_precision(value, options[:precision]) }
+        window_size = options[:window_size] || 3
+
+        header = "移動平均（ウィンドウサイズ: #{window_size}）:"
+        values_display = formatted_values.join(', ')
+        "#{header}\n#{values_display}"
       end
     end
   end

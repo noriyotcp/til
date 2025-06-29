@@ -6,7 +6,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 NumberAnalyzer is a comprehensive statistical analysis tool built in Ruby. Originally started as a refactoring exercise from beginner-level code to professional Ruby Gem, it has evolved into an enterprise-ready statistical analysis library with data visualization capabilities.
 
-**Current Status**: ✅ **Production Ready** - 17 statistical functions, 237 test cases, Phase 7.2 Step 1 complete with trend analysis, enterprise-level code quality
+**Current Status**: ✅ **Production Ready** - 18 statistical functions, 262 test cases, Phase 7.2 Step 2 complete with moving averages, enterprise-level code quality
 
 ## Development Commands
 
@@ -43,10 +43,13 @@ NumberAnalyzer is a comprehensive statistical analysis tool built in Ruby. Origi
 - `bundle exec number_analyzer trend 1 2 3 4 5` (linear trend analysis)
 - `bundle exec number_analyzer trend --format=json --file sales.csv` (JSON output)
 - `bundle exec number_analyzer trend --precision=2 1.1 2.3 3.2 4.8` (precision control)
+- `bundle exec number_analyzer moving-average 1 2 3 4 5 6 7` (3-period moving average)
+- `bundle exec number_analyzer moving-average --window=5 --file sales.csv` (5-period moving average)
+- `bundle exec number_analyzer moving-average --format=json --window=7 1 2 3 4 5 6 7 8 9` (JSON output)
 
 **Development Tools**:
 - `bundle install` - Install dependencies
-- `rspec` - Run test suite (237 tests)
+- `rspec` - Run test suite (262 tests)
 - `bundle exec rubocop` - Code style checking (MANDATORY: zero violations)
 - `bundle exec rubocop -a` - Auto-fix style violations (run first)
 - `bundle exec rubocop [file]` - Check specific file
@@ -68,29 +71,29 @@ lib/
 ```
 
 **Key Classes**:
-- **NumberAnalyzer**: Pure statistical calculations (17 functions)
-- **NumberAnalyzer::CLI**: Command-line argument processing + 15 subcommand routing
+- **NumberAnalyzer**: Pure statistical calculations (18 functions)
+- **NumberAnalyzer::CLI**: Command-line argument processing + 16 subcommand routing
 - **NumberAnalyzer::FileReader**: CSV/JSON/TXT file input
 - **NumberAnalyzer::StatisticsPresenter**: Output formatting and histogram display
 - **NumberAnalyzer::OutputFormatter**: Advanced output formatting (JSON, precision, quiet mode)
 
 ## Implemented Features
 
-**Statistical Functions (17)**:
+**Statistical Functions (18)**:
 - Basic: sum, mean, min, max, median, mode
 - Variability: variance, standard deviation, IQR
 - Advanced: percentiles, quartiles, outliers, deviation scores
 - Relationships: Pearson correlation coefficient
-- Time Series: linear trend analysis (slope, intercept, R², direction)
+- Time Series: linear trend analysis (slope, intercept, R², direction), moving averages
 - Visualization: frequency distribution, ASCII histogram
 
 **Input Support**: CLI arguments, CSV/JSON/TXT files (both full analysis and all subcommands)
 **Output**: Comprehensive analysis OR individual statistics + visualization
-**CLI Modes**: Full analysis (default) OR 15 individual subcommands (Phases 6.1, 6.2, 7.1, 7.2)
+**CLI Modes**: Full analysis (default) OR 16 individual subcommands (Phases 6.1, 6.2, 7.1, 7.2)
 **Subcommand Categories**: Basic statistics, advanced analysis, parameterized commands, correlation analysis, time series analysis
 **Output Options (Phase 6.3)**: JSON format, precision control, quiet mode, help system
 **Correlation Analysis (Phase 7.1)**: Dual dataset input, mathematical interpretation, file/numeric support
-**Time Series Analysis (Phase 7.2)**: Linear trend analysis with regression statistics and direction interpretation
+**Time Series Analysis (Phase 7.2)**: Linear trend analysis, moving averages with customizable window sizes
 
 ## Code Quality Standards
 
@@ -169,12 +172,12 @@ rspec                        # MUST be all tests passing
 
 ## Quick Reference
 
-**Current State**: ✅ Phase 7.2 Step 1 Complete (Trend Analysis)
-**Next Phase**: Phase 7.2 Steps 2-4 - Moving Average, Growth Rate, Seasonal Patterns (see `ai-docs/ROADMAP.md`)
-**Test Count**: 237 total (80+ core + 87+ CLI/subcommands + 27 file + 13 presenter + 32+ formatter)
+**Current State**: ✅ Phase 7.2 Step 2 Complete (Moving Averages)
+**Next Phase**: Phase 7.2 Steps 3-4 - Growth Rate, Seasonal Patterns (see `ai-docs/ROADMAP.md`)
+**Test Count**: 262 total (94+ core + 96+ CLI/subcommands + 27 file + 13 presenter + 40+ formatter)
 **RuboCop Status**: Full compliance (zero violations policy enforced)
-**Subcommand Count**: 15 total (7 basic + 6 advanced + 1 correlation + 1 time series command)
-**CLI Options**: 4 advanced options (JSON, precision, quiet, help) across all subcommands
+**Subcommand Count**: 16 total (7 basic + 6 advanced + 1 correlation + 2 time series commands)
+**CLI Options**: 5 advanced options (JSON, precision, quiet, help, window) across all subcommands
 
 ## Documentation Structure
 

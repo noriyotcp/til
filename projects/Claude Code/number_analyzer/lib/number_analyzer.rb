@@ -174,6 +174,18 @@ class NumberAnalyzer
     end
   end
 
+  def moving_average(window_size)
+    return nil if @numbers.empty? || window_size <= 0 || window_size > @numbers.length
+
+    result = []
+    (@numbers.length - window_size + 1).times do |i|
+      window_sum = @numbers[i, window_size].sum
+      result << (window_sum.to_f / window_size)
+    end
+
+    result
+  end
+
   private
 
   def average_value = @numbers.sum.to_f / @numbers.length

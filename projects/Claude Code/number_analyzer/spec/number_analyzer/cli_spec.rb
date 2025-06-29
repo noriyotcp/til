@@ -604,6 +604,53 @@ RSpec.describe NumberAnalyzer::CLI do
           .to output(/Usage: bundle exec number_analyzer trend/).to_stdout
       end
     end
+
+    context 'moving-average subcommand' do
+      it 'calculates moving average with default window size 3' do
+        expect { NumberAnalyzer::CLI.run(%w[moving-average 1 2 3 4 5]) }
+          .to output("移動平均（ウィンドウサイズ: 3）:\n2.0, 3.0, 4.0\n").to_stdout
+      end
+
+      it 'calculates moving average with custom window size' do
+        expect { NumberAnalyzer::CLI.run(%w[moving-average --window=5 1 2 3 4 5 6 7]) }
+          .to output("移動平均（ウィンドウサイズ: 5）:\n3.0, 4.0, 5.0\n").to_stdout
+      end
+
+      it 'outputs JSON format when requested' do
+        expect { NumberAnalyzer::CLI.run(%w[moving-average --format=json --window=3 1 2 3 4]) }
+          .to output("{\"moving_average\":[2.0,3.0],\"window_size\":3,\"dataset_size\":4}\n").to_stdout
+      end
+
+      it 'outputs quiet format when requested' do
+        expect { NumberAnalyzer::CLI.run(%w[moving-average --quiet --window=2 1 2 3 4]) }
+          .to output("1.5 2.5 3.5\n").to_stdout
+      end
+
+      it 'applies precision formatting' do
+        expect { NumberAnalyzer::CLI.run(%w[moving-average --precision=1 --window=3 1.11 2.22 3.33 4.44]) }
+          .to output("移動平均（ウィンドウサイズ: 3）:\n2.2, 3.3\n").to_stdout
+      end
+
+      it 'handles window size larger than dataset' do
+        expect { NumberAnalyzer::CLI.run(%w[moving-average --window=5 1 2 3]) }
+          .to output("エラー: データが不十分です（ウィンドウサイズがデータ長を超えています）\n").to_stdout
+      end
+
+      it 'handles invalid window size' do
+        expect { NumberAnalyzer::CLI.run(%w[moving-average --window=0 1 2 3]) }
+          .to output("エラー: ウィンドウサイズは正の整数である必要があります。\n").to_stdout.and raise_error(SystemExit)
+      end
+
+      it 'handles non-integer window size' do
+        expect { NumberAnalyzer::CLI.run(%w[moving-average --window=abc 1 2 3]) }
+          .to output("エラー: invalid argument: --window=abc\n").to_stdout.and raise_error(SystemExit)
+      end
+
+      it 'shows help when requested' do
+        expect { NumberAnalyzer::CLI.run(%w[moving-average --help]) }
+          .to output(/Usage: bundle exec number_analyzer moving-average/).to_stdout
+      end
+    end
   end
 
   private

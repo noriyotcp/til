@@ -279,4 +279,70 @@ RSpec.describe NumberAnalyzer::OutputFormatter do
       end
     end
   end
+
+  describe '.format_moving_average' do
+    context 'with valid moving average data' do
+      let(:moving_avg_data) { [2.0, 3.0, 4.0, 5.0] }
+
+      it 'formats default output with window size' do
+        result = described_class.format_moving_average(moving_avg_data, window_size: 3)
+        expect(result).to eq("移動平均（ウィンドウサイズ: 3）:\n2.0, 3.0, 4.0, 5.0")
+      end
+
+      it 'applies precision formatting' do
+        result = described_class.format_moving_average([2.1234, 3.5678], precision: 2, window_size: 3)
+        expect(result).to eq("移動平均（ウィンドウサイズ: 3）:\n2.12, 3.57")
+      end
+
+      it 'formats JSON output' do
+        result = described_class.format_moving_average(moving_avg_data, format: 'json', window_size: 3, dataset_size: 6)
+        parsed = JSON.parse(result)
+        expect(parsed).to eq({
+                               'moving_average' => [2.0, 3.0, 4.0, 5.0],
+                               'window_size' => 3,
+                               'dataset_size' => 6
+                             })
+      end
+
+      it 'formats JSON output with precision' do
+        result = described_class.format_moving_average([2.1234, 3.5678], format: 'json', precision: 1, window_size: 3, dataset_size: 5)
+        parsed = JSON.parse(result)
+        expect(parsed['moving_average']).to eq([2.1, 3.6])
+        expect(parsed['window_size']).to eq(3)
+        expect(parsed['dataset_size']).to eq(5)
+      end
+
+      it 'formats quiet output' do
+        result = described_class.format_moving_average(moving_avg_data, format: 'quiet')
+        expect(result).to eq('2.0 3.0 4.0 5.0')
+      end
+
+      it 'formats quiet output with precision' do
+        result = described_class.format_moving_average([2.1234, 3.5678], format: 'quiet', precision: 2)
+        expect(result).to eq('2.12 3.57')
+      end
+    end
+
+    context 'with nil moving average data (error cases)' do
+      it 'formats default error message' do
+        result = described_class.format_moving_average(nil)
+        expect(result).to eq('エラー: データが不十分です（ウィンドウサイズがデータ長を超えています）')
+      end
+
+      it 'formats JSON error output' do
+        result = described_class.format_moving_average(nil, format: 'json', dataset_size: 2)
+        parsed = JSON.parse(result)
+        expect(parsed).to eq({
+                               'moving_average' => nil,
+                               'error' => 'データが不十分です',
+                               'dataset_size' => 2
+                             })
+      end
+
+      it 'formats quiet error output' do
+        result = described_class.format_moving_average(nil, format: 'quiet')
+        expect(result).to eq('')
+      end
+    end
+  end
 end

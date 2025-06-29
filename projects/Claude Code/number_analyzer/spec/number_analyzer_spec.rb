@@ -762,4 +762,70 @@ RSpec.describe NumberAnalyzer do
       end
     end
   end
+
+  describe '#moving_average' do
+    context 'with basic dataset and window size 3' do
+      let(:ma_analyzer) { NumberAnalyzer.new([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]) }
+
+      it 'calculates 3-period moving average correctly' do
+        result = ma_analyzer.moving_average(3)
+        
+        expect(result).to be_an(Array)
+        expect(result.length).to eq(8) # 10 - 3 + 1 = 8
+        expect(result[0]).to be_within(0.001).of(2.0) # (1+2+3)/3
+        expect(result[1]).to be_within(0.001).of(3.0) # (2+3+4)/3
+        expect(result[2]).to be_within(0.001).of(4.0) # (3+4+5)/3
+        expect(result.last).to be_within(0.001).of(9.0) # (8+9+10)/3
+      end
+    end
+
+    context 'with window size 5' do
+      let(:ma_analyzer) { NumberAnalyzer.new([2, 4, 6, 8, 10, 12, 14, 16, 18, 20]) }
+
+      it 'calculates 5-period moving average correctly' do
+        result = ma_analyzer.moving_average(5)
+        
+        expect(result.length).to eq(6) # 10 - 5 + 1 = 6
+        expect(result[0]).to be_within(0.001).of(6.0) # (2+4+6+8+10)/5
+        expect(result.last).to be_within(0.001).of(16.0) # (12+14+16+18+20)/5
+      end
+    end
+
+    context 'with edge cases' do
+      it 'returns nil for empty array' do
+        empty_analyzer = NumberAnalyzer.new([])
+        expect(empty_analyzer.moving_average(3)).to be_nil
+      end
+
+      it 'returns nil when window size is larger than dataset' do
+        small_analyzer = NumberAnalyzer.new([1, 2])
+        expect(small_analyzer.moving_average(5)).to be_nil
+      end
+
+      it 'returns single value when window size equals dataset size' do
+        equal_analyzer = NumberAnalyzer.new([1, 2, 3])
+        result = equal_analyzer.moving_average(3)
+        expect(result).to eq([2.0])
+      end
+
+      it 'returns nil for invalid window size' do
+        analyzer = NumberAnalyzer.new([1, 2, 3, 4, 5])
+        expect(analyzer.moving_average(0)).to be_nil
+        expect(analyzer.moving_average(-1)).to be_nil
+      end
+    end
+
+    context 'with decimal values' do
+      let(:decimal_analyzer) { NumberAnalyzer.new([1.5, 2.5, 3.5, 4.5, 5.5]) }
+
+      it 'handles decimal values correctly' do
+        result = decimal_analyzer.moving_average(3)
+        
+        expect(result.length).to eq(3)
+        expect(result[0]).to be_within(0.001).of(2.5) # (1.5+2.5+3.5)/3
+        expect(result[1]).to be_within(0.001).of(3.5) # (2.5+3.5+4.5)/3
+        expect(result[2]).to be_within(0.001).of(4.5) # (3.5+4.5+5.5)/3
+      end
+    end
+  end
 end
