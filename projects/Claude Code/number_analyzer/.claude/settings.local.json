@@ -10,8 +10,12 @@
       "WebFetch(domain:www.rubydoc.info)",
       "Bash(grep:*)",
       "Bash(find:*)",
-      "Bash(git add:*)"
+      "Bash(git add:*)",
+      "Bash(ruby:*)",
+      "WebFetch(domain:docs.anthropic.com)"
     ],
-    "deny": []
+    "deny": [
+      "Bash(git commit:*)"
+    ]
   }
 }
