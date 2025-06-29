@@ -109,6 +109,55 @@ class NumberAnalyzer
       end
     end
 
+    # Format trend analysis output
+    def self.format_trend(trend_data, options = {})
+      case options[:format]
+      when 'json'
+        format_trend_json(trend_data, options)
+      when 'quiet'
+        format_trend_quiet(trend_data, options)
+      else
+        format_trend_default(trend_data, options)
+      end
+    end
+
+    private_class_method def self.format_trend_json(trend_data, options)
+      return JSON.generate({ trend: nil }.merge(dataset_metadata(options))) if trend_data.nil?
+
+      formatted_trend = build_formatted_trend_data(trend_data, options)
+      JSON.generate({ trend: formatted_trend }.merge(dataset_metadata(options)))
+    end
+
+    private_class_method def self.build_formatted_trend_data(trend_data, options)
+      {
+        slope: apply_precision(trend_data[:slope], options[:precision]),
+        intercept: apply_precision(trend_data[:intercept], options[:precision]),
+        r_squared: apply_precision(trend_data[:r_squared], options[:precision]),
+        direction: trend_data[:direction]
+      }
+    end
+
+    private_class_method def self.format_trend_quiet(trend_data, options)
+      return '' if trend_data.nil?
+
+      slope = apply_precision(trend_data[:slope], options[:precision])
+      intercept = apply_precision(trend_data[:intercept], options[:precision])
+      r_squared = apply_precision(trend_data[:r_squared], options[:precision])
+      "#{slope} #{intercept} #{r_squared}"
+    end
+
+    private_class_method def self.format_trend_default(trend_data, options)
+      if trend_data.nil?
+        'エラー: データが不十分です（2つ以上の値が必要）'
+      else
+        slope = apply_precision(trend_data[:slope], options[:precision])
+        intercept = apply_precision(trend_data[:intercept], options[:precision])
+        r_squared = apply_precision(trend_data[:r_squared], options[:precision])
+
+        "トレンド分析結果:\n傾き: #{slope}\n切片: #{intercept}\n決定係数(R²): #{r_squared}\n方向性: #{trend_data[:direction]}"
+      end
+    end
+
     private_class_method def self.apply_precision(value, precision)
       return value unless precision && value.is_a?(Numeric)
 

@@ -210,4 +210,73 @@ RSpec.describe NumberAnalyzer::OutputFormatter do
       end
     end
   end
+
+  describe '.format_trend' do
+    let(:trend_data) do
+      {
+        slope: 1.5,
+        intercept: 2.0,
+        r_squared: 0.95,
+        direction: '上昇'
+      }
+    end
+
+    context 'with default format' do
+      it 'formats trend data with Japanese labels' do
+        result = described_class.format_trend(trend_data)
+        expected = "トレンド分析結果:\n傾き: 1.5\n切片: 2.0\n決定係数(R²): 0.95\n方向性: 上昇"
+        expect(result).to eq(expected)
+      end
+    end
+
+    context 'with precision option' do
+      it 'applies precision to numeric values' do
+        result = described_class.format_trend(trend_data, precision: 1)
+        expected = "トレンド分析結果:\n傾き: 1.5\n切片: 2.0\n決定係数(R²): 1.0\n方向性: 上昇"
+        expect(result).to eq(expected)
+      end
+    end
+
+    context 'with JSON format' do
+      it 'returns JSON with trend data and metadata' do
+        result = described_class.format_trend(trend_data, format: 'json', dataset_size: 5)
+        parsed = JSON.parse(result)
+        expected = {
+          'trend' => {
+            'slope' => 1.5,
+            'intercept' => 2.0,
+            'r_squared' => 0.95,
+            'direction' => '上昇'
+          },
+          'dataset_size' => 5
+        }
+        expect(parsed).to eq(expected)
+      end
+    end
+
+    context 'with quiet format' do
+      it 'returns space-separated numeric values' do
+        result = described_class.format_trend(trend_data, format: 'quiet')
+        expect(result).to eq('1.5 2.0 0.95')
+      end
+    end
+
+    context 'with nil trend data' do
+      it 'returns error message for default format' do
+        result = described_class.format_trend(nil)
+        expect(result).to eq('エラー: データが不十分です（2つ以上の値が必要）')
+      end
+
+      it 'returns JSON with null trend for JSON format' do
+        result = described_class.format_trend(nil, format: 'json', dataset_size: 1)
+        parsed = JSON.parse(result)
+        expect(parsed).to eq({ 'trend' => nil, 'dataset_size' => 1 })
+      end
+
+      it 'returns empty string for quiet format' do
+        result = described_class.format_trend(nil, format: 'quiet')
+        expect(result).to eq('')
+      end
+    end
+  end
 end

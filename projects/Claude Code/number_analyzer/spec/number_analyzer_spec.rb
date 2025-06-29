@@ -52,6 +52,59 @@ RSpec.describe NumberAnalyzer do
     end
   end
 
+  describe '#linear_trend' do
+    context 'with perfect upward trend' do
+      let(:trend_analyzer) { NumberAnalyzer.new([1, 2, 3, 4, 5]) }
+
+      it 'calculates correct trend slope and intercept' do
+        result = trend_analyzer.linear_trend
+        
+        expect(result[:slope]).to be_within(0.001).of(1.0)
+        expect(result[:intercept]).to be_within(0.001).of(1.0)
+        expect(result[:r_squared]).to be_within(0.001).of(1.0)
+        expect(result[:direction]).to eq('上昇')
+      end
+    end
+
+    context 'with perfect downward trend' do
+      let(:downward_analyzer) { NumberAnalyzer.new([5, 4, 3, 2, 1]) }
+
+      it 'detects downward trend' do
+        result = downward_analyzer.linear_trend
+        
+        expect(result[:slope]).to be_within(0.001).of(-1.0)
+        expect(result[:direction]).to eq('下降')
+      end
+    end
+
+    context 'with no trend (flat)' do
+      let(:flat_analyzer) { NumberAnalyzer.new([5, 5, 5, 5, 5]) }
+
+      it 'detects flat trend' do
+        result = flat_analyzer.linear_trend
+        
+        expect(result[:slope]).to be_within(0.001).of(0.0)
+        expect(result[:direction]).to eq('横ばい')
+      end
+    end
+
+    context 'with empty array' do
+      let(:empty_analyzer) { NumberAnalyzer.new([]) }
+
+      it 'returns nil for empty dataset' do
+        expect(empty_analyzer.linear_trend).to be_nil
+      end
+    end
+
+    context 'with single value' do
+      let(:single_analyzer) { NumberAnalyzer.new([42]) }
+
+      it 'returns nil for single value' do
+        expect(single_analyzer.linear_trend).to be_nil
+      end
+    end
+  end
+
   describe '#median' do
     context 'with odd number of elements' do
       let(:odd_analyzer) { NumberAnalyzer.new([1, 3, 5, 7, 9]) }

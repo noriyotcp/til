@@ -24,7 +24,8 @@ class NumberAnalyzer
       'variance' => :run_variance,
       'std' => :run_standard_deviation,
       'deviation-scores' => :run_deviation_scores,
-      'correlation' => :run_correlation
+      'correlation' => :run_correlation,
+      'trend' => :run_trend
     }.freeze
 
     # Main entry point for CLI
@@ -463,6 +464,20 @@ class NumberAnalyzer
       dataset1 = parse_numeric_arguments(args[0...mid])
       dataset2 = parse_numeric_arguments(args[mid..])
       [dataset1, dataset2]
+    end
+
+    private_class_method def self.run_trend(args, options = {})
+      if options[:help]
+        show_help('trend', 'Calculate linear trend analysis (slope, intercept, R²)')
+        return
+      end
+
+      numbers = parse_numbers_with_options(args, options)
+      analyzer = NumberAnalyzer.new(numbers)
+      result = analyzer.linear_trend
+
+      options[:dataset_size] = numbers.size
+      puts OutputFormatter.format_trend(result, options)
     end
 
     private_class_method def self.parse_numeric_arguments(argv)

@@ -20,6 +20,7 @@ NumberAnalyzer provides the following statistical calculations:
 - **Outlier Detection** - Identifies outliers using IQR * 1.5 rule
 - **Deviation Scores** - Standardized scores with mean=50, showing relative position of each value
 - **Correlation Analysis** - Pearson correlation coefficient between two datasets with strength interpretation
+- **Trend Analysis** - Linear regression analysis with slope, intercept, R², and direction (上昇/下降/横ばい)
 - **Frequency Distribution** - Count occurrences of each value for data distribution analysis
 - **Histogram Display** - ASCII art visualization of frequency distribution with automatic scaling
 - **File Input Support** - Read data from CSV, JSON, and TXT files
@@ -65,6 +66,11 @@ bundle exec number_analyzer --file values.txt
 # Correlation analysis with files
 bundle exec number_analyzer correlation file1.csv file2.csv
 bundle exec number_analyzer correlation --format=json file1.csv file2.csv
+
+# Time series trend analysis
+bundle exec number_analyzer trend 1 2 3 4 5
+bundle exec number_analyzer trend --format=json --file sales.csv
+bundle exec number_analyzer trend --precision=2 1.1 2.3 3.2 4.8
 ```
 
 #### Using the bin file directly
@@ -145,6 +151,11 @@ bundle exec number_analyzer std --quiet 1.5 2.5 3.5 4.5
 bundle exec number_analyzer deviation-scores --precision=1 60 70 80 90
 bundle exec number_analyzer correlation 1 2 3 2 4 6
 bundle exec number_analyzer correlation --format=json --precision=3 1 2 3 2 4 6
+
+# Time Series Analysis
+bundle exec number_analyzer trend 1 2 3 4 5
+bundle exec number_analyzer trend --format=json 5 4 3 2 1
+bundle exec number_analyzer trend --precision=3 --quiet 1.1 2.2 3.3 4.4
 
 # Specialized Commands with Options
 bundle exec number_analyzer percentile 75 --format=json 1 2 3 4 5

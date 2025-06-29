@@ -110,6 +110,24 @@ class NumberAnalyzer
 
   def frequency_distribution = @numbers.tally
 
+  def linear_trend
+    return nil if @numbers.empty? || @numbers.length < 2
+
+    x_values = (0...@numbers.length).to_a
+    slope, intercept = calculate_trend_line(x_values)
+    return nil if slope.nil?
+
+    r_squared = calculate_r_squared(x_values, slope, intercept)
+    direction = determine_trend_direction(slope)
+
+    {
+      slope: slope.round(10),
+      intercept: intercept.round(10),
+      r_squared: r_squared.round(10),
+      direction: direction
+    }
+  end
+
   def correlation(other_dataset)
     return nil if @numbers.empty? || other_dataset.empty?
     return nil if @numbers.length != other_dataset.length
@@ -159,4 +177,49 @@ class NumberAnalyzer
   private
 
   def average_value = @numbers.sum.to_f / @numbers.length
+
+  def calculate_trend_line(x_values)
+    n = @numbers.length
+    x_mean = x_values.sum.to_f / n
+    y_mean = average_value
+
+    numerator = 0.0
+    denominator = 0.0
+
+    n.times do |i|
+      x_diff = x_values[i] - x_mean
+      y_diff = @numbers[i] - y_mean
+
+      numerator += x_diff * y_diff
+      denominator += x_diff * x_diff
+    end
+
+    return [nil, nil] if denominator.zero?
+
+    slope = numerator / denominator
+    intercept = y_mean - (slope * x_mean)
+    [slope, intercept]
+  end
+
+  def calculate_r_squared(x_values, slope, intercept)
+    y_mean = average_value
+    ss_total = @numbers.sum { |y| (y - y_mean)**2 }
+
+    ss_residual = x_values.each_with_index.sum do |x, i|
+      predicted = (slope * x) + intercept
+      (@numbers[i] - predicted)**2
+    end
+
+    ss_total.zero? ? 1.0 : 1.0 - (ss_residual / ss_total)
+  end
+
+  def determine_trend_direction(slope)
+    if slope > 0.001
+      '上昇'
+    elsif slope < -0.001
+      '下降'
+    else
+      '横ばい'
+    end
+  end
 end

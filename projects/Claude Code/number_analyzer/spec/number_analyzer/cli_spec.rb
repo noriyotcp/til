@@ -562,6 +562,48 @@ RSpec.describe NumberAnalyzer::CLI do
         end
       end
     end
+
+    context 'trend subcommand' do
+      it 'calculates trend for upward data' do
+        expect { NumberAnalyzer::CLI.run(%w[trend 1 2 3 4 5]) }
+          .to output("トレンド分析結果:\n傾き: 1.0\n切片: 1.0\n決定係数(R²): 1.0\n方向性: 上昇\n").to_stdout
+      end
+
+      it 'calculates trend for downward data' do
+        expect { NumberAnalyzer::CLI.run(%w[trend 5 4 3 2 1]) }
+          .to output("トレンド分析結果:\n傾き: -1.0\n切片: 5.0\n決定係数(R²): 1.0\n方向性: 下降\n").to_stdout
+      end
+
+      it 'calculates trend for flat data' do
+        expect { NumberAnalyzer::CLI.run(%w[trend 5 5 5 5 5]) }
+          .to output("トレンド分析結果:\n傾き: 0.0\n切片: 5.0\n決定係数(R²): 1.0\n方向性: 横ばい\n").to_stdout
+      end
+
+      it 'outputs JSON format when requested' do
+        expect { NumberAnalyzer::CLI.run(%w[trend --format=json 1 2 3]) }
+          .to output("{\"trend\":{\"slope\":1.0,\"intercept\":1.0,\"r_squared\":1.0,\"direction\":\"上昇\"},\"dataset_size\":3}\n").to_stdout
+      end
+
+      it 'outputs quiet format when requested' do
+        expect { NumberAnalyzer::CLI.run(%w[trend --quiet 1 2 3]) }
+          .to output("1.0 1.0 1.0\n").to_stdout
+      end
+
+      it 'applies precision formatting' do
+        expect { NumberAnalyzer::CLI.run(%w[trend --precision=2 1 2.1 3.2]) }
+          .to output("トレンド分析結果:\n傾き: 1.1\n切片: 1.0\n決定係数(R²): 1.0\n方向性: 上昇\n").to_stdout
+      end
+
+      it 'handles insufficient data' do
+        expect { NumberAnalyzer::CLI.run(%w[trend 42]) }
+          .to output("エラー: データが不十分です（2つ以上の値が必要）\n").to_stdout
+      end
+
+      it 'shows help when requested' do
+        expect { NumberAnalyzer::CLI.run(%w[trend --help]) }
+          .to output(/Usage: bundle exec number_analyzer trend/).to_stdout
+      end
+    end
   end
 
   private
