@@ -501,4 +501,150 @@ RSpec.describe NumberAnalyzer::OutputFormatter do
       end
     end
   end
+
+  describe '.format_seasonal' do
+    let(:seasonal_data) do
+      {
+        period: 4,
+        seasonal_indices: [11.0, 21.0, 16.0, 26.0],
+        seasonal_strength: 0.2751,
+        has_seasonality: true
+      }
+    end
+
+    context 'with default format' do
+      it 'formats seasonal analysis with Japanese labels' do
+        result = described_class.format_seasonal(seasonal_data)
+
+        expect(result).to include('季節性分析結果:')
+        expect(result).to include('検出周期: 4')
+        expect(result).to include('季節指数: 11.0, 21.0, 16.0, 26.0')
+        expect(result).to include('季節性強度: 0.2751')
+        expect(result).to include('季節性判定: 季節性あり')
+      end
+
+      it 'formats seasonal analysis without seasonality' do
+        no_seasonal_data = seasonal_data.merge(has_seasonality: false)
+        result = described_class.format_seasonal(no_seasonal_data)
+
+        expect(result).to include('季節性分析結果:')
+        expect(result).to include('季節性判定: 季節性なし')
+      end
+
+      it 'handles nil data with error message' do
+        result = described_class.format_seasonal(nil)
+
+        expect(result).to eq('エラー: データが不十分です（季節性分析には最低4つの値が必要）')
+      end
+    end
+
+    context 'with JSON format' do
+      it 'formats seasonal analysis as structured JSON' do
+        result = described_class.format_seasonal(seasonal_data, format: 'json', dataset_size: 8)
+        parsed = JSON.parse(result)
+
+        expect(parsed).to have_key('seasonal_analysis')
+        analysis = parsed['seasonal_analysis']
+        expect(analysis['period']).to eq(4)
+        expect(analysis['seasonal_indices']).to eq([11.0, 21.0, 16.0, 26.0])
+        expect(analysis['seasonal_strength']).to be_within(0.0001).of(0.2751)
+        expect(analysis['has_seasonality']).to be true
+        expect(parsed['dataset_size']).to eq(8)
+      end
+
+      it 'handles nil data with JSON error structure' do
+        result = described_class.format_seasonal(nil, format: 'json', dataset_size: 3)
+        parsed = JSON.parse(result)
+
+        expect(parsed['seasonal_analysis']).to be_nil
+        expect(parsed['error']).to eq('データが不十分です')
+        expect(parsed['dataset_size']).to eq(3)
+      end
+
+      it 'includes metadata in JSON output' do
+        result = described_class.format_seasonal(seasonal_data, format: 'json', dataset_size: 12)
+        parsed = JSON.parse(result)
+
+        expect(parsed).to have_key('dataset_size')
+        expect(parsed['dataset_size']).to eq(12)
+      end
+    end
+
+    context 'with quiet format' do
+      it 'formats seasonal analysis as space-separated values' do
+        result = described_class.format_seasonal(seasonal_data, format: 'quiet')
+        values = result.strip.split
+
+        expect(values.length).to eq(3)
+        expect(values[0]).to eq('4') # period
+        expect(values[1]).to eq('0.2751')   # strength
+        expect(values[2]).to eq('true')     # has_seasonality
+      end
+
+      it 'handles seasonality false case' do
+        no_seasonal_data = seasonal_data.merge(has_seasonality: false)
+        result = described_class.format_seasonal(no_seasonal_data, format: 'quiet')
+        values = result.strip.split
+
+        expect(values[2]).to eq('false')
+      end
+
+      it 'handles nil data with empty output' do
+        result = described_class.format_seasonal(nil, format: 'quiet')
+
+        expect(result).to eq('')
+      end
+    end
+
+    context 'with precision option' do
+      it 'applies precision to default format' do
+        result = described_class.format_seasonal(seasonal_data, precision: 2)
+
+        expect(result).to include('季節指数: 11.0, 21.0, 16.0, 26.0')
+        expect(result).to include('季節性強度: 0.28')
+      end
+
+      it 'applies precision to JSON format' do
+        result = described_class.format_seasonal(seasonal_data, format: 'json', precision: 1)
+        parsed = JSON.parse(result)
+
+        analysis = parsed['seasonal_analysis']
+        expect(analysis['seasonal_indices']).to eq([11.0, 21.0, 16.0, 26.0])
+        expect(analysis['seasonal_strength']).to eq(0.3)
+      end
+
+      it 'applies precision to quiet format' do
+        result = described_class.format_seasonal(seasonal_data, format: 'quiet', precision: 2)
+        values = result.strip.split
+
+        expect(values[0]).to eq('4')
+        expect(values[1]).to eq('0.28')
+        expect(values[2]).to eq('true')
+      end
+    end
+
+    context 'with edge cases' do
+      it 'handles zero seasonal strength' do
+        zero_strength_data = seasonal_data.merge(seasonal_strength: 0.0, has_seasonality: false)
+        result = described_class.format_seasonal(zero_strength_data)
+
+        expect(result).to include('季節性強度: 0.0')
+        expect(result).to include('季節性判定: 季節性なし')
+      end
+
+      it 'handles single seasonal index' do
+        single_index_data = seasonal_data.merge(seasonal_indices: [15.0])
+        result = described_class.format_seasonal(single_index_data)
+
+        expect(result).to include('季節指数: 15.0')
+      end
+
+      it 'handles high precision values' do
+        precise_data = seasonal_data.merge(seasonal_strength: 0.123456789)
+        result = described_class.format_seasonal(precise_data, precision: 3)
+
+        expect(result).to include('季節性強度: 0.123')
+      end
+    end
+  end
 end

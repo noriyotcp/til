@@ -144,6 +144,18 @@ class NumberAnalyzer
       end
     end
 
+    # Format seasonal analysis output
+    def self.format_seasonal(seasonal_data, options = {})
+      case options[:format]
+      when 'json'
+        format_seasonal_json(seasonal_data, options)
+      when 'quiet'
+        format_seasonal_quiet(seasonal_data, options)
+      else
+        format_seasonal_default(seasonal_data, options)
+      end
+    end
+
     private_class_method def self.format_trend_json(trend_data, options)
       return JSON.generate({ trend: nil }.merge(dataset_metadata(options))) if trend_data.nil?
 
@@ -325,6 +337,55 @@ class NumberAnalyzer
         "平均成長率: #{avg_formatted}"
       else
         '平均成長率: 計算不可'
+      end
+    end
+
+    private_class_method def self.format_seasonal_json(seasonal_data, options)
+      if seasonal_data.nil?
+        return JSON.generate({ seasonal_analysis: nil, error: 'データが不十分です' }.merge(dataset_metadata(options)))
+      end
+
+      formatted_data = build_formatted_seasonal_data(seasonal_data, options)
+      JSON.generate({ seasonal_analysis: formatted_data }.merge(dataset_metadata(options)))
+    end
+
+    private_class_method def self.build_formatted_seasonal_data(seasonal_data, options)
+      formatted_indices = seasonal_data[:seasonal_indices].map do |index|
+        apply_precision(index, options[:precision])
+      end
+
+      {
+        period: seasonal_data[:period],
+        seasonal_indices: formatted_indices,
+        seasonal_strength: apply_precision(seasonal_data[:seasonal_strength], options[:precision]),
+        has_seasonality: seasonal_data[:has_seasonality]
+      }
+    end
+
+    private_class_method def self.format_seasonal_quiet(seasonal_data, options)
+      return '' if seasonal_data.nil?
+
+      strength = apply_precision(seasonal_data[:seasonal_strength], options[:precision])
+      has_seasonality = seasonal_data[:has_seasonality] ? 'true' : 'false'
+      "#{seasonal_data[:period]} #{strength} #{has_seasonality}"
+    end
+
+    private_class_method def self.format_seasonal_default(seasonal_data, options)
+      if seasonal_data.nil?
+        'エラー: データが不十分です（季節性分析には最低4つの値が必要）'
+      else
+        formatted_indices = seasonal_data[:seasonal_indices].map do |index|
+          apply_precision(index, options[:precision])
+        end
+        strength_formatted = apply_precision(seasonal_data[:seasonal_strength], options[:precision])
+        seasonality_status = seasonal_data[:has_seasonality] ? '季節性あり' : '季節性なし'
+
+        result = "季節性分析結果:\n"
+        result += "検出周期: #{seasonal_data[:period]}\n"
+        result += "季節指数: #{formatted_indices.join(', ')}\n"
+        result += "季節性強度: #{strength_formatted}\n"
+        result += "季節性判定: #{seasonality_status}"
+        result
       end
     end
 

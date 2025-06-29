@@ -6,7 +6,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 NumberAnalyzer is a comprehensive statistical analysis tool built in Ruby. Originally started as a refactoring exercise from beginner-level code to professional Ruby Gem, it has evolved into an enterprise-ready statistical analysis library with data visualization capabilities.
 
-**Current Status**: ✅ **Production Ready** - 21 statistical functions, 222 test cases, Phase 7.2 Step 3 complete with growth rate analysis, enterprise-level code quality
+**Current Status**: ✅ **Production Ready** - 24 statistical functions, 251 test cases, Phase 7.2 Step 4 complete with seasonal pattern analysis, enterprise-level code quality
 
 ## Development Commands
 
@@ -49,10 +49,13 @@ NumberAnalyzer is a comprehensive statistical analysis tool built in Ruby. Origi
 - `bundle exec number_analyzer growth-rate 100 110 121 133` (growth rate analysis)
 - `bundle exec number_analyzer growth-rate --format=json --file sales.csv` (JSON output)
 - `bundle exec number_analyzer growth-rate --precision=1 50 55 60 62` (precision control)
+- `bundle exec number_analyzer seasonal 10 20 15 25 12 22 17 27` (seasonal pattern analysis)
+- `bundle exec number_analyzer seasonal --format=json --file quarterly.csv` (JSON output)
+- `bundle exec number_analyzer seasonal --period=4 --precision=2 sales_data.csv` (manual period specification)
 
 **Development Tools**:
 - `bundle install` - Install dependencies
-- `rspec` - Run test suite (222 tests)
+- `rspec` - Run test suite (251 tests)
 - `bundle exec rubocop` - Code style checking (MANDATORY: zero violations)
 - `bundle exec rubocop -a` - Auto-fix style violations (run first)
 - `bundle exec rubocop [file]` - Check specific file
@@ -82,21 +85,21 @@ lib/
 
 ## Implemented Features
 
-**Statistical Functions (21)**:
+**Statistical Functions (24)**:
 - Basic: sum, mean, min, max, median, mode
 - Variability: variance, standard deviation, IQR
 - Advanced: percentiles, quartiles, outliers, deviation scores
 - Relationships: Pearson correlation coefficient
-- Time Series: linear trend analysis (slope, intercept, R², direction), moving averages, growth rate analysis (period-over-period, CAGR, average growth rate)
+- Time Series: linear trend analysis (slope, intercept, R², direction), moving averages, growth rate analysis (period-over-period, CAGR, average growth rate), seasonal pattern analysis (decomposition, period detection, seasonal strength)
 - Visualization: frequency distribution, ASCII histogram
 
 **Input Support**: CLI arguments, CSV/JSON/TXT files (both full analysis and all subcommands)
 **Output**: Comprehensive analysis OR individual statistics + visualization
-**CLI Modes**: Full analysis (default) OR 17 individual subcommands (Phases 6.1, 6.2, 7.1, 7.2)
+**CLI Modes**: Full analysis (default) OR 18 individual subcommands (Phases 6.1, 6.2, 7.1, 7.2)
 **Subcommand Categories**: Basic statistics, advanced analysis, parameterized commands, correlation analysis, time series analysis
 **Output Options (Phase 6.3)**: JSON format, precision control, quiet mode, help system
 **Correlation Analysis (Phase 7.1)**: Dual dataset input, mathematical interpretation, file/numeric support
-**Time Series Analysis (Phase 7.2)**: Linear trend analysis, moving averages with customizable window sizes, growth rate analysis with CAGR calculation
+**Time Series Analysis (Phase 7.2)**: Linear trend analysis, moving averages with customizable window sizes, growth rate analysis with CAGR calculation, seasonal pattern analysis with automatic period detection
 
 ## Code Quality Standards
 
@@ -175,12 +178,12 @@ rspec                        # MUST be all tests passing
 
 ## Quick Reference
 
-**Current State**: ✅ Phase 7.2 Step 3 Complete (Growth Rate Analysis)
-**Next Phase**: Phase 7.2 Step 4 - Seasonal Patterns (see `ai-docs/ROADMAP.md`)
-**Test Count**: 222 total (104 core + 28 CLI + 54 formatter + 23 file reader + 13 presenter)
+**Current State**: ✅ Phase 7.2 Step 4 Complete (Seasonal Pattern Analysis)
+**Next Phase**: Phase 7.3 - Statistical Tests (see `ai-docs/ROADMAP.md`)
+**Test Count**: 251 total (118 core + 28 CLI + 69 formatter + 23 file reader + 13 presenter)
 **RuboCop Status**: Full compliance (zero violations policy enforced)
-**Subcommand Count**: 17 total (7 basic + 6 advanced + 1 correlation + 3 time series commands)
-**CLI Options**: 5 advanced options (JSON, precision, quiet, help, window) across all subcommands
+**Subcommand Count**: 18 total (7 basic + 6 advanced + 1 correlation + 4 time series commands)
+**CLI Options**: 6 advanced options (JSON, precision, quiet, help, window, period) across all subcommands
 
 ## Documentation Structure
 

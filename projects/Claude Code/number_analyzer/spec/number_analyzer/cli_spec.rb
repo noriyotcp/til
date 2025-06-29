@@ -733,6 +733,105 @@ RSpec.describe NumberAnalyzer::CLI do
     end
   end
 
+  describe 'seasonal subcommand' do
+    it 'calculates and displays seasonal decomposition analysis' do
+      output = capture_stdout { NumberAnalyzer::CLI.run(%w[seasonal 10 20 15 25 12 22 17 27]) }
+
+      expect(output).to include('季節性分析結果:')
+      expect(output).to include('検出周期:')
+      expect(output).to include('季節指数:')
+      expect(output).to include('季節性強度:')
+      expect(output).to include('季節性判定:')
+    end
+
+    it 'handles JSON format output' do
+      output = capture_stdout { NumberAnalyzer::CLI.run(%w[seasonal --format=json 10 20 15 25 12 22 17 27]) }
+
+      json_data = JSON.parse(output)
+      expect(json_data).to have_key('seasonal_analysis')
+      expect(json_data['seasonal_analysis']).to have_key('period')
+      expect(json_data['seasonal_analysis']).to have_key('seasonal_indices')
+      expect(json_data['seasonal_analysis']).to have_key('seasonal_strength')
+      expect(json_data['seasonal_analysis']).to have_key('has_seasonality')
+      expect(json_data).to have_key('dataset_size')
+    end
+
+    it 'handles quiet mode output' do
+      output = capture_stdout { NumberAnalyzer::CLI.run(%w[seasonal --quiet 10 20 15 25 12 22 17 27]) }
+
+      values = output.strip.split
+      expect(values.length).to eq(3) # period, strength, has_seasonality
+      expect(values[0].to_i).to be > 0 # period
+      expect(values[1].to_f).to be >= 0.0 # strength
+      expect(%w[true false]).to include(values[2]) # has_seasonality boolean
+    end
+
+    it 'handles precision control' do
+      output = capture_stdout { NumberAnalyzer::CLI.run(%w[seasonal --precision=2 10 20 15 25 12 22 17 27]) }
+
+      expect(output).to include('季節性分析結果:')
+      # Check that precision is applied to seasonal indices and strength
+      expect(output).to match(/\d+\.\d{2}/)
+    end
+
+    it 'handles manual period specification' do
+      output = capture_stdout { NumberAnalyzer::CLI.run(%w[seasonal --period=2 10 20 15 25 12 22]) }
+
+      expect(output).to include('検出周期: 2')
+      expect(output).to include('季節性分析結果:')
+    end
+
+    it 'handles insufficient data error' do
+      output = capture_stdout { NumberAnalyzer::CLI.run(%w[seasonal 1 2 3]) }
+
+      expect(output).to include('エラー: データが不十分です（季節性分析には最低4つの値が必要）')
+    end
+
+    it 'handles invalid period specification' do
+      expect { NumberAnalyzer::CLI.run(%w[seasonal --period=1 10 20 15 25]) }
+        .to output(/エラー: 周期は2以上である必要があります/).to_stdout
+        .and raise_error(SystemExit)
+    end
+
+    it 'handles non-numeric period specification' do
+      expect { NumberAnalyzer::CLI.run(%w[seasonal --period=abc 10 20 15 25]) }
+        .to output("エラー: invalid argument: --period=abc\n").to_stdout
+        .and raise_error(SystemExit)
+    end
+
+    context 'with file input' do
+      let(:csv_file) { 'test_seasonal_data.csv' }
+
+      before do
+        File.write(csv_file, "10\n20\n15\n25\n12\n22\n17\n27\n")
+      end
+
+      after do
+        FileUtils.rm_f(csv_file)
+      end
+
+      it 'reads data from CSV file' do
+        output = capture_stdout { NumberAnalyzer::CLI.run(['seasonal', '--file', csv_file]) }
+
+        expect(output).to include('季節性分析結果:')
+        expect(output).to include('検出周期:')
+      end
+
+      it 'supports period option with file input' do
+        output = capture_stdout { NumberAnalyzer::CLI.run(['seasonal', '--period=4', '--file', csv_file]) }
+
+        expect(output).to include('検出周期: 4')
+      end
+    end
+
+    context 'help option' do
+      it 'displays help message and exits' do
+        expect { NumberAnalyzer::CLI.run(%w[seasonal --help]) }
+          .to output(/Usage: bundle exec number_analyzer seasonal/).to_stdout
+      end
+    end
+  end
+
   private
 
   def capture_stdout

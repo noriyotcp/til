@@ -962,4 +962,120 @@ RSpec.describe NumberAnalyzer do
       end
     end
   end
+
+  describe '#seasonal_decomposition' do
+    context 'with seasonal data' do
+      # Quarterly seasonal pattern: [10, 20, 15, 25, 12, 22, 17, 27]
+      # Period 4: indices [11.0, 21.0, 16.0, 26.0]
+      let(:seasonal_analyzer) { NumberAnalyzer.new([10, 20, 15, 25, 12, 22, 17, 27]) }
+
+      it 'detects seasonal decomposition correctly' do
+        result = seasonal_analyzer.seasonal_decomposition
+        expect(result).not_to be_nil
+        expect(result[:period]).to eq(4)
+        expect(result[:seasonal_indices]).to eq([11.0, 21.0, 16.0, 26.0])
+        expect(result[:has_seasonality]).to be true
+        expect(result[:seasonal_strength]).to be > 0.1
+      end
+
+      it 'accepts manual period specification' do
+        result = seasonal_analyzer.seasonal_decomposition(2)
+        expect(result).not_to be_nil
+        expect(result[:period]).to eq(2)
+        expect(result[:seasonal_indices].length).to eq(2)
+      end
+    end
+
+    context 'with non-seasonal data' do
+      # Linear trend with no seasonality: [1, 2, 3, 4, 5, 6, 7, 8]
+      let(:linear_analyzer) { NumberAnalyzer.new([1, 2, 3, 4, 5, 6, 7, 8]) }
+
+      it 'returns nil for linear data (no seasonality detected)' do
+        result = linear_analyzer.seasonal_decomposition
+        expect(result).to be_nil
+      end
+    end
+
+    context 'with edge cases' do
+      it 'returns nil for insufficient data' do
+        short_analyzer = NumberAnalyzer.new([1, 2, 3])
+        expect(short_analyzer.seasonal_decomposition).to be_nil
+      end
+
+      it 'returns nil for empty dataset' do
+        empty_analyzer = NumberAnalyzer.new([])
+        expect(empty_analyzer.seasonal_decomposition).to be_nil
+      end
+
+      it 'handles invalid period specification' do
+        analyzer = NumberAnalyzer.new([1, 2, 3, 4, 5, 6])
+        expect(analyzer.seasonal_decomposition(1)).to be_nil
+        expect(analyzer.seasonal_decomposition(10)).to be_nil
+      end
+    end
+  end
+
+  describe '#detect_seasonal_period' do
+    context 'with clear seasonal pattern' do
+      # 4-period seasonal: [10, 20, 15, 25, 12, 22, 17, 27, 14, 24, 19, 29]
+      let(:quarterly_analyzer) { NumberAnalyzer.new([10, 20, 15, 25, 12, 22, 17, 27, 14, 24, 19, 29]) }
+
+      it 'detects quarterly pattern correctly' do
+        expect(quarterly_analyzer.detect_seasonal_period).to eq(4)
+      end
+    end
+
+    context 'with weak or no pattern' do
+      let(:linear_analyzer) { NumberAnalyzer.new([1, 2, 3, 4, 5, 6, 7, 8]) }
+
+      it 'returns nil for data without strong seasonality' do
+        expect(linear_analyzer.detect_seasonal_period).to be_nil
+      end
+    end
+
+    context 'with edge cases' do
+      it 'returns nil for insufficient data' do
+        short_analyzer = NumberAnalyzer.new([1, 2, 3])
+        expect(short_analyzer.detect_seasonal_period).to be_nil
+      end
+
+      it 'returns nil for empty dataset' do
+        empty_analyzer = NumberAnalyzer.new([])
+        expect(empty_analyzer.detect_seasonal_period).to be_nil
+      end
+    end
+  end
+
+  describe '#seasonal_strength' do
+    context 'with seasonal data' do
+      let(:seasonal_analyzer) { NumberAnalyzer.new([10, 20, 15, 25, 12, 22, 17, 27]) }
+
+      it 'returns positive strength for seasonal data' do
+        strength = seasonal_analyzer.seasonal_strength
+        expect(strength).to be > 0.1
+        expect(strength).to be <= 1.0
+      end
+    end
+
+    context 'with non-seasonal data' do
+      let(:linear_analyzer) { NumberAnalyzer.new([1, 2, 3, 4, 5, 6, 7, 8]) }
+
+      it 'returns 0.0 strength for non-seasonal data' do
+        strength = linear_analyzer.seasonal_strength
+        expect(strength).to eq(0.0)
+      end
+    end
+
+    context 'with edge cases' do
+      it 'returns 0.0 for insufficient data' do
+        short_analyzer = NumberAnalyzer.new([1, 2, 3])
+        expect(short_analyzer.seasonal_strength).to eq(0.0)
+      end
+
+      it 'returns 0.0 for empty dataset' do
+        empty_analyzer = NumberAnalyzer.new([])
+        expect(empty_analyzer.seasonal_strength).to eq(0.0)
+      end
+    end
+  end
 end

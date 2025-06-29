@@ -27,7 +27,8 @@ class NumberAnalyzer
       'correlation' => :run_correlation,
       'trend' => :run_trend,
       'moving-average' => :run_moving_average,
-      'growth-rate' => :run_growth_rate
+      'growth-rate' => :run_growth_rate,
+      'seasonal' => :run_seasonal
     }.freeze
 
     # Main entry point for CLI
@@ -91,7 +92,8 @@ class NumberAnalyzer
         quiet: false,
         help: false,
         file: nil,
-        window: nil
+        window: nil,
+        period: nil
       }
     end
 
@@ -106,6 +108,7 @@ class NumberAnalyzer
         opts.on('--help', 'Show help') { options[:help] = true }
         opts.on('--file FILE', '-f FILE', 'Read numbers from file') { |file| options[:file] = file }
         opts.on('--window N', Integer, 'Window size for moving average') { |window| options[:window] = window }
+        opts.on('--period N', Integer, 'Period for seasonal analysis') { |period| options[:period] = period }
       end
     end
 
@@ -536,6 +539,37 @@ class NumberAnalyzer
 
       options[:dataset_size] = numbers.size
       puts OutputFormatter.format_growth_rate(result, options)
+    end
+
+    private_class_method def self.run_seasonal(args, options = {})
+      if options[:help]
+        show_help('seasonal', 'Analyze seasonal patterns and decomposition')
+        return
+      end
+
+      # Parse period from options if provided
+      period = options[:period]
+      if period
+        begin
+          period = Integer(period)
+        rescue ArgumentError
+          puts "エラー: 無効な周期です: #{options[:period]}"
+          puts '正の整数を指定してください。'
+          exit 1
+        end
+
+        if period < 2
+          puts 'エラー: 周期は2以上である必要があります。'
+          exit 1
+        end
+      end
+
+      numbers = parse_numbers_with_options(args, options)
+      analyzer = NumberAnalyzer.new(numbers)
+      result = analyzer.seasonal_decomposition(period)
+
+      options[:dataset_size] = numbers.size
+      puts OutputFormatter.format_seasonal(result, options)
     end
 
     private_class_method def self.parse_numeric_arguments(argv)
