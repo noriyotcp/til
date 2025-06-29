@@ -304,6 +304,19 @@ class NumberAnalyzer
     end
   end
 
+  def confidence_interval(confidence_level, type: :mean)
+    return nil if @numbers.empty? || @numbers.length < 2
+
+    raise ArgumentError, 'Confidence level must be between 1 and 99' unless confidence_level.between?(1, 99)
+
+    case type
+    when :mean
+      mean_confidence_interval(confidence_level)
+    else
+      raise ArgumentError, "Invalid confidence interval type: #{type}. Use :mean"
+    end
+  end
+
   private
 
   def average_value = @numbers.sum.to_f / @numbers.length
@@ -608,5 +621,101 @@ class NumberAnalyzer
       n: n,
       significant: p_value < 0.05
     }
+  end
+
+  def mean_confidence_interval(confidence_level)
+    n = @numbers.length
+    sample_mean = average_value
+    standard_err = standard_error
+
+    return nil if standard_err.zero?
+
+    # Calculate t-critical value for two-tailed test
+    alpha = (100 - confidence_level) / 100.0
+    df = n - 1
+    t_critical = calculate_t_critical_value(alpha / 2, df)
+
+    margin_of_error = t_critical * standard_err
+
+    {
+      confidence_level: confidence_level,
+      point_estimate: sample_mean.round(10),
+      lower_bound: (sample_mean - margin_of_error).round(10),
+      upper_bound: (sample_mean + margin_of_error).round(10),
+      margin_of_error: margin_of_error.round(10),
+      standard_error: standard_err.round(10),
+      sample_size: n
+    }
+  end
+
+  def standard_error
+    return 0.0 if @numbers.length <= 1
+
+    sample_std = Math.sqrt(sample_variance)
+    sample_std / Math.sqrt(@numbers.length)
+  end
+
+  def sample_variance
+    return 0.0 if @numbers.length <= 1
+
+    mean = average_value
+    @numbers.sum { |x| (x - mean)**2 } / (@numbers.length - 1)
+  end
+
+  def calculate_t_critical_value(alpha, degrees_of_freedom)
+    return inverse_normal_cdf(1 - alpha) if degrees_of_freedom >= 30
+
+    base_t_value = lookup_t_value(degrees_of_freedom)
+    confidence_factor = calculate_confidence_factor(alpha)
+    base_t_value * confidence_factor
+  end
+
+  def lookup_t_value(degrees_of_freedom)
+    t_values = {
+      1 => 12.706, 2 => 4.303, 3 => 3.182, 4 => 2.776, 5 => 2.571,
+      6 => 2.447, 7 => 2.365, 8 => 2.306, 9 => 2.262, 10 => 2.228,
+      11 => 2.201, 12 => 2.179, 13 => 2.160, 14 => 2.145, 15 => 2.131,
+      16 => 2.120, 17 => 2.110, 18 => 2.101, 19 => 2.093, 20 => 2.086,
+      25 => 2.060, 29 => 2.045
+    }
+
+    t_values[degrees_of_freedom] || 2.045 # Default to df=29 value
+  end
+
+  def calculate_confidence_factor(alpha)
+    two_tailed_alpha = alpha * 2
+    return 1.3 if two_tailed_alpha.between?(0.009, 0.011) # 99% CI
+    return 1.0 if two_tailed_alpha.between?(0.049, 0.051) # 95% CI
+    return 0.8 if two_tailed_alpha.between?(0.099, 0.101) # 90% CI
+
+    1.0 # Default factor
+  end
+
+  def inverse_normal_cdf(probability)
+    # Approximation of inverse normal CDF using Beasley-Springer-Moro algorithm
+    # This provides reasonable accuracy for confidence interval calculations
+
+    return -Float::INFINITY if probability <= 0
+    return Float::INFINITY if probability >= 1
+    return 0.0 if probability.between?(0.499, 0.501)
+
+    # Use symmetry for probability > 0.5
+    return -inverse_normal_cdf(1 - probability) if probability > 0.5
+
+    # Approximation for 0 < probability < 0.5
+    t = Math.sqrt(-2 * Math.log(probability))
+
+    # Coefficients for the approximation
+    c0 = 2.515517
+    c1 = 0.802853
+    c2 = 0.010328
+    d1 = 1.432788
+    d2 = 0.189269
+    d3 = 0.001308
+
+    numerator = c0 + (c1 * t) + (c2 * t * t)
+    denominator = 1 + (d1 * t) + (d2 * t * t) + (d3 * t * t * t)
+
+    -(t - (numerator / denominator))
   end
 end

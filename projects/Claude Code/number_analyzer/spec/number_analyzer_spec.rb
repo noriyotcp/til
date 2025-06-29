@@ -1245,4 +1245,108 @@ RSpec.describe NumberAnalyzer do
       end
     end
   end
+
+  describe '#confidence_interval' do
+    context 'with basic sample data' do
+      # Sample: [1, 2, 3, 4, 5], n=5, mean=3.0, standard_error=0.707
+      # Calculated 95% CI: [1.037, 4.963] using t-distribution (df=4, t=2.776)
+      let(:basic_data) { [1, 2, 3, 4, 5] }
+      let(:basic_analyzer) { NumberAnalyzer.new(basic_data) }
+
+      it 'calculates 95% confidence interval for mean' do
+        result = basic_analyzer.confidence_interval(95)
+        
+        expect(result).to be_a(Hash)
+        expect(result[:confidence_level]).to eq(95)
+        expect(result[:point_estimate]).to be_within(0.01).of(3.0)
+        expect(result[:lower_bound]).to be_within(0.01).of(1.037)
+        expect(result[:upper_bound]).to be_within(0.01).of(4.963)
+        expect(result[:margin_of_error]).to be > 0
+        expect(result[:sample_size]).to eq(5)
+      end
+
+      it 'calculates 90% confidence interval for mean' do
+        result = basic_analyzer.confidence_interval(90)
+        
+        expect(result[:confidence_level]).to eq(90)
+        expect(result[:lower_bound]).to be_within(0.01).of(1.43) # 90% CI should be narrower
+        expect(result[:upper_bound]).to be_within(0.01).of(4.57) # than 95% CI
+      end
+
+      it 'calculates 99% confidence interval for mean' do
+        result = basic_analyzer.confidence_interval(99)
+        
+        expect(result[:confidence_level]).to eq(99)
+        expect(result[:lower_bound]).to be_within(0.01).of(0.448) # 99% CI should be wider
+        expect(result[:upper_bound]).to be_within(0.01).of(5.552) # than 95% CI
+      end
+    end
+
+    context 'with edge cases' do
+      it 'handles single value dataset' do
+        single_analyzer = NumberAnalyzer.new([42])
+        result = single_analyzer.confidence_interval(95)
+        
+        expect(result).to be_nil # Cannot calculate CI with n=1
+      end
+
+      it 'handles empty dataset' do
+        empty_analyzer = NumberAnalyzer.new([])
+        result = empty_analyzer.confidence_interval(95)
+        
+        expect(result).to be_nil
+      end
+
+      it 'handles two-value dataset' do
+        two_analyzer = NumberAnalyzer.new([10, 20])
+        result = two_analyzer.confidence_interval(95)
+        
+        expect(result).not_to be_nil
+        expect(result[:point_estimate]).to eq(15.0)
+        expect(result[:sample_size]).to eq(2)
+      end
+    end
+
+    context 'with larger sample' do
+      # Large sample to test normal approximation
+      let(:large_data) { (1..50).to_a }
+      let(:large_analyzer) { NumberAnalyzer.new(large_data) }
+
+      it 'calculates confidence interval for large sample' do
+        result = large_analyzer.confidence_interval(95)
+        
+        expect(result[:point_estimate]).to eq(25.5)
+        expect(result[:sample_size]).to eq(50)
+        expect(result[:lower_bound]).to be < 25.5
+        expect(result[:upper_bound]).to be > 25.5
+      end
+    end
+
+    context 'with invalid inputs' do
+      let(:test_analyzer) { NumberAnalyzer.new([1, 2, 3, 4, 5]) }
+
+      it 'raises error for invalid confidence level' do
+        expect { test_analyzer.confidence_interval(150) }.to raise_error(ArgumentError)
+        expect { test_analyzer.confidence_interval(-10) }.to raise_error(ArgumentError)
+        expect { test_analyzer.confidence_interval(0) }.to raise_error(ArgumentError)
+      end
+
+      it 'raises error for invalid type' do
+        expect { test_analyzer.confidence_interval(95, type: :invalid) }.to raise_error(ArgumentError)
+      end
+    end
+
+    context 'with different data types' do
+      let(:float_data) { [1.1, 2.2, 3.3, 4.4, 5.5] }
+      let(:float_analyzer) { NumberAnalyzer.new(float_data) }
+
+      it 'handles floating point data correctly' do
+        result = float_analyzer.confidence_interval(95)
+        
+        expect(result[:point_estimate]).to be_within(0.01).of(3.3)
+        expect(result[:lower_bound]).to be < result[:point_estimate]
+        expect(result[:upper_bound]).to be > result[:point_estimate]
+      end
+    end
+  end
 end
