@@ -133,6 +133,17 @@ class NumberAnalyzer
       end
     end
 
+    def self.format_growth_rate(growth_data, options = {})
+      case options[:format]
+      when 'json'
+        format_growth_rate_json(growth_data, options)
+      when 'quiet'
+        format_growth_rate_quiet(growth_data, options)
+      else
+        format_growth_rate_default(growth_data, options)
+      end
+    end
+
     private_class_method def self.format_trend_json(trend_data, options)
       return JSON.generate({ trend: nil }.merge(dataset_metadata(options))) if trend_data.nil?
 
@@ -239,6 +250,91 @@ class NumberAnalyzer
         header = "移動平均（ウィンドウサイズ: #{window_size}）:"
         values_display = formatted_values.join(', ')
         "#{header}\n#{values_display}"
+      end
+    end
+
+    private_class_method def self.format_growth_rate_json(growth_data, options)
+      formatted_data = build_formatted_growth_data(growth_data, options)
+      JSON.generate({ growth_rate_analysis: formatted_data }.merge(dataset_metadata(options)))
+    end
+
+    private_class_method def self.build_formatted_growth_data(growth_data, options)
+      formatted_rates = growth_data[:growth_rates].map do |rate|
+        if rate.infinite?
+          rate.positive? ? 'Infinity' : '-Infinity'
+        else
+          apply_precision(rate, options[:precision])
+        end
+      end
+
+      {
+        period_growth_rates: formatted_rates,
+        compound_annual_growth_rate: if growth_data[:compound_annual_growth_rate]
+                                       apply_precision(growth_data[:compound_annual_growth_rate], options[:precision])
+                                     end,
+        average_growth_rate: if growth_data[:average_growth_rate]
+                               apply_precision(growth_data[:average_growth_rate], options[:precision])
+                             end
+      }
+    end
+
+    private_class_method def self.format_growth_rate_quiet(growth_data, options)
+      cagr = growth_data[:compound_annual_growth_rate]
+      avg_growth = growth_data[:average_growth_rate]
+
+      cagr_value = cagr ? apply_precision(cagr, options[:precision]) : ''
+      avg_value = avg_growth ? apply_precision(avg_growth, options[:precision]) : ''
+
+      "#{cagr_value} #{avg_value}".strip
+    end
+
+    private_class_method def self.format_growth_rate_default(growth_data, options)
+      return 'エラー: データが不十分です（2つ以上の値が必要）' if growth_data[:growth_rates].empty?
+
+      result = "成長率分析:\n"
+      result += format_period_growth_rates(growth_data[:growth_rates], options)
+      result += format_cagr_output(growth_data[:compound_annual_growth_rate], options)
+      result += format_average_growth_output(growth_data[:average_growth_rate], options)
+      result
+    end
+
+    private_class_method def self.format_period_growth_rates(growth_rates, options)
+      formatted_rates = growth_rates.map do |rate|
+        if rate.infinite?
+          rate.positive? ? '+∞%' : '-∞%'
+        else
+          precision_value = apply_precision(rate, options[:precision])
+          format_percentage(precision_value)
+        end
+      end
+      "期間別成長率: #{formatted_rates.join(', ')}\n"
+    end
+
+    private_class_method def self.format_cagr_output(cagr, options)
+      if cagr
+        cagr_formatted = format_percentage(apply_precision(cagr, options[:precision]))
+        "複合年間成長率 (CAGR): #{cagr_formatted}\n"
+      else
+        "複合年間成長率 (CAGR): 計算不可（負の初期値）\n"
+      end
+    end
+
+    private_class_method def self.format_average_growth_output(avg_growth, options)
+      if avg_growth
+        avg_formatted = format_percentage(apply_precision(avg_growth, options[:precision]))
+        "平均成長率: #{avg_formatted}"
+      else
+        '平均成長率: 計算不可'
+      end
+    end
+
+    private_class_method def self.format_percentage(value)
+      if value == value.to_i # Check if it's a whole number
+        format('%+d%%', value.to_i)
+      else
+        # Use default 2 decimal places, but remove trailing zeros
+        formatted = format('%+.2f%%', value)
+        formatted.gsub(/\.?0+%$/, '%')
       end
     end
   end

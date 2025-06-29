@@ -26,7 +26,8 @@ class NumberAnalyzer
       'deviation-scores' => :run_deviation_scores,
       'correlation' => :run_correlation,
       'trend' => :run_trend,
-      'moving-average' => :run_moving_average
+      'moving-average' => :run_moving_average,
+      'growth-rate' => :run_growth_rate
     }.freeze
 
     # Main entry point for CLI
@@ -511,6 +512,30 @@ class NumberAnalyzer
       options[:dataset_size] = numbers.size
       options[:window_size] = window_size
       puts OutputFormatter.format_moving_average(result, options)
+    end
+
+    private_class_method def self.run_growth_rate(args, options = {})
+      if options[:help]
+        show_help('growth-rate', 'Analyze growth rates including period-over-period rates and CAGR')
+        return
+      end
+
+      numbers = parse_numbers_with_options(args, options)
+      analyzer = NumberAnalyzer.new(numbers)
+
+      # Calculate growth rate metrics
+      growth_rates = analyzer.growth_rates
+      cagr = analyzer.compound_annual_growth_rate
+      avg_growth = analyzer.average_growth_rate
+
+      result = {
+        growth_rates: growth_rates,
+        compound_annual_growth_rate: cagr,
+        average_growth_rate: avg_growth
+      }
+
+      options[:dataset_size] = numbers.size
+      puts OutputFormatter.format_growth_rate(result, options)
     end
 
     private_class_method def self.parse_numeric_arguments(argv)

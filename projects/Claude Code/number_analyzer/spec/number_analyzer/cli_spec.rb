@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require 'English'
+require 'fileutils'
 require_relative '../../lib/number_analyzer/cli'
 
 RSpec.describe NumberAnalyzer::CLI do
@@ -649,6 +650,85 @@ RSpec.describe NumberAnalyzer::CLI do
       it 'shows help when requested' do
         expect { NumberAnalyzer::CLI.run(%w[moving-average --help]) }
           .to output(/Usage: bundle exec number_analyzer moving-average/).to_stdout
+      end
+    end
+  end
+
+  describe 'growth-rate subcommand' do
+    it 'calculates and displays growth rate analysis' do
+      output = capture_stdout { NumberAnalyzer::CLI.run(%w[growth-rate 100 110 121 133]) }
+
+      expect(output).to include('成長率分析:')
+      expect(output).to include('期間別成長率:')
+      expect(output).to include('複合年間成長率 (CAGR):')
+      expect(output).to include('平均成長率:')
+    end
+
+    it 'handles JSON format output' do
+      output = capture_stdout { NumberAnalyzer::CLI.run(%w[growth-rate --format=json 100 110 121 133]) }
+
+      json_data = JSON.parse(output)
+      expect(json_data).to have_key('growth_rate_analysis')
+      expect(json_data['growth_rate_analysis']).to have_key('period_growth_rates')
+      expect(json_data['growth_rate_analysis']).to have_key('compound_annual_growth_rate')
+      expect(json_data['growth_rate_analysis']).to have_key('average_growth_rate')
+    end
+
+    it 'handles quiet mode output' do
+      output = capture_stdout { NumberAnalyzer::CLI.run(%w[growth-rate --quiet 100 110 121 133]) }
+
+      # Should output CAGR and average growth rate separated by space
+      values = output.strip.split
+      expect(values.length).to eq(2)
+      expect(values[0].to_f).to be_within(0.01).of(9.97)  # CAGR
+      expect(values[1].to_f).to be_within(0.01).of(9.97)  # Average growth
+    end
+
+    it 'handles precision control' do
+      output = capture_stdout { NumberAnalyzer::CLI.run(%w[growth-rate --precision=1 100 110 121 133]) }
+
+      expect(output).to include('CAGR')
+      # Should display with 1 decimal place precision
+      expect(output).to match(/\+\d+\.\d+%/)
+    end
+
+    it 'handles insufficient data error' do
+      output = capture_stdout { NumberAnalyzer::CLI.run(%w[growth-rate 100]) }
+
+      expect(output).to include('エラー: データが不十分です（2つ以上の値が必要）')
+    end
+
+    it 'handles zero values appropriately' do
+      output = capture_stdout { NumberAnalyzer::CLI.run(%w[growth-rate 0 10 0]) }
+
+      expect(output).to include('成長率分析:')
+      expect(output).to include('+∞%') # Should show infinity symbol
+      expect(output).to include('-100%') # Should show -100% for decline to zero
+    end
+
+    context 'with file input' do
+      let(:csv_file) { 'test_growth_data.csv' }
+
+      before do
+        File.write(csv_file, "100\n110\n121\n133\n")
+      end
+
+      after do
+        FileUtils.rm_f(csv_file)
+      end
+
+      it 'reads data from CSV file' do
+        output = capture_stdout { NumberAnalyzer::CLI.run(['growth-rate', '--file', csv_file]) }
+
+        expect(output).to include('成長率分析:')
+        expect(output).to include('期間別成長率:')
+      end
+    end
+
+    context 'help option' do
+      it 'displays help message and exits' do
+        expect { NumberAnalyzer::CLI.run(%w[growth-rate --help]) }
+          .to output(/Usage: bundle exec number_analyzer growth-rate/).to_stdout
       end
     end
   end

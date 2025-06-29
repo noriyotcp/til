@@ -345,4 +345,160 @@ RSpec.describe NumberAnalyzer::OutputFormatter do
       end
     end
   end
+
+  describe '.format_growth_rate' do
+    let(:growth_data) do
+      {
+        growth_rates: [10.0, 10.0, 9.9173553719],
+        compound_annual_growth_rate: 9.9724448886,
+        average_growth_rate: 9.9724517906
+      }
+    end
+
+    context 'default format' do
+      it 'formats growth rate analysis correctly' do
+        result = described_class.format_growth_rate(growth_data)
+
+        expect(result).to include('成長率分析:')
+        expect(result).to include('期間別成長率: +10%, +10%, +9.92%')
+        expect(result).to include('複合年間成長率 (CAGR): +9.97%')
+        expect(result).to include('平均成長率: +9.97%')
+      end
+
+      it 'handles infinite growth rates' do
+        infinite_data = {
+          growth_rates: [Float::INFINITY, -100.0],
+          compound_annual_growth_rate: nil,
+          average_growth_rate: -100.0
+        }
+
+        result = described_class.format_growth_rate(infinite_data)
+
+        expect(result).to include('期間別成長率: +∞%, -100%')
+        expect(result).to include('複合年間成長率 (CAGR): 計算不可（負の初期値）')
+        expect(result).to include('平均成長率: -100%')
+      end
+
+      it 'handles nil CAGR appropriately' do
+        nil_cagr_data = {
+          growth_rates: [10.0],
+          compound_annual_growth_rate: nil,
+          average_growth_rate: 10.0
+        }
+
+        result = described_class.format_growth_rate(nil_cagr_data)
+
+        expect(result).to include('複合年間成長率 (CAGR): 計算不可（負の初期値）')
+      end
+
+      it 'handles empty growth rates' do
+        empty_data = {
+          growth_rates: [],
+          compound_annual_growth_rate: nil,
+          average_growth_rate: nil
+        }
+
+        result = described_class.format_growth_rate(empty_data)
+
+        expect(result).to eq('エラー: データが不十分です（2つ以上の値が必要）')
+      end
+    end
+
+    context 'JSON format' do
+      it 'formats JSON output correctly' do
+        result = described_class.format_growth_rate(growth_data, format: 'json')
+        parsed = JSON.parse(result)
+
+        expect(parsed).to have_key('growth_rate_analysis')
+        analysis = parsed['growth_rate_analysis']
+
+        expect(analysis['period_growth_rates']).to eq([10.0, 10.0, 9.9173553719])
+        expect(analysis['compound_annual_growth_rate']).to be_within(0.0001).of(9.9724448886)
+        expect(analysis['average_growth_rate']).to be_within(0.0001).of(9.9724517906)
+      end
+
+      it 'handles infinite values in JSON' do
+        infinite_data = {
+          growth_rates: [Float::INFINITY, -Float::INFINITY, 10.0],
+          compound_annual_growth_rate: 5.0,
+          average_growth_rate: 10.0
+        }
+
+        result = described_class.format_growth_rate(infinite_data, format: 'json')
+        parsed = JSON.parse(result)
+
+        rates = parsed['growth_rate_analysis']['period_growth_rates']
+        expect(rates[0]).to eq('Infinity')
+        expect(rates[1]).to eq('-Infinity')
+        expect(rates[2]).to eq(10.0)
+      end
+
+      it 'includes dataset metadata' do
+        result = described_class.format_growth_rate(growth_data, format: 'json', dataset_size: 4)
+        parsed = JSON.parse(result)
+
+        expect(parsed['dataset_size']).to eq(4)
+      end
+    end
+
+    context 'quiet format' do
+      it 'outputs CAGR and average growth only' do
+        result = described_class.format_growth_rate(growth_data, format: 'quiet')
+        values = result.strip.split
+
+        expect(values.length).to eq(2)
+        expect(values[0].to_f).to be_within(0.0001).of(9.9724448886)
+        expect(values[1].to_f).to be_within(0.0001).of(9.9724517906)
+      end
+
+      it 'handles nil values in quiet mode' do
+        nil_data = {
+          growth_rates: [10.0],
+          compound_annual_growth_rate: nil,
+          average_growth_rate: nil
+        }
+
+        result = described_class.format_growth_rate(nil_data, format: 'quiet')
+        expect(result.strip).to eq('')
+      end
+
+      it 'handles partial nil values' do
+        partial_nil_data = {
+          growth_rates: [10.0],
+          compound_annual_growth_rate: 5.0,
+          average_growth_rate: nil
+        }
+
+        result = described_class.format_growth_rate(partial_nil_data, format: 'quiet')
+        expect(result.strip).to eq('5.0')
+      end
+    end
+
+    context 'precision control' do
+      it 'applies precision to default format' do
+        result = described_class.format_growth_rate(growth_data, precision: 1)
+
+        expect(result).to include('+10%')
+        expect(result).to include('+9.9%')
+      end
+
+      it 'applies precision to JSON format' do
+        result = described_class.format_growth_rate(growth_data, format: 'json', precision: 1)
+        parsed = JSON.parse(result)
+
+        analysis = parsed['growth_rate_analysis']
+        expect(analysis['period_growth_rates']).to eq([10.0, 10.0, 9.9])
+        expect(analysis['compound_annual_growth_rate']).to eq(10.0)
+        expect(analysis['average_growth_rate']).to eq(10.0)
+      end
+
+      it 'applies precision to quiet format' do
+        result = described_class.format_growth_rate(growth_data, format: 'quiet', precision: 1)
+        values = result.strip.split
+
+        expect(values[0]).to eq('10.0')
+        expect(values[1]).to eq('10.0')
+      end
+    end
+  end
 end

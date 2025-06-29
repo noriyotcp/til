@@ -828,4 +828,138 @@ RSpec.describe NumberAnalyzer do
       end
     end
   end
+
+  describe '#growth_rates' do
+    context 'with valid numeric data' do
+      let(:growth_analyzer) { NumberAnalyzer.new([100, 110, 121, 133]) }
+
+      it 'calculates period-over-period growth rates correctly' do
+        result = growth_analyzer.growth_rates
+        
+        expect(result.length).to eq(3)
+        expect(result[0]).to be_within(0.0001).of(10.0)      # (110-100)/100 * 100
+        expect(result[1]).to be_within(0.0001).of(10.0)      # (121-110)/110 * 100
+        expect(result[2]).to be_within(0.0001).of(9.9173553719) # (133-121)/121 * 100
+      end
+    end
+
+    context 'with edge cases' do
+      it 'returns empty array for empty dataset' do
+        empty_analyzer = NumberAnalyzer.new([])
+        expect(empty_analyzer.growth_rates).to eq([])
+      end
+
+      it 'returns empty array for single value' do
+        single_analyzer = NumberAnalyzer.new([100])
+        expect(single_analyzer.growth_rates).to eq([])
+      end
+
+      it 'handles zero values correctly' do
+        zero_analyzer = NumberAnalyzer.new([0, 10, 0])
+        result = zero_analyzer.growth_rates
+        
+        expect(result.length).to eq(2)
+        expect(result[0]).to eq(Float::INFINITY) # 10/0 = infinity
+        expect(result[1]).to be_within(0.0001).of(-100.0) # (0-10)/10 * 100
+      end
+
+      it 'handles negative values correctly' do
+        negative_analyzer = NumberAnalyzer.new([100, 90, 110])
+        result = negative_analyzer.growth_rates
+        
+        expect(result.length).to eq(2)
+        expect(result[0]).to be_within(0.0001).of(-10.0) # (90-100)/100 * 100
+        expect(result[1]).to be_within(0.0001).of(22.2222222222) # (110-90)/90 * 100
+      end
+
+      it 'handles zero to zero transition' do
+        zero_to_zero_analyzer = NumberAnalyzer.new([0, 0, 5])
+        result = zero_to_zero_analyzer.growth_rates
+        
+        expect(result.length).to eq(2)
+        expect(result[0]).to eq(0.0)              # (0-0)/0 = 0 (special case)
+        expect(result[1]).to eq(Float::INFINITY)  # (5-0)/0 = infinity
+      end
+    end
+  end
+
+  describe '#compound_annual_growth_rate' do
+    context 'with valid positive data' do
+      let(:cagr_analyzer) { NumberAnalyzer.new([100, 110, 121, 133]) }
+
+      it 'calculates CAGR correctly' do
+        result = cagr_analyzer.compound_annual_growth_rate
+        # CAGR = ((133/100)^(1/3) - 1) * 100 ≈ 9.97%
+        expect(result).to be_within(0.0001).of(9.9724448886)
+      end
+    end
+
+    context 'with edge cases' do
+      it 'returns nil for empty dataset' do
+        empty_analyzer = NumberAnalyzer.new([])
+        expect(empty_analyzer.compound_annual_growth_rate).to be_nil
+      end
+
+      it 'returns nil for single value' do
+        single_analyzer = NumberAnalyzer.new([100])
+        expect(single_analyzer.compound_annual_growth_rate).to be_nil
+      end
+
+      it 'returns nil for zero or negative initial value' do
+        zero_analyzer = NumberAnalyzer.new([0, 100])
+        negative_analyzer = NumberAnalyzer.new([-50, 100])
+        
+        expect(zero_analyzer.compound_annual_growth_rate).to be_nil
+        expect(negative_analyzer.compound_annual_growth_rate).to be_nil
+      end
+
+      it 'returns -100% for zero final value' do
+        decline_analyzer = NumberAnalyzer.new([100, 50, 0])
+        expect(decline_analyzer.compound_annual_growth_rate).to eq(-100.0)
+      end
+
+      it 'handles two-value dataset correctly' do
+        two_value_analyzer = NumberAnalyzer.new([100, 110])
+        result = two_value_analyzer.compound_annual_growth_rate
+        # CAGR = ((110/100)^(1/1) - 1) * 100 = 10%
+        expect(result).to be_within(0.0001).of(10.0)
+      end
+    end
+  end
+
+  describe '#average_growth_rate' do
+    context 'with valid data' do
+      let(:avg_analyzer) { NumberAnalyzer.new([100, 110, 121, 133]) }
+
+      it 'calculates average growth rate correctly' do
+        result = avg_analyzer.average_growth_rate
+        # Average of [10.0, 10.0, 9.9173553719] ≈ 9.9724517906
+        expect(result).to be_within(0.0001).of(9.9724517906)
+      end
+    end
+
+    context 'with edge cases' do
+      it 'returns nil for empty dataset' do
+        empty_analyzer = NumberAnalyzer.new([])
+        expect(empty_analyzer.average_growth_rate).to be_nil
+      end
+
+      it 'returns nil for single value' do
+        single_analyzer = NumberAnalyzer.new([100])
+        expect(single_analyzer.average_growth_rate).to be_nil
+      end
+
+      it 'filters out infinite values in calculation' do
+        infinity_analyzer = NumberAnalyzer.new([0, 10, 20])
+        result = infinity_analyzer.average_growth_rate
+        # Should average only the finite value: (20-10)/10 * 100 = 100%
+        expect(result).to be_within(0.0001).of(100.0)
+      end
+
+      it 'handles zero values correctly' do
+        all_zero_analyzer = NumberAnalyzer.new([0, 0, 0])
+        expect(all_zero_analyzer.average_growth_rate).to eq(0.0)
+      end
+    end
+  end
 end

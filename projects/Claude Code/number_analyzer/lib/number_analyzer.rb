@@ -186,6 +186,55 @@ class NumberAnalyzer
     result
   end
 
+  def growth_rates
+    return [] if @numbers.empty? || @numbers.length < 2
+
+    result = []
+    (1...@numbers.length).each do |i|
+      previous_value = @numbers[i - 1]
+      current_value = @numbers[i]
+
+      # Handle division by zero
+      if previous_value.zero?
+        result << (current_value.zero? ? 0.0 : Float::INFINITY)
+      else
+        growth_rate = ((current_value - previous_value).to_f / previous_value) * 100
+        result << growth_rate.round(10)
+      end
+    end
+
+    result
+  end
+
+  def compound_annual_growth_rate
+    return nil if @numbers.empty? || @numbers.length < 2
+
+    initial_value = @numbers.first
+    final_value = @numbers.last
+    periods = @numbers.length - 1
+
+    # Handle zero or negative initial value
+    return nil if initial_value <= 0
+
+    # Handle zero final value
+    return -100.0 if final_value.zero?
+
+    # Calculate CAGR
+    cagr = (((final_value.to_f / initial_value)**(1.0 / periods)) - 1) * 100
+    cagr.round(10)
+  end
+
+  def average_growth_rate
+    rates = growth_rates
+    return nil if rates.empty?
+
+    # Filter out infinite values for average calculation
+    finite_rates = rates.reject(&:infinite?)
+    return nil if finite_rates.empty?
+
+    finite_rates.sum / finite_rates.length
+  end
+
   private
 
   def average_value = @numbers.sum.to_f / @numbers.length
