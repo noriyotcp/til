@@ -29,7 +29,8 @@ class NumberAnalyzer
       'moving-average' => :run_moving_average,
       'growth-rate' => :run_growth_rate,
       'seasonal' => :run_seasonal,
-      't-test' => :run_t_test
+      't-test' => :run_t_test,
+      'confidence-interval' => :run_confidence_interval
     }.freeze
 
     # Main entry point for CLI
@@ -98,7 +99,8 @@ class NumberAnalyzer
         paired: false,
         one_sample: false,
         population_mean: nil,
-        mu: nil
+        mu: nil,
+        confidence_level: 95
       }
     end
 
@@ -120,6 +122,7 @@ class NumberAnalyzer
           options[:population_mean] = mean
         end
         opts.on('--mu MEAN', Float, 'Population mean for one-sample t-test (alias)') { |mean| options[:mu] = mean }
+        opts.on('--level LEVEL', Float, 'Confidence level (default: 95)') { |level| options[:confidence_level] = level }
       end
     end
 
@@ -759,6 +762,66 @@ class NumberAnalyzer
       options[:dataset1_size] = dataset1.size
       options[:dataset2_size] = dataset2.size
       puts OutputFormatter.format_t_test(result, options)
+    end
+
+    private_class_method def self.run_confidence_interval(args, options = {})
+      if options[:help]
+        show_help('confidence-interval', 'Calculate confidence interval for population mean')
+        return
+      end
+
+      # Parse confidence level from first argument or use option
+      confidence_level = parse_confidence_level_from_args(args, options)
+      remaining_args = confidence_level_from_args?(args) ? args[1..] : args
+
+      numbers = parse_numbers_with_options(remaining_args, options)
+      analyzer = NumberAnalyzer.new(numbers)
+      result = analyzer.confidence_interval(confidence_level)
+
+      if result.nil?
+        puts 'エラー: 信頼区間を計算できませんでした。データを確認してください。'
+        exit 1
+      end
+
+      options[:dataset_size] = numbers.size
+      puts OutputFormatter.format_confidence_interval(result, options)
+    end
+
+    private_class_method def self.parse_confidence_level_from_args(args, options)
+      # Check if first argument is a confidence level (number between 1-99)
+      level = if confidence_level_from_args?(args)
+                Float(args[0])
+              else
+                # Use option or default
+                options[:confidence_level] || 95
+              end
+
+      validate_confidence_level(level)
+      level
+    rescue ArgumentError
+      puts "エラー: 無効な信頼度です: #{args[0]}"
+      puts '信頼度は1-99の範囲で指定してください。'
+      exit 1
+    end
+
+    private_class_method def self.confidence_level_from_args?(args)
+      return false if args.empty?
+
+      begin
+        level = Float(args[0])
+        # Only consider it a confidence level if it's a reasonable confidence level
+        # and there are more arguments (the data values)
+        level.between?(80, 99) && args.length > 1
+      rescue ArgumentError
+        false
+      end
+    end
+
+    private_class_method def self.validate_confidence_level(level)
+      return if level.between?(1, 99)
+
+      puts "エラー: 信頼度は1-99の範囲で指定してください: #{level}"
+      exit 1
     end
 
     private_class_method def self.parse_numeric_arguments(argv)

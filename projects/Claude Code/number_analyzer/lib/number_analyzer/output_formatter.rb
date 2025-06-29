@@ -544,5 +544,69 @@ class NumberAnalyzer
         formatted.gsub(/\.?0+%$/, '%')
       end
     end
+
+    # Format confidence interval data based on options
+    def self.format_confidence_interval(ci_data, options = {})
+      return '' if ci_data.nil?
+
+      case options[:format]
+      when 'json'
+        format_confidence_interval_json(ci_data, options)
+      when 'quiet'
+        format_confidence_interval_quiet(ci_data, options)
+      else
+        format_confidence_interval_default(ci_data, options)
+      end
+    end
+
+    private_class_method def self.format_confidence_interval_default(ci_data, options)
+      formatted_data = build_formatted_confidence_interval_data(ci_data, options)
+      build_confidence_interval_result_lines(formatted_data).join("\n")
+    end
+
+    private_class_method def self.build_confidence_interval_result_lines(formatted_data)
+      confidence_interval_line = build_confidence_interval_line(formatted_data)
+
+      [
+        confidence_interval_line,
+        "下限: #{formatted_data[:lower_bound]}",
+        "上限: #{formatted_data[:upper_bound]}",
+        "標本平均: #{formatted_data[:point_estimate]}",
+        "誤差の幅: #{formatted_data[:margin_of_error]}",
+        "標準誤差: #{formatted_data[:standard_error]}",
+        "サンプルサイズ: #{formatted_data[:sample_size]}"
+      ]
+    end
+
+    private_class_method def self.build_confidence_interval_line(formatted_data)
+      level = formatted_data[:confidence_level]
+      lower = formatted_data[:lower_bound]
+      upper = formatted_data[:upper_bound]
+      "#{level}%信頼区間: [#{lower}, #{upper}]"
+    end
+
+    private_class_method def self.format_confidence_interval_json(ci_data, options)
+      formatted_data = build_formatted_confidence_interval_data(ci_data, options)
+      formatted_data[:dataset_size] = options[:dataset_size] if options[:dataset_size]
+
+      JSON.generate(formatted_data)
+    end
+
+    private_class_method def self.format_confidence_interval_quiet(ci_data, options)
+      formatted_data = build_formatted_confidence_interval_data(ci_data, options)
+      "#{formatted_data[:lower_bound]} #{formatted_data[:upper_bound]}"
+    end
+
+    private_class_method def self.build_formatted_confidence_interval_data(ci_data, options)
+      {
+        confidence_level: ci_data[:confidence_level],
+        lower_bound: apply_precision(ci_data[:lower_bound], options[:precision]),
+        upper_bound: apply_precision(ci_data[:upper_bound], options[:precision]),
+        point_estimate: apply_precision(ci_data[:point_estimate], options[:precision]),
+        margin_of_error: apply_precision(ci_data[:margin_of_error], options[:precision]),
+        standard_error: apply_precision(ci_data[:standard_error], options[:precision]),
+        sample_size: ci_data[:sample_size]
+      }
+    end
   end
 end

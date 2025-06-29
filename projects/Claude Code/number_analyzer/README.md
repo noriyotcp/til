@@ -25,6 +25,7 @@ NumberAnalyzer provides the following statistical calculations:
 - **Growth Rate Analysis** - Period-over-period growth rates, CAGR, and average growth rate calculation  
 - **Seasonal Pattern Analysis** - Seasonal decomposition, period detection, and seasonal strength measurement
 - **T-Test Analysis** - Independent samples t-test (Welch's t-test), paired samples t-test, and one-sample t-test with statistical significance testing
+- **Confidence Intervals** - Calculate confidence intervals for population mean using t-distribution (small samples) and normal approximation (large samples)
 - **Frequency Distribution** - Count occurrences of each value for data distribution analysis
 - **Histogram Display** - ASCII art visualization of frequency distribution with automatic scaling
 - **File Input Support** - Read data from CSV, JSON, and TXT files
@@ -82,6 +83,11 @@ bundle exec number_analyzer seasonal 10 20 15 25 12 22 17 27
 bundle exec number_analyzer t-test group1.csv group2.csv
 bundle exec number_analyzer t-test --paired before.csv after.csv
 bundle exec number_analyzer t-test --one-sample --population-mean=100 data.csv
+
+# Confidence interval analysis
+bundle exec number_analyzer confidence-interval 95 1 2 3 4 5
+bundle exec number_analyzer confidence-interval --level=90 --file data.csv
+bundle exec number_analyzer confidence-interval --format=json --precision=2 10 20 30
 ```
 
 #### Using the bin file directly
@@ -96,7 +102,7 @@ number_analyzer 1 2 3 4 5
 
 #### Advanced Usage with Options (Phase 6.3)
 
-NumberAnalyzer supports advanced output formatting and control options for all 19 subcommands:
+NumberAnalyzer supports advanced output formatting and control options for all 20 subcommands:
 
 **JSON Output Format**
 ```bash
@@ -148,7 +154,7 @@ bundle exec number_analyzer histogram --help
 
 **Subcommands with Options**
 
-All 19 subcommands support the new options:
+All 20 subcommands support the new options:
 
 ```bash
 # Basic Statistics with Options
@@ -173,6 +179,9 @@ bundle exec number_analyzer seasonal --period=4 10 20 15 25 12 22 17 27
 bundle exec number_analyzer t-test --format=json group1.csv group2.csv
 bundle exec number_analyzer t-test --paired --precision=3 before.csv after.csv
 bundle exec number_analyzer t-test --one-sample --population-mean=50 --quiet data.csv
+bundle exec number_analyzer confidence-interval 95 --format=json 1 2 3 4 5
+bundle exec number_analyzer confidence-interval --level=90 --precision=2 --file data.csv
+bundle exec number_analyzer confidence-interval --quiet 99 10 20 30 40
 
 # Specialized Commands with Options
 bundle exec number_analyzer percentile 75 --format=json 1 2 3 4 5
@@ -231,6 +240,14 @@ puts before.t_test(after, type: :paired)
 # One-sample t-test
 sample = NumberAnalyzer.new([18, 20, 22, 24, 26])
 puts sample.t_test(nil, type: :one_sample, population_mean: 20)
+
+# Confidence interval analysis
+data = NumberAnalyzer.new([1, 2, 3, 4, 5])
+puts data.confidence_interval(95)
+# => {confidence_level: 95, lower_bound: 1.037, upper_bound: 4.963, point_estimate: 3.0, margin_of_error: 1.963, ...}
+
+puts data.confidence_interval(90)  # 90% confidence interval
+puts data.confidence_interval(99)  # 99% confidence interval
 
 # Frequency distribution for data analysis (programmatic access)
 puts analyzer.frequency_distribution # => {1=>1, 2=>1, 3=>1, 4=>1, 5=>1, 6=>1, 7=>1, 8=>1, 9=>1, 10=>1}
@@ -374,7 +391,7 @@ number_analyzer/
 ├── lib/
 │   ├── number_analyzer.rb          # Core statistical calculations
 │   └── number_analyzer/
-│       ├── cli.rb                  # Command line interface + 19 subcommands
+│       ├── cli.rb                  # Command line interface + 20 subcommands
 │       ├── file_reader.rb          # File input support (CSV/JSON/TXT)
 │       ├── statistics_presenter.rb # Display and formatting logic
 │       └── output_formatter.rb     # Advanced output formatting (JSON, precision, quiet)
@@ -396,7 +413,7 @@ number_analyzer/
 The project follows clean architecture principles with separation of concerns:
 
 - **NumberAnalyzer** - Pure statistical calculation library (no dependencies)
-- **NumberAnalyzer::CLI** - Command line interface and argument parsing with 19 subcommands
+- **NumberAnalyzer::CLI** - Command line interface and argument parsing with 20 subcommands
 - **NumberAnalyzer::FileReader** - File input handling (CSV/JSON/TXT support)
 - **NumberAnalyzer::StatisticsPresenter** - Display and formatting logic for full analysis
 - **NumberAnalyzer::OutputFormatter** - Advanced output formatting (JSON, precision, quiet mode)
