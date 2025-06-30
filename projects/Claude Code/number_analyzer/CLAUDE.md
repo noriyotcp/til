@@ -70,7 +70,8 @@ NumberAnalyzer is a comprehensive statistical analysis tool built in Ruby. Origi
 - `bundle exec number_analyzer anova 1 2 3 -- 4 5 6 -- 7 8 9` (one-way ANOVA with command-line data)
 - `bundle exec number_analyzer anova --file group1.csv group2.csv group3.csv` (one-way ANOVA with file input)
 - `bundle exec number_analyzer anova --format=json --precision=3 1 2 3 -- 4 5 6 -- 7 8 9` (JSON output with precision)
-- `bundle exec number_analyzer anova --post-hoc=tukey 1 2 3 -- 4 5 6 -- 7 8 9` (ANOVA with post-hoc tests - planned feature)
+- `bundle exec number_analyzer anova --post-hoc=tukey 1 2 3 -- 4 5 6 -- 7 8 9` (ANOVA with Tukey HSD post-hoc test)
+- `bundle exec number_analyzer anova --post-hoc=bonferroni 1 2 3 -- 4 5 6 -- 7 8 9` (ANOVA with Bonferroni correction)
 - `bundle exec number_analyzer anova --alpha=0.01 --quiet 1 2 3 -- 4 5 6 -- 7 8 9` (custom significance level, quiet output)
 
 **Development Tools**:
@@ -117,7 +118,7 @@ lib/
 - Relationships: Pearson correlation coefficient
 - Time Series: linear trend analysis (slope, intercept, R², direction), moving averages, growth rate analysis (period-over-period, CAGR, average growth rate), seasonal pattern analysis (decomposition, period detection, seasonal strength)
 - Statistical Tests: independent samples t-test (Welch's t-test), paired samples t-test, one-sample t-test with p-value and significance testing, confidence intervals for population mean (t-distribution and normal approximation), chi-square test for independence and goodness-of-fit with Cramér's V effect size
-- Analysis of Variance: one-way ANOVA with F-statistic, p-value calculation, effect size measures (η², ω²), statistical interpretation, and comprehensive ANOVA table output
+- Analysis of Variance: one-way ANOVA with F-statistic, p-value calculation, effect size measures (η², ω²), statistical interpretation, comprehensive ANOVA table output, post-hoc tests (Tukey HSD, Bonferroni correction) for multiple pairwise comparisons
 - Visualization: frequency distribution, ASCII histogram
 
 **Input Support**: CLI arguments, CSV/JSON/TXT files (both full analysis and all subcommands)
@@ -128,7 +129,7 @@ lib/
 **Correlation Analysis (Phase 7.1)**: Dual dataset input, mathematical interpretation, file/numeric support
 **Time Series Analysis (Phase 7.2)**: Linear trend analysis, moving averages with customizable window sizes, growth rate analysis with CAGR calculation, seasonal pattern analysis with automatic period detection
 **Statistical Tests (Phase 7.3)**: T-test analysis with all three types (independent, paired, one-sample), confidence intervals for population mean using t-distribution, chi-square test for independence and goodness-of-fit with categorical data analysis, mathematical accuracy with Welch's formula and chi-square distribution, two-tailed p-values and significance interpretation
-**Analysis of Variance (Phase 7.4)**: One-way ANOVA with F-distribution p-value calculation, comprehensive effect size analysis (eta squared and omega squared), statistical interpretation with significance testing, and detailed ANOVA table output with sum of squares decomposition
+**Analysis of Variance (Phase 7.4)**: One-way ANOVA with F-distribution p-value calculation, comprehensive effect size analysis (eta squared and omega squared), statistical interpretation with significance testing, detailed ANOVA table output with sum of squares decomposition, and post-hoc multiple comparison tests (Tukey HSD and Bonferroni correction) for pairwise group analysis
 
 ## Code Quality Standards
 
@@ -216,8 +217,8 @@ rspec                        # MUST be all tests passing
 
 ## Quick Reference
 
-**Current State**: ✅ Phase 7.4 Step 1 Complete (One-way ANOVA)
-**Next Phase**: Phase 7.4 Step 2 - Post-hoc Tests (see `ai-docs/ROADMAP.md`)
+**Current State**: ✅ Phase 7.4 Complete (One-way ANOVA + Post-hoc Tests)
+**Next Phase**: Phase 8.0 - Plugin System Architecture (see `ai-docs/ROADMAP.md`)
 **Test Count**: 42+ examples total
 **RuboCop Status**: ✅ Zero violations (ANOVA formatting updated to use annotated format tokens)
 **Subcommand Count**: 22 total (7 basic + 6 advanced + 1 correlation + 4 time series + 3 statistical test + 1 ANOVA commands)

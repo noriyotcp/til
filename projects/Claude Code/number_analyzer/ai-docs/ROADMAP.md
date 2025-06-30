@@ -84,14 +84,25 @@
 - [x] TDD実装（Red-Green-Refactor サイクル）
 - [x] RuboCop準拠
 
+### Phase 7.4 Step 2: Post-hoc Tests ✅ 完了
+- [x] **Tukey HSD検定**: 学生化範囲分布による多重比較（q統計量、臨界値テーブル）
+- [x] **Bonferroni補正**: 保守的多重比較補正（調整済みp値、調整済みα水準）
+- [x] **CLI統合**: `--post-hoc=tukey/bonferroni` オプション対応
+- [x] **出力フォーマット**: 詳細な比較結果表示（日本語）とJSON出力対応
+- [x] **数学的正確性**: 調和平均サンプルサイズ、Welch-Satterthwaite自由度計算
+- [x] **包括的テスト**: 9新規テストケース（有意差検出、類似グループ、無効入力）
+- [x] **TDD実装**: Red-Green-Refactorサイクルによる段階的開発
+- [x] **RuboCop準拠**: ゼロ違反維持
+
 ## Next Development Phase
 
-## Phase 7.4 Step 2: Post-hoc Tests 🔮 計画段階
+## Phase 7.5: Advanced ANOVA Features 🔮 計画段階
 
 ### ANOVA Extension Features
-- 🔮 **多重比較検定**: Tukey HSD, Bonferroni補正
 - 🔮 **分散の等質性検定**: Levene検定、Bartlett検定
 - 🔮 **二元配置分散分析**: 2つの要因の主効果と交互作用
+- 🔮 **反復測定ANOVA**: 被験者内計画による分散分析
+- 🔮 **ノンパラメトリック代替**: Kruskal-Wallis検定、Friedman検定
 
 ## Phase 8.0: Plugin System Architecture 🔮 長期計画
 

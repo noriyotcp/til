@@ -6,6 +6,7 @@ AllCops:
 Metrics/BlockLength:
   Exclude:
     - 'spec/**/*'
+    - 'lib/number_analyzer/cli.rb'  # Complex argument parsing for ANOVA and chi-square commands requires longer blocks
 
 Metrics/MethodLength:
   Max: 25

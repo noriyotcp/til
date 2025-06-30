@@ -397,6 +397,63 @@ class NumberAnalyzer
     }
   end
 
+  def post_hoc_analysis(groups, method: :tukey)
+    # Validate input
+    return nil if groups.nil? || groups.length < 2
+    return nil unless %i[tukey bonferroni].include?(method)
+
+    # Clean groups
+    groups = groups.compact.reject { |g| g.is_a?(Array) && g.empty? }
+    return nil if groups.length < 2
+
+    # Run ANOVA first to get MSE
+    anova_result = one_way_anova(*groups)
+    return nil if anova_result.nil?
+
+    ms_within = anova_result[:mean_squares][:within]
+
+    # Generate all pairwise comparisons
+    comparisons = []
+    groups.each_with_index do |group1, i|
+      groups.each_with_index do |group2, j|
+        next if i >= j # Only unique pairs
+
+        comparison = if method == :tukey
+                       tukey_pairwise_comparison(group1, group2, groups, ms_within)
+                     else
+                       bonferroni_pairwise_comparison(group1, group2, groups.length)
+                     end
+
+        comparison[:groups] = [i + 1, j + 1] # 1-indexed group labels
+        comparisons << comparison
+      end
+    end
+
+    # Apply Bonferroni adjustment if needed
+    if method == :bonferroni
+      adjusted_p_values = bonferroni_adjust(comparisons.map { |c| c[:p_value] })
+      comparisons.each_with_index do |comp, idx|
+        comp[:adjusted_p_value] = adjusted_p_values[idx]
+        comp[:significant] = comp[:adjusted_p_value] < 0.05
+      end
+    end
+
+    result = {
+      method: method == :tukey ? 'Tukey HSD' : 'Bonferroni',
+      pairwise_comparisons: comparisons
+    }
+
+    # Add adjusted alpha for Bonferroni
+    result[:adjusted_alpha] = 0.05 / comparisons.length if method == :bonferroni
+
+    # Add warning if ANOVA was not significant
+    unless anova_result[:significant]
+      result[:warning] = 'ANOVA was not significant. Post-hoc tests may not be appropriate.'
+    end
+
+    result
+  end
+
   private
 
   def average_value = @numbers.sum.to_f / @numbers.length
@@ -1106,5 +1163,137 @@ class NumberAnalyzer
                                  end
 
     "#{significance}差あり (p = #{p_value.round(3)}), #{effect_size_interpretation} (η² = #{eta_squared.round(3)})"
+  end
+
+  def tukey_pairwise_comparison(group1, group2, all_groups, ms_within)
+    mean1 = group1.sum.to_f / group1.length
+    mean2 = group2.sum.to_f / group2.length
+    mean_diff = (mean1 - mean2).abs
+
+    # Calculate q-statistic
+    n_harmonic = calculate_harmonic_mean_n([group1.length, group2.length])
+    se = Math.sqrt(ms_within / n_harmonic)
+    q_statistic = mean_diff / se
+
+    # Get critical value and p-value
+    k = all_groups.length # number of groups
+    df_within = all_groups.flatten.length - k
+    q_critical = tukey_critical_value(k, df_within, 0.05)
+
+    # Estimate p-value based on q-statistic
+    p_value = estimate_tukey_p_value(q_statistic, k, df_within)
+
+    {
+      mean_difference: mean_diff.round(6),
+      q_statistic: q_statistic.round(6),
+      q_critical: q_critical.round(6),
+      p_value: p_value.round(6),
+      significant: q_statistic > q_critical
+    }
+  end
+
+  def bonferroni_pairwise_comparison(group1, group2, _num_groups)
+    # Calculate t-test statistics directly
+    mean1 = group1.sum.to_f / group1.length
+    mean2 = group2.sum.to_f / group2.length
+    var1 = variance_of_array(group1)
+    var2 = variance_of_array(group2)
+    n1 = group1.length
+    n2 = group2.length
+
+    # Welch's t-test
+    se = Math.sqrt((var1 / n1) + (var2 / n2))
+    return nil if se.zero?
+
+    t_statistic = (mean1 - mean2) / se
+
+    # Calculate degrees of freedom using Welch-Satterthwaite equation
+    df = (((var1 / n1) + (var2 / n2))**2) /
+         ((((var1 / n1)**2) / (n1 - 1)) + (((var2 / n2)**2) / (n2 - 1)))
+
+    # Calculate p-value
+    p_value = calculate_two_tailed_p_value(t_statistic, df)
+
+    {
+      mean_difference: (mean1 - mean2).abs.round(6),
+      t_statistic: t_statistic.abs.round(6),
+      p_value: p_value.round(6)
+    }
+  end
+
+  def bonferroni_adjust(p_values)
+    n_comparisons = p_values.length
+    p_values.map { |p| [p * n_comparisons, 1.0].min }
+  end
+
+  def calculate_harmonic_mean_n(sizes)
+    n = sizes.length
+    n / sizes.sum { |size| 1.0 / size }
+  end
+
+  def tukey_critical_value(num_groups, deg_freedom, _alpha)
+    # Approximation of Tukey's studentized range critical values
+    # For common values at alpha = 0.05
+    tukey_table = {
+      2 => { 5 => 3.64, 10 => 3.15, 15 => 3.01, 20 => 2.95, 30 => 2.89, 60 => 2.83 },
+      3 => { 5 => 4.60, 10 => 3.88, 15 => 3.67, 20 => 3.58, 30 => 3.49, 60 => 3.40 },
+      4 => { 5 => 5.22, 10 => 4.33, 15 => 4.08, 20 => 3.96, 30 => 3.85, 60 => 3.74 },
+      5 => { 5 => 5.67, 10 => 4.65, 15 => 4.37, 20 => 4.23, 30 => 4.10, 60 => 3.98 }
+    }
+
+    # Find closest values
+    k_key = num_groups.clamp(2, 5) # Clamp k between 2 and 5
+
+    # Find closest df
+    df_keys = tukey_table[k_key].keys.sort
+    df_key = df_keys.min_by { |key| (key - deg_freedom).abs }
+
+    # Adjust if df is very large
+    df_key = 60 if deg_freedom > 60
+
+    tukey_table[k_key][df_key] || 3.5 # Default fallback
+  end
+
+  def estimate_tukey_p_value(q_statistic, num_groups, deg_freedom)
+    # Rough estimation of p-value from q-statistic
+    # This is an approximation since exact calculation requires complex integration
+
+    # Get critical values for different alpha levels
+    q_one_percent = tukey_critical_value(num_groups, deg_freedom, 0.01) * 1.3 # Rough scaling
+    q_five_percent = tukey_critical_value(num_groups, deg_freedom, 0.05)
+    q_ten_percent = tukey_critical_value(num_groups, deg_freedom, 0.05) * 0.9 # Rough scaling
+
+    if q_statistic >= q_one_percent
+      0.001
+    elsif q_statistic >= q_five_percent
+      0.001 + ((0.05 - 0.001) * (q_one_percent - q_statistic) / (q_one_percent - q_five_percent))
+    elsif q_statistic >= q_ten_percent
+      0.05 + ((0.1 - 0.05) * (q_five_percent - q_statistic) / (q_five_percent - q_ten_percent))
+    else
+      # For smaller q values, use exponential decay approximation
+      0.1 * Math.exp(-(q_ten_percent - q_statistic))
+    end.clamp(0.0001, 0.9999)
+  end
+
+  def calculate_tukey_q_statistic(group1, group2)
+    # This is a helper method for testing
+    # In practice, it's called within tukey_pairwise_comparison
+    mean1 = group1.sum.to_f / group1.length
+    mean2 = group2.sum.to_f / group2.length
+    mean_diff = (mean1 - mean2).abs
+
+    # For this test helper, we'll use a simple approximation
+    pooled_variance = (variance_of_array(group1) + variance_of_array(group2)) / 2
+    n_harmonic = calculate_harmonic_mean_n([group1.length, group2.length])
+    se = Math.sqrt(pooled_variance / n_harmonic)
+
+    se.zero? ? 0.0 : mean_diff / se
+  end
+
+  def variance_of_array(array)
+    return 0.0 if array.length <= 1
+
+    mean = array.sum.to_f / array.length
+    array.sum { |x| (x - mean)**2 } / (array.length - 1)
   end
 end

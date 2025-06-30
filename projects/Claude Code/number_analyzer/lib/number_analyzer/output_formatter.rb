@@ -795,6 +795,98 @@ class NumberAnalyzer
       "#{f_stat} #{df_between} #{df_within} #{p_value} #{eta_sq} #{significant}"
     end
 
+    def self.format_post_hoc(post_hoc_data, options = {})
+      return format_post_hoc_json(post_hoc_data, options) if options[:format] == 'json'
+      return format_post_hoc_quiet(post_hoc_data, options) if options[:quiet]
+
+      format_post_hoc_default(post_hoc_data, options)
+    end
+
+    private_class_method def self.format_post_hoc_json(post_hoc_data, options)
+      formatted_data = build_formatted_post_hoc_data(post_hoc_data, options)
+      JSON.generate(formatted_data)
+    end
+
+    private_class_method def self.format_post_hoc_default(post_hoc_data, options)
+      lines = []
+      lines << "=== Post-hoc Analysis (#{post_hoc_data[:method]}) ==="
+
+      # Add warning if present
+      lines << "\n#{post_hoc_data[:warning]}" if post_hoc_data[:warning]
+
+      # Add adjusted alpha for Bonferroni
+      if post_hoc_data[:adjusted_alpha]
+        lines << "調整済みα値: #{apply_precision(post_hoc_data[:adjusted_alpha], options[:precision])}"
+      end
+
+      lines << "\nペアワイズ比較:"
+      lines << ('-' * 60)
+
+      # Format pairwise comparisons
+      post_hoc_data[:pairwise_comparisons].each do |comparison|
+        group1, group2 = comparison[:groups]
+        lines << "\nグループ #{group1} vs グループ #{group2}:"
+
+        lines << "  平均値の差: #{apply_precision(comparison[:mean_difference], options[:precision])}"
+        if post_hoc_data[:method] == 'Tukey HSD'
+          lines << "  q統計量: #{apply_precision(comparison[:q_statistic], options[:precision])}"
+          lines << "  q臨界値: #{apply_precision(comparison[:q_critical], options[:precision])}"
+          lines << "  p値: #{apply_precision(comparison[:p_value], options[:precision])}"
+        else # Bonferroni
+          lines << "  t統計量: #{apply_precision(comparison[:t_statistic], options[:precision])}"
+          lines << "  p値: #{apply_precision(comparison[:p_value], options[:precision])}"
+          lines << "  調整済みp値: #{apply_precision(comparison[:adjusted_p_value], options[:precision])}"
+        end
+
+        lines << "  有意差: #{comparison[:significant] ? 'あり' : 'なし'}"
+      end
+
+      lines.join("\n")
+    end
+
+    private_class_method def self.format_post_hoc_quiet(post_hoc_data, _options)
+      # Quiet format: method comparison_count significant_count
+      comparison_count = post_hoc_data[:pairwise_comparisons].length
+      significant_count = post_hoc_data[:pairwise_comparisons].count { |c| c[:significant] }
+
+      "#{post_hoc_data[:method]} #{comparison_count} #{significant_count}"
+    end
+
+    private_class_method def self.build_formatted_post_hoc_data(post_hoc_data, options)
+      formatted_data = {
+        method: post_hoc_data[:method],
+        pairwise_comparisons: []
+      }
+
+      formatted_data[:warning] = post_hoc_data[:warning] if post_hoc_data[:warning]
+      if post_hoc_data[:adjusted_alpha]
+        formatted_data[:adjusted_alpha] =
+          apply_precision(post_hoc_data[:adjusted_alpha], options[:precision])
+      end
+
+      post_hoc_data[:pairwise_comparisons].each do |comparison|
+        formatted_comparison = {
+          groups: comparison[:groups],
+          mean_difference: apply_precision(comparison[:mean_difference], options[:precision]),
+          significant: comparison[:significant]
+        }
+
+        if post_hoc_data[:method] == 'Tukey HSD'
+          formatted_comparison[:q_statistic] = apply_precision(comparison[:q_statistic], options[:precision])
+          formatted_comparison[:q_critical] = apply_precision(comparison[:q_critical], options[:precision])
+          formatted_comparison[:p_value] = apply_precision(comparison[:p_value], options[:precision])
+        else # Bonferroni
+          formatted_comparison[:t_statistic] = apply_precision(comparison[:t_statistic], options[:precision])
+          formatted_comparison[:p_value] = apply_precision(comparison[:p_value], options[:precision])
+          formatted_comparison[:adjusted_p_value] = apply_precision(comparison[:adjusted_p_value], options[:precision])
+        end
+
+        formatted_data[:pairwise_comparisons] << formatted_comparison
+      end
+
+      formatted_data
+    end
+
     private_class_method def self.build_formatted_anova_data(anova_data, options)
       {
         test_type: 'one_way_anova',

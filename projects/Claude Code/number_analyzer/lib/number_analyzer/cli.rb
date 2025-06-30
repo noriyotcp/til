@@ -92,12 +92,20 @@ class NumberAnalyzer
             options[:uniform] = true
           when '--post-hoc'
             options[:post_hoc] = args[index + 1] if index + 1 < args.length
+          when /^--post-hoc=(.+)$/
+            options[:post_hoc] = Regexp.last_match(1)
           when '--alpha'
             options[:alpha] = args[index + 1].to_f if index + 1 < args.length
+          when /^--alpha=(.+)$/
+            options[:alpha] = Regexp.last_match(1).to_f
           when '--format'
             options[:format] = args[index + 1] if index + 1 < args.length
+          when /^--format=(.+)$/
+            options[:format] = Regexp.last_match(1)
           when '--precision'
             options[:precision] = args[index + 1].to_i if index + 1 < args.length
+          when /^--precision=(\d+)$/
+            options[:precision] = Regexp.last_match(1).to_i
           when '--quiet'
             options[:quiet] = true
             options[:format] = 'quiet' unless options[:format]
@@ -107,7 +115,9 @@ class NumberAnalyzer
             options[:file] = args[index + 1] if index + 1 < args.length
           else
             # Found first non-option argument
-            unless arg.start_with?('--') || args[index - 1] =~ /^--(format|precision|file|post-hoc|alpha)$/
+            is_option_flag = arg.start_with?('--')
+            is_option_value = index.positive? && args[index - 1] =~ /^--(format|precision|file|post-hoc|alpha)$/
+            unless is_option_flag || is_option_value
               data_start_index = index
               break
             end
@@ -1085,53 +1095,59 @@ class NumberAnalyzer
         format: options[:format],
         precision: options[:precision],
         quiet: options[:quiet],
-        help: false,
-        file: nil,
-        post_hoc: nil,
-        alpha: 0.05
+        help: options[:help] || false,
+        file: options[:file] || nil,
+        post_hoc: options[:post_hoc] || nil,
+        alpha: options[:alpha] || 0.05
       }
 
-      parser = OptionParser.new do |opts|
-        opts.banner = 'Usage: bundle exec number_analyzer anova [options] group1.csv group2.csv group3.csv'
-        opts.separator '       bundle exec number_analyzer anova [options] 1 2 3 -- 4 5 6 -- 7 8 9'
-        opts.separator ''
-        opts.separator 'Options:'
+      # If we already have parsed options (from special handling), use args directly
+      if options.key?(:post_hoc) || options.key?(:independence) || options.key?(:alpha)
+        remaining_args = args
+      else
+        # Otherwise, parse with OptionParser for standard handling
+        parser = OptionParser.new do |opts|
+          opts.banner = 'Usage: bundle exec number_analyzer anova [options] group1.csv group2.csv group3.csv'
+          opts.separator '       bundle exec number_analyzer anova [options] 1 2 3 -- 4 5 6 -- 7 8 9'
+          opts.separator ''
+          opts.separator 'Options:'
 
-        opts.on('--format=FORMAT', ['json'], 'Output format (json)') do |format|
-          anova_options[:format] = format
+          opts.on('--format=FORMAT', ['json'], 'Output format (json)') do |format|
+            anova_options[:format] = format
+          end
+
+          opts.on('--precision=N', Integer, 'Number of decimal places') do |precision|
+            anova_options[:precision] = precision
+          end
+
+          opts.on('--quiet', 'Suppress descriptive text') do
+            anova_options[:quiet] = true
+          end
+
+          opts.on('--post-hoc=TEST', %w[tukey bonferroni], 'Post-hoc test (tukey, bonferroni)') do |test|
+            anova_options[:post_hoc] = test
+          end
+
+          opts.on('--alpha=LEVEL', Float, 'Significance level (default: 0.05)') do |alpha|
+            anova_options[:alpha] = alpha
+          end
+
+          opts.on('--file', 'Read from CSV files') do
+            anova_options[:file] = true
+          end
+
+          opts.on('-h', '--help', 'Show this help') do
+            anova_options[:help] = true
+          end
         end
 
-        opts.on('--precision=N', Integer, 'Number of decimal places') do |precision|
-          anova_options[:precision] = precision
+        begin
+          remaining_args = parser.parse(args)
+        rescue OptionParser::InvalidOption, OptionParser::MissingArgument => e
+          puts "エラー: #{e.message}"
+          puts parser
+          exit 1
         end
-
-        opts.on('--quiet', 'Suppress descriptive text') do
-          anova_options[:quiet] = true
-        end
-
-        opts.on('--post-hoc=TEST', %w[tukey bonferroni], 'Post-hoc test (tukey, bonferroni)') do |test|
-          anova_options[:post_hoc] = test
-        end
-
-        opts.on('--alpha=LEVEL', Float, 'Significance level (default: 0.05)') do |alpha|
-          anova_options[:alpha] = alpha
-        end
-
-        opts.on('--file', 'Read from CSV files') do
-          anova_options[:file] = true
-        end
-
-        opts.on('-h', '--help', 'Show this help') do
-          anova_options[:help] = true
-        end
-      end
-
-      begin
-        remaining_args = parser.parse(args)
-      rescue OptionParser::InvalidOption, OptionParser::MissingArgument => e
-        puts "エラー: #{e.message}"
-        puts parser
-        exit 1
       end
 
       if anova_options[:help]
@@ -1181,6 +1197,17 @@ class NumberAnalyzer
         }
         formatted_result = OutputFormatter.format_anova(result, format_options)
         puts formatted_result
+
+        # Perform post-hoc analysis if requested
+        if anova_options[:post_hoc]
+          post_hoc_result = analyzer.post_hoc_analysis(groups, method: anova_options[:post_hoc].to_sym)
+
+          if post_hoc_result
+            puts "\n" unless anova_options[:format] == 'json'
+            formatted_post_hoc = OutputFormatter.format_post_hoc(post_hoc_result, format_options)
+            puts formatted_post_hoc
+          end
+        end
       rescue StandardError => e
         puts "エラー: #{e.message}"
         exit 1
