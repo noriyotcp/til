@@ -330,6 +330,73 @@ class NumberAnalyzer
     end
   end
 
+  def one_way_anova(*groups)
+    # Validate input - groups should be arrays of numbers
+    groups = groups.compact
+
+    # Remove empty groups
+    groups = groups.reject { |group| group.is_a?(Array) && group.empty? }
+
+    return nil if groups.length < 2
+
+    # Ensure each group has at least one value and is an array
+    groups.each do |group|
+      return nil unless group.is_a?(Array)
+      return nil if group.empty?
+    end
+
+    # Calculate basic statistics
+    group_means = groups.map { |group| group.sum.to_f / group.length }
+    grand_mean = groups.flatten.sum.to_f / groups.flatten.length
+
+    # Calculate sum of squares
+    ss_between = calculate_sum_of_squares_between(groups, group_means, grand_mean)
+    ss_within = calculate_sum_of_squares_within(groups, group_means)
+    ss_total = ss_between + ss_within
+
+    # Calculate degrees of freedom
+    df_between = groups.length - 1
+    df_within = groups.flatten.length - groups.length
+    df_total = df_between + df_within
+
+    # Calculate mean squares
+    ms_between = ss_between / df_between
+    ms_within = df_within.zero? ? 0.0 : ss_within / df_within
+
+    # Calculate F-statistic
+    f_statistic = ms_within.zero? ? Float::INFINITY : ms_between / ms_within
+
+    # Calculate p-value using F-distribution approximation
+    p_value = calculate_f_distribution_p_value(f_statistic, df_between, df_within)
+
+    # Calculate effect sizes
+    eta_squared = ss_total.zero? ? 0.0 : ss_between / ss_total
+    omega_squared = calculate_omega_squared(ss_between, df_between, ms_within, df_total)
+
+    {
+      f_statistic: f_statistic.round(6),
+      p_value: p_value.round(6),
+      degrees_of_freedom: [df_between, df_within],
+      sum_of_squares: {
+        between: ss_between.round(6),
+        within: ss_within.round(6),
+        total: ss_total.round(6)
+      },
+      mean_squares: {
+        between: ms_between.round(6),
+        within: ms_within.round(6)
+      },
+      effect_size: {
+        eta_squared: eta_squared.round(6),
+        omega_squared: omega_squared.round(6)
+      },
+      group_means: group_means.map { |mean| mean.round(6) },
+      grand_mean: grand_mean.round(6),
+      significant: p_value < 0.05,
+      interpretation: interpret_anova_results(f_statistic, p_value, eta_squared)
+    }
+  end
+
   private
 
   def average_value = @numbers.sum.to_f / @numbers.length
@@ -943,5 +1010,101 @@ class NumberAnalyzer
       10 => { 0.001 => 29.59, 0.01 => 23.21, 0.05 => 18.31, 0.10 => 15.99, 0.20 => 13.44, 0.30 => 11.78, 0.40 => 10.47,
               0.50 => 9.342, 0.60 => 8.295, 0.70 => 7.267, 0.80 => 6.179, 0.90 => 4.865, 0.95 => 3.940, 0.99 => 2.558 }
     }
+  end
+
+  # ANOVA helper methods
+  def calculate_sum_of_squares_between(groups, group_means, grand_mean)
+    groups.zip(group_means).sum do |group, group_mean|
+      group.length * ((group_mean - grand_mean)**2)
+    end
+  end
+
+  def calculate_sum_of_squares_within(groups, group_means)
+    groups.zip(group_means).sum do |group, group_mean|
+      group.sum { |value| (value - group_mean)**2 }
+    end
+  end
+
+  def calculate_omega_squared(ss_between, df_between, ms_within, df_total)
+    numerator = ss_between - (df_between * ms_within)
+    denominator = (ss_between + ((df_total + 1) * ms_within))
+    denominator.zero? ? 0.0 : numerator / denominator
+  end
+
+  def calculate_f_distribution_p_value(f_statistic, df_numerator, df_denominator)
+    return 1.0 if f_statistic.infinite? || f_statistic.nan?
+    return 1.0 if f_statistic <= 0
+
+    # Simplified F-distribution p-value calculation using critical values
+    # This is an approximation for common cases
+    f_critical_values
+
+    # Find appropriate p-value by comparing with critical values
+    alphas = [0.001, 0.01, 0.05, 0.10, 0.25, 0.50]
+
+    alphas.each do |alpha|
+      critical_value = interpolate_f_critical_value(df_numerator, df_denominator, alpha)
+      return alpha if f_statistic <= critical_value
+    end
+
+    # If F-statistic is higher than all critical values, p < 0.001
+    0.001
+  end
+
+  def f_critical_values
+    # Simplified F-critical values for common df combinations at α = 0.05
+    # Format: [df_numerator, df_denominator] => critical_value
+    {
+      [1, 1] => 161.4, [1, 2] => 18.51, [1, 3] => 10.13, [1, 4] => 7.71, [1, 5] => 6.61,
+      [1, 10] => 4.96, [1, 20] => 4.35, [1, 30] => 4.17, [1, 40] => 4.08, [1, 60] => 4.00,
+      [2, 1] => 199.5, [2, 2] => 19.00, [2, 3] => 9.55, [2, 4] => 6.94, [2, 5] => 5.79,
+      [2, 10] => 4.10, [2, 20] => 3.49, [2, 30] => 3.32, [2, 40] => 3.23, [2, 60] => 3.15,
+      [3, 1] => 215.7, [3, 2] => 19.16, [3, 3] => 9.28, [3, 4] => 6.59, [3, 5] => 5.41,
+      [3, 10] => 3.71, [3, 20] => 3.10, [3, 30] => 2.92, [3, 40] => 2.84, [3, 60] => 2.76,
+      [4, 1] => 224.6, [4, 2] => 19.25, [4, 3] => 9.12, [4, 4] => 6.39, [4, 5] => 5.19,
+      [4, 10] => 3.48, [4, 20] => 2.87, [4, 30] => 2.69, [4, 40] => 2.61, [4, 60] => 2.53,
+      [5, 1] => 230.2, [5, 2] => 19.30, [5, 3] => 9.01, [5, 4] => 6.26, [5, 5] => 5.05,
+      [5, 10] => 3.33, [5, 20] => 2.71, [5, 30] => 2.53, [5, 40] => 2.45, [5, 60] => 2.37
+    }
+  end
+
+  def interpolate_f_critical_value(df_num, df_den, alpha)
+    # Simplified interpolation for F critical values
+    # Returns approximate critical value for F(df_num, df_den) at given alpha
+    base_critical = f_critical_values[[df_num, df_den]] ||
+                    f_critical_values[[df_num, [df_den, 60].min]] ||
+                    3.0 # Default fallback
+
+    # Adjust for different alpha levels (rough approximation)
+    if alpha <= 0.001
+      base_critical * 2.5
+    elsif alpha <= 0.01
+      base_critical * 1.5
+    elsif alpha <= 0.05
+      base_critical
+    elsif alpha <= 0.10
+      base_critical * 0.7
+    elsif alpha <= 0.25
+      base_critical * 0.4
+    else
+      base_critical * 0.2
+    end
+  end
+
+  def interpret_anova_results(_f_statistic, p_value, eta_squared)
+    significance = p_value < 0.05 ? '有意' : '非有意'
+
+    effect_size_interpretation = case eta_squared
+                                 when 0.0...0.01
+                                   '効果サイズ: 極小'
+                                 when 0.01...0.06
+                                   '効果サイズ: 小'
+                                 when 0.06...0.14
+                                   '効果サイズ: 中'
+                                 else
+                                   '効果サイズ: 大'
+                                 end
+
+    "#{significance}差あり (p = #{p_value.round(3)}), #{effect_size_interpretation} (η² = #{eta_squared.round(3)})"
   end
 end

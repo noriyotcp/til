@@ -31,7 +31,8 @@ class NumberAnalyzer
       'seasonal' => :run_seasonal,
       't-test' => :run_t_test,
       'confidence-interval' => :run_confidence_interval,
-      'chi-square' => :run_chi_square
+      'chi-square' => :run_chi_square,
+      'anova' => :run_anova
     }.freeze
 
     # Main entry point for CLI
@@ -74,8 +75,8 @@ class NumberAnalyzer
     end
 
     private_class_method def self.run_subcommand(command, args)
-      # Special handling for chi-square to preserve '--' separators
-      if command == 'chi-square' && args.include?('--')
+      # Special handling for commands that use '--' separators
+      if %w[chi-square anova].include?(command) && args.include?('--')
         # Find where options end and data begins
         options = default_options
         data_start_index = 0
@@ -89,6 +90,10 @@ class NumberAnalyzer
             options[:goodness_of_fit] = true
           when '--uniform'
             options[:uniform] = true
+          when '--post-hoc'
+            options[:post_hoc] = args[index + 1] if index + 1 < args.length
+          when '--alpha'
+            options[:alpha] = args[index + 1].to_f if index + 1 < args.length
           when '--format'
             options[:format] = args[index + 1] if index + 1 < args.length
           when '--precision'
@@ -102,7 +107,7 @@ class NumberAnalyzer
             options[:file] = args[index + 1] if index + 1 < args.length
           else
             # Found first non-option argument
-            unless arg.start_with?('--') || args[index - 1] =~ /^--(format|precision|file)$/
+            unless arg.start_with?('--') || args[index - 1] =~ /^--(format|precision|file|post-hoc|alpha)$/
               data_start_index = index
               break
             end
@@ -1073,6 +1078,153 @@ class NumberAnalyzer
       puts 'エラー: 無効な数値が含まれています。'
       puts '使用例: bundle exec number_analyzer chi-square --independence 30 20 -- 15 35'
       exit 1
+    end
+
+    def self.run_anova(args, options = {})
+      anova_options = {
+        format: options[:format],
+        precision: options[:precision],
+        quiet: options[:quiet],
+        help: false,
+        file: nil,
+        post_hoc: nil,
+        alpha: 0.05
+      }
+
+      parser = OptionParser.new do |opts|
+        opts.banner = 'Usage: bundle exec number_analyzer anova [options] group1.csv group2.csv group3.csv'
+        opts.separator '       bundle exec number_analyzer anova [options] 1 2 3 -- 4 5 6 -- 7 8 9'
+        opts.separator ''
+        opts.separator 'Options:'
+
+        opts.on('--format=FORMAT', ['json'], 'Output format (json)') do |format|
+          anova_options[:format] = format
+        end
+
+        opts.on('--precision=N', Integer, 'Number of decimal places') do |precision|
+          anova_options[:precision] = precision
+        end
+
+        opts.on('--quiet', 'Suppress descriptive text') do
+          anova_options[:quiet] = true
+        end
+
+        opts.on('--post-hoc=TEST', %w[tukey bonferroni], 'Post-hoc test (tukey, bonferroni)') do |test|
+          anova_options[:post_hoc] = test
+        end
+
+        opts.on('--alpha=LEVEL', Float, 'Significance level (default: 0.05)') do |alpha|
+          anova_options[:alpha] = alpha
+        end
+
+        opts.on('--file', 'Read from CSV files') do
+          anova_options[:file] = true
+        end
+
+        opts.on('-h', '--help', 'Show this help') do
+          anova_options[:help] = true
+        end
+      end
+
+      begin
+        remaining_args = parser.parse(args)
+      rescue OptionParser::InvalidOption, OptionParser::MissingArgument => e
+        puts "エラー: #{e.message}"
+        puts parser
+        exit 1
+      end
+
+      if anova_options[:help]
+        puts parser
+        puts ''
+        puts 'Examples:'
+        puts '  bundle exec number_analyzer anova 1 2 3 -- 4 5 6 -- 7 8 9'
+        puts '  bundle exec number_analyzer anova --file group1.csv group2.csv group3.csv'
+        puts '  bundle exec number_analyzer anova --format=json --precision=3 1 2 3 -- 4 5 6 -- 7 8 9'
+        puts '  bundle exec number_analyzer anova --post-hoc=tukey 1 2 3 -- 4 5 6 -- 7 8 9'
+        return
+      end
+
+      if remaining_args.empty?
+        puts 'エラー: グループデータが指定されていません。'
+        puts parser
+        exit 1
+      end
+
+      begin
+        # Parse groups - either from files or command line arguments
+        groups = if anova_options[:file]
+                   parse_anova_files(remaining_args)
+                 else
+                   parse_anova_groups(remaining_args)
+                 end
+
+        if groups.length < 2
+          puts 'エラー: ANOVAには少なくとも2つのグループが必要です。'
+          exit 1
+        end
+
+        # Create NumberAnalyzer instance (dummy, since we'll call class method)
+        analyzer = NumberAnalyzer.new([])
+        result = analyzer.one_way_anova(*groups)
+
+        if result.nil?
+          puts 'エラー: ANOVAの計算ができませんでした。有効なデータを確認してください。'
+          exit 1
+        end
+
+        # Format and display results
+        format_options = {
+          format: anova_options[:format],
+          precision: anova_options[:precision],
+          quiet: anova_options[:quiet]
+        }
+        formatted_result = OutputFormatter.format_anova(result, format_options)
+        puts formatted_result
+      rescue StandardError => e
+        puts "エラー: #{e.message}"
+        exit 1
+      end
+    end
+
+    def self.parse_anova_groups(args)
+      groups = []
+      current_group = []
+
+      args.each do |arg|
+        if arg == '--'
+          groups << current_group.map(&:to_f) unless current_group.empty?
+          current_group = []
+        else
+          current_group << arg
+        end
+      end
+
+      # Add the last group
+      groups << current_group.map(&:to_f) unless current_group.empty?
+
+      raise ArgumentError, '有効なグループデータがありません' if groups.empty?
+
+      groups
+    rescue ArgumentError
+      raise ArgumentError, '無効な数値が含まれています'
+    end
+
+    def self.parse_anova_files(filenames)
+      groups = []
+
+      filenames.each do |filename|
+        raise ArgumentError, "ファイルが見つかりません: #{filename}" unless File.exist?(filename)
+
+        data = FileReader.read_file(filename)
+        raise ArgumentError, "空のファイル: #{filename}" if data.empty?
+
+        groups << data
+      end
+
+      groups
+    rescue StandardError => e
+      raise ArgumentError, "ファイル読み込みエラー: #{e.message}"
     end
   end
 end

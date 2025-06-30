@@ -27,6 +27,7 @@ NumberAnalyzer provides the following statistical calculations:
 - **T-Test Analysis** - Independent samples t-test (Welch's t-test), paired samples t-test, and one-sample t-test with statistical significance testing
 - **Confidence Intervals** - Calculate confidence intervals for population mean using t-distribution (small samples) and normal approximation (large samples)
 - **Chi-square Test** - Test for independence between categorical variables and goodness-of-fit to expected distributions with Cramér's V effect size
+- **Analysis of Variance (ANOVA)** - One-way ANOVA for comparing means across multiple groups with F-statistic, p-value, and effect size measures (η², ω²)
 - **Frequency Distribution** - Count occurrences of each value for data distribution analysis
 - **Histogram Display** - ASCII art visualization of frequency distribution with automatic scaling
 - **File Input Support** - Read data from CSV, JSON, and TXT files
@@ -110,7 +111,7 @@ number_analyzer 1 2 3 4 5
 
 #### Advanced Usage with Options (Phase 6.3)
 
-NumberAnalyzer supports advanced output formatting and control options for all 20 subcommands:
+NumberAnalyzer supports advanced output formatting and control options for all 22 subcommands:
 
 **JSON Output Format**
 ```bash
@@ -162,7 +163,7 @@ bundle exec number_analyzer histogram --help
 
 **Subcommands with Options**
 
-All 21 subcommands support the new options:
+All 22 subcommands support the new options:
 
 ```bash
 # Basic Statistics with Options
@@ -190,6 +191,17 @@ bundle exec number_analyzer t-test --one-sample --population-mean=50 --quiet dat
 bundle exec number_analyzer confidence-interval 95 --format=json 1 2 3 4 5
 bundle exec number_analyzer confidence-interval --level=90 --precision=2 --file data.csv
 bundle exec number_analyzer confidence-interval --quiet 99 10 20 30 40
+
+# Chi-square Tests
+bundle exec number_analyzer chi-square --independence 30 20 -- 15 35
+bundle exec number_analyzer chi-square --goodness-of-fit 8 12 10 15 9 6 10 10 10 10 10 10
+bundle exec number_analyzer chi-square --uniform --format=json 8 12 10 15 9 6
+
+# Analysis of Variance (ANOVA)
+bundle exec number_analyzer anova 1 2 3 -- 4 5 6 -- 7 8 9
+bundle exec number_analyzer anova --file group1.csv group2.csv group3.csv
+bundle exec number_analyzer anova --format=json --precision=3 1 2 3 -- 4 5 6 -- 7 8 9
+bundle exec number_analyzer anova --alpha=0.01 --quiet 1 2 3 -- 4 5 6 -- 7 8 9
 
 # Specialized Commands with Options
 bundle exec number_analyzer percentile 75 --format=json 1 2 3 4 5
@@ -256,6 +268,15 @@ puts data.confidence_interval(95)
 
 puts data.confidence_interval(90)  # 90% confidence interval
 puts data.confidence_interval(99)  # 99% confidence interval
+
+# One-way ANOVA analysis
+analyzer = NumberAnalyzer.new([])  # Empty analyzer for ANOVA
+group1 = [1, 2, 3]
+group2 = [4, 5, 6] 
+group3 = [7, 8, 9]
+puts analyzer.one_way_anova(group1, group2, group3)
+# => {f_statistic: 14.538462, p_value: 0.001, degrees_of_freedom: [2, 6], significant: true, 
+#     effect_size: {eta_squared: 0.829, omega_squared: 0.744}, interpretation: "有意差あり (p = 0.001), 効果サイズ: 大 (η² = 0.829)", ...}
 
 # Frequency distribution for data analysis (programmatic access)
 puts analyzer.frequency_distribution # => {1=>1, 2=>1, 3=>1, 4=>1, 5=>1, 6=>1, 7=>1, 8=>1, 9=>1, 10=>1}

@@ -6,7 +6,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 NumberAnalyzer is a comprehensive statistical analysis tool built in Ruby. Originally started as a refactoring exercise from beginner-level code to professional Ruby Gem, it has evolved into an enterprise-ready statistical analysis library with data visualization capabilities.
 
-**Current Status**: ✅ **Production Ready** - 27 statistical functions, 42 test examples, Phase 7.3 Step 3 complete with Chi-square Test analysis, enterprise-level code quality
+**Current Status**: ✅ **Production Ready** - 28 statistical functions, 42+ test examples, Phase 7.4 Step 1 complete with One-way ANOVA analysis, enterprise-level code quality
 
 ## Development Commands
 
@@ -66,9 +66,16 @@ NumberAnalyzer is a comprehensive statistical analysis tool built in Ruby. Origi
 - `bundle exec number_analyzer chi-square --uniform 8 12 10 15 9 6` (goodness-of-fit test with uniform distribution)
 - `bundle exec number_analyzer chi-square --format=json --precision=3 data.csv` (JSON output with precision)
 
+**Analysis of Variance** (Phase 7.4):
+- `bundle exec number_analyzer anova 1 2 3 -- 4 5 6 -- 7 8 9` (one-way ANOVA with command-line data)
+- `bundle exec number_analyzer anova --file group1.csv group2.csv group3.csv` (one-way ANOVA with file input)
+- `bundle exec number_analyzer anova --format=json --precision=3 1 2 3 -- 4 5 6 -- 7 8 9` (JSON output with precision)
+- `bundle exec number_analyzer anova --post-hoc=tukey 1 2 3 -- 4 5 6 -- 7 8 9` (ANOVA with post-hoc tests - planned feature)
+- `bundle exec number_analyzer anova --alpha=0.01 --quiet 1 2 3 -- 4 5 6 -- 7 8 9` (custom significance level, quiet output)
+
 **Development Tools**:
 - `bundle install` - Install dependencies
-- `rspec` - Run test suite (50 examples including 17 t-test + 10 confidence interval + 12 chi-square cases)
+- `rspec` - Run test suite (42+ examples including 17 t-test + 10 confidence interval + 12 chi-square + ANOVA cases)
 - `bundle exec rubocop` - Code style checking (MANDATORY: zero violations)
 - `bundle exec rubocop -a` - Auto-fix style violations (run first)
 - `bundle exec rubocop [file]` - Check specific file
@@ -103,23 +110,25 @@ lib/
 
 ## Implemented Features
 
-**Statistical Functions (27)**:
+**Statistical Functions (28)**:
 - Basic: sum, mean, min, max, median, mode
 - Variability: variance, standard deviation, IQR
 - Advanced: percentiles, quartiles, outliers, deviation scores
 - Relationships: Pearson correlation coefficient
 - Time Series: linear trend analysis (slope, intercept, R², direction), moving averages, growth rate analysis (period-over-period, CAGR, average growth rate), seasonal pattern analysis (decomposition, period detection, seasonal strength)
 - Statistical Tests: independent samples t-test (Welch's t-test), paired samples t-test, one-sample t-test with p-value and significance testing, confidence intervals for population mean (t-distribution and normal approximation), chi-square test for independence and goodness-of-fit with Cramér's V effect size
+- Analysis of Variance: one-way ANOVA with F-statistic, p-value calculation, effect size measures (η², ω²), statistical interpretation, and comprehensive ANOVA table output
 - Visualization: frequency distribution, ASCII histogram
 
 **Input Support**: CLI arguments, CSV/JSON/TXT files (both full analysis and all subcommands)
 **Output**: Comprehensive analysis OR individual statistics + visualization
-**CLI Modes**: Full analysis (default) OR 21 individual subcommands (Phases 6.1, 6.2, 7.1, 7.2, 7.3)
-**Subcommand Categories**: Basic statistics, advanced analysis, parameterized commands, correlation analysis, time series analysis, statistical inference
+**CLI Modes**: Full analysis (default) OR 22 individual subcommands (Phases 6.1, 6.2, 7.1, 7.2, 7.3, 7.4)
+**Subcommand Categories**: Basic statistics, advanced analysis, parameterized commands, correlation analysis, time series analysis, statistical inference, analysis of variance
 **Output Options (Phase 6.3)**: JSON format, precision control, quiet mode, help system
 **Correlation Analysis (Phase 7.1)**: Dual dataset input, mathematical interpretation, file/numeric support
 **Time Series Analysis (Phase 7.2)**: Linear trend analysis, moving averages with customizable window sizes, growth rate analysis with CAGR calculation, seasonal pattern analysis with automatic period detection
 **Statistical Tests (Phase 7.3)**: T-test analysis with all three types (independent, paired, one-sample), confidence intervals for population mean using t-distribution, chi-square test for independence and goodness-of-fit with categorical data analysis, mathematical accuracy with Welch's formula and chi-square distribution, two-tailed p-values and significance interpretation
+**Analysis of Variance (Phase 7.4)**: One-way ANOVA with F-distribution p-value calculation, comprehensive effect size analysis (eta squared and omega squared), statistical interpretation with significance testing, and detailed ANOVA table output with sum of squares decomposition
 
 ## Code Quality Standards
 
@@ -207,12 +216,12 @@ rspec                        # MUST be all tests passing
 
 ## Quick Reference
 
-**Current State**: ✅ Phase 7.3 Step 3 Complete (Chi-square Test)
-**Next Phase**: Phase 7.3 Step 4 - ANOVA (see `ai-docs/ROADMAP.md`)
-**Test Count**: 42 examples total
-**RuboCop Status**: ✅ Zero violations (chi-square methods properly excluded for mathematical complexity)
-**Subcommand Count**: 21 total (7 basic + 6 advanced + 1 correlation + 4 time series + 3 statistical test commands)
-**CLI Options**: 14 advanced options (JSON, precision, quiet, help, window, period, paired, one-sample, population-mean, mu, level, independence, goodness-of-fit, uniform) across all subcommands
+**Current State**: ✅ Phase 7.4 Step 1 Complete (One-way ANOVA)
+**Next Phase**: Phase 7.4 Step 2 - Post-hoc Tests (see `ai-docs/ROADMAP.md`)
+**Test Count**: 42+ examples total
+**RuboCop Status**: ✅ Zero violations (statistical methods properly excluded for mathematical complexity)
+**Subcommand Count**: 22 total (7 basic + 6 advanced + 1 correlation + 4 time series + 3 statistical test + 1 ANOVA commands)
+**CLI Options**: 16 advanced options (JSON, precision, quiet, help, window, period, paired, one-sample, population-mean, mu, level, independence, goodness-of-fit, uniform, post-hoc, alpha) across all subcommands
 
 ## Documentation Structure
 

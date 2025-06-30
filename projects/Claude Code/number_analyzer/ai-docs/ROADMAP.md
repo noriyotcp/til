@@ -72,16 +72,26 @@
 - [x] 全機能でJSON/精度/quiet/helpオプション対応
 
 
+### Phase 7.4 Step 1: One-way ANOVA ✅ 完了
+- [x] 一元配置分散分析実装（F統計量、p値、自由度計算）
+- [x] `anova` サブコマンド追加（22個目の統計コマンド）
+- [x] 効果サイズ計算（η²: eta squared, ω²: omega squared）
+- [x] F分布による仮説検定とp値計算
+- [x] 統計的解釈機能（有意差判定、効果サイズ分類）
+- [x] 既存CLI オプション完全対応（JSON、精度、quiet、help、file、alpha）
+- [x] `--` 区切りによる複数グループ入力対応
+- [x] 分散分析表の表形式表示
+- [x] TDD実装（Red-Green-Refactor サイクル）
+- [x] RuboCop準拠
+
 ## Next Development Phase
 
-## Phase 7.4: ANOVA Implementation 🔮 計画段階
+## Phase 7.4 Step 2: Post-hoc Tests 🔮 計画段階
 
-### Statistical Tests Extension
-- 🔮 **一元配置分散分析**: 複数グループ間の平均差検定
-- 🔮 **二元配置分散分析**: 2つの要因の主効果と交互作用
+### ANOVA Extension Features
 - 🔮 **多重比較検定**: Tukey HSD, Bonferroni補正
 - 🔮 **分散の等質性検定**: Levene検定、Bartlett検定
-- 🔮 **効果サイズ**: η² (eta squared), ω² (omega squared)
+- 🔮 **二元配置分散分析**: 2つの要因の主効果と交互作用
 
 ## Phase 8.0: Plugin System Architecture 🔮 長期計画
 

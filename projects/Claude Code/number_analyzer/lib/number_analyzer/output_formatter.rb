@@ -709,5 +709,113 @@ class NumberAnalyzer
 
       formatted_data
     end
+
+    # Format ANOVA output
+    def self.format_anova(anova_data, options = {})
+      case options[:format]
+      when 'json'
+        format_anova_json(anova_data, options)
+      when 'quiet'
+        format_anova_quiet(anova_data, options)
+      else
+        format_anova_default(anova_data, options)
+      end
+    end
+
+    private_class_method def self.format_anova_json(anova_data, options)
+      formatted_data = build_formatted_anova_data(anova_data, options)
+      JSON.generate(formatted_data)
+    end
+
+    private_class_method def self.format_anova_default(anova_data, options)
+      output = []
+      output << '=== 一元配置分散分析結果 ==='
+      output << ''
+
+      # Group statistics
+      output << "グループ平均値: #{format_array(anova_data[:group_means], options)}"
+      output << "全体平均値: #{apply_precision(anova_data[:grand_mean], options[:precision])}"
+      output << ''
+
+      # ANOVA table
+      output << '【分散分析表】'
+      output << format('%-12s %12s %8s %12s %12s', '変動要因', '平方和', '自由度', '平均平方', 'F値')
+      output << ('-' * 60)
+
+      ss_between = apply_precision(anova_data[:sum_of_squares][:between], options[:precision])
+      ss_within = apply_precision(anova_data[:sum_of_squares][:within], options[:precision])
+      ss_total = apply_precision(anova_data[:sum_of_squares][:total], options[:precision])
+
+      ms_between = apply_precision(anova_data[:mean_squares][:between], options[:precision])
+      ms_within = apply_precision(anova_data[:mean_squares][:within], options[:precision])
+
+      f_stat = apply_precision(anova_data[:f_statistic], options[:precision])
+      df_between, df_within = anova_data[:degrees_of_freedom]
+
+      output << format('%-12s %12s %8d %12s %12s', '群間', ss_between, df_between, ms_between, f_stat)
+      output << format('%-12s %12s %8d %12s %12s', '群内', ss_within, df_within, ms_within, '-')
+      output << format('%-12s %12s %8d %12s %12s', '全体', ss_total, df_between + df_within, '-', '-')
+      output << ''
+
+      # Statistical significance
+      p_value = apply_precision(anova_data[:p_value], options[:precision])
+      significance = anova_data[:significant] ? '有意' : '非有意'
+      output << "F統計量: #{f_stat}"
+      output << "p値: #{p_value}"
+      output << "結果: #{significance} (α = 0.05)"
+      output << ''
+
+      # Effect sizes
+      eta_sq = apply_precision(anova_data[:effect_size][:eta_squared], options[:precision])
+      omega_sq = apply_precision(anova_data[:effect_size][:omega_squared], options[:precision])
+      output << '効果サイズ:'
+      output << "  η² (eta squared): #{eta_sq}"
+      output << "  ω² (omega squared): #{omega_sq}"
+      output << ''
+
+      # Interpretation
+      output << "解釈: #{anova_data[:interpretation]}"
+
+      output.join("\n")
+    end
+
+    private_class_method def self.format_anova_quiet(anova_data, options)
+      f_stat = apply_precision(anova_data[:f_statistic], options[:precision])
+      p_value = apply_precision(anova_data[:p_value], options[:precision])
+      eta_sq = apply_precision(anova_data[:effect_size][:eta_squared], options[:precision])
+      df_between, df_within = anova_data[:degrees_of_freedom]
+      significant = anova_data[:significant]
+
+      "#{f_stat} #{df_between} #{df_within} #{p_value} #{eta_sq} #{significant}"
+    end
+
+    private_class_method def self.build_formatted_anova_data(anova_data, options)
+      {
+        test_type: 'one_way_anova',
+        f_statistic: apply_precision(anova_data[:f_statistic], options[:precision]),
+        p_value: apply_precision(anova_data[:p_value], options[:precision]),
+        degrees_of_freedom: {
+          between: anova_data[:degrees_of_freedom][0],
+          within: anova_data[:degrees_of_freedom][1]
+        },
+        sum_of_squares: {
+          between: apply_precision(anova_data[:sum_of_squares][:between], options[:precision]),
+          within: apply_precision(anova_data[:sum_of_squares][:within], options[:precision]),
+          total: apply_precision(anova_data[:sum_of_squares][:total], options[:precision])
+        },
+        mean_squares: {
+          between: apply_precision(anova_data[:mean_squares][:between], options[:precision]),
+          within: apply_precision(anova_data[:mean_squares][:within], options[:precision])
+        },
+        effect_size: {
+          eta_squared: apply_precision(anova_data[:effect_size][:eta_squared], options[:precision]),
+          omega_squared: apply_precision(anova_data[:effect_size][:omega_squared], options[:precision])
+        },
+        group_means: anova_data[:group_means].map { |mean| apply_precision(mean, options[:precision]) },
+        grand_mean: apply_precision(anova_data[:grand_mean], options[:precision]),
+        significant: anova_data[:significant],
+        interpretation: anova_data[:interpretation]
+      }
+    end
   end
 end
