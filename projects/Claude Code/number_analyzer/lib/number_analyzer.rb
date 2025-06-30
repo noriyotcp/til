@@ -1,9 +1,12 @@
 # frozen_string_literal: true
 
 require_relative 'number_analyzer/statistics_presenter'
+require_relative 'number_analyzer/statistics/basic_stats'
 
 # 数値配列の統計を計算するプログラム
 class NumberAnalyzer
+  include BasicStats
+
   def initialize(numbers)
     @numbers = numbers
   end
@@ -28,22 +31,6 @@ class NumberAnalyzer
   end
 
   def median = percentile(50)
-
-  def mode
-    frequency = @numbers.tally
-    max_frequency = frequency.values.max
-
-    return [] if max_frequency == 1
-
-    frequency.select { |_, count| count == max_frequency }.keys
-  end
-
-  def variance
-    return 0.0 if @numbers.length <= 1
-
-    mean = average_value
-    @numbers.sum { |num| (num - mean)**2 } / @numbers.length
-  end
 
   def percentile(percentile_value)
     return nil if @numbers.empty?
@@ -91,8 +78,6 @@ class NumberAnalyzer
 
     @numbers.select { |num| num < lower_bound || num > upper_bound }
   end
-
-  def standard_deviation = Math.sqrt(variance)
 
   def deviation_scores
     return [] if @numbers.empty?
@@ -796,8 +781,6 @@ class NumberAnalyzer
   end
 
   private
-
-  def average_value = @numbers.sum.to_f / @numbers.length
 
   def calculate_trend_line(x_values)
     n = @numbers.length

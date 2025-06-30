@@ -6,7 +6,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 NumberAnalyzer is a comprehensive statistical analysis tool built in Ruby. Originally started as a refactoring exercise from beginner-level code to professional Ruby Gem, it has evolved into an enterprise-ready statistical analysis library with data visualization capabilities.
 
-**Current Status**: ✅ **Production Ready** - 32 statistical functions, 106+ test examples, Phase 7.6 Step 1 complete with comprehensive non-parametric tests (Kruskal-Wallis + Mann-Whitney), enterprise-level code quality
+**Current Status**: ✅ **Production Ready** - 32 statistical functions, 138+ test examples, Phase 7.7 Step 1 complete with modular BasicStats architecture and comprehensive non-parametric tests (Kruskal-Wallis + Mann-Whitney), enterprise-level code quality
 
 ## Development Commands
 
@@ -96,7 +96,7 @@ NumberAnalyzer is a comprehensive statistical analysis tool built in Ruby. Origi
 
 **Development Tools**:
 - `bundle install` - Install dependencies
-- `rspec` - Run test suite (106+ examples including 17 t-test + 10 confidence interval + 12 chi-square + ANOVA + 15 Levene + 16 Bartlett + 16 Kruskal-Wallis + 17 Mann-Whitney test cases)
+- `rspec` - Run test suite (138+ examples including 32 BasicStats unit tests + 17 t-test + 10 confidence interval + 12 chi-square + ANOVA + 15 Levene + 16 Bartlett + 16 Kruskal-Wallis + 17 Mann-Whitney test cases)
 - `bundle exec rubocop` - Code style checking (MANDATORY: zero violations)
 - `bundle exec rubocop -a` - Auto-fix style violations (run first)
 - `bundle exec rubocop [file]` - Check specific file
@@ -110,21 +110,24 @@ NumberAnalyzer is a comprehensive statistical analysis tool built in Ruby. Origi
 
 ## Current Architecture
 
-**Ruby Gem Structure** with clean separation of concerns:
+**Enhanced Ruby Gem Structure** with modular BasicStats extraction:
 
 ```
 lib/
-├── number_analyzer.rb              # Core statistical calculations
+├── number_analyzer.rb              # Core statistical calculations (1,710 lines)
 └── number_analyzer/
-    ├── cli.rb                      # CLI interface + 21 subcommands
+    ├── cli.rb                      # CLI interface + 26 subcommands
     ├── file_reader.rb              # File input handling
     ├── statistics_presenter.rb     # Output formatting
-    └── output_formatter.rb         # Advanced output formatting
+    ├── output_formatter.rb         # Advanced output formatting
+    └── statistics/                 # NEW: Modular statistics components
+        └── basic_stats.rb          # BasicStats module (sum, mean, mode, variance, std_dev)
 ```
 
 **Key Classes**:
-- **NumberAnalyzer**: Pure statistical calculations (19 functions)
-- **NumberAnalyzer::CLI**: Command-line argument processing + 20 subcommand routing
+- **NumberAnalyzer**: Pure statistical calculations (27 functions) + BasicStats module integration
+- **BasicStats**: Modular basic statistics (sum, mean, mode, variance, standard_deviation)
+- **NumberAnalyzer::CLI**: Command-line argument processing + 26 subcommand routing
 - **NumberAnalyzer::FileReader**: CSV/JSON/TXT file input
 - **NumberAnalyzer::StatisticsPresenter**: Output formatting and histogram display
 - **NumberAnalyzer::OutputFormatter**: Advanced output formatting (JSON, precision, quiet mode)
@@ -266,16 +269,18 @@ rspec                        # MUST be all tests passing
 **Phase 7.7 Goal**: 基盤リファクタリング (Plugin System Architecture 準備段階)
 
 ### 現在の課題
-- **1,727行のモノリシックファイル**: `lib/number_analyzer.rb` の可読性・保守性限界
+- **1,710行のモノリシックファイル**: `lib/number_analyzer.rb` の可読性・保守性限界 (BasicStats抽出により17行削減済み)
 - **メソッド重複リスク**: standard_normal_cdf, erf等の重複による保守負荷  
 - **単一責任原則違反**: 32個の統計機能が1クラスに集約、拡張性限界
 
-### Phase 7.7 Step 1: BasicStats モジュール抽出 🔧 次の実装対象
-**最初のモジュール分割テスト**
-- **Target**: `lib/number_analyzer/statistics/basic_stats.rb` 作成
-- **Extracted Methods**: sum, mean, median, mode, variance, standard_deviation
-- **Integration**: NumberAnalyzer クラスに `include Statistics::BasicStats` 追加
-- **Quality Gate**: 既存106テスト全通過確認（API変更なし）
+### Phase 7.7 Step 1: BasicStats モジュール抽出 ✅ 完了
+**最初のモジュール分割テスト - 成功**
+- **Target**: `lib/number_analyzer/statistics/basic_stats.rb` 作成完了
+- **Extracted Methods**: sum, mean, mode, variance, standard_deviation (median は percentile 依存のため保留)
+- **Integration**: NumberAnalyzer クラスに `include BasicStats` 追加完了
+- **Quality Gate**: 既存106テスト + 新規32テスト = 138テスト全通過確認（API変更なし）
+- **Architecture**: 17行削減 (1,727 → 1,710 lines), 51行の BasicStats モジュール作成
+- **Test Coverage**: 包括的ユニットテスト追加 (`spec/number_analyzer/statistics/basic_stats_spec.rb`)
 
 ### Phase 7.7 Benefits
 - **可読性向上**: 各ファイル200-300行程度に分割
@@ -307,10 +312,10 @@ rspec                        # MUST be all tests passing
 
 ## Quick Reference
 
-**Current State**: ✅ Phase 7.6 Step 1 Complete (Non-parametric 2-group + Multi-group Comparison)
-**Next Phase**: Phase 7.7 Step 1 - BasicStats モジュール抽出 (基盤リファクタリング開始)
-**Test Count**: 106+ examples total (including 15 Levene + 16 Bartlett + 16 Kruskal-Wallis + 17 Mann-Whitney test cases)
-**RuboCop Status**: ✅ Zero violations (Mann-Whitney implementation with U-statistic and normal approximation)
+**Current State**: ✅ Phase 7.7 Step 1 Complete (BasicStats Module Architecture + Non-parametric Test Suite)
+**Next Phase**: Phase 7.7 Step 2 - MathUtils モジュール抽出 (基盤リファクタリング継続)
+**Test Count**: 138+ examples total (32 BasicStats unit tests + 15 Levene + 16 Bartlett + 16 Kruskal-Wallis + 17 Mann-Whitney + integration test cases)
+**RuboCop Status**: ✅ Zero violations (BasicStats module + Mann-Whitney implementation with modular architecture)
 **Subcommand Count**: 26 total (7 basic + 6 advanced + 1 correlation + 4 time series + 3 statistical test + 1 ANOVA + 2 variance homogeneity + 2 non-parametric commands)
 **CLI Options**: 16 advanced options (JSON, precision, quiet, help, window, period, paired, one-sample, population-mean, mu, level, independence, goodness-of-fit, uniform, post-hoc, alpha) across all subcommands
 
