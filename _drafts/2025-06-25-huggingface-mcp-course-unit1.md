@@ -143,6 +143,27 @@ last_modified_at: "2025-06-25 22:44:36 +0900"
 
 ---
 
+## MCP Clients
+### Understanding MCP Clients
+### User Interface Client
+#### Chat Interface Clients
+#### Interactive Development Clients
+### Configuring MCP Clients
+#### MCP Configuration Files
+##### mcp.json Structure
+##### Configuration for stdio Transport
+##### Configuration for HTTP+SSE Transport
+##### Environment Variables in Configuration
+
+#### Configuration Examples
+##### Scenario 1: Local Server Configuration
+##### Scenario 2: Remote Server Configuration
+
+### Tiny Agents Clients
+#### Setup
+#### Connecting to MCP Servers
+### Next Steps
+
 1.  **MCPクライアントの概要:** MCP（Model Context Protocol）クライアントは、AIアプリケーション（ホスト）とMCPサーバーが提供する外部機能との間の橋渡し役として機能します。ホストはAIアシスタントやIDEなどの主要なアプリケーションであり、クライアントはホスト内のMCP通信を処理する専用モジュールと考えることができます。
 
 2.  **主要なMCPクライアントの実装:** AnthropicのClaude Desktopは、様々なMCPサーバーとの統合を提供する主要なMCPクライアントの一つです。また、CursorのMCPクライアント実装は、コード編集機能との直接統合を通じてAIを活用したコーディング支援を可能にします。さらに、Continue.devは、VS CodeからMCPサーバーに接続する対話型の開発クライアントの一例です。
