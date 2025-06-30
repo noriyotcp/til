@@ -739,7 +739,7 @@ class NumberAnalyzer
 
       # ANOVA table
       output << '【分散分析表】'
-      output << format('%-12s %12s %8s %12s %12s', '変動要因', '平方和', '自由度', '平均平方', 'F値')
+      output << '変動要因                  平方和      自由度         平均平方           F値'
       output << ('-' * 60)
 
       ss_between = apply_precision(anova_data[:sum_of_squares][:between], options[:precision])
@@ -752,9 +752,15 @@ class NumberAnalyzer
       f_stat = apply_precision(anova_data[:f_statistic], options[:precision])
       df_between, df_within = anova_data[:degrees_of_freedom]
 
-      output << format('%-12s %12s %8d %12s %12s', '群間', ss_between, df_between, ms_between, f_stat)
-      output << format('%-12s %12s %8d %12s %12s', '群内', ss_within, df_within, ms_within, '-')
-      output << format('%-12s %12s %8d %12s %12s', '全体', ss_total, df_between + df_within, '-', '-')
+      output << format('%-<factor>12s %<ss>12s %<df>8d %<ms>12s %<f_stat>12s', factor: '群間', ss: ss_between,
+                                                                               df: df_between, ms: ms_between,
+                                                                               f_stat: f_stat)
+      output << format('%-<factor>12s %<ss>12s %<df>8d %<ms>12s %<f_stat>12s', factor: '群内', ss: ss_within,
+                                                                               df: df_within, ms: ms_within,
+                                                                               f_stat: '-')
+      output << format('%-<factor>12s %<ss>12s %<df>8d %<ms>12s %<f_stat>12s', factor: '全体', ss: ss_total,
+                                                                               df: df_between + df_within, ms: '-',
+                                                                               f_stat: '-')
       output << ''
 
       # Statistical significance
