@@ -6,7 +6,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 NumberAnalyzer is a comprehensive statistical analysis tool built in Ruby. Originally started as a refactoring exercise from beginner-level code to professional Ruby Gem, it has evolved into an enterprise-ready statistical analysis library with data visualization capabilities.
 
-**Current Status**: ✅ **Production Ready** - 31 statistical functions, 89+ test examples, Phase 7.5 Step 3 complete with Kruskal-Wallis test for non-parametric group comparison, enterprise-level code quality
+**Current Status**: ✅ **Production Ready** - 31 statistical functions, 89+ test examples, Phase 7.5 complete with comprehensive non-parametric group comparison (Kruskal-Wallis), enterprise-level code quality
 
 ## Development Commands
 
@@ -257,10 +257,33 @@ rspec                        # MUST be all tests passing
 - Settings prohibit `git commit` commands for stability
 - User must manually run `git commit` with generated message
 
+## Next Development Phase - Phase 7.6
+
+**Phase 7.6 Goal**: Non-parametric Test Suite Completion
+
+### Phase 7.6 Step 1: Mann-Whitney U Test (次期実装)
+**Target**: 最も基本的なノンパラメトリック2群比較検定
+- **Statistical Function**: Mann-Whitney U検定 (Wilcoxon rank-sum testとも呼ばれる)
+- **Use Case**: t検定のノンパラメトリック版、2つの独立グループの分布比較
+- **Implementation Base**: Kruskal-Wallisのランク計算ロジック直接応用
+- **CLI Command**: `bundle exec number_analyzer mann-whitney group1.csv group2.csv`
+- **Expected Complexity**: Medium (既存パターン応用で実装容易)
+
+### Phase 7.6 Benefits
+- **26個目のサブコマンド**: ノンパラメトリック検定の基礎完成
+- **実用性向上**: 最も頻繁に使用される2群比較検定
+- **統計的完成度**: パラメトリック(t-test) + ノンパラメトリック(Mann-Whitney)の両方対応
+- **テスト品質**: 105+テストケース到達予定
+
+### Implementation Strategy
+1. **Reuse Existing Infrastructure**: Kruskal-Wallisのランク計算メソッド活用
+2. **Follow Established Patterns**: CLI統合、テスト、ドキュメント更新の既存プロセス踏襲
+3. **Maintain Quality Standards**: RuboCop準拠、TDD実装、包括的テスト
+
 ## Quick Reference
 
-**Current State**: ✅ Phase 7.5 Step 3 Complete (Kruskal-Wallis Test for Non-parametric Group Comparison)
-**Next Phase**: Phase 8.0 - Plugin System Architecture (see `ai-docs/ROADMAP.md`)
+**Current State**: ✅ Phase 7.5 Complete (Variance Homogeneity + Non-parametric Group Comparison)
+**Next Phase**: Phase 7.6 Step 1 - Mann-Whitney U Test Implementation (see `ai-docs/ROADMAP.md`)
 **Test Count**: 89+ examples total (including 15 Levene + 16 Bartlett + 16 Kruskal-Wallis test cases)
 **RuboCop Status**: ✅ Zero violations (Kruskal-Wallis implementation with rank-based H-statistic)
 **Subcommand Count**: 25 total (7 basic + 6 advanced + 1 correlation + 4 time series + 3 statistical test + 1 ANOVA + 2 variance homogeneity + 1 non-parametric commands)

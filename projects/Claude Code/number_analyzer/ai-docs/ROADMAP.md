@@ -132,6 +132,36 @@
 - [x] 統計的解釈機能（有意差判定、数学的正確性）
 - [x] 全CLI オプション対応（JSON、精度、quiet、help、file）とRuboCop準拠
 
+## Next Development Phase
+
+## Phase 7.6: Non-parametric Test Suite Completion 📋 実装準備完了
+
+### Phase 7.6 Step 1: Mann-Whitney U Test Implementation 🎯 次期実装
+**最も基本的なノンパラメトリック2群比較検定**
+- [ ] `mann_whitney_u_test(group1, group2)` メソッド実装
+- [ ] U統計量計算: `U1 = n1*n2 + n1*(n1+1)/2 - R1`
+- [ ] 正規近似によるz統計量計算（大標本）および正確検定（小標本）
+- [ ] 両側検定・片側検定オプション対応
+- [ ] CLI統合: `'mann-whitney' => :run_mann_whitney` コマンド追加（26個目のサブコマンド）
+- [ ] 新規テストファイル: `spec/mann_whitney_spec.rb`
+- [ ] 統計的解釈機能（効果サイズr、有意差判定）
+- [ ] 全CLI オプション対応とRuboCop準拠
+
+### Phase 7.6 Step 2: Wilcoxon Signed-Rank Test Implementation 🔮 計画段階
+**対応のある2群比較のノンパラメトリック検定**
+- [ ] `wilcoxon_signed_rank_test(before, after)` メソッド実装
+- [ ] 符号順位統計量計算とタイ補正
+- [ ] 正規近似による検定統計量計算
+- [ ] CLI統合: `'wilcoxon' => :run_wilcoxon` コマンド追加
+- [ ] 対応のあるt検定との比較機能
+
+### Phase 7.6 Step 3: Friedman Test Implementation 🔮 計画段階
+**反復測定のノンパラメトリックANOVA**
+- [ ] `friedman_test(*repeated_groups)` メソッド実装
+- [ ] χ²統計量計算: `χ² = [12/(b*k*(k+1))] * [Σ(Rj²)] - 3*b*(k+1)`
+- [ ] 反復測定データ構造対応
+- [ ] CLI統合: `'friedman' => :run_friedman` コマンド追加
+
 ### Future ANOVA Extension Features 🔮 長期計画
 - 🔮 **二元配置分散分析**: 2つの要因の主効果と交互作用
 - 🔮 **反復測定ANOVA**: 被験者内計画による分散分析
