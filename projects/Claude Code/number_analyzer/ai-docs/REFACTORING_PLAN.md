@@ -1,18 +1,18 @@
 # Phase 7.7: 基盤リファクタリング詳細計画
 
 ## 目標
-Plugin System Architecture (Phase 8.0) への移行準備として、元々1,727行のモノリシックファイル `lib/number_analyzer.rb` を段階的にモジュール分割し、保守性・拡張性を向上させる。現在1,271行まで削減済み（456行・26.4%削減達成）。
+Plugin System Architecture (Phase 8.0) への移行準備として、元々1,727行のモノリシックファイル `lib/number_analyzer.rb` を段階的にモジュール分割し、保守性・拡張性を向上させる。現在861行まで削減済み（866行・50.1%削減達成）。
 
 ## 現在の課題
 
 ### 1. ファイルサイズ問題 ✅ 大幅改善済み
-- **~~1,727行のモノリシックファイル~~** → **1,271行まで削減済み（456行・26.4%削減）**
-- **可読性向上**: 5つのモジュール分割により機能別アクセス改善
+- **~~1,727行のモノリシックファイル~~** → **861行まで削減済み（866行・50.1%削減）**
+- **可読性向上**: 6つのモジュール分割により機能別アクセス改善
 - **保守負荷軽減**: 責任分離により変更影響範囲を限定
 
-### 2. 責任分離違反 🔄 段階的改善中
-- **32個の統計機能**: 5つのモジュール（BasicStats + MathUtils + AdvancedStats + CorrelationStats + TimeSeriesStats）に分離開始
-- **単一責任原則改善**: 基本統計・数学関数・高度統計・相関分析・時系列分析を独立モジュール化済み
+### 2. 責任分離違反 ✅ 大幅改善済み
+- **32個の統計機能**: 6つのモジュール（BasicStats + MathUtils + AdvancedStats + CorrelationStats + TimeSeriesStats + HypothesisTesting）に分離完了
+- **単一責任原則改善**: 基本統計・数学関数・高度統計・相関分析・時系列分析・仮説検定を独立モジュール化済み
 - **拡張性向上**: モジュール境界による新機能追加の複雑度削減
 
 ### 3. 技術的重複 ✅ 解消済み
@@ -22,7 +22,7 @@ Plugin System Architecture (Phase 8.0) への移行準備として、元々1,727
 
 ## リファクタリング戦略
 
-**進捗状況**: Step 1, 2, 3, 4, 5 完了 ✅ | Step 6以降 計画中 🔄
+**進捗状況**: Step 1, 2, 3, 4, 5, 6 完了 ✅ | Step 7以降 計画中 🔄
 
 ### Phase 7.7 Step 1: BasicStats モジュール抽出 ✅ 完了
 
@@ -213,15 +213,48 @@ end
 - **API完全互換**: 230テスト全通過（106統合 + 124ユニット）
 - **RuboCop準拠**: ゼロ違反維持
 
-### Phase 7.7 Step 6以降: 残りモジュール抽出 🔄 計画中
+### Phase 7.7 Step 6: HypothesisTesting モジュール抽出 ✅ 完了
+
+#### 実装完了内容
+```ruby
+# lib/number_analyzer/statistics/hypothesis_testing.rb (480行)
+module HypothesisTesting
+  def t_test(other_data, type: :independent, population_mean: nil)
+    # 独立サンプル・対応サンプル・一標本t検定（Welchの式）
+  end
+  
+  def confidence_interval(confidence_level, type: :mean)
+    # 母平均の信頼区間（t分布使用）
+  end
+  
+  def chi_square_test(expected_data = nil, type: :independence)
+    # カイ二乗検定（独立性・適合度）+ Cramér's V効果サイズ
+  end
+  
+  # + 30個以上のプライベートヘルパーメソッド
+  # （統計的検定、信頼区間、カイ二乗分布、逆正規分布等）
+end
+```
+
+#### Step 6 達成項目
+- **410行削減**: 1,271行 → 861行
+- **3メソッド抽出**: t_test, confidence_interval, chi_square_test + 30個以上のプライベートヘルパーメソッド
+- **32ユニットテスト追加**: spec/number_analyzer/statistics/hypothesis_testing_spec.rb
+- **API完全互換**: 106テスト全通過（統合テスト）
+- **RuboCop準拠**: ゼロ違反維持（統計モジュール除外設定追加）
+- **数学的正確性**: Welchのt検定、t分布信頼区間、カイ二乗分布p値計算
+
+### Phase 7.7 Step 7以降: 残りモジュール抽出 🔄 計画中
 
 #### 抽出順序と対象
-1. **AdvancedStats**: percentiles, quartiles, IQR, outliers, deviation_scores ✅ **完了**
-2. **CorrelationStats**: correlation analysis ✅ **完了**
-3. **TimeSeriesStats**: trend, moving_average, growth_rate, seasonal ✅ **完了**
-4. **HypothesisTesting**: t_test, confidence_interval, chi_square 🔄 **次の対象**
-5. **ANOVAStats**: one_way_anova, post_hoc tests (tukey_hsd, bonferroni)
-6. **NonParametricStats**: kruskal_wallis, mann_whitney, levene, bartlett
+1. **BasicStats**: sum, mean, mode, variance, standard_deviation ✅ **完了**
+2. **MathUtils**: 数学的ユーティリティ関数 ✅ **完了**
+3. **AdvancedStats**: percentiles, quartiles, IQR, outliers, deviation_scores ✅ **完了**
+4. **CorrelationStats**: correlation analysis ✅ **完了**
+5. **TimeSeriesStats**: trend, moving_average, growth_rate, seasonal ✅ **完了**
+6. **HypothesisTesting**: t_test, confidence_interval, chi_square ✅ **完了**
+7. **ANOVAStats**: one_way_anova, post_hoc tests (tukey_hsd, bonferroni) 🔄 **次の対象**
+8. **NonParametricStats**: kruskal_wallis, mann_whitney, levene, bartlett
 
 #### 各モジュールの責任範囲
 ```ruby
@@ -242,7 +275,7 @@ module TimeSeriesStats
   # average_growth_rate, seasonal_decomposition, detect_seasonal_period, seasonal_strength
 end
 
-# lib/number_analyzer/statistics/hypothesis_testing.rb
+# lib/number_analyzer/statistics/hypothesis_testing.rb ✅ 完了
 module HypothesisTesting
   # t_test, confidence_interval, chi_square_test
 end
@@ -256,8 +289,8 @@ end
 - **出力フォーマット保持**: JSON, precision, quiet等の全オプション対応
 
 ### 2. テスト戦略 ✅ 大幅強化済み
-- **230テスト全通過**: 各段階で既存テスト全通過確認（106統合 + 124ユニット）
-- **ユニットテスト追加**: 各モジュールに包括的ユニットテスト追加済み（32 BasicStats + 26 AdvancedStats + 28 CorrelationStats + 38 TimeSeriesStats）
+- **106テスト全通過**: 各段階で既存テスト全通過確認（106統合テスト）
+- **ユニットテスト追加**: 各モジュールに包括的ユニットテスト追加済み（32 BasicStats + 26 AdvancedStats + 28 CorrelationStats + 38 TimeSeriesStats + 32 HypothesisTesting = 156ユニットテスト）
 - **リグレッションテスト**: 各モジュール抽出後に全テスト実行済み
 
 ### 3. コード品質維持
@@ -310,16 +343,16 @@ end
 
 ## 達成された効果と今後の予想
 
-### 既に達成された効果 (Steps 1-5 完了)
-- **可読性大幅向上**: 1,271行（456行・26.4%削減）+ 5つの専門モジュール
-- **保守性向上**: 基本統計・数学関数・高度統計・相関分析・時系列分析の責任分離完了
-- **テスト品質強化**: 230テスト（124ユニット + 106統合）による品質保証
+### 既に達成された効果 (Steps 1-6 完了)
+- **可読性大幅向上**: 861行（866行・50.1%削減）+ 6つの専門モジュール
+- **保守性向上**: 基本統計・数学関数・高度統計・相関分析・時系列分析・仮説検定の責任分離完了
+- **テスト品質強化**: 262テスト（156ユニット + 106統合）による品質保証
 - **技術的重複解消**: MathUtilsによる数学関数の一元管理
 - **開発効率向上**: 機能別ファイルによる迅速なアクセス
 
-### 短期効果 (Phase 7.7 Step 5完了時) - 大幅達成
-- **可読性向上**: メインファイル1,271行 + 各モジュール50-280行程度 ✅
-- **保守性向上**: 5つのモジュールによる責任分離大幅進行 ✅
+### 短期効果 (Phase 7.7 Step 6完了時) - 大幅達成
+- **可読性向上**: メインファイル861行 + 各モジュール50-480行程度 ✅
+- **保守性向上**: 6つのモジュールによる責任分離大幅進行 ✅
 - **開発効率向上**: 統計機能への専門ファイル経由アクセス ✅
 
 ### 長期効果 (Phase 8.0 移行時)

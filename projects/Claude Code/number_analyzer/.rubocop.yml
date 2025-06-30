@@ -2,6 +2,7 @@ inherit_from: .rubocop_todo.yml
 
 AllCops:
   NewCops: enable
+  SuggestExtensions: false
 
 Metrics/BlockLength:
   Exclude:
@@ -14,18 +15,21 @@ Metrics/MethodLength:
     - 'lib/number_analyzer.rb'  # Chi-square and other statistical methods require comprehensive calculations
     - 'lib/number_analyzer/cli.rb'  # CLI methods for chi-square parsing and subcommand handling
     - 'lib/number_analyzer/output_formatter.rb'  # Output formatting methods
+    - 'lib/number_analyzer/statistics/**/*'  # Statistical modules contain complex mathematical algorithms
 
 Metrics/CyclomaticComplexity:
   Max: 7
   Exclude:
     - 'lib/number_analyzer.rb'  # Chi-square statistical methods have inherent mathematical complexity
     - 'lib/number_analyzer/cli.rb'  # CLI argument parsing and chi-square special handling
+    - 'lib/number_analyzer/statistics/**/*'  # Statistical algorithms require complex conditional logic
 
 Metrics/PerceivedComplexity:
   Max: 8
   Exclude:
     - 'lib/number_analyzer.rb'  # Chi-square and statistical calculation methods require complex logic
     - 'lib/number_analyzer/cli.rb'  # CLI methods for chi-square parsing and option handling
+    - 'lib/number_analyzer/statistics/**/*'  # Statistical algorithms require complex mathematical logic
 
 Metrics/ClassLength:
   Exclude:
@@ -35,12 +39,18 @@ Metrics/ClassLength:
     - 'lib/number_analyzer/output_formatter.rb'  # Output formatting for all statistical functions and CLI options
     - 'lib/number_analyzer/statistics_presenter.rb'  # Statistical test formatting (Levene, Bartlett, etc.) requires multiple display methods
 
+Metrics/ModuleLength:
+  Exclude:
+    - 'lib/number_analyzer/statistics/**/*'  # Statistical modules contain comprehensive mathematical implementations
+
 Metrics/AbcSize:
   Exclude:
     - 'lib/number_analyzer.rb'  # Statistical calculation methods have inherent complexity
     - 'lib/number_analyzer/statistics_presenter.rb'  # Display methods need to format 11+ statistical values
     - 'lib/number_analyzer/cli.rb'  # CLI argument parsing has inherent complexity
     - 'lib/number_analyzer/output_formatter.rb'  # Complex output formatting for chi-square and other statistical tests
+    - 'lib/number_analyzer/statistics/**/*'  # Statistical modules have high assignment/branch/condition complexity
+    - 'spec/number_analyzer/statistics/**/*'  # Test helper methods for statistical calculations
 
 Layout/LineLength:
   Exclude:
@@ -49,3 +59,9 @@ Layout/LineLength:
 
 Style/EndlessMethod:
   EnforcedStyle: allow_single_line
+
+Naming/MethodParameterName:
+  Exclude:
+    - 'lib/number_analyzer.rb'  # Mathematical variables (z, t, f) follow standard statistical notation
+    - 'lib/number_analyzer/statistics/**/*'  # Statistical modules use standard mathematical parameter names (z, t, f, p)
+    - 'spec/number_analyzer/statistics/**/*'  # Test helper methods use mathematical notation

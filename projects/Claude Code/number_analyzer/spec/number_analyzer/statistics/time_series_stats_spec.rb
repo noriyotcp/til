@@ -363,7 +363,7 @@ RSpec.describe TimeSeriesStats do
       it 'handles negative numbers correctly' do
         growth_rates = subject.growth_rates
         expect(growth_rates.length).to eq(4)
-        expect(growth_rates[0]).to eq(-40.0)  # (-3 - (-5)) / -5 * 100 = -40%
+        expect(growth_rates[0]).to eq(-40.0) # (-3 - (-5)) / -5 * 100 = -40%
       end
     end
   end
