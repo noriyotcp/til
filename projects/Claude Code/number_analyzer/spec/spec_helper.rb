@@ -13,6 +13,17 @@
 # it.
 #
 # See https://rubydoc.info/gems/rspec-core/RSpec/Core/Configuration
+
+# Add the lib directory to the load path
+$LOAD_PATH.unshift File.expand_path('../lib', __dir__)
+
+# Require the main files
+require 'number_analyzer'
+require 'number_analyzer/cli'
+require 'number_analyzer/file_reader'
+require 'number_analyzer/statistics_presenter'
+require 'number_analyzer/output_formatter'
+
 RSpec.configure do |config|
   # rspec-expectations config goes here. You can use an alternate
   # assertion/expectation library such as wrong or the stdlib/minitest

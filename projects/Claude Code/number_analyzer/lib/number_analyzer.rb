@@ -744,7 +744,7 @@ class NumberAnalyzer
     col_totals = (0...cols).map { |j| observed.sum { |row| row[j] } }
     grand_total = row_totals.sum
 
-    return nil if grand_total == 0
+    return nil if grand_total.zero?
 
     # Calculate expected frequencies
     expected = Array.new(rows) do |i|
@@ -754,7 +754,7 @@ class NumberAnalyzer
     end
 
     # Validate expected frequency conditions
-    expected_frequencies_valid = validate_expected_frequencies(expected.flatten)
+    expected_frequencies_valid = validate_expected_frequencies?(expected.flatten)
     warning = expected_frequencies_valid ? nil : '警告: 期待度数が5未満のセルがあります。結果の信頼性が低い可能性があります。'
 
     # Calculate chi-square statistic
@@ -764,7 +764,7 @@ class NumberAnalyzer
 
     # Calculate Cramér's V (effect size)
     min_dimension = [rows - 1, cols - 1].min
-    cramers_v = min_dimension > 0 ? Math.sqrt(chi_square / (grand_total * min_dimension)) : 0.0
+    cramers_v = min_dimension.positive? ? Math.sqrt(chi_square / (grand_total * min_dimension)) : 0.0
 
     {
       test_type: 'independence',
@@ -798,7 +798,7 @@ class NumberAnalyzer
     return nil if observed_frequencies.empty?
 
     # Validate expected frequency conditions
-    expected_frequencies_valid = validate_expected_frequencies(expected_frequencies)
+    expected_frequencies_valid = validate_expected_frequencies?(expected_frequencies)
     warning = expected_frequencies_valid ? nil : '警告: 期待度数が5未満のカテゴリがあります。結果の信頼性が低い可能性があります。'
 
     # Calculate chi-square statistic
@@ -827,7 +827,7 @@ class NumberAnalyzer
     end
   end
 
-  def validate_expected_frequencies(expected_frequencies)
+  def validate_expected_frequencies?(expected_frequencies)
     # Rule: All expected frequencies should be ≥ 5
     # Alternative: At least 80% should be ≥ 5 and minimum should be ≥ 1
     all_valid = expected_frequencies.all? { |freq| freq >= 5 }
@@ -851,10 +851,10 @@ class NumberAnalyzer
     end
   end
 
-  def calculate_chi_square_p_value_table(chi_square, df)
+  def calculate_chi_square_p_value_table(chi_square, degrees_freedom)
     # Pre-calculated critical values for common significance levels
     # Using interpolation for p-value estimation
-    critical_values = chi_square_critical_values[df] || {}
+    critical_values = chi_square_critical_values[degrees_freedom] || {}
 
     return 1.0 if chi_square <= 0
 
@@ -880,11 +880,11 @@ class NumberAnalyzer
     0.001 # Very small p-value for large chi-square values
   end
 
-  def calculate_chi_square_p_value_normal_approximation(chi_square, df)
-    # For large df, chi-square approaches normal distribution
+  def calculate_chi_square_p_value_normal_approximation(chi_square, degrees_freedom)
+    # For large degrees_freedom, chi-square approaches normal distribution
     # Using continuity correction: χ² ~ N(df, 2*df)
-    mean = df
-    variance = 2 * df
+    mean = degrees_freedom
+    variance = 2 * degrees_freedom
     std_dev = Math.sqrt(variance)
 
     z_score = (chi_square - mean) / std_dev
@@ -894,14 +894,14 @@ class NumberAnalyzer
     1.0 - normal_cdf(z_score)
   end
 
-  def normal_cdf(z)
+  def normal_cdf(z_score)
     # Standard normal cumulative distribution function approximation
-    return 0.0 if z < -6
-    return 1.0 if z > 6
+    return 0.0 if z_score < -6
+    return 1.0 if z_score > 6
 
     # Using Abramowitz and Stegun approximation
-    sign = z < 0 ? -1 : 1
-    z = z.abs
+    sign = z_score.negative? ? -1 : 1
+    z_score = z_score.abs
 
     # Constants for the approximation
     a1 = 0.254829592
@@ -911,11 +911,11 @@ class NumberAnalyzer
     a5 = 1.061405429
     p = 0.3275911
 
-    t = 1.0 / (1.0 + (p * z))
-    error_function = 1.0 - (((((((((a5 * t) + a4) * t) + a3) * t) + a2) * t) + a1) * t * Math.exp(-z * z))
+    t = 1.0 / (1.0 + (p * z_score))
+    error_function = 1.0 - (((((((((a5 * t) + a4) * t) + a3) * t) + a2) * t) + a1) * t * Math.exp(-z_score * z_score))
 
     result = 0.5 * (1 + (sign * error_function))
-    [0.0, [result, 1.0].min].max
+    result.clamp(0.0, 1.0)
   end
 
   def chi_square_critical_values

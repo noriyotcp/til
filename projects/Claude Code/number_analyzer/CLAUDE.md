@@ -6,7 +6,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 NumberAnalyzer is a comprehensive statistical analysis tool built in Ruby. Originally started as a refactoring exercise from beginner-level code to professional Ruby Gem, it has evolved into an enterprise-ready statistical analysis library with data visualization capabilities.
 
-**Current Status**: ✅ **Production Ready** - 27 statistical functions, 50 test examples (17 t-test + 10 confidence interval + 12 chi-square + 11 others), Phase 7.3 Step 3 complete with Chi-square Test analysis, enterprise-level code quality
+**Current Status**: ✅ **Production Ready** - 27 statistical functions, 42 test examples, Phase 7.3 Step 3 complete with Chi-square Test analysis, enterprise-level code quality
 
 ## Development Commands
 
@@ -209,7 +209,7 @@ rspec                        # MUST be all tests passing
 
 **Current State**: ✅ Phase 7.3 Step 3 Complete (Chi-square Test)
 **Next Phase**: Phase 7.3 Step 4 - ANOVA (see `ai-docs/ROADMAP.md`)
-**Test Count**: 50 examples total (17 t-test + 10 confidence interval + 12 chi-square + 11 existing statistical tests)
+**Test Count**: 42 examples total
 **RuboCop Status**: Full compliance (zero violations policy enforced)
 **Subcommand Count**: 21 total (7 basic + 6 advanced + 1 correlation + 4 time series + 3 statistical test commands)
 **CLI Options**: 14 advanced options (JSON, precision, quiet, help, window, period, paired, one-sample, population-mean, mu, level, independence, goodness-of-fit, uniform) across all subcommands

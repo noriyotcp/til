@@ -26,6 +26,7 @@ NumberAnalyzer provides the following statistical calculations:
 - **Seasonal Pattern Analysis** - Seasonal decomposition, period detection, and seasonal strength measurement
 - **T-Test Analysis** - Independent samples t-test (Welch's t-test), paired samples t-test, and one-sample t-test with statistical significance testing
 - **Confidence Intervals** - Calculate confidence intervals for population mean using t-distribution (small samples) and normal approximation (large samples)
+- **Chi-square Test** - Test for independence between categorical variables and goodness-of-fit to expected distributions with Cramér's V effect size
 - **Frequency Distribution** - Count occurrences of each value for data distribution analysis
 - **Histogram Display** - ASCII art visualization of frequency distribution with automatic scaling
 - **File Input Support** - Read data from CSV, JSON, and TXT files
@@ -88,6 +89,13 @@ bundle exec number_analyzer t-test --one-sample --population-mean=100 data.csv
 bundle exec number_analyzer confidence-interval 95 1 2 3 4 5
 bundle exec number_analyzer confidence-interval --level=90 --file data.csv
 bundle exec number_analyzer confidence-interval --format=json --precision=2 10 20 30
+
+# Chi-square test analysis
+bundle exec number_analyzer chi-square --independence 30 20 -- 15 35
+bundle exec number_analyzer chi-square --independence 10 20 30 -- 15 25 35 -- 20 30 40
+bundle exec number_analyzer chi-square --goodness-of-fit 8 12 10 15 10 10 10 10
+bundle exec number_analyzer chi-square --uniform 8 12 10 15 9 6
+bundle exec number_analyzer chi-square --independence --file contingency_table.csv
 ```
 
 #### Using the bin file directly
@@ -154,7 +162,7 @@ bundle exec number_analyzer histogram --help
 
 **Subcommands with Options**
 
-All 20 subcommands support the new options:
+All 21 subcommands support the new options:
 
 ```bash
 # Basic Statistics with Options

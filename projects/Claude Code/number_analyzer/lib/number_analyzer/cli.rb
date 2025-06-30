@@ -74,7 +74,46 @@ class NumberAnalyzer
     end
 
     private_class_method def self.run_subcommand(command, args)
-      options, remaining_args = parse_options(args)
+      # Special handling for chi-square to preserve '--' separators
+      if command == 'chi-square' && args.include?('--')
+        # Find where options end and data begins
+        options = default_options
+        data_start_index = 0
+
+        # Process only option flags, not data
+        args.each_with_index do |arg, index|
+          case arg
+          when '--independence'
+            options[:independence] = true
+          when '--goodness-of-fit'
+            options[:goodness_of_fit] = true
+          when '--uniform'
+            options[:uniform] = true
+          when '--format'
+            options[:format] = args[index + 1] if index + 1 < args.length
+          when '--precision'
+            options[:precision] = args[index + 1].to_i if index + 1 < args.length
+          when '--quiet'
+            options[:quiet] = true
+            options[:format] = 'quiet' unless options[:format]
+          when '--help'
+            options[:help] = true
+          when '--file', '-f'
+            options[:file] = args[index + 1] if index + 1 < args.length
+          else
+            # Found first non-option argument
+            unless arg.start_with?('--') || args[index - 1] =~ /^--(format|precision|file)$/
+              data_start_index = index
+              break
+            end
+          end
+        end
+
+        remaining_args = args[data_start_index..]
+      else
+        # Standard option parsing for other commands
+        options, remaining_args = parse_options(args)
+      end
       method_name = COMMANDS[command]
       send(method_name, remaining_args, options)
     end
@@ -172,6 +211,28 @@ class NumberAnalyzer
       puts "  bundle exec number_analyzer #{command} --format=json 1 2 3"
       puts "  bundle exec number_analyzer #{command} --precision=2 1.234 2.567"
       puts "  bundle exec number_analyzer #{command} --file data.csv"
+    end
+
+    # Show help information for chi-square command
+    private_class_method def self.show_chi_square_help
+      puts 'Usage: bundle exec number_analyzer chi-square [options] numbers...'
+      puts ''
+      puts 'Description: Perform chi-square test for independence or goodness-of-fit'
+      puts ''
+      puts 'Options:'
+      puts '  --independence    Perform independence test'
+      puts '  --goodness-of-fit Perform goodness-of-fit test'
+      puts '  --uniform        Test against uniform distribution'
+      puts '  --format json     Output in JSON format'
+      puts '  --precision N     Round to N decimal places'
+      puts '  --quiet          Minimal output (no labels)'
+      puts '  --file FILE, -f  Read numbers from file'
+      puts '  --help           Show this help'
+      puts ''
+      puts 'Examples:'
+      puts '  bundle exec number_analyzer chi-square --independence 30 20 -- 15 35'
+      puts '  bundle exec number_analyzer chi-square --goodness-of-fit observed.csv expected.csv'
+      puts '  bundle exec number_analyzer chi-square --uniform 8 12 10 15 9 6'
     end
 
     # Parse numbers from arguments and options, handling file input
@@ -856,7 +917,7 @@ class NumberAnalyzer
 
     private_class_method def self.run_chi_square(args, options = {})
       if options[:help]
-        show_help('chi-square', 'Perform chi-square test for independence or goodness-of-fit')
+        show_chi_square_help
         return
       end
 
@@ -889,14 +950,28 @@ class NumberAnalyzer
       # For independence test, we expect a 2D contingency table
       if options[:file]
         # Read contingency table from file
-        data = parse_numbers_with_options(args, options)
-        # Convert flat array to 2D contingency table (assume square for now)
-        dimension = Math.sqrt(data.length).to_i
-        if dimension * dimension != data.length
-          puts 'エラー: 独立性検定には正方形の分割表が必要です。'
+        # Try to read as CSV with multiple rows first
+        begin
+          file_path = options[:file]
+          if File.exist?(file_path)
+            lines = File.readlines(file_path)
+            contingency_table = lines.map do |line|
+              line.strip.split(',').map(&:to_f)
+            end
+            # Validate that all rows have same number of columns
+            col_count = contingency_table.first&.length
+            if contingency_table.any? { |row| row.length != col_count }
+              puts 'エラー: 分割表の各行は同じ列数である必要があります。'
+              exit 1
+            end
+          else
+            puts "エラー: ファイルが見つかりません: #{file_path}"
+            exit 1
+          end
+        rescue StandardError => e
+          puts "エラー: ファイル読み込み中にエラーが発生しました: #{e.message}"
           exit 1
         end
-        contingency_table = data.each_slice(dimension).to_a
       else
         # Parse contingency table from command line arguments
         # Expected format: rows separated by '--'
@@ -972,9 +1047,24 @@ class NumberAnalyzer
       # Add the last row
       rows << current_row.map(&:to_f) unless current_row.empty?
 
+      # Validate contingency table
       if rows.empty? || rows.any?(&:empty?)
         puts 'エラー: 有効な分割表を作成できませんでした。'
         puts '使用例: bundle exec number_analyzer chi-square --independence 30 20 -- 15 35'
+        exit 1
+      end
+
+      # Ensure we have at least 2x2 table
+      if rows.length < 2
+        puts 'エラー: 独立性検定には少なくとも2x2の分割表が必要です。'
+        puts '使用例: bundle exec number_analyzer chi-square --independence 30 20 -- 15 35'
+        exit 1
+      end
+
+      # Ensure all rows have same number of columns
+      col_count = rows.first.length
+      if rows.any? { |row| row.length != col_count }
+        puts 'エラー: 分割表の各行は同じ列数である必要があります。'
         exit 1
       end
 
