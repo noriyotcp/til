@@ -1,18 +1,18 @@
 # Phase 7.7: 基盤リファクタリング詳細計画
 
 ## 目標
-Plugin System Architecture (Phase 8.0) への移行準備として、元々1,727行のモノリシックファイル `lib/number_analyzer.rb` を段階的にモジュール分割し、保守性・拡張性を向上させる。現在1,556行まで削減済み（171行・9.9%削減達成）。
+Plugin System Architecture (Phase 8.0) への移行準備として、元々1,727行のモノリシックファイル `lib/number_analyzer.rb` を段階的にモジュール分割し、保守性・拡張性を向上させる。現在1,528行まで削減済み（199行・11.5%削減達成）。
 
 ## 現在の課題
 
 ### 1. ファイルサイズ問題 ✅ 大幅改善済み
-- **~~1,727行のモノリシックファイル~~** → **1,556行まで削減済み（171行・9.9%削減）**
-- **可読性向上**: 3つのモジュール分割により機能別アクセス改善
+- **~~1,727行のモノリシックファイル~~** → **1,528行まで削減済み（199行・11.5%削減）**
+- **可読性向上**: 4つのモジュール分割により機能別アクセス改善
 - **保守負荷軽減**: 責任分離により変更影響範囲を限定
 
 ### 2. 責任分離違反 🔄 段階的改善中
-- **32個の統計機能**: 3つのモジュール（BasicStats + MathUtils + AdvancedStats）に分離開始
-- **単一責任原則改善**: 基本統計・数学関数・高度統計を独立モジュール化済み
+- **32個の統計機能**: 4つのモジュール（BasicStats + MathUtils + AdvancedStats + CorrelationStats）に分離開始
+- **単一責任原則改善**: 基本統計・数学関数・高度統計・相関分析を独立モジュール化済み
 - **拡張性向上**: モジュール境界による新機能追加の複雑度削減
 
 ### 3. 技術的重複 ✅ 解消済み
@@ -22,7 +22,7 @@ Plugin System Architecture (Phase 8.0) への移行準備として、元々1,727
 
 ## リファクタリング戦略
 
-**進捗状況**: Step 1, 2, 3 完了 ✅ | Step 4以降 計画中 🔄
+**進捗状況**: Step 1, 2, 3, 4 完了 ✅ | Step 5以降 計画中 🔄
 
 ### Phase 7.7 Step 1: BasicStats モジュール抽出 ✅ 完了
 
@@ -141,12 +141,35 @@ end
 - **API完全互換**: 164テスト全通過（106統合 + 58ユニット）
 - **RuboCop準拠**: ゼロ違反維持
 
-### Phase 7.7 Step 4: 残りモジュール抽出 🔄 計画中
+### Phase 7.7 Step 4: CorrelationStats モジュール抽出 ✅ 完了
+
+#### 実装完了内容
+```ruby
+# lib/number_analyzer/statistics/correlation_stats.rb (54行)
+module CorrelationStats
+  def correlation(other_dataset)
+    # ピアソン相関係数計算
+  end
+  
+  def interpret_correlation(correlation_value)
+    # 相関強度解釈（日本語）
+  end
+end
+```
+
+#### Step 4 達成項目
+- **28行削減**: 1,556行 → 1,528行
+- **2メソッド抽出**: correlation, interpret_correlation
+- **32ユニットテスト追加**: spec/number_analyzer/statistics/correlation_stats_spec.rb
+- **API完全互換**: 192テスト全通過（106統合 + 86ユニット）
+- **RuboCop準拠**: ゼロ違反維持
+
+### Phase 7.7 Step 5: 残りモジュール抽出 🔄 計画中
 
 #### 抽出順序と対象
 1. **AdvancedStats**: percentiles, quartiles, IQR, outliers, deviation_scores ✅ **完了**
-2. **CorrelationStats**: correlation analysis 🔄 **次の対象**
-3. **TimeSeriesStats**: trend, moving_average, growth_rate, seasonal
+2. **CorrelationStats**: correlation analysis ✅ **完了**
+3. **TimeSeriesStats**: trend, moving_average, growth_rate, seasonal 🔄 **次の対象**
 4. **HypothesisTesting**: t_test, confidence_interval, chi_square
 5. **ANOVAStats**: one_way_anova, post_hoc tests (tukey_hsd, bonferroni)
 6. **NonParametricStats**: kruskal_wallis, mann_whitney, levene, bartlett
@@ -159,10 +182,9 @@ module AdvancedStats
   # outliers, deviation_scores
 end
 
-# lib/number_analyzer/statistics/correlation_stats.rb 🔄 次の対象
+# lib/number_analyzer/statistics/correlation_stats.rb ✅ 完了
 module CorrelationStats
-  # pearson_correlation_coefficient
-  # correlation_interpretation
+  # correlation, interpret_correlation
 end
 
 # lib/number_analyzer/statistics/time_series_stats.rb  
@@ -185,7 +207,7 @@ end
 - **出力フォーマット保持**: JSON, precision, quiet等の全オプション対応
 
 ### 2. テスト戦略 ✅ 大幅強化済み
-- **164テスト全通過**: 各段階で既存テスト全通過確認（106統合 + 58ユニット）
+- **192テスト全通過**: 各段階で既存テスト全通過確認（106統合 + 86ユニット）
 - **ユニットテスト追加**: 各モジュールに包括的ユニットテスト追加済み
 - **リグレッションテスト**: 各モジュール抽出後に全テスト実行済み
 
@@ -239,16 +261,16 @@ end
 
 ## 達成された効果と今後の予想
 
-### 既に達成された効果 (Steps 1-3 完了)
-- **可読性大幅向上**: 1,556行（171行・9.9%削減）+ 3つの専門モジュール
-- **保守性向上**: 基本統計・数学関数・高度統計の責任分離完了
-- **テスト品質強化**: 164テスト（58ユニット + 106統合）による品質保証
+### 既に達成された効果 (Steps 1-4 完了)
+- **可読性大幅向上**: 1,528行（199行・11.5%削減）+ 4つの専門モジュール
+- **保守性向上**: 基本統計・数学関数・高度統計・相関分析の責任分離完了
+- **テスト品質強化**: 192テスト（86ユニット + 106統合）による品質保証
 - **技術的重複解消**: MathUtilsによる数学関数の一元管理
 - **開発効率向上**: 機能別ファイルによる迅速なアクセス
 
-### 短期効果 (Phase 7.7 完了時) - 部分的達成
-- **可読性向上**: メインファイル1,556行 + 各モジュール50-100行程度 ✅
-- **保守性向上**: 3つのモジュールによる責任分離開始 🔄
+### 短期効果 (Phase 7.7 部分完了時) - 適度達成
+- **可読性向上**: メインファイル1,528行 + 各モジュール50-100行程度 ✅
+- **保守性向上**: 4つのモジュールによる責任分離進行 🔄
 - **開発効率向上**: 統計機能への専門ファイル経由アクセス ✅
 
 ### 長期効果 (Phase 8.0 移行時)

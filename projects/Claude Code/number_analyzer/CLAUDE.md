@@ -6,7 +6,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 NumberAnalyzer is a comprehensive statistical analysis tool built in Ruby. Originally started as a refactoring exercise from beginner-level code to professional Ruby Gem, it has evolved into an enterprise-ready statistical analysis library with data visualization capabilities.
 
-**Current Status**: ✅ **Production Ready** - 32 statistical functions, 138+ test examples, Phase 7.7 Step 2 complete with modular MathUtils architecture and comprehensive non-parametric tests (Kruskal-Wallis + Mann-Whitney), enterprise-level code quality
+**Current Status**: ✅ **Production Ready** - 32 statistical functions, 192+ test examples, Phase 7.7 Step 4 complete with modular CorrelationStats architecture and comprehensive non-parametric tests (Kruskal-Wallis + Mann-Whitney), enterprise-level code quality
 
 ## Development Commands
 
@@ -114,7 +114,7 @@ NumberAnalyzer is a comprehensive statistical analysis tool built in Ruby. Origi
 
 ```
 lib/
-├── number_analyzer.rb              # Core statistical calculations (1,615 lines)
+├── number_analyzer.rb              # Core statistical calculations (1,528 lines)
 └── number_analyzer/
     ├── cli.rb                      # CLI interface + 26 subcommands
     ├── file_reader.rb              # File input handling
@@ -122,13 +122,17 @@ lib/
     ├── output_formatter.rb         # Advanced output formatting
     └── statistics/                 # NEW: Modular statistics components
         ├── basic_stats.rb          # BasicStats module (sum, mean, mode, variance, std_dev)
-        └── math_utils.rb           # MathUtils module (mathematical functions)
+        ├── math_utils.rb           # MathUtils module (mathematical functions)
+        ├── advanced_stats.rb       # AdvancedStats module (percentiles, quartiles, outliers)
+        └── correlation_stats.rb    # CorrelationStats module (correlation analysis)
 ```
 
 **Key Classes**:
 - **NumberAnalyzer**: Pure statistical calculations (27 functions) + modular component integration
 - **BasicStats**: Modular basic statistics (sum, mean, mode, variance, standard_deviation)
 - **MathUtils**: Mathematical utility functions (standard_normal_cdf, erf, t_distribution_cdf, f_distribution_p_value)
+- **AdvancedStats**: Advanced statistical analysis (percentile, quartiles, interquartile_range, outliers, deviation_scores)
+- **CorrelationStats**: Correlation analysis (correlation, interpret_correlation)
 - **NumberAnalyzer::CLI**: Command-line argument processing + 26 subcommand routing
 - **NumberAnalyzer::FileReader**: CSV/JSON/TXT file input
 - **NumberAnalyzer::StatisticsPresenter**: Output formatting and histogram display
@@ -271,7 +275,7 @@ rspec                        # MUST be all tests passing
 **Phase 7.7 Goal**: 基盤リファクタリング (Plugin System Architecture 準備段階)
 
 ### 現在の課題
-- **1,615行のモノリシックファイル**: `lib/number_analyzer.rb` の可読性・保守性限界 (BasicStats + MathUtils抽出により112行削減済み)
+- **1,528行のモノリシックファイル**: `lib/number_analyzer.rb` の可読性・保守性限界 (4モジュール抽出により199行削減済み)
 - **メソッド重複リスク**: standard_normal_cdf, erf等の重複による保守負荷  
 - **単一責任原則違反**: 32個の統計機能が1クラスに集約、拡張性限界
 
@@ -323,10 +327,10 @@ rspec                        # MUST be all tests passing
 
 ## Quick Reference
 
-**Current State**: ✅ Phase 7.7 Step 2 Complete (MathUtils Module Architecture + Mathematical Function Consolidation)
-**Next Phase**: Phase 7.7 Step 3 - AdvancedStats モジュール抽出 (基盤リファクタリング継続)
-**Test Count**: 138+ examples total (32 BasicStats unit tests + 15 Levene + 16 Bartlett + 16 Kruskal-Wallis + 17 Mann-Whitney + integration test cases)
-**RuboCop Status**: ✅ Zero violations (BasicStats + MathUtils modular architecture with mathematical function consolidation)
+**Current State**: ✅ Phase 7.7 Step 4 Complete (CorrelationStats Module Architecture + Correlation Analysis Extraction)
+**Next Phase**: Phase 7.7 Step 5 - TimeSeriesStats モジュール抽出 (基盤リファクタリング継続)
+**Test Count**: 192+ examples total (86 unit tests: 32 BasicStats + 26 AdvancedStats + 28 CorrelationStats + 106 integration test cases)
+**RuboCop Status**: ✅ Minimal violations (4 modular architecture with BasicStats + MathUtils + AdvancedStats + CorrelationStats)
 **Subcommand Count**: 26 total (7 basic + 6 advanced + 1 correlation + 4 time series + 3 statistical test + 1 ANOVA + 2 variance homogeneity + 2 non-parametric commands)
 **CLI Options**: 16 advanced options (JSON, precision, quiet, help, window, period, paired, one-sample, population-mean, mu, level, independence, goodness-of-fit, uniform, post-hoc, alpha) across all subcommands
 

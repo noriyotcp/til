@@ -218,17 +218,9 @@ class NumberAnalyzer
     end
 
     private_class_method def self.interpret_correlation(value)
-      abs_value = value.abs
-      case abs_value
-      when 0.8..1.0
-        value.positive? ? '強い正の相関' : '強い負の相関'
-      when 0.5..0.8
-        value.positive? ? '中程度の正の相関' : '中程度の負の相関'
-      when 0.3..0.5
-        value.positive? ? '弱い正の相関' : '弱い負の相関'
-      else
-        'ほぼ無相関'
-      end
+      # Create a dummy NumberAnalyzer instance to access the interpret_correlation method
+      analyzer = NumberAnalyzer.new([])
+      analyzer.interpret_correlation(value)
     end
 
     private_class_method def self.format_moving_average_json(moving_avg_data, options)
