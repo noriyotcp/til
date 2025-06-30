@@ -194,6 +194,16 @@
 - [ ] percentile依存関係の整理とモジュール化
 - [ ] 高度統計分析の一元管理
 
+### Phase 7.7 後続ステップ
+**詳細な実装計画とモジュール仕様は `ai-docs/REFACTORING_PLAN.md` を参照**
+
+残りのモジュール抽出順序:
+- Step 4: CorrelationStats Module
+- Step 5: TimeSeriesStats Module  
+- Step 6: HypothesisTesting Module
+- Step 7: ANOVAStats Module
+- Step 8: NonParametricStats Module
+
 ### Phase 7.6 Step 2: Wilcoxon Signed-Rank Test Implementation 🔮 計画段階
 **対応のある2群比較のノンパラメトリック検定**
 - [ ] `wilcoxon_signed_rank_test(before, after)` メソッド実装
