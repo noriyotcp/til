@@ -202,10 +202,93 @@ class NumberAnalyzer
       "#{chi_square_stat} #{p_value}"
     end
 
+    def self.format_kruskal_wallis_test(result, options = {})
+      case options[:format]
+      when 'json'
+        format_kruskal_wallis_test_json(result, options)
+      when 'quiet'
+        format_kruskal_wallis_test_quiet(result, options)
+      else
+        format_kruskal_wallis_test_verbose(result, options)
+      end
+    end
+
+    def self.format_kruskal_wallis_test_verbose(result, options = {})
+      precision = options[:precision] || 6
+
+      output = []
+      output << build_kruskal_wallis_header
+      output << build_kruskal_wallis_statistics(result, precision)
+      output << build_kruskal_wallis_interpretation(result)
+      output << build_kruskal_wallis_notes
+
+      output.compact.join("\n")
+    end
+
+    def self.format_kruskal_wallis_test_json(result, options = {})
+      precision = options[:precision] || 6
+
+      formatted_result = {
+        test_type: result[:test_type],
+        h_statistic: result[:h_statistic].round(precision),
+        p_value: result[:p_value].round(precision),
+        degrees_of_freedom: result[:degrees_of_freedom],
+        significant: result[:significant],
+        interpretation: result[:interpretation],
+        group_sizes: result[:group_sizes],
+        total_n: result[:total_n]
+      }
+
+      JSON.generate(formatted_result)
+    end
+
+    def self.format_kruskal_wallis_test_quiet(result, options = {})
+      precision = options[:precision] || 6
+      h_stat = result[:h_statistic].round(precision)
+      p_value = result[:p_value].round(precision)
+      "#{h_stat} #{p_value}"
+    end
+
+    def self.build_kruskal_wallis_header
+      '=== Kruskal-Wallis H検定 ==='
+    end
+
+    def self.build_kruskal_wallis_statistics(result, precision)
+      [
+        "H統計量: #{result[:h_statistic].round(precision)}",
+        "自由度: #{result[:degrees_of_freedom]}",
+        "p値: #{result[:p_value].round(precision)}",
+        "総サンプル数: #{result[:total_n]}",
+        "グループサイズ: #{result[:group_sizes].join(', ')}"
+      ].join("\n")
+    end
+
+    def self.build_kruskal_wallis_interpretation(result)
+      significance = result[:significant] ? '**有意**' : '非有意'
+      [
+        "結果: #{significance} (α = 0.05)",
+        "解釈: #{result[:interpretation]}"
+      ].join("\n")
+    end
+
+    def self.build_kruskal_wallis_notes
+      [
+        '',
+        '注意事項:',
+        '・ Kruskal-Wallis検定はノンパラメトリック検定です',
+        '・ 正規分布の仮定は不要ですが、同一の分布形状を仮定します',
+        '・ 有意差が見つかった場合は、事後検定（Dunn検定など）を検討してください'
+      ].join("\n")
+    end
+
     private_class_method :format_mode, :format_outliers, :format_deviation_scores, :display_histogram,
                          :format_levene_test_verbose, :format_levene_test_json, :format_levene_test_quiet,
                          :format_bartlett_test_verbose, :format_bartlett_test_json, :format_bartlett_test_quiet,
                          :build_bartlett_header, :build_bartlett_statistics,
-                         :build_bartlett_interpretation, :build_bartlett_notes
+                         :build_bartlett_interpretation, :build_bartlett_notes,
+                         :format_kruskal_wallis_test_verbose, :format_kruskal_wallis_test_json,
+                         :format_kruskal_wallis_test_quiet, :build_kruskal_wallis_header,
+                         :build_kruskal_wallis_statistics, :build_kruskal_wallis_interpretation,
+                         :build_kruskal_wallis_notes
   end
 end

@@ -630,6 +630,81 @@ class NumberAnalyzer
     }
   end
 
+  def kruskal_wallis_test(*groups)
+    # Validate input - need at least 2 groups
+    groups = groups.compact
+    groups = groups.reject { |group| group.is_a?(Array) && group.empty? }
+
+    return nil if groups.length < 2
+
+    # Ensure each group has at least one value and is an array
+    groups.each do |group|
+      return nil unless group.is_a?(Array)
+      return nil if group.empty?
+    end
+
+    # Calculate basic parameters
+    k = groups.length # number of groups
+    n_total = groups.flatten.length # total sample size
+    group_sizes = groups.map(&:length)
+
+    # Combine all values and calculate ranks
+    all_values = groups.flatten
+    all_values_with_group_index = []
+
+    groups.each_with_index do |group, group_idx|
+      group.each do |value|
+        all_values_with_group_index << [value, group_idx]
+      end
+    end
+
+    # Sort by value and assign ranks
+    sorted_values = all_values_with_group_index.sort_by(&:first)
+    ranks = calculate_ranks_with_ties(sorted_values.map(&:first))
+
+    # Calculate rank sums for each group
+    rank_sums = Array.new(k, 0.0)
+    sorted_values.each_with_index do |(_value, group_idx), i|
+      rank_sums[group_idx] += ranks[i]
+    end
+
+    # Calculate H statistic
+    # H = [12/(N(N+1))] * [Σ(Ri²/ni)] - 3(N+1)
+    sum_rank_squares_over_n = rank_sums.each_with_index.sum do |rank_sum, i|
+      (rank_sum**2) / group_sizes[i].to_f
+    end
+
+    h_statistic = ((12.0 / (n_total * (n_total + 1))) * sum_rank_squares_over_n) - (3 * (n_total + 1))
+
+    # Apply tie correction if there are ties
+    h_statistic = apply_tie_correction_to_h(h_statistic, all_values)
+
+    # Degrees of freedom
+    df = k - 1
+
+    # Calculate p-value using chi-square distribution
+    p_value = calculate_chi_square_p_value(h_statistic, df)
+
+    # Determine significance and interpretation
+    significant = p_value < 0.05
+    interpretation = if significant
+                       'グループ間に統計的有意差が認められる（中央値が等しくない）'
+                     else
+                       'グループ間に統計的有意差は認められない（中央値が等しいと考えられる）'
+                     end
+
+    {
+      test_type: 'Kruskal-Wallis H Test',
+      h_statistic: h_statistic.round(6),
+      p_value: p_value.round(6),
+      degrees_of_freedom: df,
+      significant: significant,
+      interpretation: interpretation,
+      group_sizes: group_sizes,
+      total_n: n_total
+    }
+  end
+
   private
 
   def average_value = @numbers.sum.to_f / @numbers.length
@@ -1486,5 +1561,53 @@ class NumberAnalyzer
 
     mean = array.sum.to_f / array.length
     array.sum { |x| (x - mean)**2 } / (array.length - 1)
+  end
+
+  def calculate_ranks_with_ties(values)
+    # Sort values with original indices to handle ties properly
+    sorted_with_index = values.each_with_index.sort_by(&:first)
+    ranks = Array.new(values.length)
+
+    i = 0
+    while i < sorted_with_index.length
+      # Find the extent of the current tie group
+      current_value = sorted_with_index[i][0]
+      tie_start = i
+      tie_end = i
+
+      tie_end += 1 while tie_end < sorted_with_index.length && sorted_with_index[tie_end][0] == current_value
+
+      # Calculate average rank for the tie group
+      # Ranks are 1-indexed, so we add 1 to the starting position
+      average_rank = (tie_start + tie_end + 1).to_f / 2.0
+
+      # Assign the average rank to all values in the tie group
+      (tie_start...tie_end).each do |j|
+        original_index = sorted_with_index[j][1]
+        ranks[original_index] = average_rank
+      end
+
+      i = tie_end
+    end
+
+    ranks
+  end
+
+  def apply_tie_correction_to_h(h_statistic, all_values)
+    # Count occurrences of each value to identify ties
+    value_counts = all_values.tally
+
+    # Calculate tie correction factor
+    # C = 1 - [Σ(ti³ - ti)] / [N³ - N]
+    # where ti is the number of tied observations for each distinct value
+    n_total = all_values.length
+    tie_sum = value_counts.values.sum { |count| (count**3) - count }
+
+    return h_statistic if tie_sum.zero? # No ties, no correction needed
+
+    correction_factor = 1.0 - (tie_sum.to_f / ((n_total**3) - n_total))
+
+    # Apply correction: H_corrected = H / C
+    h_statistic / correction_factor
   end
 end

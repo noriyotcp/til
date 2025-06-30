@@ -6,7 +6,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 NumberAnalyzer is a comprehensive statistical analysis tool built in Ruby. Originally started as a refactoring exercise from beginner-level code to professional Ruby Gem, it has evolved into an enterprise-ready statistical analysis library with data visualization capabilities.
 
-**Current Status**: ✅ **Production Ready** - 30 statistical functions, 73+ test examples, Phase 7.5 Step 2 complete with Bartlett test for variance homogeneity, enterprise-level code quality
+**Current Status**: ✅ **Production Ready** - 31 statistical functions, 89+ test examples, Phase 7.5 Step 3 complete with Kruskal-Wallis test for non-parametric group comparison, enterprise-level code quality
 
 ## Development Commands
 
@@ -84,9 +84,15 @@ NumberAnalyzer is a comprehensive statistical analysis tool built in Ruby. Origi
 - `bundle exec number_analyzer bartlett --format=json --precision=3 1 2 3 -- 4 5 6 -- 7 8 9` (JSON output with precision)
 - `bundle exec number_analyzer bartlett --quiet 1 2 3 -- 4 5 6 -- 7 8 9` (quiet output for scripting)
 
+**Non-parametric Tests** (Phase 7.5):
+- `bundle exec number_analyzer kruskal-wallis 1 2 3 -- 4 5 6 -- 7 8 9` (Kruskal-Wallis test for comparing medians, non-parametric ANOVA)
+- `bundle exec number_analyzer kruskal-wallis --file group1.csv group2.csv group3.csv` (Kruskal-Wallis test with file input)
+- `bundle exec number_analyzer kruskal-wallis --format=json --precision=3 1 2 3 -- 4 5 6 -- 7 8 9` (JSON output with precision)
+- `bundle exec number_analyzer kruskal-wallis --quiet 1 2 3 -- 4 5 6 -- 7 8 9` (quiet output for scripting)
+
 **Development Tools**:
 - `bundle install` - Install dependencies
-- `rspec` - Run test suite (73+ examples including 17 t-test + 10 confidence interval + 12 chi-square + ANOVA + 15 Levene + 16 Bartlett test cases)
+- `rspec` - Run test suite (89+ examples including 17 t-test + 10 confidence interval + 12 chi-square + ANOVA + 15 Levene + 16 Bartlett + 16 Kruskal-Wallis test cases)
 - `bundle exec rubocop` - Code style checking (MANDATORY: zero violations)
 - `bundle exec rubocop -a` - Auto-fix style violations (run first)
 - `bundle exec rubocop [file]` - Check specific file
@@ -253,11 +259,11 @@ rspec                        # MUST be all tests passing
 
 ## Quick Reference
 
-**Current State**: ✅ Phase 7.5 Step 2 Complete (Bartlett Test for Variance Homogeneity)
-**Next Phase**: Phase 7.5 Step 3 - Kruskal-Wallis Test Implementation (see `ai-docs/ROADMAP.md`)
-**Test Count**: 73+ examples total (including 15 Levene + 16 Bartlett test cases)
-**RuboCop Status**: ✅ Zero violations (Bartlett implementation with chi-square distribution)
-**Subcommand Count**: 24 total (7 basic + 6 advanced + 1 correlation + 4 time series + 3 statistical test + 1 ANOVA + 2 variance homogeneity commands)
+**Current State**: ✅ Phase 7.5 Step 3 Complete (Kruskal-Wallis Test for Non-parametric Group Comparison)
+**Next Phase**: Phase 8.0 - Plugin System Architecture (see `ai-docs/ROADMAP.md`)
+**Test Count**: 89+ examples total (including 15 Levene + 16 Bartlett + 16 Kruskal-Wallis test cases)
+**RuboCop Status**: ✅ Zero violations (Kruskal-Wallis implementation with rank-based H-statistic)
+**Subcommand Count**: 25 total (7 basic + 6 advanced + 1 correlation + 4 time series + 3 statistical test + 1 ANOVA + 2 variance homogeneity + 1 non-parametric commands)
 **CLI Options**: 16 advanced options (JSON, precision, quiet, help, window, period, paired, one-sample, population-mean, mu, level, independence, goodness-of-fit, uniform, post-hoc, alpha) across all subcommands
 
 ## Documentation Structure

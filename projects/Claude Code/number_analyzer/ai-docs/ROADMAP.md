@@ -33,7 +33,7 @@
 - [x] StatisticsPresenterへの自動統合
 - [x] 包括的テストスイート（12テストケース）
 
-**現在の成果**: 73テスト実行例、30統計指標、Phase 7.5 Step 2完全実装、企業レベル品質
+**現在の成果**: 89+テスト実行例、31統計指標、Phase 7.5 Step 3完全実装、企業レベル品質
 
 ### Phase 6: CLI Subcommands Implementation ✅ 完了
 - [x] 13個の統計サブコマンド実装 (median, mean, mode, sum, min, max, histogram, outliers, percentile, quartiles, variance, std, deviation-scores)
@@ -121,16 +121,16 @@
 - [x] 全CLI オプション対応（JSON、精度、quiet、help、file）
 - [x] TDD実装とRuboCop準拠
 
-### Phase 7.5 Step 3: Kruskal-Wallis Test Implementation 🔮 計画段階
+### Phase 7.5 Step 3: Kruskal-Wallis Test Implementation ✅ 完了
 **ノンパラメトリックANOVA代替 (正規性仮定不要)**
-- [ ] `kruskal_wallis_test(*groups)` メソッド実装
-- [ ] H統計量計算: `H = [12/(N(N+1))] * [Σ(R²ᵢ/nᵢ)] - 3(N+1)`
-- [ ] 順位(ランク)計算とタイ補正アルゴリズム
-- [ ] カイ二乗分布 χ²(k-1) によるp値計算
-- [ ] CLI統合: `'kruskal-wallis' => :run_kruskal_wallis` コマンド追加
-- [ ] 新規テストファイル: `spec/kruskal_wallis_spec.rb`
-- [ ] 統計的解釈機能（効果サイズ、有意差判定）
-- [ ] 全CLI オプション対応とRuboCop準拠
+- [x] `kruskal_wallis_test(*groups)` メソッド実装
+- [x] H統計量計算: `H = [12/(N(N+1))] * [Σ(R²ᵢ/nᵢ)] - 3(N+1)`
+- [x] 順位(ランク)計算とタイ補正アルゴリズム
+- [x] カイ二乗分布 χ²(k-1) によるp値計算
+- [x] CLI統合: `'kruskal-wallis' => :run_kruskal_wallis` コマンド追加（25個目のサブコマンド）
+- [x] 新規テストファイル: `spec/kruskal_wallis_spec.rb` (16 test cases)
+- [x] 統計的解釈機能（有意差判定、数学的正確性）
+- [x] 全CLI オプション対応（JSON、精度、quiet、help、file）とRuboCop準拠
 
 ### Future ANOVA Extension Features 🔮 長期計画
 - 🔮 **二元配置分散分析**: 2つの要因の主効果と交互作用
