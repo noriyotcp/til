@@ -2,6 +2,7 @@
 
 require_relative 'number_analyzer/statistics_presenter'
 require_relative 'number_analyzer/statistics/basic_stats'
+require_relative 'number_analyzer/statistics/math_utils'
 
 # 数値配列の統計を計算するプログラム
 class NumberAnalyzer
@@ -352,7 +353,7 @@ class NumberAnalyzer
     f_statistic = ms_within.zero? ? Float::INFINITY : ms_between / ms_within
 
     # Calculate p-value using F-distribution approximation
-    p_value = calculate_f_distribution_p_value(f_statistic, df_between, df_within)
+    p_value = MathUtils.calculate_f_distribution_p_value(f_statistic, df_between, df_within)
 
     # Calculate effect sizes
     eta_squared = ss_total.zero? ? 0.0 : ss_between / ss_total
@@ -505,7 +506,7 @@ class NumberAnalyzer
                   end
 
     # Calculate p-value using F-distribution
-    p_value = calculate_f_distribution_p_value(f_statistic, df_between, df_within)
+    p_value = MathUtils.calculate_f_distribution_p_value(f_statistic, df_between, df_within)
 
     # Determine significance and interpretation
     significant = p_value < 0.05
@@ -751,7 +752,7 @@ class NumberAnalyzer
     end
 
     # Two-tailed p-value using normal distribution (same for both cases)
-    p_value = 2 * (1 - standard_normal_cdf(z_statistic.abs))
+    p_value = 2 * (1 - MathUtils.standard_normal_cdf(z_statistic.abs))
 
     # Calculate effect size (r = z / sqrt(N))
     effect_size = z_statistic.abs / Math.sqrt(n_total)
@@ -977,47 +978,11 @@ class NumberAnalyzer
     else
       # Simple approximation for small samples
       # This is not as accurate as proper t-distribution but provides reasonable estimates
-      p_one_tail = approximate_t_distribution_cdf(abs_t, degrees_of_freedom)
+      p_one_tail = MathUtils.approximate_t_distribution_cdf(abs_t, degrees_of_freedom)
     end
 
     # Two-tailed test
     2.0 * p_one_tail
-  end
-
-  def standard_normal_cdf(z_score)
-    # Approximation of standard normal CDF using error function approximation
-    # This is reasonably accurate for most practical purposes
-    0.5 * (1.0 + erf(z_score / Math.sqrt(2.0)))
-  end
-
-  def erf(value)
-    # Approximation of error function using Abramowitz and Stegun formula
-    # Maximum error: 1.5 × 10^−7
-    a1 = 0.254829592
-    a2 = -0.284496736
-    a3 = 1.421413741
-    a4 = -1.453152027
-    a5 = 1.061405429
-    p = 0.3275911
-
-    sign = value >= 0 ? 1 : -1
-    value = value.abs
-
-    t = 1.0 / (1.0 + (p * value))
-    y = 1.0 - (((((((((a5 * t) + a4) * t) + a3) * t) + a2) * t) + a1) * t * Math.exp(-value * value))
-
-    sign * y
-  end
-
-  def approximate_t_distribution_cdf(t_value, degrees_of_freedom)
-    # Simple approximation for t-distribution
-    # Not highly accurate but sufficient for basic statistical testing
-    return 0.5 - (Math.atan(t_value) / Math::PI) if degrees_of_freedom <= 1
-
-    # For df > 1, use approximation that converges to normal distribution
-    adjustment = 1.0 + ((t_value * t_value) / (4.0 * degrees_of_freedom))
-    normal_approx = standard_normal_cdf(t_value / Math.sqrt(adjustment))
-    1.0 - normal_approx
   end
 
   def invalid_data_for_independent_test?(other_data)
@@ -1410,66 +1375,6 @@ class NumberAnalyzer
     numerator = ss_between - (df_between * ms_within)
     denominator = (ss_between + ((df_total + 1) * ms_within))
     denominator.zero? ? 0.0 : numerator / denominator
-  end
-
-  def calculate_f_distribution_p_value(f_statistic, df_numerator, df_denominator)
-    return 1.0 if f_statistic.infinite? || f_statistic.nan?
-    return 1.0 if f_statistic <= 0
-
-    # Simplified F-distribution p-value calculation using critical values
-    # This is an approximation for common cases
-    f_critical_values
-
-    # Find appropriate p-value by comparing with critical values
-    alphas = [0.001, 0.01, 0.05, 0.10, 0.25, 0.50]
-
-    alphas.each do |alpha|
-      critical_value = interpolate_f_critical_value(df_numerator, df_denominator, alpha)
-      return alpha if f_statistic <= critical_value
-    end
-
-    # If F-statistic is higher than all critical values, p < 0.001
-    0.001
-  end
-
-  def f_critical_values
-    # Simplified F-critical values for common df combinations at α = 0.05
-    # Format: [df_numerator, df_denominator] => critical_value
-    {
-      [1, 1] => 161.4, [1, 2] => 18.51, [1, 3] => 10.13, [1, 4] => 7.71, [1, 5] => 6.61,
-      [1, 10] => 4.96, [1, 20] => 4.35, [1, 30] => 4.17, [1, 40] => 4.08, [1, 60] => 4.00,
-      [2, 1] => 199.5, [2, 2] => 19.00, [2, 3] => 9.55, [2, 4] => 6.94, [2, 5] => 5.79,
-      [2, 10] => 4.10, [2, 20] => 3.49, [2, 30] => 3.32, [2, 40] => 3.23, [2, 60] => 3.15,
-      [3, 1] => 215.7, [3, 2] => 19.16, [3, 3] => 9.28, [3, 4] => 6.59, [3, 5] => 5.41,
-      [3, 10] => 3.71, [3, 20] => 3.10, [3, 30] => 2.92, [3, 40] => 2.84, [3, 60] => 2.76,
-      [4, 1] => 224.6, [4, 2] => 19.25, [4, 3] => 9.12, [4, 4] => 6.39, [4, 5] => 5.19,
-      [4, 10] => 3.48, [4, 20] => 2.87, [4, 30] => 2.69, [4, 40] => 2.61, [4, 60] => 2.53,
-      [5, 1] => 230.2, [5, 2] => 19.30, [5, 3] => 9.01, [5, 4] => 6.26, [5, 5] => 5.05,
-      [5, 10] => 3.33, [5, 20] => 2.71, [5, 30] => 2.53, [5, 40] => 2.45, [5, 60] => 2.37
-    }
-  end
-
-  def interpolate_f_critical_value(df_num, df_den, alpha)
-    # Simplified interpolation for F critical values
-    # Returns approximate critical value for F(df_num, df_den) at given alpha
-    base_critical = f_critical_values[[df_num, df_den]] ||
-                    f_critical_values[[df_num, [df_den, 60].min]] ||
-                    3.0 # Default fallback
-
-    # Adjust for different alpha levels (rough approximation)
-    if alpha <= 0.001
-      base_critical * 2.5
-    elsif alpha <= 0.01
-      base_critical * 1.5
-    elsif alpha <= 0.05
-      base_critical
-    elsif alpha <= 0.10
-      base_critical * 0.7
-    elsif alpha <= 0.25
-      base_critical * 0.4
-    else
-      base_critical * 0.2
-    end
   end
 
   def interpret_anova_results(_f_statistic, p_value, eta_squared)
