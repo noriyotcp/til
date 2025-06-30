@@ -186,14 +186,38 @@ bundle exec rubocop          # MUST be zero violations
 rspec                        # MUST be all tests passing
 ```
 
-### New Feature Implementation
-1. **Plan** - Document in `ai-docs/ROADMAP.md` if significant
+### New Feature Implementation (MANDATORY PROCESS)
+
+**重要**: 実装とドキュメント更新は一体のプロセスです。コード動作確認だけでは「未完了」です。
+
+#### 実装開始時の必須TODO作成
+```bash
+# 新機能実装時は必ずこの5つのTodoを作成:
+1. Core implementation (コアメソッド実装)
+2. CLI integration (CLIサブコマンド追加)  
+3. Test suite creation (包括的テストスイート)
+4. Documentation updates (README + ROADMAP + examples)
+5. RuboCop compliance + commit (コンプライアンス確認とコミット)
+```
+
+#### 実装順序 (MANDATORY)
+1. **Plan** - `TodoWrite`で5つの必須項目作成
 2. **TDD** - Write failing tests first
-3. **Implement** - Follow existing patterns and Ruby conventions
-4. **RuboCop Check** - Run `bundle exec rubocop` after each significant change
-5. **Test** - Ensure all 193+ tests pass
-6. **Final RuboCop** - `bundle exec rubocop -a` then verify zero violations
-7. **Document** - Update README.md and relevant documentation
+3. **Core Implement** - Follow existing patterns and Ruby conventions
+4. **📝 即座にドキュメント更新** - README.md features section, ROADMAP.md phase status
+5. **CLI Integration** - Add subcommand and CLI examples 
+6. **Test Completion** - Ensure all tests pass with comprehensive coverage
+7. **RuboCop Gate** - `bundle exec rubocop -a` then verify zero violations
+8. **Final Documentation** - Verify all docs updated and staged for commit
+
+#### ドキュメント更新必須ファイル (ALL REQUIRED)
+- **README.md**: Features section + CLI examples + subcommand count update
+- **ROADMAP.md**: Phase status complete + checkbox [x] updates + achievement numbers
+- **CLAUDE.md**: Command examples (通常は実装中に既に更新済み)
+
+#### 完了基準の再定義
+- ✅ **完了** = Code + Tests + Documentation Updates + RuboCop compliance
+- ❌ **未完了** = 動くけどドキュメント未更新の状態
 
 ### File Organization
 - **Core logic**: `lib/number_analyzer.rb`
@@ -214,7 +238,7 @@ rspec                        # MUST be all tests passing
 - **Auto-correction workflow**: Always run `bundle exec rubocop -a` first, then manual review
 - **Commit messages**: Use `/project:commit-message` to generate messages ONLY - DO NOT auto-commit
 - **Manual commits**: Only commit when user explicitly requests "commit" or "コミット"
-- **Documentation**: Update README.md features/usage after changes
+- **Documentation**: **MANDATORY** - Update README.md features/usage AND ROADMAP.md phase status immediately after implementation. Never leave code changes without documentation updates.
 - **RSpec syntax**: Use `-e "pattern"` for test filtering
 - **Mathematical precision**: Consider floating-point accuracy in tests
 - **Japanese output**: Maintain Japanese labels for user-facing output
