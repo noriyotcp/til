@@ -29,6 +29,7 @@ NumberAnalyzer provides the following statistical calculations:
 - **Chi-square Test** - Test for independence between categorical variables and goodness-of-fit to expected distributions with Cramér's V effect size
 - **Analysis of Variance (ANOVA)** - One-way ANOVA for comparing means across multiple groups with F-statistic, p-value, and effect size measures (η², ω²)
 - **Levene Test** - Test for variance homogeneity across multiple groups using Brown-Forsythe modification for robust variance equality testing
+- **Bartlett Test** - Test for variance homogeneity with high precision under normality assumptions using chi-square distribution
 - **Frequency Distribution** - Count occurrences of each value for data distribution analysis
 - **Histogram Display** - ASCII art visualization of frequency distribution with automatic scaling
 - **File Input Support** - Read data from CSV, JSON, and TXT files
@@ -112,7 +113,7 @@ number_analyzer 1 2 3 4 5
 
 #### Advanced Usage with Options (Phase 6.3)
 
-NumberAnalyzer supports advanced output formatting and control options for all 22 subcommands:
+NumberAnalyzer supports advanced output formatting and control options for all 24 subcommands:
 
 **JSON Output Format**
 ```bash
@@ -164,7 +165,7 @@ bundle exec number_analyzer histogram --help
 
 **Subcommands with Options**
 
-All 22 subcommands support the new options:
+All 24 subcommands support the new options:
 
 ```bash
 # Basic Statistics with Options
@@ -209,6 +210,12 @@ bundle exec number_analyzer levene 1 2 3 -- 4 5 6 -- 7 8 9
 bundle exec number_analyzer levene --file group1.csv group2.csv group3.csv
 bundle exec number_analyzer levene --format=json --precision=3 1 2 3 -- 4 5 6 -- 7 8 9
 bundle exec number_analyzer levene --quiet 1 2 3 -- 4 5 6 -- 7 8 9
+
+# Bartlett Test for Variance Homogeneity
+bundle exec number_analyzer bartlett 1 2 3 -- 4 5 6 -- 7 8 9
+bundle exec number_analyzer bartlett --file group1.csv group2.csv group3.csv
+bundle exec number_analyzer bartlett --format=json --precision=3 1 2 3 -- 4 5 6 -- 7 8 9
+bundle exec number_analyzer bartlett --quiet 1 2 3 -- 4 5 6 -- 7 8 9
 
 # Specialized Commands with Options
 bundle exec number_analyzer percentile 75 --format=json 1 2 3 4 5
