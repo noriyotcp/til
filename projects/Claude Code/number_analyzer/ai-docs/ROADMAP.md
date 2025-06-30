@@ -259,13 +259,29 @@
 - ✅ **1,420行削減**: 1,727行 → 307行（82.2%削減達成）
 - ✅ **品質保証**: API変更なし、分散分析の完全専門化完了
 
+### Phase 7.7 Step 8: NonParametricStats Module Extraction ✅ 完了
+**ノンパラメトリック統計検定機能のモジュール化 - 基盤リファクタリング完了**
+- [x] `lib/number_analyzer/statistics/non_parametric_stats.rb` モジュール作成（246行）
+- [x] ノンパラメトリック検定メソッド抽出: `kruskal_wallis_test`, `mann_whitney_u_test`
+- [x] ランク計算とタイ補正の専門化と3個のプライベートヘルパーメソッド抽出
+- [x] 26個の包括的ユニットテスト追加: `spec/number_analyzer/statistics/non_parametric_stats_spec.rb`
+- [x] API完全互換性維持: 106テスト全通過確認（統合テスト）
+- [x] 234行削減 (302 → 68 lines), RuboCop準拠
+- [x] ノンパラメトリック検定完全統合: Kruskal-Wallis + Mann-Whitney U検定の専門モジュール化
+
+**Phase 7.7 Step 8 達成項目**:
+- ✅ **8つのモジュール完成**: BasicStats + MathUtils + AdvancedStats + CorrelationStats + TimeSeriesStats + HypothesisTesting + ANOVAStats + NonParametricStats
+- ✅ **326テスト実行例**: 220ユニットテスト + 106統合テスト
+- ✅ **1,659行削減**: 1,727行 → 68行（96.1%削減達成）
+- ✅ **基盤リファクタリング完了**: 完全モジュラーアーキテクチャ、Phase 8.0 Plugin System Architecture準備完了
+
 ### Phase 7.7 最終ステップ
 **詳細な実装計画とモジュール仕様は `ai-docs/REFACTORING_PLAN.md` を参照**
 
-最終モジュール抽出:
+基盤リファクタリング完了:
 - Step 6: HypothesisTesting Module ✅ **完了**
 - Step 7: ANOVAStats Module ✅ **完了**
-- Step 8: NonParametricStats Module 🔧 **次の対象** (kruskal_wallis, mann_whitney)
+- Step 8: NonParametricStats Module ✅ **完了** (kruskal_wallis, mann_whitney)
 
 ### Phase 7.6 Step 2: Wilcoxon Signed-Rank Test Implementation 🔮 計画段階
 **対応のある2群比較のノンパラメトリック検定**
@@ -287,7 +303,11 @@
 - 🔮 **反復測定ANOVA**: 被験者内計画による分散分析
 - 🔮 **Friedman検定**: 反復測定のノンパラメトリック代替
 
-## Phase 8.0: Plugin System Architecture 🔮 長期計画
+## Phase 8.0: Plugin System Architecture 🚀 準備完了
+
+**Phase 7.7 基盤リファクタリング完了により、Plugin System Architecture への自然な移行パスが確立**
+
+## Phase 8.0: Plugin System Architecture 移行計画
 
 ### Plugin System Features
 - Dynamic command loading

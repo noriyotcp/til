@@ -22,7 +22,7 @@ Plugin System Architecture (Phase 8.0) への移行準備として、元々1,727
 
 ## リファクタリング戦略
 
-**進捗状況**: Step 1, 2, 3, 4, 5, 6, 7 完了 ✅ | Step 8以降 計画中 🔄
+**進捗状況**: Step 1, 2, 3, 4, 5, 6, 7, 8 完了 ✅ | 基盤リファクタリング完了 🎉
 
 ### Phase 7.7 Step 1: BasicStats モジュール抽出 ✅ 完了
 
@@ -279,7 +279,32 @@ end
 - **RuboCop準拠**: ゼロ違反維持
 - **分散分析完全統合**: ANOVA + 事後検定 + 分散等質性検定の専門モジュール化
 
-### Phase 7.7 Step 8以降: 残りモジュール抽出 🔄 計画中
+### Phase 7.7 Step 8: NonParametricStats モジュール抽出 ✅ 完了
+
+#### 実装完了内容
+```ruby
+# lib/number_analyzer/statistics/non_parametric_stats.rb (246行)
+module NonParametricStats
+  def kruskal_wallis_test(*groups)
+    # Kruskal-Wallis H検定（ノンパラメトリックANOVA）
+  end
+  
+  def mann_whitney_u_test(group1, group2)
+    # Mann-Whitney U検定（ノンパラメトリック2群比較）
+  end
+  
+  # + 3個のプライベートヘルパーメソッド
+  # （ランク計算、タイ補正、Mann-Whitney分散計算）
+end
+```
+
+#### Step 8 達成項目
+- **234行削減**: 302行 → 68行
+- **2メソッド抽出**: kruskal_wallis_test, mann_whitney_u_test + 3個のプライベートヘルパーメソッド
+- **26ユニットテスト追加**: spec/number_analyzer/statistics/non_parametric_stats_spec.rb
+- **API完全互換**: 106テスト全通過確認（統合テスト）
+- **RuboCop準拠**: ゼロ違反維持
+- **ノンパラメトリック検定完全統合**: Kruskal-Wallis + Mann-Whitney U検定の専門モジュール化
 
 #### 抽出順序と対象
 1. **BasicStats**: sum, mean, mode, variance, standard_deviation ✅ **完了**
@@ -289,7 +314,7 @@ end
 5. **TimeSeriesStats**: trend, moving_average, growth_rate, seasonal ✅ **完了**
 6. **HypothesisTesting**: t_test, confidence_interval, chi_square ✅ **完了**
 7. **ANOVAStats**: one_way_anova, post_hoc tests (tukey_hsd, bonferroni), levene_test, bartlett_test ✅ **完了**
-8. **NonParametricStats**: kruskal_wallis, mann_whitney 🔄 **次の対象**
+8. **NonParametricStats**: kruskal_wallis, mann_whitney ✅ **完了**
 
 #### 各モジュールの責任範囲
 ```ruby
@@ -383,17 +408,19 @@ end
 
 ## 達成された効果と今後の予想
 
-### 既に達成された効果 (Steps 1-7 完了)
-- **可読性大幅向上**: 307行（1,420行・82.2%削減）+ 7つの専門モジュール
-- **保守性向上**: 基本統計・数学関数・高度統計・相関分析・時系列分析・仮説検定・分散分析の責任分離完了
-- **テスト品質強化**: 300テスト（194ユニット + 106統合）による品質保証
+### 基盤リファクタリング完了効果 (Steps 1-8 完了) 🎉
+- **可読性大幅向上**: 68行（1,659行・96.1%削減）+ 8つの専門モジュール
+- **保守性向上**: 基本統計・数学関数・高度統計・相関分析・時系列分析・仮説検定・分散分析・ノンパラメトリック検定の責任分離完了
+- **テスト品質強化**: 326テスト（220ユニット + 106統合）による品質保証
 - **技術的重複解消**: MathUtilsによる数学関数の一元管理
 - **開発効率向上**: 機能別ファイルによる迅速なアクセス
+- **Plugin System準備**: 完全モジュラーアーキテクチャによるPhase 8.0移行パス確立
 
-### 短期効果 (Phase 7.7 Step 7完了時) - 大幅達成
-- **可読性向上**: メインファイル307行 + 各モジュール50-566行程度 ✅
-- **保守性向上**: 7つのモジュールによる責任分離大幅進行 ✅
-- **開発効率向上**: 統計機能への専門ファイル経由アクセス ✅
+### 短期効果 (Phase 7.7 Step 8完了時) - 目標大幅超過達成 🚀
+- **可読性向上**: メインファイル68行 + 各モジュール50-566行程度 ✅✅
+- **保守性向上**: 8つのモジュールによる完全責任分離達成 ✅✅
+- **開発効率向上**: 統計機能への専門ファイル経由アクセス ✅✅
+- **Phase 8.0準備**: Plugin System Architecture移行準備完了 🎉
 
 ### 長期効果 (Phase 8.0 移行時)
 - **拡張性向上**: プラグインベース新機能追加

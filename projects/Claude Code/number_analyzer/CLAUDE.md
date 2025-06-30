@@ -6,7 +6,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 NumberAnalyzer is a comprehensive statistical analysis tool built in Ruby. Originally started as a refactoring exercise from beginner-level code to professional Ruby Gem, it has evolved into an enterprise-ready statistical analysis library with data visualization capabilities.
 
-**Current Status**: ✅ **Production Ready** - 32 statistical functions, 300+ test examples, Phase 7.7 Step 7 complete with comprehensive modular architecture (7 modules extracted: BasicStats, MathUtils, AdvancedStats, CorrelationStats, TimeSeriesStats, HypothesisTesting, ANOVAStats), enterprise-level code quality
+**Current Status**: ✅ **Production Ready** - 32 statistical functions, 326+ test examples, Phase 7.7 Step 8 complete with fully modular architecture (8 modules extracted: BasicStats, MathUtils, AdvancedStats, CorrelationStats, TimeSeriesStats, HypothesisTesting, ANOVAStats, NonParametricStats), 96.1% code reduction achieved, enterprise-level code quality
 
 ## Development Commands
 
@@ -369,10 +369,10 @@ git status                   # README.md, ROADMAP.md, CLAUDE.md が含まれて�
 
 ## Quick Reference
 
-**Current State**: ✅ Phase 7.7 Step 7 Complete (ANOVAStats Module Architecture + ANOVA Analysis Extraction)
-**Next Phase**: Phase 7.7 Step 8 - NonParametricStats モジュール抽出 (基盤リファクタリング最終段階)
-**Test Count**: 300+ examples total (194 unit tests: 32 BasicStats + 26 AdvancedStats + 28 CorrelationStats + 38 TimeSeriesStats + 32 HypothesisTesting + 38 ANOVAStats + 106 integration test cases)
-**RuboCop Status**: ✅ Zero violations (7 modular architecture with BasicStats + MathUtils + AdvancedStats + CorrelationStats + TimeSeriesStats + HypothesisTesting + ANOVAStats)
+**Current State**: ✅ Phase 7.7 Step 8 Complete (NonParametricStats Module Architecture + Non-parametric Tests Extraction) - 基盤リファクタリング完了
+**Next Phase**: Phase 8.0 - Plugin System Architecture (プラグインシステム移行準備完了)
+**Test Count**: 326+ examples total (220 unit tests: 32 BasicStats + 26 AdvancedStats + 28 CorrelationStats + 38 TimeSeriesStats + 32 HypothesisTesting + 38 ANOVAStats + 26 NonParametricStats + 106 integration test cases)
+**RuboCop Status**: ✅ Zero violations (8 modular architecture with BasicStats + MathUtils + AdvancedStats + CorrelationStats + TimeSeriesStats + HypothesisTesting + ANOVAStats + NonParametricStats)
 **Subcommand Count**: 26 total (7 basic + 6 advanced + 1 correlation + 4 time series + 3 statistical test + 1 ANOVA + 2 variance homogeneity + 2 non-parametric commands)
 **CLI Options**: 16 advanced options (JSON, precision, quiet, help, window, period, paired, one-sample, population-mean, mu, level, independence, goodness-of-fit, uniform, post-hoc, alpha) across all subcommands
 
