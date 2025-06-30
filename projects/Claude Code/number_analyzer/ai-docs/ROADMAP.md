@@ -96,13 +96,46 @@
 
 ## Next Development Phase
 
-## Phase 7.5: Advanced ANOVA Features 🔮 計画段階
+## Phase 7.5: Advanced ANOVA Features 📋 実装準備完了
 
-### ANOVA Extension Features
-- 🔮 **分散の等質性検定**: Levene検定、Bartlett検定
+### Phase 7.5 Step 1: Levene Test Implementation 🔮 計画段階
+**分散の等質性検定 (ANOVA前提条件チェック)**
+- [ ] `levene_test(*groups)` メソッド実装（Brown-Forsythe修正版）
+- [ ] F統計量計算: `F = [(N-k)/(k-1)] * [Σnᵢ(Zᵢ - Z̄)²] / [Σᵢ Σⱼ(Zᵢⱼ - Zᵢ)²]`
+- [ ] Zᵢⱼ = |Xᵢⱼ - M̃ᵢ| による中央値ベース計算（外れ値に頑健）
+- [ ] F分布 F(k-1, N-k) によるp値計算
+- [ ] CLI統合: `'levene' => :run_levene` コマンド追加
+- [ ] 新規テストファイル: `spec/levene_test_spec.rb` (10+ test cases)
+- [ ] JSON/precision/quiet/help オプション対応
+- [ ] TDD実装（Red-Green-Refactor サイクル）
+- [ ] RuboCop準拠（ゼロ違反維持）
+
+### Phase 7.5 Step 2: Bartlett Test Implementation 🔮 計画段階
+**分散の等質性検定 (正規分布仮定下での高精度)**
+- [ ] `bartlett_test(*groups)` メソッド実装
+- [ ] カイ二乗統計量: `χ² = (1/C) * [(N-k)ln(S²ₚ) - Σ(nᵢ-1)ln(S²ᵢ)]`
+- [ ] 補正係数C計算: `C = 1 + (1/(3(k-1))) * [Σ(1/(nᵢ-1)) - 1/(N-k)]`
+- [ ] 合併分散S²ₚ計算とカイ二乗分布 χ²(k-1) によるp値
+- [ ] CLI統合: `'bartlett' => :run_bartlett` コマンド追加
+- [ ] 新規テストファイル: `spec/bartlett_test_spec.rb`
+- [ ] 全CLI オプション対応（JSON、精度、quiet、help）
+- [ ] TDD実装とRuboCop準拠
+
+### Phase 7.5 Step 3: Kruskal-Wallis Test Implementation 🔮 計画段階
+**ノンパラメトリックANOVA代替 (正規性仮定不要)**
+- [ ] `kruskal_wallis_test(*groups)` メソッド実装
+- [ ] H統計量計算: `H = [12/(N(N+1))] * [Σ(R²ᵢ/nᵢ)] - 3(N+1)`
+- [ ] 順位(ランク)計算とタイ補正アルゴリズム
+- [ ] カイ二乗分布 χ²(k-1) によるp値計算
+- [ ] CLI統合: `'kruskal-wallis' => :run_kruskal_wallis` コマンド追加
+- [ ] 新規テストファイル: `spec/kruskal_wallis_spec.rb`
+- [ ] 統計的解釈機能（効果サイズ、有意差判定）
+- [ ] 全CLI オプション対応とRuboCop準拠
+
+### Future ANOVA Extension Features 🔮 長期計画
 - 🔮 **二元配置分散分析**: 2つの要因の主効果と交互作用
 - 🔮 **反復測定ANOVA**: 被験者内計画による分散分析
-- 🔮 **ノンパラメトリック代替**: Kruskal-Wallis検定、Friedman検定
+- 🔮 **Friedman検定**: 反復測定のノンパラメトリック代替
 
 ## Phase 8.0: Plugin System Architecture 🔮 長期計画
 
