@@ -116,7 +116,96 @@ class NumberAnalyzer
       "#{f_stat} #{p_value}"
     end
 
+    def self.format_bartlett_test(result, options = {})
+      if options[:format] == 'json'
+        format_bartlett_test_json(result, options)
+      elsif options[:quiet]
+        format_bartlett_test_quiet(result, options)
+      else
+        format_bartlett_test_verbose(result, options)
+      end
+    end
+
+    def self.format_bartlett_test_verbose(result, options = {})
+      precision = options[:precision] || 6
+
+      output = []
+      output.concat(build_bartlett_header)
+      output.concat(build_bartlett_statistics(result, precision))
+      output.concat(build_bartlett_interpretation(result))
+      output.concat(build_bartlett_notes)
+
+      output.join("\n")
+    end
+
+    def self.build_bartlett_header
+      ['=== Bartlett検定結果 ===', '']
+    end
+
+    def self.build_bartlett_statistics(result, precision)
+      [
+        '検定統計量:',
+        "  カイ二乗統計量: #{result[:chi_square_statistic].round(precision)}",
+        "  p値: #{result[:p_value].round(precision)}",
+        "  自由度: #{result[:degrees_of_freedom]}",
+        "  補正係数: #{result[:correction_factor].round(precision)}",
+        "  合併分散: #{result[:pooled_variance].round(precision)}",
+        ''
+      ]
+    end
+
+    def self.build_bartlett_interpretation(result)
+      output = ['統計的判定:']
+      if result[:significant]
+        output << '  結果: **有意差あり** (p < 0.05)'
+        output << '  結論: 各グループの分散は等しくない'
+      else
+        output << '  結果: 有意差なし (p ≥ 0.05)'
+        output << '  結論: 各グループの分散は等しいと考えられる'
+      end
+      output << ''
+      output << '解釈:'
+      output << "  #{result[:interpretation]}"
+      output << ''
+    end
+
+    def self.build_bartlett_notes
+      [
+        '注意事項:',
+        '  - Bartlett検定は正規分布を仮定します',
+        '  - 正規性が満たされる場合はLevene検定より高精度です',
+        '  - この検定はANOVA分析の前提条件チェックに使用されます'
+      ]
+    end
+
+    def self.format_bartlett_test_json(result, options = {})
+      precision = options[:precision] || 6
+
+      formatted_result = {
+        test_type: result[:test_type],
+        chi_square_statistic: result[:chi_square_statistic].round(precision),
+        p_value: result[:p_value].round(precision),
+        degrees_of_freedom: result[:degrees_of_freedom],
+        significant: result[:significant],
+        interpretation: result[:interpretation],
+        correction_factor: result[:correction_factor].round(precision),
+        pooled_variance: result[:pooled_variance].round(precision)
+      }
+
+      JSON.generate(formatted_result)
+    end
+
+    def self.format_bartlett_test_quiet(result, options = {})
+      precision = options[:precision] || 6
+      chi_square_stat = result[:chi_square_statistic].round(precision)
+      p_value = result[:p_value].round(precision)
+      "#{chi_square_stat} #{p_value}"
+    end
+
     private_class_method :format_mode, :format_outliers, :format_deviation_scores, :display_histogram,
-                         :format_levene_test_verbose, :format_levene_test_json, :format_levene_test_quiet
+                         :format_levene_test_verbose, :format_levene_test_json, :format_levene_test_quiet,
+                         :format_bartlett_test_verbose, :format_bartlett_test_json, :format_bartlett_test_quiet,
+                         :build_bartlett_header, :build_bartlett_statistics,
+                         :build_bartlett_interpretation, :build_bartlett_notes
   end
 end

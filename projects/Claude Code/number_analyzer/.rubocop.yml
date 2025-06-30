@@ -29,10 +29,11 @@ Metrics/PerceivedComplexity:
 
 Metrics/ClassLength:
   Exclude:
-    - 'lib/number_analyzer.rb'              # Core statistical analysis with 16 statistical functions
+    - 'lib/number_analyzer.rb'              # Core statistical analysis with 30 statistical functions
     - 'lib/number_analyzer/file_reader.rb'  # Multi-format file reader (CSV/JSON/TXT) requires comprehensive methods
-    - 'lib/number_analyzer/cli.rb'          # CLI class requires all subcommand implementations
+    - 'lib/number_analyzer/cli.rb'          # CLI class requires all 24 subcommand implementations
     - 'lib/number_analyzer/output_formatter.rb'  # Output formatting for all statistical functions and CLI options
+    - 'lib/number_analyzer/statistics_presenter.rb'  # Statistical test formatting (Levene, Bartlett, etc.) requires multiple display methods
 
 Metrics/AbcSize:
   Exclude:

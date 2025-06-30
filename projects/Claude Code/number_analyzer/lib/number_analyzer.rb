@@ -540,6 +540,96 @@ class NumberAnalyzer
     }
   end
 
+  def bartlett_test(*groups)
+    # Validate input - need at least 2 groups
+    groups = groups.compact
+    groups = groups.reject { |group| group.is_a?(Array) && group.empty? }
+
+    return nil if groups.length < 2
+
+    # Ensure each group has at least one value and is an array
+    groups.each do |group|
+      return nil unless group.is_a?(Array)
+      return nil if group.empty?
+    end
+
+    # Calculate basic parameters
+    k = groups.length # number of groups
+    n_total = groups.flatten.length # total sample size
+    group_sizes = groups.map(&:length)
+
+    # Calculate sample variances for each group
+    group_variances = groups.map do |group|
+      next 0.0 if group.length <= 1
+
+      mean = group.sum.to_f / group.length
+      sum_squared_deviations = group.sum { |x| (x - mean)**2 }
+      sum_squared_deviations / (group.length - 1)
+    end
+
+    # Calculate pooled variance (S²p)
+    numerator = group_variances.each_with_index.sum do |var, i|
+      (group_sizes[i] - 1) * var
+    end
+    pooled_variance = numerator / (n_total - k)
+
+    # Handle edge case where all variances are zero
+    if pooled_variance <= 0.0 || group_variances.all? { |var| var <= 0.0 }
+      return {
+        test_type: 'Bartlett Test',
+        chi_square_statistic: 0.0,
+        p_value: 1.0,
+        degrees_of_freedom: k - 1,
+        significant: false,
+        interpretation: '分散の等質性仮説は棄却されない（各グループの分散は等しいと考えられる）',
+        correction_factor: 1.0,
+        pooled_variance: 0.0
+      }
+    end
+
+    # Calculate correction factor C
+    # C = 1 + (1/(3(k-1))) * [Σ(1/(ni-1)) - 1/(N-k)]
+    sum_inverse_df = group_sizes.sum { |n_i| 1.0 / (n_i - 1) }
+    inverse_total_df = 1.0 / (n_total - k)
+    correction_factor = 1.0 + ((1.0 / (3.0 * (k - 1))) * (sum_inverse_df - inverse_total_df))
+
+    # Calculate Bartlett statistic
+    # χ² = (1/C) * [(N-k)ln(S²p) - Σ(ni-1)ln(S²i)]
+    pooled_log_variance = Math.log(pooled_variance)
+    sum_weighted_log_variances = group_variances.each_with_index.sum do |var, i|
+      next 0.0 if var <= 0.0
+
+      (group_sizes[i] - 1) * Math.log(var)
+    end
+
+    chi_square_statistic = (((n_total - k) * pooled_log_variance) - sum_weighted_log_variances) / correction_factor
+
+    # Degrees of freedom
+    df = k - 1
+
+    # Calculate p-value using chi-square distribution
+    p_value = calculate_chi_square_p_value(chi_square_statistic, df)
+
+    # Determine significance and interpretation
+    significant = p_value < 0.05
+    interpretation = if significant
+                       '分散の等質性仮説は棄却される（各グループの分散は等しくない）'
+                     else
+                       '分散の等質性仮説は棄却されない（各グループの分散は等しいと考えられる）'
+                     end
+
+    {
+      test_type: 'Bartlett Test',
+      chi_square_statistic: chi_square_statistic.round(6),
+      p_value: p_value.round(6),
+      degrees_of_freedom: df,
+      significant: significant,
+      interpretation: interpretation,
+      correction_factor: correction_factor.round(6),
+      pooled_variance: pooled_variance.round(6)
+    }
+  end
+
   private
 
   def average_value = @numbers.sum.to_f / @numbers.length

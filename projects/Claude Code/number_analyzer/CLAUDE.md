@@ -6,7 +6,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 NumberAnalyzer is a comprehensive statistical analysis tool built in Ruby. Originally started as a refactoring exercise from beginner-level code to professional Ruby Gem, it has evolved into an enterprise-ready statistical analysis library with data visualization capabilities.
 
-**Current Status**: ✅ **Production Ready** - 29 statistical functions, 42+ test examples, Phase 7.5 Step 1 complete with Levene test for variance homogeneity, enterprise-level code quality
+**Current Status**: ✅ **Production Ready** - 30 statistical functions, 73+ test examples, Phase 7.5 Step 2 complete with Bartlett test for variance homogeneity, enterprise-level code quality
 
 ## Development Commands
 
@@ -79,10 +79,14 @@ NumberAnalyzer is a comprehensive statistical analysis tool built in Ruby. Origi
 - `bundle exec number_analyzer levene --file group1.csv group2.csv group3.csv` (Levene test with file input)
 - `bundle exec number_analyzer levene --format=json --precision=3 1 2 3 -- 4 5 6 -- 7 8 9` (JSON output with precision)
 - `bundle exec number_analyzer levene --quiet 1 2 3 -- 4 5 6 -- 7 8 9` (quiet output for scripting)
+- `bundle exec number_analyzer bartlett 1 2 3 -- 4 5 6 -- 7 8 9` (Bartlett test for variance homogeneity, assumes normality)
+- `bundle exec number_analyzer bartlett --file group1.csv group2.csv group3.csv` (Bartlett test with file input)
+- `bundle exec number_analyzer bartlett --format=json --precision=3 1 2 3 -- 4 5 6 -- 7 8 9` (JSON output with precision)
+- `bundle exec number_analyzer bartlett --quiet 1 2 3 -- 4 5 6 -- 7 8 9` (quiet output for scripting)
 
 **Development Tools**:
 - `bundle install` - Install dependencies
-- `rspec` - Run test suite (57+ examples including 17 t-test + 10 confidence interval + 12 chi-square + ANOVA + 15 Levene test cases)
+- `rspec` - Run test suite (73+ examples including 17 t-test + 10 confidence interval + 12 chi-square + ANOVA + 15 Levene + 16 Bartlett test cases)
 - `bundle exec rubocop` - Code style checking (MANDATORY: zero violations)
 - `bundle exec rubocop -a` - Auto-fix style violations (run first)
 - `bundle exec rubocop [file]` - Check specific file
@@ -117,7 +121,7 @@ lib/
 
 ## Implemented Features
 
-**Statistical Functions (29)**:
+**Statistical Functions (30)**:
 - Basic: sum, mean, min, max, median, mode
 - Variability: variance, standard deviation, IQR
 - Advanced: percentiles, quartiles, outliers, deviation scores
@@ -125,19 +129,19 @@ lib/
 - Time Series: linear trend analysis (slope, intercept, R², direction), moving averages, growth rate analysis (period-over-period, CAGR, average growth rate), seasonal pattern analysis (decomposition, period detection, seasonal strength)
 - Statistical Tests: independent samples t-test (Welch's t-test), paired samples t-test, one-sample t-test with p-value and significance testing, confidence intervals for population mean (t-distribution and normal approximation), chi-square test for independence and goodness-of-fit with Cramér's V effect size
 - Analysis of Variance: one-way ANOVA with F-statistic, p-value calculation, effect size measures (η², ω²), statistical interpretation, comprehensive ANOVA table output, post-hoc tests (Tukey HSD, Bonferroni correction) for multiple pairwise comparisons
-- Variance Homogeneity: Levene test with Brown-Forsythe modification for robust variance equality testing, ANOVA prerequisite checking, outlier-resistant analysis
+- Variance Homogeneity: Levene test with Brown-Forsythe modification for robust variance equality testing, Bartlett test for high-precision variance equality testing under normality assumptions, ANOVA prerequisite checking, outlier-resistant analysis
 - Visualization: frequency distribution, ASCII histogram
 
 **Input Support**: CLI arguments, CSV/JSON/TXT files (both full analysis and all subcommands)
 **Output**: Comprehensive analysis OR individual statistics + visualization
-**CLI Modes**: Full analysis (default) OR 23 individual subcommands (Phases 6.1, 6.2, 7.1, 7.2, 7.3, 7.4, 7.5)
+**CLI Modes**: Full analysis (default) OR 24 individual subcommands (Phases 6.1, 6.2, 7.1, 7.2, 7.3, 7.4, 7.5)
 **Subcommand Categories**: Basic statistics, advanced analysis, parameterized commands, correlation analysis, time series analysis, statistical inference, analysis of variance, variance homogeneity tests
 **Output Options (Phase 6.3)**: JSON format, precision control, quiet mode, help system
 **Correlation Analysis (Phase 7.1)**: Dual dataset input, mathematical interpretation, file/numeric support
 **Time Series Analysis (Phase 7.2)**: Linear trend analysis, moving averages with customizable window sizes, growth rate analysis with CAGR calculation, seasonal pattern analysis with automatic period detection
 **Statistical Tests (Phase 7.3)**: T-test analysis with all three types (independent, paired, one-sample), confidence intervals for population mean using t-distribution, chi-square test for independence and goodness-of-fit with categorical data analysis, mathematical accuracy with Welch's formula and chi-square distribution, two-tailed p-values and significance interpretation
 **Analysis of Variance (Phase 7.4)**: One-way ANOVA with F-distribution p-value calculation, comprehensive effect size analysis (eta squared and omega squared), statistical interpretation with significance testing, detailed ANOVA table output with sum of squares decomposition, and post-hoc multiple comparison tests (Tukey HSD and Bonferroni correction) for pairwise group analysis
-**Variance Homogeneity Tests (Phase 7.5)**: Levene test with Brown-Forsythe modification using median-based calculations for robust variance equality testing, ANOVA prerequisite checking with F-distribution p-values, outlier-resistant statistical analysis, and comprehensive CLI integration with all standard output options
+**Variance Homogeneity Tests (Phase 7.5)**: Levene test with Brown-Forsythe modification using median-based calculations for robust variance equality testing, Bartlett test with chi-square distribution for high-precision variance equality testing under normality assumptions, ANOVA prerequisite checking with F-distribution and chi-square p-values, outlier-resistant statistical analysis, and comprehensive CLI integration with all standard output options
 
 ## Code Quality Standards
 
@@ -225,11 +229,11 @@ rspec                        # MUST be all tests passing
 
 ## Quick Reference
 
-**Current State**: ✅ Phase 7.5 Step 1 Complete (Levene Test for Variance Homogeneity)
-**Next Phase**: Phase 7.5 Step 2 - Bartlett Test Implementation (see `ai-docs/ROADMAP.md`)
-**Test Count**: 57+ examples total (including 15 Levene test cases)
-**RuboCop Status**: ✅ Zero violations (Brown-Forsythe implementation with median-based calculations)
-**Subcommand Count**: 23 total (7 basic + 6 advanced + 1 correlation + 4 time series + 3 statistical test + 1 ANOVA + 1 variance homogeneity commands)
+**Current State**: ✅ Phase 7.5 Step 2 Complete (Bartlett Test for Variance Homogeneity)
+**Next Phase**: Phase 7.5 Step 3 - Kruskal-Wallis Test Implementation (see `ai-docs/ROADMAP.md`)
+**Test Count**: 73+ examples total (including 15 Levene + 16 Bartlett test cases)
+**RuboCop Status**: ✅ Zero violations (Bartlett implementation with chi-square distribution)
+**Subcommand Count**: 24 total (7 basic + 6 advanced + 1 correlation + 4 time series + 3 statistical test + 1 ANOVA + 2 variance homogeneity commands)
 **CLI Options**: 16 advanced options (JSON, precision, quiet, help, window, period, paired, one-sample, population-mean, mu, level, independence, goodness-of-fit, uniform, post-hoc, alpha) across all subcommands
 
 ## Documentation Structure

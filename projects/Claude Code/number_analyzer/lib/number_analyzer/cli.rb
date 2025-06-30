@@ -33,7 +33,8 @@ class NumberAnalyzer
       'confidence-interval' => :run_confidence_interval,
       'chi-square' => :run_chi_square,
       'anova' => :run_anova,
-      'levene' => :run_levene
+      'levene' => :run_levene,
+      'bartlett' => :run_bartlett
     }.freeze
 
     # Main entry point for CLI
@@ -77,7 +78,7 @@ class NumberAnalyzer
 
     private_class_method def self.run_subcommand(command, args)
       # Special handling for commands that use '--' separators
-      if %w[chi-square anova levene].include?(command) && args.include?('--')
+      if %w[chi-square anova levene bartlett].include?(command) && args.include?('--')
         # Find where options end and data begins
         options = default_options
         data_start_index = 0
@@ -1286,6 +1287,39 @@ class NumberAnalyzer
 
       # Format and display results
       puts StatisticsPresenter.format_levene_test(result, options)
+    end
+
+    private_class_method def self.run_bartlett(args, options = {})
+      if options[:help]
+        show_help('bartlett', 'Test for variance homogeneity using Bartlett test (assumes normality)')
+        return
+      end
+
+      # Parse data sources (files or command line groups)
+      groups = if options[:file] || args.any? { |arg| arg.end_with?('.csv', '.json', '.txt') }
+                 parse_file_groups(args, options)
+               else
+                 parse_command_line_groups(args)
+               end
+
+      if groups.nil? || groups.empty? || groups.length < 2
+        puts 'エラー: Bartlett検定には少なくとも2つのグループが必要です。'
+        puts '使用例: bundle exec number_analyzer bartlett 1 2 3 -- 4 5 6 -- 7 8 9'
+        puts '        bundle exec number_analyzer bartlett --file group1.csv group2.csv group3.csv'
+        exit 1
+      end
+
+      # Execute Bartlett test
+      analyzer = NumberAnalyzer.new([])
+      result = analyzer.bartlett_test(*groups)
+
+      if result.nil?
+        puts 'エラー: Bartlett検定を実行できませんでした。データを確認してください。'
+        exit 1
+      end
+
+      # Format and display results
+      puts StatisticsPresenter.format_bartlett_test(result, options)
     end
 
     private_class_method def self.parse_file_groups(args, options)
