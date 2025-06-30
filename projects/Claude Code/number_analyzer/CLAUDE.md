@@ -6,7 +6,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 NumberAnalyzer is a comprehensive statistical analysis tool built in Ruby. Originally started as a refactoring exercise from beginner-level code to professional Ruby Gem, it has evolved into an enterprise-ready statistical analysis library with data visualization capabilities.
 
-**Current Status**: ✅ **Production Ready** - 32 statistical functions, 192+ test examples, Phase 7.7 Step 4 complete with modular CorrelationStats architecture and comprehensive non-parametric tests (Kruskal-Wallis + Mann-Whitney), enterprise-level code quality
+**Current Status**: ✅ **Production Ready** - 32 statistical functions, 230+ test examples, Phase 7.7 Step 5 complete with modular TimeSeriesStats architecture and comprehensive time series analysis, enterprise-level code quality
 
 ## Development Commands
 
@@ -96,7 +96,7 @@ NumberAnalyzer is a comprehensive statistical analysis tool built in Ruby. Origi
 
 **Development Tools**:
 - `bundle install` - Install dependencies
-- `rspec` - Run test suite (138+ examples including 32 BasicStats unit tests + 17 t-test + 10 confidence interval + 12 chi-square + ANOVA + 15 Levene + 16 Bartlett + 16 Kruskal-Wallis + 17 Mann-Whitney test cases)
+- `rspec` - Run test suite (230+ examples including 124 unit tests: 32 BasicStats + 26 AdvancedStats + 28 CorrelationStats + 38 TimeSeriesStats + 106 integration test cases)
 - `bundle exec rubocop` - Code style checking (MANDATORY: zero violations)
 - `bundle exec rubocop -a` - Auto-fix style violations (run first)
 - `bundle exec rubocop [file]` - Check specific file
@@ -114,7 +114,7 @@ NumberAnalyzer is a comprehensive statistical analysis tool built in Ruby. Origi
 
 ```
 lib/
-├── number_analyzer.rb              # Core statistical calculations (1,528 lines)
+├── number_analyzer.rb              # Core statistical calculations (1,271 lines)
 └── number_analyzer/
     ├── cli.rb                      # CLI interface + 26 subcommands
     ├── file_reader.rb              # File input handling
@@ -124,7 +124,8 @@ lib/
         ├── basic_stats.rb          # BasicStats module (sum, mean, mode, variance, std_dev)
         ├── math_utils.rb           # MathUtils module (mathematical functions)
         ├── advanced_stats.rb       # AdvancedStats module (percentiles, quartiles, outliers)
-        └── correlation_stats.rb    # CorrelationStats module (correlation analysis)
+        ├── correlation_stats.rb    # CorrelationStats module (correlation analysis)
+        └── time_series_stats.rb    # TimeSeriesStats module (time series analysis)
 ```
 
 **Key Classes**:
@@ -133,6 +134,7 @@ lib/
 - **MathUtils**: Mathematical utility functions (standard_normal_cdf, erf, t_distribution_cdf, f_distribution_p_value)
 - **AdvancedStats**: Advanced statistical analysis (percentile, quartiles, interquartile_range, outliers, deviation_scores)
 - **CorrelationStats**: Correlation analysis (correlation, interpret_correlation)
+- **TimeSeriesStats**: Time series analysis (linear_trend, moving_average, growth_rates, seasonal_decomposition)
 - **NumberAnalyzer::CLI**: Command-line argument processing + 26 subcommand routing
 - **NumberAnalyzer::FileReader**: CSV/JSON/TXT file input
 - **NumberAnalyzer::StatisticsPresenter**: Output formatting and histogram display
