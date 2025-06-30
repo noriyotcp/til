@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require 'json'
+
 # 統計結果の表示を担当するクラス
 class NumberAnalyzer
   # Handles the presentation and formatting of statistical results
@@ -52,6 +54,69 @@ class NumberAnalyzer
       deviation_scores.join(', ')
     end
 
-    private_class_method :format_mode, :format_outliers, :format_deviation_scores, :display_histogram
+    def self.format_levene_test(result, options = {})
+      if options[:format] == 'json'
+        format_levene_test_json(result, options)
+      elsif options[:quiet]
+        format_levene_test_quiet(result, options)
+      else
+        format_levene_test_verbose(result, options)
+      end
+    end
+
+    def self.format_levene_test_verbose(result, options = {})
+      precision = options[:precision] || 6
+
+      output = []
+      output << '=== Levene検定結果 (Brown-Forsythe修正版) ==='
+      output << ''
+      output << '検定統計量:'
+      output << "  F統計量: #{result[:f_statistic].round(precision)}"
+      output << "  p値: #{result[:p_value].round(precision)}"
+      output << "  自由度: #{result[:degrees_of_freedom][0]}, #{result[:degrees_of_freedom][1]}"
+      output << ''
+      output << '統計的判定:'
+      if result[:significant]
+        output << '  結果: **有意差あり** (p < 0.05)'
+        output << '  結論: 各グループの分散は等しくない'
+      else
+        output << '  結果: 有意差なし (p ≥ 0.05)'
+        output << '  結論: 各グループの分散は等しいと考えられる'
+      end
+      output << ''
+      output << '解釈:'
+      output << "  #{result[:interpretation]}"
+      output << ''
+      output << '注意事項:'
+      output << '  - Brown-Forsythe修正版は外れ値に対して頑健です'
+      output << '  - この検定はANOVA分析の前提条件チェックに使用されます'
+
+      output.join("\n")
+    end
+
+    def self.format_levene_test_json(result, options = {})
+      precision = options[:precision] || 6
+
+      formatted_result = {
+        test_type: result[:test_type],
+        f_statistic: result[:f_statistic].round(precision),
+        p_value: result[:p_value].round(precision),
+        degrees_of_freedom: result[:degrees_of_freedom],
+        significant: result[:significant],
+        interpretation: result[:interpretation]
+      }
+
+      JSON.generate(formatted_result)
+    end
+
+    def self.format_levene_test_quiet(result, options = {})
+      precision = options[:precision] || 6
+      f_stat = result[:f_statistic].round(precision)
+      p_value = result[:p_value].round(precision)
+      "#{f_stat} #{p_value}"
+    end
+
+    private_class_method :format_mode, :format_outliers, :format_deviation_scores, :display_histogram,
+                         :format_levene_test_verbose, :format_levene_test_json, :format_levene_test_quiet
   end
 end

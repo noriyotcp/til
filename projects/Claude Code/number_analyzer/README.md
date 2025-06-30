@@ -28,6 +28,7 @@ NumberAnalyzer provides the following statistical calculations:
 - **Confidence Intervals** - Calculate confidence intervals for population mean using t-distribution (small samples) and normal approximation (large samples)
 - **Chi-square Test** - Test for independence between categorical variables and goodness-of-fit to expected distributions with Cramér's V effect size
 - **Analysis of Variance (ANOVA)** - One-way ANOVA for comparing means across multiple groups with F-statistic, p-value, and effect size measures (η², ω²)
+- **Levene Test** - Test for variance homogeneity across multiple groups using Brown-Forsythe modification for robust variance equality testing
 - **Frequency Distribution** - Count occurrences of each value for data distribution analysis
 - **Histogram Display** - ASCII art visualization of frequency distribution with automatic scaling
 - **File Input Support** - Read data from CSV, JSON, and TXT files
@@ -203,6 +204,12 @@ bundle exec number_analyzer anova --file group1.csv group2.csv group3.csv
 bundle exec number_analyzer anova --format=json --precision=3 1 2 3 -- 4 5 6 -- 7 8 9
 bundle exec number_analyzer anova --alpha=0.01 --quiet 1 2 3 -- 4 5 6 -- 7 8 9
 
+# Levene Test for Variance Homogeneity  
+bundle exec number_analyzer levene 1 2 3 -- 4 5 6 -- 7 8 9
+bundle exec number_analyzer levene --file group1.csv group2.csv group3.csv
+bundle exec number_analyzer levene --format=json --precision=3 1 2 3 -- 4 5 6 -- 7 8 9
+bundle exec number_analyzer levene --quiet 1 2 3 -- 4 5 6 -- 7 8 9
+
 # Specialized Commands with Options
 bundle exec number_analyzer percentile 75 --format=json 1 2 3 4 5
 bundle exec number_analyzer histogram --quiet 1 2 2 3 3 3
@@ -277,6 +284,11 @@ group3 = [7, 8, 9]
 puts analyzer.one_way_anova(group1, group2, group3)
 # => {f_statistic: 14.538462, p_value: 0.001, degrees_of_freedom: [2, 6], significant: true, 
 #     effect_size: {eta_squared: 0.829, omega_squared: 0.744}, interpretation: "有意差あり (p = 0.001), 効果サイズ: 大 (η² = 0.829)", ...}
+
+# Levene test for variance homogeneity (ANOVA prerequisite check)
+puts analyzer.levene_test(group1, group2, group3)
+# => {test_type: "Levene Test (Brown-Forsythe)", f_statistic: 0.0, p_value: 1.0, degrees_of_freedom: [2, 6], 
+#     significant: false, interpretation: "分散の等質性仮説は棄却されない（各グループの分散は等しいと考えられる）"}
 
 # Frequency distribution for data analysis (programmatic access)
 puts analyzer.frequency_distribution # => {1=>1, 2=>1, 3=>1, 4=>1, 5=>1, 6=>1, 7=>1, 8=>1, 9=>1, 10=>1}

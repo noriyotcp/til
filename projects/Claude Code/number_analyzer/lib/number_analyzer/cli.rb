@@ -32,7 +32,8 @@ class NumberAnalyzer
       't-test' => :run_t_test,
       'confidence-interval' => :run_confidence_interval,
       'chi-square' => :run_chi_square,
-      'anova' => :run_anova
+      'anova' => :run_anova,
+      'levene' => :run_levene
     }.freeze
 
     # Main entry point for CLI
@@ -76,7 +77,7 @@ class NumberAnalyzer
 
     private_class_method def self.run_subcommand(command, args)
       # Special handling for commands that use '--' separators
-      if %w[chi-square anova].include?(command) && args.include?('--')
+      if %w[chi-square anova levene].include?(command) && args.include?('--')
         # Find where options end and data begins
         options = default_options
         data_start_index = 0
@@ -1252,6 +1253,104 @@ class NumberAnalyzer
       groups
     rescue StandardError => e
       raise ArgumentError, "ファイル読み込みエラー: #{e.message}"
+    end
+
+    private_class_method def self.run_levene(args, options = {})
+      if options[:help]
+        show_help('levene', 'Test for variance homogeneity using Levene test (Brown-Forsythe)')
+        return
+      end
+
+      # Parse data sources (files or command line groups)
+      groups = if options[:file] || args.any? { |arg| arg.end_with?('.csv', '.json', '.txt') }
+                 parse_file_groups(args, options)
+               else
+                 parse_command_line_groups(args)
+               end
+
+      if groups.nil? || groups.empty? || groups.length < 2
+        puts 'エラー: Levene検定には少なくとも2つのグループが必要です。'
+        puts '使用例: bundle exec number_analyzer levene 1 2 3 -- 4 5 6 -- 7 8 9'
+        puts '        bundle exec number_analyzer levene --file group1.csv group2.csv group3.csv'
+        exit 1
+      end
+
+      # Execute Levene test
+      analyzer = NumberAnalyzer.new([])
+      result = analyzer.levene_test(*groups)
+
+      if result.nil?
+        puts 'エラー: Levene検定を実行できませんでした。データを確認してください。'
+        exit 1
+      end
+
+      # Format and display results
+      puts StatisticsPresenter.format_levene_test(result, options)
+    end
+
+    private_class_method def self.parse_file_groups(args, options)
+      # Handle file input for multiple groups
+      file_args = if options[:file]
+                    # Support --file option with multiple files
+                    [options[:file]] + args
+                  else
+                    # Support direct file arguments
+                    args.select { |arg| arg.end_with?('.csv', '.json', '.txt') }
+                  end
+
+      if file_args.empty?
+        puts 'エラー: ファイルが指定されていません。'
+        exit 1
+      end
+
+      groups = []
+      file_args.each do |filename|
+        unless File.exist?(filename)
+          puts "エラー: ファイルが見つかりません: #{filename}"
+          exit 1
+        end
+
+        begin
+          data = FileReader.read_file(filename)
+          if data.empty?
+            puts "エラー: 空のファイル: #{filename}"
+            exit 1
+          end
+          groups << data
+        rescue StandardError => e
+          puts "エラー: ファイル読み込み失敗 (#{filename}): #{e.message}"
+          exit 1
+        end
+      end
+
+      groups
+    end
+
+    private_class_method def self.parse_command_line_groups(args)
+      # Parse command line arguments separated by '--'
+      return [] if args.empty?
+
+      groups = []
+      current_group = []
+
+      args.each do |arg|
+        if arg == '--'
+          groups << current_group.dup unless current_group.empty?
+          current_group.clear
+        else
+          begin
+            current_group << Float(arg)
+          rescue ArgumentError
+            puts "エラー: 無効な数値: #{arg}"
+            exit 1
+          end
+        end
+      end
+
+      # Add the last group if it's not empty
+      groups << current_group unless current_group.empty?
+
+      groups
     end
   end
 end

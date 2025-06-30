@@ -454,6 +454,92 @@ class NumberAnalyzer
     result
   end
 
+  def levene_test(*groups)
+    # Validate input - need at least 2 groups
+    groups = groups.compact
+    groups = groups.reject { |group| group.is_a?(Array) && group.empty? }
+
+    return nil if groups.length < 2
+
+    # Ensure each group has at least one value and is an array
+    groups.each do |group|
+      return nil unless group.is_a?(Array)
+      return nil if group.empty?
+    end
+
+    # Calculate basic parameters
+    k = groups.length # number of groups
+    n_total = groups.flatten.length # total sample size
+
+    # Calculate median for each group (Brown-Forsythe modification)
+    group_medians = groups.map { |group| calculate_group_median(group) }
+
+    # Transform data: Zij = |Xij - median_i|
+    z_groups = groups.each_with_index.map do |group, i|
+      median_i = group_medians[i]
+      group.map { |x| (x - median_i).abs }
+    end
+
+    # Calculate group means of Z values
+    z_group_means = z_groups.map { |z_group| z_group.sum.to_f / z_group.length }
+
+    # Calculate overall mean of Z values
+    all_z_values = z_groups.flatten
+    z_overall_mean = all_z_values.sum.to_f / all_z_values.length
+
+    # Calculate sum of squares between groups
+    ss_between = 0.0
+    z_groups.each_with_index do |z_group, i|
+      n_i = z_group.length
+      z_bar_i = z_group_means[i]
+      ss_between += n_i * ((z_bar_i - z_overall_mean)**2)
+    end
+
+    # Calculate sum of squares within groups
+    ss_within = 0.0
+    z_groups.each_with_index do |z_group, i|
+      z_bar_i = z_group_means[i]
+      z_group.each do |z_ij|
+        ss_within += (z_ij - z_bar_i)**2
+      end
+    end
+
+    # Calculate degrees of freedom
+    df_between = k - 1
+    df_within = n_total - k
+
+    # Calculate mean squares
+    ms_between = ss_between / df_between
+    ms_within = df_within.zero? ? 0.0 : ss_within / df_within
+
+    # Calculate F-statistic
+    f_statistic = if ms_within.zero?
+                    ms_between.zero? ? 0.0 : Float::INFINITY
+                  else
+                    ms_between / ms_within
+                  end
+
+    # Calculate p-value using F-distribution
+    p_value = calculate_f_distribution_p_value(f_statistic, df_between, df_within)
+
+    # Determine significance and interpretation
+    significant = p_value < 0.05
+    interpretation = if significant
+                       '分散の等質性仮説は棄却される（各グループの分散は等しくない）'
+                     else
+                       '分散の等質性仮説は棄却されない（各グループの分散は等しいと考えられる）'
+                     end
+
+    {
+      test_type: 'Levene Test (Brown-Forsythe)',
+      f_statistic: f_statistic.round(6),
+      p_value: p_value.round(6),
+      degrees_of_freedom: [df_between, df_within],
+      significant: significant,
+      interpretation: interpretation
+    }
+  end
+
   private
 
   def average_value = @numbers.sum.to_f / @numbers.length
@@ -1288,6 +1374,21 @@ class NumberAnalyzer
     se = Math.sqrt(pooled_variance / n_harmonic)
 
     se.zero? ? 0.0 : mean_diff / se
+  end
+
+  def calculate_group_median(array)
+    return nil if array.empty?
+
+    sorted = array.sort
+    length = sorted.length
+
+    if length.odd?
+      sorted[length / 2]
+    else
+      mid1 = sorted[(length / 2) - 1]
+      mid2 = sorted[length / 2]
+      (mid1 + mid2) / 2.0
+    end
   end
 
   def variance_of_array(array)
