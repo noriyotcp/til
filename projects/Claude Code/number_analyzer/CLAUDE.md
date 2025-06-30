@@ -261,9 +261,35 @@ rspec                        # MUST be all tests passing
 - Settings prohibit `git commit` commands for stability
 - User must manually run `git commit` with generated message
 
-## Next Development Phase - Phase 7.6
+## Next Development Phase - Phase 7.7
 
-**Phase 7.6 Goal**: Non-parametric Test Suite Completion
+**Phase 7.7 Goal**: 基盤リファクタリング (Plugin System Architecture 準備段階)
+
+### 現在の課題
+- **1,727行のモノリシックファイル**: `lib/number_analyzer.rb` の可読性・保守性限界
+- **メソッド重複リスク**: standard_normal_cdf, erf等の重複による保守負荷  
+- **単一責任原則違反**: 32個の統計機能が1クラスに集約、拡張性限界
+
+### Phase 7.7 Step 1: BasicStats モジュール抽出 🔧 次の実装対象
+**最初のモジュール分割テスト**
+- **Target**: `lib/number_analyzer/statistics/basic_stats.rb` 作成
+- **Extracted Methods**: sum, mean, median, mode, variance, standard_deviation
+- **Integration**: NumberAnalyzer クラスに `include Statistics::BasicStats` 追加
+- **Quality Gate**: 既存106テスト全通過確認（API変更なし）
+
+### Phase 7.7 Benefits
+- **可読性向上**: 各ファイル200-300行程度に分割
+- **保守性向上**: 統計分野ごとの責任分離
+- **拡張性向上**: 新機能追加時の影響範囲限定
+- **将来性**: Plugin System Architecture (Phase 8.0) への自然な移行パス
+- **安全性**: 既存API完全保持、106テスト全通過維持
+
+### Implementation Strategy
+1. **段階的実装**: BasicStats → MathUtils → 他のモジュール順次抽出
+2. **API完全保持**: NumberAnalyzer.new(...).median 等の既存呼び出し維持
+3. **品質保証**: 各段階で全テスト通過、RuboCop違反ゼロ維持
+
+## Completed Phase - Phase 7.6
 
 ### Phase 7.6 Step 1: Mann-Whitney U Test ✅ 完了
 **Target**: 最も基本的なノンパラメトリック2群比較検定
@@ -279,15 +305,10 @@ rspec                        # MUST be all tests passing
 - **統計的完成度**: パラメトリック(t-test) + ノンパラメトリック(Mann-Whitney)の両方対応
 - **テスト品質**: 106テストケース到達（17 Mann-Whitney追加）
 
-### Implementation Strategy
-1. **Reuse Existing Infrastructure**: Kruskal-Wallisのランク計算メソッド活用
-2. **Follow Established Patterns**: CLI統合、テスト、ドキュメント更新の既存プロセス踏襲
-3. **Maintain Quality Standards**: RuboCop準拠、TDD実装、包括的テスト
-
 ## Quick Reference
 
 **Current State**: ✅ Phase 7.6 Step 1 Complete (Non-parametric 2-group + Multi-group Comparison)
-**Next Phase**: Phase 7.6 Step 2 - Wilcoxon Signed-Rank Test Implementation (see `ai-docs/ROADMAP.md`)
+**Next Phase**: Phase 7.7 Step 1 - BasicStats モジュール抽出 (基盤リファクタリング開始)
 **Test Count**: 106+ examples total (including 15 Levene + 16 Bartlett + 16 Kruskal-Wallis + 17 Mann-Whitney test cases)
 **RuboCop Status**: ✅ Zero violations (Mann-Whitney implementation with U-statistic and normal approximation)
 **Subcommand Count**: 26 total (7 basic + 6 advanced + 1 correlation + 4 time series + 3 statistical test + 1 ANOVA + 2 variance homogeneity + 2 non-parametric commands)
@@ -300,5 +321,6 @@ rspec                        # MUST be all tests passing
 - **ai-docs/ROADMAP.md**: Development phases and future planning
 - **ai-docs/FEATURES.md**: Comprehensive feature documentation
 - **ai-docs/ARCHITECTURE.md**: Technical architecture details
+- **ai-docs/REFACTORING_PLAN.md**: Phase 7.7 基盤リファクタリング詳細計画
 
 For detailed information about specific aspects of the project, refer to the appropriate documentation file above.
