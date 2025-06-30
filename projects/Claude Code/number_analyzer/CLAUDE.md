@@ -182,8 +182,30 @@ lib/
 1. **RuboCop compliance** - REQUIRED: `bundle exec rubocop` must show zero violations
 2. **Auto-correction applied** - REQUIRED: `bundle exec rubocop -a` before manual review
 3. **Test coverage** - All new features require comprehensive tests
-4. **Documentation updates** - Update relevant docs (README.md, etc.)
+4. **Documentation updates** - REQUIRED: Update ALL relevant docs (see Documentation Update Checklist below)
 5. **Mathematical accuracy** - Verify statistical correctness
+
+### Documentation Update Checklist (MANDATORY - Zero Documentation Debt Policy)
+**Every implementation MUST update these files before completion**:
+
+**Core Documentation Files** (ALL REQUIRED):
+- ✅ **README.md** - Features section + CLI examples + subcommand count updates
+- ✅ **ROADMAP.md** - Phase status updates + checkbox [x] completion + achievement metrics
+- ✅ **CLAUDE.md** - Command examples + development commands (if new CLI features)
+
+**Documentation Verification Process**:
+```bash
+# Before marking implementation complete, verify:
+1. README.md features section updated with new functionality
+2. ROADMAP.md phase status marked as complete with metrics
+3. CLAUDE.md development commands updated (if applicable)
+4. All examples tested and working
+5. Subcommand counts and statistics accurate
+```
+
+**Completion Redefinition**:
+- ✅ **COMPLETE** = Code + Tests + Documentation Updates + RuboCop compliance
+- ❌ **INCOMPLETE** = Working code without corresponding documentation updates
 
 ## Development Guidelines
 
@@ -205,6 +227,9 @@ rspec                        # Ensure tests pass
 ```bash
 bundle exec rubocop          # MUST be zero violations
 rspec                        # MUST be all tests passing
+# Documentation Verification (REQUIRED):
+git status                   # Verify documentation files staged for commit
+git diff --name-only --cached | grep -E "(README|ROADMAP|CLAUDE)\.md" || echo "⚠️  MISSING: Documentation updates not staged"
 ```
 
 ### New Feature Implementation (MANDATORY PROCESS)
@@ -232,13 +257,28 @@ rspec                        # MUST be all tests passing
 8. **Final Documentation** - Verify all docs updated and staged for commit
 
 #### ドキュメント更新必須ファイル (ALL REQUIRED)
-- **README.md**: Features section + CLI examples + subcommand count update
-- **ROADMAP.md**: Phase status complete + checkbox [x] updates + achievement numbers
-- **CLAUDE.md**: Command examples (通常は実装中に既に更新済み)
+**新機能実装完了の3つの必須ドキュメント更新**:
+- ✅ **README.md**: Features section + CLI examples + subcommand count update
+- ✅ **ROADMAP.md**: Phase status complete + checkbox [x] updates + achievement numbers  
+- ✅ **CLAUDE.md**: Command examples (通常は実装中に既に更新済み)
 
-#### 完了基準の再定義
-- ✅ **完了** = Code + Tests + Documentation Updates + RuboCop compliance
+**ドキュメント更新検証方法**:
+```bash
+# 実装完了前の必須確認コマンド:
+# 実装で変更したファイルのみをステージング:
+git add [変更したファイル]       # 例: git add lib/number_analyzer.rb lib/number_analyzer/statistics/new_module.rb
+git add README.md ai-docs/ROADMAP.md CLAUDE.md  # ドキュメント更新
+git status                   # README.md, ROADMAP.md, CLAUDE.md が含まれているか確認
+# 以下のファイルが全て "to be committed" に含まれていることを確認:
+# - README.md (new functionality documented)
+# - ROADMAP.md (phase status updated)  
+# - CLAUDE.md (command examples updated, if applicable)
+```
+
+#### 完了基準の再定義 (Zero Documentation Debt Policy)
+- ✅ **完了** = Code + Tests + **All 3 Documentation Files Updated** + RuboCop compliance
 - ❌ **未完了** = 動くけどドキュメント未更新の状態
+- 🚨 **禁止**: 「後でドキュメント更新します」は認めない - 実装と同時に更新必須
 
 ### File Organization
 - **Core logic**: `lib/number_analyzer.rb`
@@ -259,7 +299,7 @@ rspec                        # MUST be all tests passing
 - **Auto-correction workflow**: Always run `bundle exec rubocop -a` first, then manual review
 - **Commit messages**: Use `/project:commit-message` to generate messages ONLY - DO NOT auto-commit
 - **Manual commits**: Only commit when user explicitly requests "commit" or "コミット"
-- **Documentation**: **MANDATORY** - Update README.md features/usage AND ROADMAP.md phase status immediately after implementation. Never leave code changes without documentation updates.
+- **Documentation**: **MANDATORY** - Update README.md features/usage AND ROADMAP.md phase status immediately after implementation. Never leave code changes without documentation updates. Follow Documentation Update Checklist above.
 - **RSpec syntax**: Use `-e "pattern"` for test filtering
 - **Mathematical precision**: Consider floating-point accuracy in tests
 - **Japanese output**: Maintain Japanese labels for user-facing output
