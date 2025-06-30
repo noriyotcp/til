@@ -219,7 +219,7 @@ rspec                        # MUST be all tests passing
 **Current State**: ✅ Phase 7.4 Step 1 Complete (One-way ANOVA)
 **Next Phase**: Phase 7.4 Step 2 - Post-hoc Tests (see `ai-docs/ROADMAP.md`)
 **Test Count**: 42+ examples total
-**RuboCop Status**: ✅ Zero violations (statistical methods properly excluded for mathematical complexity)
+**RuboCop Status**: ✅ Zero violations (ANOVA formatting updated to use annotated format tokens)
 **Subcommand Count**: 22 total (7 basic + 6 advanced + 1 correlation + 4 time series + 3 statistical test + 1 ANOVA commands)
 **CLI Options**: 16 advanced options (JSON, precision, quiet, help, window, period, paired, one-sample, population-mean, mu, level, independence, goodness-of-fit, uniform, post-hoc, alpha) across all subcommands
 
