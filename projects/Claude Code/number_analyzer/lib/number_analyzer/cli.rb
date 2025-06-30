@@ -35,7 +35,8 @@ class NumberAnalyzer
       'anova' => :run_anova,
       'levene' => :run_levene,
       'bartlett' => :run_bartlett,
-      'kruskal-wallis' => :run_kruskal_wallis
+      'kruskal-wallis' => :run_kruskal_wallis,
+      'mann-whitney' => :run_mann_whitney
     }.freeze
 
     # Main entry point for CLI
@@ -79,7 +80,7 @@ class NumberAnalyzer
 
     private_class_method def self.run_subcommand(command, args)
       # Special handling for commands that use '--' separators
-      if %w[chi-square anova levene bartlett kruskal-wallis].include?(command) && args.include?('--')
+      if %w[chi-square anova levene bartlett kruskal-wallis mann-whitney].include?(command) && args.include?('--')
         # Find where options end and data begins
         options = default_options
         data_start_index = 0
@@ -1354,6 +1355,39 @@ class NumberAnalyzer
 
       # Format and display results
       puts StatisticsPresenter.format_kruskal_wallis_test(result, options)
+    end
+
+    private_class_method def self.run_mann_whitney(args, options = {})
+      if options[:help]
+        show_help('mann-whitney', 'Non-parametric test for comparing two independent groups (Wilcoxon rank-sum test)')
+        return
+      end
+
+      # Parse data sources (files or command line groups)
+      groups = if options[:file] || args.any? { |arg| arg.end_with?('.csv', '.json', '.txt') }
+                 parse_file_groups(args, options)
+               else
+                 parse_command_line_groups(args)
+               end
+
+      if groups.nil? || groups.empty? || groups.length != 2
+        puts 'エラー: Mann-Whitney検定には正確に2つのグループが必要です。'
+        puts '使用例: bundle exec number_analyzer mann-whitney 1 2 3 -- 4 5 6'
+        puts '        bundle exec number_analyzer mann-whitney group1.csv group2.csv'
+        exit 1
+      end
+
+      # Execute Mann-Whitney U test
+      analyzer = NumberAnalyzer.new([])
+      result = analyzer.mann_whitney_u_test(groups[0], groups[1])
+
+      if result.nil?
+        puts 'エラー: Mann-Whitney検定を実行できませんでした。データを確認してください。'
+        exit 1
+      end
+
+      # Format and display results
+      puts StatisticsPresenter.format_mann_whitney_test(result, options)
     end
 
     private_class_method def self.parse_file_groups(args, options)

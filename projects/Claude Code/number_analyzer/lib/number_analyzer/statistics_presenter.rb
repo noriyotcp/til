@@ -281,6 +281,104 @@ class NumberAnalyzer
       ].join("\n")
     end
 
+    def self.format_mann_whitney_test(result, options = {})
+      case options[:format]
+      when 'json'
+        format_mann_whitney_test_json(result, options)
+      when 'quiet'
+        format_mann_whitney_test_quiet(result, options)
+      else
+        format_mann_whitney_test_verbose(result, options)
+      end
+    end
+
+    def self.format_mann_whitney_test_verbose(result, options = {})
+      precision = options[:precision] || 6
+
+      output = []
+      output << build_mann_whitney_header
+      output << build_mann_whitney_statistics(result, precision)
+      output << build_mann_whitney_interpretation(result)
+      output << build_mann_whitney_notes
+
+      output.compact.join("\n")
+    end
+
+    def self.format_mann_whitney_test_json(result, options = {})
+      precision = options[:precision] || 6
+
+      formatted_result = {
+        test_type: result[:test_type],
+        u_statistic: result[:u_statistic].round(precision),
+        u1: result[:u1].round(precision),
+        u2: result[:u2].round(precision),
+        z_statistic: result[:z_statistic].round(precision),
+        p_value: result[:p_value].round(precision),
+        significant: result[:significant],
+        interpretation: result[:interpretation],
+        effect_size: result[:effect_size].round(precision),
+        group_sizes: result[:group_sizes],
+        rank_sums: result[:rank_sums],
+        total_n: result[:total_n]
+      }
+
+      JSON.generate(formatted_result)
+    end
+
+    def self.format_mann_whitney_test_quiet(result, options = {})
+      precision = options[:precision] || 6
+      u_stat = result[:u_statistic].round(precision)
+      p_value = result[:p_value].round(precision)
+      "#{u_stat} #{p_value}"
+    end
+
+    def self.build_mann_whitney_header
+      '=== Mann-Whitney U検定 ==='
+    end
+
+    def self.build_mann_whitney_statistics(result, precision)
+      [
+        "U統計量: #{result[:u_statistic].round(precision)}",
+        "U1: #{result[:u1].round(precision)}, U2: #{result[:u2].round(precision)}",
+        "z統計量: #{result[:z_statistic].round(precision)}",
+        "p値: #{result[:p_value].round(precision)}",
+        "効果サイズ (r): #{result[:effect_size].round(precision)}",
+        "グループサイズ: #{result[:group_sizes].join(', ')}",
+        "順位和: #{result[:rank_sums].join(', ')}"
+      ].join("\n")
+    end
+
+    def self.build_mann_whitney_interpretation(result)
+      significance = result[:significant] ? '**有意**' : '非有意'
+      effect_magnitude = case result[:effect_size]
+                         when 0.0...0.1
+                           '効果サイズ: 極小'
+                         when 0.1...0.3
+                           '効果サイズ: 小'
+                         when 0.3...0.5
+                           '効果サイズ: 中'
+                         else
+                           '効果サイズ: 大'
+                         end
+
+      [
+        "結果: #{significance} (α = 0.05)",
+        "解釈: #{result[:interpretation]}",
+        effect_magnitude
+      ].join("\n")
+    end
+
+    def self.build_mann_whitney_notes
+      [
+        '',
+        '注意事項:',
+        '・ Mann-Whitney U検定は2群比較のノンパラメトリック検定です',
+        '・ t検定の代替として正規分布を仮定しない場合に使用します',
+        '・ 順位に基づく検定のため外れ値に頑健です',
+        '・ 同じ分布形状を仮定しますが、位置（中央値）の違いを検定します'
+      ].join("\n")
+    end
+
     private_class_method :format_mode, :format_outliers, :format_deviation_scores, :display_histogram,
                          :format_levene_test_verbose, :format_levene_test_json, :format_levene_test_quiet,
                          :format_bartlett_test_verbose, :format_bartlett_test_json, :format_bartlett_test_quiet,
@@ -289,6 +387,10 @@ class NumberAnalyzer
                          :format_kruskal_wallis_test_verbose, :format_kruskal_wallis_test_json,
                          :format_kruskal_wallis_test_quiet, :build_kruskal_wallis_header,
                          :build_kruskal_wallis_statistics, :build_kruskal_wallis_interpretation,
-                         :build_kruskal_wallis_notes
+                         :build_kruskal_wallis_notes,
+                         :format_mann_whitney_test_verbose, :format_mann_whitney_test_json,
+                         :format_mann_whitney_test_quiet, :build_mann_whitney_header,
+                         :build_mann_whitney_statistics, :build_mann_whitney_interpretation,
+                         :build_mann_whitney_notes
   end
 end

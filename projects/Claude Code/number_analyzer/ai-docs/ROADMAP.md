@@ -33,7 +33,7 @@
 - [x] StatisticsPresenterへの自動統合
 - [x] 包括的テストスイート（12テストケース）
 
-**現在の成果**: 89+テスト実行例、31統計指標、Phase 7.5 Step 3完全実装、企業レベル品質
+**現在の成果**: 106+テスト実行例、32統計指標、Phase 7.6 Step 1完全実装、企業レベル品質
 
 ### Phase 6: CLI Subcommands Implementation ✅ 完了
 - [x] 13個の統計サブコマンド実装 (median, mean, mode, sum, min, max, histogram, outliers, percentile, quartiles, variance, std, deviation-scores)
@@ -136,16 +136,16 @@
 
 ## Phase 7.6: Non-parametric Test Suite Completion 📋 実装準備完了
 
-### Phase 7.6 Step 1: Mann-Whitney U Test Implementation 🎯 次期実装
+### Phase 7.6 Step 1: Mann-Whitney U Test Implementation ✅ 完了
 **最も基本的なノンパラメトリック2群比較検定**
-- [ ] `mann_whitney_u_test(group1, group2)` メソッド実装
-- [ ] U統計量計算: `U1 = n1*n2 + n1*(n1+1)/2 - R1`
-- [ ] 正規近似によるz統計量計算（大標本）および正確検定（小標本）
-- [ ] 両側検定・片側検定オプション対応
-- [ ] CLI統合: `'mann-whitney' => :run_mann_whitney` コマンド追加（26個目のサブコマンド）
-- [ ] 新規テストファイル: `spec/mann_whitney_spec.rb`
-- [ ] 統計的解釈機能（効果サイズr、有意差判定）
-- [ ] 全CLI オプション対応とRuboCop準拠
+- [x] `mann_whitney_u_test(group1, group2)` メソッド実装
+- [x] U統計量計算: `U1 = n1*n2 + n1*(n1+1)/2 - R1`
+- [x] 正規近似によるz統計量計算（大標本）および正確検定（小標本）
+- [x] タイ補正対応と連続性補正適用
+- [x] CLI統合: `'mann-whitney' => :run_mann_whitney` コマンド追加（26個目のサブコマンド）
+- [x] 新規テストファイル: `spec/mann_whitney_spec.rb` (17 test cases)
+- [x] 統計的解釈機能（効果サイズr、有意差判定、数学的正確性）
+- [x] 全CLI オプション対応（JSON、精度、quiet、help、file）とRuboCop準拠
 
 ### Phase 7.6 Step 2: Wilcoxon Signed-Rank Test Implementation 🔮 計画段階
 **対応のある2群比較のノンパラメトリック検定**

@@ -6,7 +6,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 NumberAnalyzer is a comprehensive statistical analysis tool built in Ruby. Originally started as a refactoring exercise from beginner-level code to professional Ruby Gem, it has evolved into an enterprise-ready statistical analysis library with data visualization capabilities.
 
-**Current Status**: ✅ **Production Ready** - 31 statistical functions, 89+ test examples, Phase 7.5 complete with comprehensive non-parametric group comparison (Kruskal-Wallis), enterprise-level code quality
+**Current Status**: ✅ **Production Ready** - 32 statistical functions, 106+ test examples, Phase 7.6 Step 1 complete with comprehensive non-parametric tests (Kruskal-Wallis + Mann-Whitney), enterprise-level code quality
 
 ## Development Commands
 
@@ -84,15 +84,19 @@ NumberAnalyzer is a comprehensive statistical analysis tool built in Ruby. Origi
 - `bundle exec number_analyzer bartlett --format=json --precision=3 1 2 3 -- 4 5 6 -- 7 8 9` (JSON output with precision)
 - `bundle exec number_analyzer bartlett --quiet 1 2 3 -- 4 5 6 -- 7 8 9` (quiet output for scripting)
 
-**Non-parametric Tests** (Phase 7.5):
+**Non-parametric Tests** (Phase 7.5-7.6):
 - `bundle exec number_analyzer kruskal-wallis 1 2 3 -- 4 5 6 -- 7 8 9` (Kruskal-Wallis test for comparing medians, non-parametric ANOVA)
 - `bundle exec number_analyzer kruskal-wallis --file group1.csv group2.csv group3.csv` (Kruskal-Wallis test with file input)
 - `bundle exec number_analyzer kruskal-wallis --format=json --precision=3 1 2 3 -- 4 5 6 -- 7 8 9` (JSON output with precision)
 - `bundle exec number_analyzer kruskal-wallis --quiet 1 2 3 -- 4 5 6 -- 7 8 9` (quiet output for scripting)
+- `bundle exec number_analyzer mann-whitney 1 2 3 -- 4 5 6` (Mann-Whitney U test for comparing two groups, non-parametric t-test)
+- `bundle exec number_analyzer mann-whitney --file group1.csv group2.csv` (Mann-Whitney test with file input)
+- `bundle exec number_analyzer mann-whitney --format=json --precision=3 1 2 3 -- 6 7 8` (JSON output with precision)
+- `bundle exec number_analyzer mann-whitney --quiet 10 20 30 -- 40 50 60` (quiet output for scripting)
 
 **Development Tools**:
 - `bundle install` - Install dependencies
-- `rspec` - Run test suite (89+ examples including 17 t-test + 10 confidence interval + 12 chi-square + ANOVA + 15 Levene + 16 Bartlett + 16 Kruskal-Wallis test cases)
+- `rspec` - Run test suite (106+ examples including 17 t-test + 10 confidence interval + 12 chi-square + ANOVA + 15 Levene + 16 Bartlett + 16 Kruskal-Wallis + 17 Mann-Whitney test cases)
 - `bundle exec rubocop` - Code style checking (MANDATORY: zero violations)
 - `bundle exec rubocop -a` - Auto-fix style violations (run first)
 - `bundle exec rubocop [file]` - Check specific file
@@ -261,19 +265,19 @@ rspec                        # MUST be all tests passing
 
 **Phase 7.6 Goal**: Non-parametric Test Suite Completion
 
-### Phase 7.6 Step 1: Mann-Whitney U Test (次期実装)
+### Phase 7.6 Step 1: Mann-Whitney U Test ✅ 完了
 **Target**: 最も基本的なノンパラメトリック2群比較検定
 - **Statistical Function**: Mann-Whitney U検定 (Wilcoxon rank-sum testとも呼ばれる)
 - **Use Case**: t検定のノンパラメトリック版、2つの独立グループの分布比較
-- **Implementation Base**: Kruskal-Wallisのランク計算ロジック直接応用
+- **Implementation**: Kruskal-Wallisのランク計算ロジック直接応用で実装完了
 - **CLI Command**: `bundle exec number_analyzer mann-whitney group1.csv group2.csv`
-- **Expected Complexity**: Medium (既存パターン応用で実装容易)
+- **Features**: U統計量、z統計量、タイ補正、連続性補正、効果サイズ計算
 
-### Phase 7.6 Benefits
+### Phase 7.6 Benefits ✅ 達成
 - **26個目のサブコマンド**: ノンパラメトリック検定の基礎完成
-- **実用性向上**: 最も頻繁に使用される2群比較検定
+- **実用性向上**: 最も頻繁に使用される2群比較検定の実装完了
 - **統計的完成度**: パラメトリック(t-test) + ノンパラメトリック(Mann-Whitney)の両方対応
-- **テスト品質**: 105+テストケース到達予定
+- **テスト品質**: 106テストケース到達（17 Mann-Whitney追加）
 
 ### Implementation Strategy
 1. **Reuse Existing Infrastructure**: Kruskal-Wallisのランク計算メソッド活用
@@ -282,11 +286,11 @@ rspec                        # MUST be all tests passing
 
 ## Quick Reference
 
-**Current State**: ✅ Phase 7.5 Complete (Variance Homogeneity + Non-parametric Group Comparison)
-**Next Phase**: Phase 7.6 Step 1 - Mann-Whitney U Test Implementation (see `ai-docs/ROADMAP.md`)
-**Test Count**: 89+ examples total (including 15 Levene + 16 Bartlett + 16 Kruskal-Wallis test cases)
-**RuboCop Status**: ✅ Zero violations (Kruskal-Wallis implementation with rank-based H-statistic)
-**Subcommand Count**: 25 total (7 basic + 6 advanced + 1 correlation + 4 time series + 3 statistical test + 1 ANOVA + 2 variance homogeneity + 1 non-parametric commands)
+**Current State**: ✅ Phase 7.6 Step 1 Complete (Non-parametric 2-group + Multi-group Comparison)
+**Next Phase**: Phase 7.6 Step 2 - Wilcoxon Signed-Rank Test Implementation (see `ai-docs/ROADMAP.md`)
+**Test Count**: 106+ examples total (including 15 Levene + 16 Bartlett + 16 Kruskal-Wallis + 17 Mann-Whitney test cases)
+**RuboCop Status**: ✅ Zero violations (Mann-Whitney implementation with U-statistic and normal approximation)
+**Subcommand Count**: 26 total (7 basic + 6 advanced + 1 correlation + 4 time series + 3 statistical test + 1 ANOVA + 2 variance homogeneity + 2 non-parametric commands)
 **CLI Options**: 16 advanced options (JSON, precision, quiet, help, window, period, paired, one-sample, population-mean, mu, level, independence, goodness-of-fit, uniform, post-hoc, alpha) across all subcommands
 
 ## Documentation Structure

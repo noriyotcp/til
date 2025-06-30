@@ -31,6 +31,7 @@ NumberAnalyzer provides the following statistical calculations:
 - **Levene Test** - Test for variance homogeneity across multiple groups using Brown-Forsythe modification for robust variance equality testing
 - **Bartlett Test** - Test for variance homogeneity with high precision under normality assumptions using chi-square distribution
 - **Kruskal-Wallis Test** - Non-parametric test for comparing medians across multiple groups with H-statistic and chi-square distribution
+- **Mann-Whitney U Test** - Non-parametric test for comparing two independent groups with U-statistic and normal approximation (Wilcoxon rank-sum test)
 - **Frequency Distribution** - Count occurrences of each value for data distribution analysis
 - **Histogram Display** - ASCII art visualization of frequency distribution with automatic scaling
 - **File Input Support** - Read data from CSV, JSON, and TXT files
@@ -166,7 +167,7 @@ bundle exec number_analyzer histogram --help
 
 **Subcommands with Options**
 
-All 25 subcommands support the new options:
+All 26 subcommands support the new options:
 
 ```bash
 # Basic Statistics with Options
@@ -223,6 +224,12 @@ bundle exec number_analyzer kruskal-wallis 1 2 3 -- 4 5 6 -- 7 8 9
 bundle exec number_analyzer kruskal-wallis --file group1.csv group2.csv group3.csv
 bundle exec number_analyzer kruskal-wallis --format=json --precision=3 1 2 3 -- 4 5 6 -- 7 8 9
 bundle exec number_analyzer kruskal-wallis --quiet 1 2 3 -- 4 5 6 -- 7 8 9
+
+# Mann-Whitney U Test (Non-parametric t-test)
+bundle exec number_analyzer mann-whitney 1 2 3 -- 4 5 6
+bundle exec number_analyzer mann-whitney --file group1.csv group2.csv
+bundle exec number_analyzer mann-whitney --format=json --precision=3 1 2 3 -- 6 7 8
+bundle exec number_analyzer mann-whitney --quiet 10 20 30 -- 40 50 60
 
 # Specialized Commands with Options
 bundle exec number_analyzer percentile 75 --format=json 1 2 3 4 5
