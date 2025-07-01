@@ -25,5 +25,18 @@
       "Bash(git rebase:*)",
       "Bash(git reset:*)"
     ]
+  },
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Edit|MultiEdit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "FILE=$(jq -r '.tool_input.file_path // .tool_input.filePath // \"\"'); if [[ \"$FILE\" == *.rb ]]; then cd /Users/noriyo_tcp/MyPlayground/til/projects/Claude\\ Code/number_analyzer && echo \"Running RuboCop on $FILE...\" && bundle exec rubocop -a \"$FILE\" && bundle exec rubocop \"$FILE\"; fi"
+          }
+        ]
+      }
+    ]
   }
 }

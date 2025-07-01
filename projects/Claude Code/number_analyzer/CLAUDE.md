@@ -210,6 +210,14 @@ lib/
 ## Development Guidelines
 
 ### Mandatory RuboCop Workflow (REQUIRED FOR ALL CHANGES)
+
+#### Automated RuboCop Execution via Hooks
+**RuboCop は Claude Code の Hooks 機能により自動実行されます**:
+- Ruby ファイル (*.rb) 編集時に自動的に実行
+- `bundle exec rubocop -a` で自動修正を適用
+- その後 `bundle exec rubocop` で検証を実行
+- 設定ファイル: `.claude/settings.local.json` の hooks セクション
+
 **Pre-Development Check**:
 ```bash
 bundle exec rubocop  # Must show zero violations before starting
@@ -217,6 +225,8 @@ bundle exec rubocop  # Must show zero violations before starting
 
 **During Development** (after each change):
 ```bash
+# Ruby ファイル編集時は Hooks により自動実行されます
+# 手動実行が必要な場合:
 bundle exec rubocop          # Check violations
 bundle exec rubocop -a       # Auto-fix correctable issues
 bundle exec rubocop          # Verify zero violations
