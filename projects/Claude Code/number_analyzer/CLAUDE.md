@@ -123,49 +123,55 @@ NumberAnalyzer is a comprehensive statistical analysis tool built in Ruby. Origi
 
 ```
 lib/
-├── number_analyzer.rb              # Core statistical calculations (1,271 lines)
+├── number_analyzer.rb              # Core integration (68 lines) - 96.1% reduction achieved
 └── number_analyzer/
-    ├── cli.rb                      # CLI interface + 26 subcommands
+    ├── cli.rb                      # CLI interface + 29 subcommands
     ├── file_reader.rb              # File input handling
     ├── statistics_presenter.rb     # Output formatting
     ├── output_formatter.rb         # Advanced output formatting
-    └── statistics/                 # NEW: Modular statistics components
+    └── statistics/                 # Complete Modular Architecture (8 modules)
         ├── basic_stats.rb          # BasicStats module (sum, mean, mode, variance, std_dev)
         ├── math_utils.rb           # MathUtils module (mathematical functions)
         ├── advanced_stats.rb       # AdvancedStats module (percentiles, quartiles, outliers)
         ├── correlation_stats.rb    # CorrelationStats module (correlation analysis)
-        └── time_series_stats.rb    # TimeSeriesStats module (time series analysis)
+        ├── time_series_stats.rb    # TimeSeriesStats module (time series analysis)
+        ├── hypothesis_testing.rb   # HypothesisTesting module (t-test, confidence intervals, chi-square)
+        ├── anova_stats.rb          # ANOVAStats module (one-way/two-way ANOVA, post-hoc tests)
+        └── non_parametric_stats.rb # NonParametricStats module (non-parametric tests)
 ```
 
 **Key Classes**:
-- **NumberAnalyzer**: Pure statistical calculations (27 functions) + modular component integration
-- **BasicStats**: Modular basic statistics (sum, mean, mode, variance, standard_deviation)
+- **NumberAnalyzer**: Core integration class (68 lines) + 8 modular components
+- **BasicStats**: Basic statistics (sum, mean, mode, variance, standard_deviation)
 - **MathUtils**: Mathematical utility functions (standard_normal_cdf, erf, t_distribution_cdf, f_distribution_p_value)
-- **AdvancedStats**: Advanced statistical analysis (percentile, quartiles, interquartile_range, outliers, deviation_scores)
+- **AdvancedStats**: Advanced analysis (percentile, quartiles, interquartile_range, outliers, deviation_scores)
 - **CorrelationStats**: Correlation analysis (correlation, interpret_correlation)
 - **TimeSeriesStats**: Time series analysis (linear_trend, moving_average, growth_rates, seasonal_decomposition)
-- **NumberAnalyzer::CLI**: Command-line argument processing + 26 subcommand routing
+- **HypothesisTesting**: Statistical tests (t_test, confidence_interval, chi_square_test)
+- **ANOVAStats**: Variance analysis (one_way_anova, two_way_anova, post_hoc_analysis, levene_test, bartlett_test)
+- **NonParametricStats**: Non-parametric tests (kruskal_wallis_test, mann_whitney_u_test, wilcoxon_signed_rank_test, friedman_test)
+- **NumberAnalyzer::CLI**: Command-line argument processing + 29 subcommand routing
 - **NumberAnalyzer::FileReader**: CSV/JSON/TXT file input
 - **NumberAnalyzer::StatisticsPresenter**: Output formatting and histogram display
 - **NumberAnalyzer::OutputFormatter**: Advanced output formatting (JSON, precision, quiet mode)
 
 ## Implemented Features
 
-**Statistical Functions (30)**:
-- Basic: sum, mean, min, max, median, mode
-- Variability: variance, standard deviation, IQR
-- Advanced: percentiles, quartiles, outliers, deviation scores
-- Relationships: Pearson correlation coefficient
-- Time Series: linear trend analysis (slope, intercept, R², direction), moving averages, growth rate analysis (period-over-period, CAGR, average growth rate), seasonal pattern analysis (decomposition, period detection, seasonal strength)
-- Statistical Tests: independent samples t-test (Welch's t-test), paired samples t-test, one-sample t-test with p-value and significance testing, confidence intervals for population mean (t-distribution and normal approximation), chi-square test for independence and goodness-of-fit with Cramér's V effect size
-- Analysis of Variance: one-way ANOVA with F-statistic, p-value calculation, effect size measures (η², ω²), statistical interpretation, comprehensive ANOVA table output, post-hoc tests (Tukey HSD, Bonferroni correction) for multiple pairwise comparisons
-- Variance Homogeneity: Levene test with Brown-Forsythe modification for robust variance equality testing, Bartlett test for high-precision variance equality testing under normality assumptions, ANOVA prerequisite checking, outlier-resistant analysis
-- Visualization: frequency distribution, ASCII histogram
+**Statistical Functions (33+)**:
+- **Basic Statistics**: sum, mean, min, max, median, mode, variance, standard deviation, IQR
+- **Advanced Analysis**: percentiles, quartiles, outliers, deviation scores  
+- **Correlation Analysis**: Pearson correlation coefficient with interpretation
+- **Time Series Analysis**: linear trend analysis (slope, intercept, R², direction), moving averages with customizable windows, growth rate analysis (period-over-period, CAGR, average growth rate), seasonal pattern analysis (decomposition, period detection, seasonal strength)
+- **Hypothesis Testing**: independent samples t-test (Welch's t-test), paired samples t-test, one-sample t-test with p-value and significance testing, confidence intervals for population mean (t-distribution and normal approximation), chi-square test for independence and goodness-of-fit with Cramér's V effect size
+- **Analysis of Variance**: one-way ANOVA and **two-way ANOVA** with F-statistic, p-value calculation, effect size measures (η², ω², partial η²), statistical interpretation, comprehensive ANOVA table output, **main effects and interaction analysis**, post-hoc tests (Tukey HSD, Bonferroni correction) for multiple pairwise comparisons
+- **Variance Homogeneity Tests**: Levene test with Brown-Forsythe modification for robust variance equality testing, Bartlett test for high-precision variance equality testing under normality assumptions, ANOVA prerequisite checking, outlier-resistant analysis
+- **Non-parametric Tests**: Kruskal-Wallis test (non-parametric ANOVA), Mann-Whitney U test (non-parametric t-test), Wilcoxon signed-rank test (paired non-parametric), Friedman test (repeated measures non-parametric ANOVA)
+- **Data Visualization**: frequency distribution, ASCII histogram
 
 **Input Support**: CLI arguments, CSV/JSON/TXT files (both full analysis and all subcommands)
 **Output**: Comprehensive analysis OR individual statistics + visualization
-**CLI Modes**: Full analysis (default) OR 24 individual subcommands (Phases 6.1, 6.2, 7.1, 7.2, 7.3, 7.4, 7.5)
-**Subcommand Categories**: Basic statistics, advanced analysis, parameterized commands, correlation analysis, time series analysis, statistical inference, analysis of variance, variance homogeneity tests
+**CLI Modes**: Full analysis (default) OR 29 individual subcommands (comprehensive statistical analysis suite)
+**Subcommand Categories**: Basic statistics, advanced analysis, parameterized commands, correlation analysis, time series analysis, statistical inference, analysis of variance (one-way & two-way), variance homogeneity tests, non-parametric tests
 **Output Options (Phase 6.3)**: JSON format, precision control, quiet mode, help system
 **Correlation Analysis (Phase 7.1)**: Dual dataset input, mathematical interpretation, file/numeric support
 **Time Series Analysis (Phase 7.2)**: Linear trend analysis, moving averages with customizable window sizes, growth rate analysis with CAGR calculation, seasonal pattern analysis with automatic period detection
@@ -194,27 +200,31 @@ lib/
 4. **Documentation updates** - REQUIRED: Update ALL relevant docs (see Documentation Update Checklist below)
 5. **Mathematical accuracy** - Verify statistical correctness
 
-### Documentation Update Checklist (MANDATORY - Zero Documentation Debt Policy)
-**Every implementation MUST update these files before completion**:
+### Documentation Update Checklist (MANDATORY - 責務分離対応)
+**新機能実装時の必須ドキュメント更新**:
 
-**Core Documentation Files** (ALL REQUIRED):
-- ✅ **README.md** - Features section + CLI examples + subcommand count updates
-- ✅ **ROADMAP.md** - Phase status updates + checkbox [x] completion + achievement metrics
-- ✅ **CLAUDE.md** - Command examples + development commands (if new CLI features)
+**Primary Documentation Updates** (責務別):
+- ✅ **[ai-docs/ROADMAP.md](ai-docs/ROADMAP.md)** - **必須**: Phase状況更新 + 達成メトリクス + テスト数・行数記録
+- ✅ **[README.md](README.md)** - **必須**: ユーザー向け機能説明 + 基本的なCLI例
+- ✅ **CLAUDE.md** - **条件付き**: 新CLI機能時のみコマンド例追加
+
+**責務分離による更新ルール**:
+- **プロジェクト管理情報** → ROADMAP.mdに集約（Phase状況、メトリクス、詳細履歴）
+- **開発ガイダンス** → CLAUDE.mdに集約（品質基準、ワークフロー、コマンド例）
+- **ユーザー情報** → README.mdに集約（機能使用法、API参考）
 
 **Documentation Verification Process**:
 ```bash
-# Before marking implementation complete, verify:
-1. README.md features section updated with new functionality
-2. ROADMAP.md phase status marked as complete with metrics
-3. CLAUDE.md development commands updated (if applicable)
+# 実装完了前の必須確認:
+1. ai-docs/ROADMAP.md - Phase status + metrics updated
+2. README.md - user-facing features documented  
+3. CLAUDE.md - development commands (新CLI機能のみ)
 4. All examples tested and working
-5. Subcommand counts and statistics accurate
 ```
 
-**Completion Redefinition**:
-- ✅ **COMPLETE** = Code + Tests + Documentation Updates + RuboCop compliance
-- ❌ **INCOMPLETE** = Working code without corresponding documentation updates
+**Completion Redefinition** (責務分離版):
+- ✅ **COMPLETE** = Code + Tests + **ROADMAP.md更新** + README.md更新 + RuboCop compliance
+- ❌ **INCOMPLETE** = Working code without ROADMAP.md status update
 
 ## Development Guidelines
 
@@ -331,77 +341,60 @@ git status                   # README.md, ROADMAP.md, CLAUDE.md が含まれて�
 - Settings prohibit `git commit` commands for stability
 - User must manually run `git commit` with generated message
 
-## Next Development Phase - Phase 7.7
+## Project Status
 
-**Phase 7.7 Goal**: 基盤リファクタリング (Plugin System Architecture 準備段階)
+**Current Development State**: Phase 7.8 完了 - 詳細な開発履歴は [ai-docs/ROADMAP.md](ai-docs/ROADMAP.md) を参照
 
-### 現在の課題
-- **1,528行のモノリシックファイル**: `lib/number_analyzer.rb` の可読性・保守性限界 (4モジュール抽出により199行削減済み)
-- **メソッド重複リスク**: standard_normal_cdf, erf等の重複による保守負荷  
-- **単一責任原則違反**: 32個の統計機能が1クラスに集約、拡張性限界
+**Architecture Overview**: 完全モジュラー化達成（8モジュール構成、96.1%コード削減）
 
-### Phase 7.7 Step 1: BasicStats モジュール抽出 ✅ 完了
-**最初のモジュール分割テスト - 成功**
-- **Target**: `lib/number_analyzer/statistics/basic_stats.rb` 作成完了
-- **Extracted Methods**: sum, mean, mode, variance, standard_deviation (median は percentile 依存のため保留)
-- **Integration**: NumberAnalyzer クラスに `include BasicStats` 追加完了
-- **Quality Gate**: 既存106テスト + 新規32テスト = 138テスト全通過確認（API変更なし）
-- **Architecture**: 17行削減 (1,727 → 1,710 lines), 51行の BasicStats モジュール作成
-- **Test Coverage**: 包括的ユニットテスト追加 (`spec/number_analyzer/statistics/basic_stats_spec.rb`)
+## Next Development Phase - Phase 8.0
 
-### Phase 7.7 Step 2: MathUtils モジュール抽出 ✅ 完了
-**数学的ユーティリティ関数の統合とコード重複解消**
-- **Target**: `lib/number_analyzer/statistics/math_utils.rb` 作成完了
-- **Extracted Functions**: standard_normal_cdf, erf, approximate_t_distribution_cdf, calculate_f_distribution_p_value
-- **Code Reduction**: 95行削減 (1,710 → 1,615 lines), 102行の MathUtils モジュール作成
-- **Duplication Elimination**: 数学的関数の重複解消、保守性向上
-- **Integration**: 統計検定メソッドから MathUtils 関数への完全移行
-- **Quality Gate**: 既存106テスト全通過確認（API変更なし、RuboCop準拠）
+### Phase 8.0: Plugin System Architecture 🚀 準備完了
 
-### Phase 7.7 Benefits
-- **可読性向上**: 各ファイル200-300行程度に分割
-- **保守性向上**: 統計分野ごとの責任分離
-- **拡張性向上**: 新機能追加時の影響範囲限定
-- **将来性**: Plugin System Architecture (Phase 8.0) への自然な移行パス
-- **安全性**: 既存API完全保持、106テスト全通過維持
+**Phase 8.0 Goal**: 次世代統計分析プラットフォーム構築
+
+**Phase 7.7基盤リファクタリング完了により、Plugin System Architecture への自然な移行パスが確立されました。**
+
+### Phase 8.0 Features (計画)
+- **Dynamic Command Loading**: 統計機能の動的ロード機能
+- **Third-party Extension Support**: サードパーティ拡張機能対応
+- **Configuration-based Plugin Management**: 設定ファイルによるプラグイン管理
+- **Modular Architecture**: 完全モジュラー設計による拡張性
+
+### Integration Possibilities
+- **R/Python Interoperability**: 他言語統計ライブラリとの連携
+- **Database Connectivity**: データベース直接接続機能
+- **Web API Endpoints**: RESTful API提供機能
+- **Jupyter Notebook Integration**: ノートブック環境での統計分析
 
 ### Implementation Strategy
-1. **段階的実装**: BasicStats → MathUtils → 他のモジュール順次抽出
-2. **API完全保持**: NumberAnalyzer.new(...).median 等の既存呼び出し維持
-3. **品質保証**: 各段階で全テスト通過、RuboCop違反ゼロ維持
+1. **Plugin Architecture Design**: プラグインシステムの設計
+2. **Extension Point Definition**: 拡張ポイントの定義
+3. **Configuration System**: プラグイン設定システム
+4. **Compatibility Layer**: 既存機能との互換性保持
 
-## Completed Phase - Phase 7.6
-
-### Phase 7.6 Step 1: Mann-Whitney U Test ✅ 完了
-**Target**: 最も基本的なノンパラメトリック2群比較検定
-- **Statistical Function**: Mann-Whitney U検定 (Wilcoxon rank-sum testとも呼ばれる)
-- **Use Case**: t検定のノンパラメトリック版、2つの独立グループの分布比較
-- **Implementation**: Kruskal-Wallisのランク計算ロジック直接応用で実装完了
-- **CLI Command**: `bundle exec number_analyzer mann-whitney group1.csv group2.csv`
-- **Features**: U統計量、z統計量、タイ補正、連続性補正、効果サイズ計算
-
-### Phase 7.6 Benefits ✅ 達成
-- **26個目のサブコマンド**: ノンパラメトリック検定の基礎完成
-- **実用性向上**: 最も頻繁に使用される2群比較検定の実装完了
-- **統計的完成度**: パラメトリック(t-test) + ノンパラメトリック(Mann-Whitney)の両方対応
-- **テスト品質**: 106テストケース到達（17 Mann-Whitney追加）
 
 ## Quick Reference
 
-**Current State**: ✅ Phase 7.6 Step 3 Complete (Friedman Test) - 反復測定ノンパラメトリックANOVA実装完了
-**Next Phase**: Phase 7.7 - Advanced Architecture Refactoring (準備完了)
-**Test Count**: 106+ examples total (comprehensive test coverage including unit and integration tests)
-**RuboCop Status**: ✅ Zero violations (8 modular architecture with BasicStats + MathUtils + AdvancedStats + CorrelationStats + TimeSeriesStats + HypothesisTesting + ANOVAStats + NonParametricStats)
-**Subcommand Count**: 28 total (7 basic + 6 advanced + 1 correlation + 4 time series + 3 statistical test + 1 ANOVA + 2 variance homogeneity + 4 non-parametric commands)
-**CLI Options**: 16 advanced options (JSON, precision, quiet, help, window, period, paired, one-sample, population-mean, mu, level, independence, goodness-of-fit, uniform, post-hoc, alpha) across all subcommands
+**Current State**: ✅ Phase 7.8 Complete - 詳細は [ai-docs/ROADMAP.md](ai-docs/ROADMAP.md) を参照  
+**Architecture**: 8 modular components, 96.1% code reduction achieved  
+**Commands**: 29 subcommands, 18 CLI options  
+**Quality**: Zero RuboCop violations, 326+ tests  
+**Next Phase**: Phase 8.0 - Plugin System Architecture 🚀
 
 ## Documentation Structure
 
-- **CLAUDE.md** (this file): Development guidance for Claude Code
-- **README.md**: User documentation and API reference
-- **ai-docs/ROADMAP.md**: Development phases and future planning
-- **ai-docs/FEATURES.md**: Comprehensive feature documentation
-- **ai-docs/ARCHITECTURE.md**: Technical architecture details
-- **ai-docs/REFACTORING_PLAN.md**: Phase 7.7 基盤リファクタリング詳細計画
+### Primary Documentation (責務分離)
+- **CLAUDE.md** (this file): **開発ガイダンス特化** - Claude Code向けコマンド例、品質基準、ワークフロー
+- **[ai-docs/ROADMAP.md](ai-docs/ROADMAP.md)**: **プロジェクト管理の単一情報源** - Phase履歴、メトリクス、次フェーズ計画
+- **[README.md](README.md)**: ユーザー向けドキュメント、API参考
 
-For detailed information about specific aspects of the project, refer to the appropriate documentation file above.
+### Secondary Documentation  
+- **[ai-docs/FEATURES.md](ai-docs/FEATURES.md)**: 機能の包括的ドキュメント
+- **[ai-docs/ARCHITECTURE.md](ai-docs/ARCHITECTURE.md)**: 技術アーキテクチャ詳細
+- **[ai-docs/REFACTORING_PLAN.md](ai-docs/REFACTORING_PLAN.md)**: Phase 7.7 基盤リファクタリング詳細計画
+
+### 情報アクセスガイド
+- **開発状況確認** → [ai-docs/ROADMAP.md](ai-docs/ROADMAP.md)
+- **開発手順・品質基準** → CLAUDE.md (this file)
+- **機能使用方法** → [README.md](README.md)
