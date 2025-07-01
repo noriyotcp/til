@@ -6,7 +6,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 NumberAnalyzer is a comprehensive statistical analysis tool built in Ruby. Originally started as a refactoring exercise from beginner-level code to professional Ruby Gem, it has evolved into an enterprise-ready statistical analysis library with data visualization capabilities.
 
-**Current Status**: ✅ **Production Ready** - 33 statistical functions, 343+ test examples, Phase 7.6 Step 3 complete with fully modular architecture (8 modules extracted: BasicStats, MathUtils, AdvancedStats, CorrelationStats, TimeSeriesStats, HypothesisTesting, ANOVAStats, NonParametricStats), 96.1% code reduction achieved, enterprise-level code quality
+**Current Status**: ✅ **Production Ready** - 33 statistical functions, 106+ test examples, Phase 7.6 Step 3 complete with fully modular architecture (8 modules extracted: BasicStats, MathUtils, AdvancedStats, CorrelationStats, TimeSeriesStats, HypothesisTesting, ANOVAStats, NonParametricStats), 96.1% code reduction achieved, enterprise-level code quality
 
 ## Development Commands
 
@@ -387,7 +387,7 @@ git status                   # README.md, ROADMAP.md, CLAUDE.md が含まれて�
 
 **Current State**: ✅ Phase 7.6 Step 3 Complete (Friedman Test) - 反復測定ノンパラメトリックANOVA実装完了
 **Next Phase**: Phase 7.7 - Advanced Architecture Refactoring (準備完了)
-**Test Count**: 343+ examples total (246 unit tests: 32 BasicStats + 26 AdvancedStats + 28 CorrelationStats + 38 TimeSeriesStats + 32 HypothesisTesting + 38 ANOVAStats + 52 NonParametricStats + 106 integration test cases)
+**Test Count**: 106+ examples total (comprehensive test coverage including unit and integration tests)
 **RuboCop Status**: ✅ Zero violations (8 modular architecture with BasicStats + MathUtils + AdvancedStats + CorrelationStats + TimeSeriesStats + HypothesisTesting + ANOVAStats + NonParametricStats)
 **Subcommand Count**: 28 total (7 basic + 6 advanced + 1 correlation + 4 time series + 3 statistical test + 1 ANOVA + 2 variance homogeneity + 4 non-parametric commands)
 **CLI Options**: 16 advanced options (JSON, precision, quiet, help, window, period, paired, one-sample, population-mean, mu, level, independence, goodness-of-fit, uniform, post-hoc, alpha) across all subcommands

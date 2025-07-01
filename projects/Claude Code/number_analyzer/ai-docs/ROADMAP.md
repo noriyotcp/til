@@ -33,7 +33,7 @@
 - [x] StatisticsPresenterへの自動統合
 - [x] 包括的テストスイート（12テストケース）
 
-**現在の成果**: 338テスト実行例、33統計指標、Phase 7.6 Step 2完全実装、8モジュール抽出アーキテクチャ（96.1%コード削減）、企業レベル品質
+**現在の成果**: 106テスト実行例、33統計指標、Phase 7.6 Step 3完全実装、8モジュール抽出アーキテクチャ（96.1%コード削減）、企業レベル品質
 
 ### Phase 6: CLI Subcommands Implementation ✅ 完了
 - [x] 13個の統計サブコマンド実装 (median, mean, mode, sum, min, max, histogram, outliers, percentile, quartiles, variance, std, deviation-scores)
@@ -316,7 +316,7 @@
 - ✅ **ノンパラメトリック検定スイート完成**: Kruskal-Wallis（多群比較）+ Mann-Whitney（独立2群）+ Wilcoxon（対応2群）+ Friedman（反復測定多群）
 - ✅ **反復測定分析対応**: パラメトリック（反復測定ANOVA）とノンパラメトリック（Friedman）の両方完備
 - ✅ **数学的完成度**: タイ補正、χ²分布p値、ランク計算の完全実装
-- ✅ **343テスト実行例**: 246ユニット + 106統合テスト（17 Friedmanテストケース追加）
+- ✅ **106テスト実行例**: 包括的テストスイート（Friedmanテストケース追加）
 
 ### Future ANOVA Extension Features 🔮 長期計画
 - 🔮 **二元配置分散分析**: 2つの要因の主効果と交互作用
