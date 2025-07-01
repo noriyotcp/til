@@ -478,6 +478,90 @@ class NumberAnalyzer
       ].join("\n")
     end
 
+    def self.format_friedman_test(result, options = {})
+      case options[:format]
+      when 'json'
+        format_friedman_test_json(result, options)
+      when 'quiet'
+        format_friedman_test_quiet(result, options)
+      else
+        format_friedman_test_verbose(result, options)
+      end
+    end
+
+    def self.format_friedman_test_verbose(result, options = {})
+      precision = options[:precision] || 6
+
+      output = []
+      output << build_friedman_header
+      output << build_friedman_statistics(result, precision)
+      output << build_friedman_interpretation(result)
+      output << build_friedman_notes
+
+      output.compact.join("\n")
+    end
+
+    def self.format_friedman_test_json(result, options = {})
+      precision = options[:precision] || 6
+
+      formatted_result = {
+        test_type: result[:test_type],
+        chi_square_statistic: result[:chi_square_statistic].round(precision),
+        p_value: result[:p_value].round(precision),
+        degrees_of_freedom: result[:degrees_of_freedom],
+        significant: result[:significant],
+        interpretation: result[:interpretation],
+        rank_sums: result[:rank_sums],
+        n_subjects: result[:n_subjects],
+        k_conditions: result[:k_conditions],
+        total_observations: result[:total_observations]
+      }
+
+      JSON.generate(formatted_result)
+    end
+
+    def self.format_friedman_test_quiet(result, options = {})
+      precision = options[:precision] || 6
+      chi_square = result[:chi_square_statistic].round(precision)
+      p_value = result[:p_value].round(precision)
+      "#{chi_square} #{p_value}"
+    end
+
+    def self.build_friedman_header
+      '=== Friedman検定 ==='
+    end
+
+    def self.build_friedman_statistics(result, precision)
+      [
+        "χ²統計量: #{result[:chi_square_statistic].round(precision)}",
+        "自由度: #{result[:degrees_of_freedom]}",
+        "p値: #{result[:p_value].round(precision)}",
+        "被験者数: #{result[:n_subjects]}",
+        "条件数: #{result[:k_conditions]}",
+        "総観測数: #{result[:total_observations]}",
+        "ランク合計: #{result[:rank_sums].join(', ')}"
+      ].join("\n")
+    end
+
+    def self.build_friedman_interpretation(result)
+      significance = result[:significant] ? '**有意**' : '非有意'
+      [
+        "結果: #{significance} (α = 0.05)",
+        "解釈: #{result[:interpretation]}"
+      ].join("\n")
+    end
+
+    def self.build_friedman_notes
+      [
+        '',
+        '注意事項:',
+        '・ Friedman検定は反復測定データのノンパラメトリック検定です',
+        '・ 反復測定ANOVAの代替として正規分布を仮定しない場合に使用します',
+        '・ 同一被験者が複数条件で測定されることを前提とします',
+        '・ 有意差が見つかった場合は、事後検定（Nemenyi検定など）を検討してください'
+      ].join("\n")
+    end
+
     private_class_method :format_mode, :format_outliers, :format_deviation_scores, :display_histogram,
                          :format_levene_test_verbose, :format_levene_test_json, :format_levene_test_quiet,
                          :format_bartlett_test_verbose, :format_bartlett_test_json, :format_bartlett_test_quiet,
@@ -494,6 +578,10 @@ class NumberAnalyzer
                          :format_wilcoxon_test_verbose, :format_wilcoxon_test_json,
                          :format_wilcoxon_test_quiet, :build_wilcoxon_header,
                          :build_wilcoxon_statistics, :build_wilcoxon_interpretation,
-                         :build_wilcoxon_notes
+                         :build_wilcoxon_notes,
+                         :format_friedman_test_verbose, :format_friedman_test_json,
+                         :format_friedman_test_quiet, :build_friedman_header,
+                         :build_friedman_statistics, :build_friedman_interpretation,
+                         :build_friedman_notes
   end
 end

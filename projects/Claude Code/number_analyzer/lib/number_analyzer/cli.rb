@@ -37,7 +37,8 @@ class NumberAnalyzer
       'bartlett' => :run_bartlett,
       'kruskal-wallis' => :run_kruskal_wallis,
       'mann-whitney' => :run_mann_whitney,
-      'wilcoxon' => :run_wilcoxon
+      'wilcoxon' => :run_wilcoxon,
+      'friedman' => :run_friedman
     }.freeze
 
     # Main entry point for CLI
@@ -82,7 +83,7 @@ class NumberAnalyzer
     private_class_method def self.run_subcommand(command, args)
       # Special handling for commands that use '--' separators
       if %w[chi-square anova levene bartlett kruskal-wallis mann-whitney
-            wilcoxon].include?(command) && args.include?('--')
+            wilcoxon friedman].include?(command) && args.include?('--')
         # Find where options end and data begins
         options = default_options
         data_start_index = 0
@@ -1430,6 +1431,47 @@ class NumberAnalyzer
 
       # Format and display results
       puts StatisticsPresenter.format_wilcoxon_test(result, options)
+    end
+
+    private_class_method def self.run_friedman(args, options = {})
+      if options[:help]
+        show_help('friedman', 'Non-parametric test for repeated measures across multiple conditions (Friedman test)')
+        return
+      end
+
+      # Parse data sources (files or command line groups)
+      groups = if options[:file] || args.any? { |arg| arg.end_with?('.csv', '.json', '.txt') }
+                 parse_file_groups(args, options)
+               else
+                 parse_command_line_groups(args)
+               end
+
+      if groups.nil? || groups.empty? || groups.length < 3
+        puts 'エラー: Friedman検定には少なくとも3つのグループ（条件）が必要です。'
+        puts '使用例: bundle exec number_analyzer friedman 1 2 3 -- 4 5 6 -- 7 8 9'
+        puts '        bundle exec number_analyzer friedman condition1.csv condition2.csv condition3.csv'
+        exit 1
+      end
+
+      # Check that all groups have the same length (repeated measures requirement)
+      group_sizes = groups.map(&:length)
+      if group_sizes.uniq.length != 1
+        puts 'エラー: 反復測定のため、全てのグループは同じ長さである必要があります。'
+        puts "グループサイズ: #{group_sizes.join(', ')}"
+        exit 1
+      end
+
+      # Execute Friedman test
+      analyzer = NumberAnalyzer.new([])
+      result = analyzer.friedman_test(*groups)
+
+      if result.nil?
+        puts 'エラー: Friedman検定を実行できませんでした。データを確認してください。'
+        exit 1
+      end
+
+      # Format and display results
+      puts StatisticsPresenter.format_friedman_test(result, options)
     end
 
     private_class_method def self.parse_file_groups(args, options)

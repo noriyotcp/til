@@ -169,6 +169,86 @@ module NonParametricStats
     }
   end
 
+  def friedman_test(*groups)
+    # Validate input - need at least 3 related groups (repeated measures)
+    groups = groups.compact
+    groups = groups.reject { |group| group.is_a?(Array) && group.empty? }
+
+    return nil if groups.length < 3
+
+    # Ensure each group has the same length (repeated measures requirement)
+    # and contains valid numeric data
+    groups.each do |group|
+      return nil unless group.is_a?(Array)
+      return nil if group.empty?
+    end
+
+    # Check for equal group sizes (requirement for repeated measures design)
+    group_sizes = groups.map(&:length)
+    return nil unless group_sizes.uniq.length == 1
+
+    # Calculate basic parameters
+    k = groups.length # number of conditions (treatments)
+    n = groups.first.length # number of subjects (blocks)
+
+    # Create a matrix for ranking: each row is a subject, each column is a condition
+    # We need to rank each subject's scores across conditions
+    rank_matrix = Array.new(n) { Array.new(k) }
+
+    # For each subject (row), rank their scores across all conditions (columns)
+    (0...n).each do |subject|
+      subject_scores = groups.map { |group| group[subject] }
+      subject_ranks = calculate_ranks_with_ties(subject_scores)
+
+      (0...k).each do |condition|
+        rank_matrix[subject][condition] = subject_ranks[condition]
+      end
+    end
+
+    # Calculate rank sums for each condition (column sums)
+    rank_sums = Array.new(k, 0.0)
+    (0...k).each do |condition|
+      rank_sums[condition] = (0...n).sum { |subject| rank_matrix[subject][condition] }
+    end
+
+    # Calculate Friedman test statistic
+    # χ² = [12/(n*k*(k+1))] * [Σ(Rj²)] - 3*n*(k+1)
+    # where Rj is the rank sum for condition j
+    sum_of_squared_rank_sums = rank_sums.sum { |rank_sum| rank_sum**2 }
+
+    chi_square_statistic = ((12.0 / (n * k * (k + 1))) * sum_of_squared_rank_sums) - (3 * n * (k + 1))
+
+    # Apply tie correction if there are ties within subjects
+    chi_square_statistic = apply_friedman_tie_correction(chi_square_statistic, rank_matrix, n, k)
+
+    # Degrees of freedom
+    df = k - 1
+
+    # Calculate p-value using chi-square distribution
+    p_value = calculate_chi_square_p_value(chi_square_statistic, df)
+
+    # Determine significance and interpretation
+    significant = p_value < 0.05
+    interpretation = if significant
+                       '条件間に統計的有意差が認められる（反復測定での条件効果あり）'
+                     else
+                       '条件間に統計的有意差は認められない（反復測定での条件効果なし）'
+                     end
+
+    {
+      test_type: 'Friedman Test',
+      chi_square_statistic: chi_square_statistic.round(6),
+      p_value: p_value.round(6),
+      degrees_of_freedom: df,
+      significant: significant,
+      interpretation: interpretation,
+      rank_sums: rank_sums.map { |sum| sum.round(2) },
+      n_subjects: n,
+      k_conditions: k,
+      total_observations: n * k
+    }
+  end
+
   def wilcoxon_signed_rank_test(before, after)
     # Validate input - need paired data of same length
     return nil if before.nil? || after.nil?
@@ -357,6 +437,37 @@ module NonParametricStats
       (((n * (n + 1) * ((2 * n) + 1)) - (tie_correction / 2.0)) / 24.0)
     else
       basic_variance
+    end
+  end
+
+  def apply_friedman_tie_correction(chi_square_statistic, rank_matrix, n_subjects, k_conditions)
+    # Calculate tie correction for Friedman test
+    # For each subject (row), count ties across their rankings
+    total_tie_correction = 0.0
+
+    (0...n_subjects).each do |subject|
+      subject_ranks = (0...k_conditions).map { |condition| rank_matrix[subject][condition] }
+
+      # Count occurrences of each rank for this subject
+      rank_counts = subject_ranks.tally
+
+      # Calculate tie correction for this subject: Σ(ti³ - ti)
+      subject_tie_correction = rank_counts.values.sum { |count| (count**3) - count }
+      total_tie_correction += subject_tie_correction
+    end
+
+    # Apply correction if there are ties
+    # Corrected χ² = χ² / [1 - (Σ(ti³ - ti)) / (n * k * (k² - 1))]
+    if total_tie_correction.positive?
+      denominator = n_subjects * k_conditions * ((k_conditions**2) - 1)
+      correction_factor = 1.0 - (total_tie_correction / denominator)
+
+      # Avoid division by zero
+      return chi_square_statistic if correction_factor <= 0
+
+      chi_square_statistic / correction_factor
+    else
+      chi_square_statistic
     end
   end
 end

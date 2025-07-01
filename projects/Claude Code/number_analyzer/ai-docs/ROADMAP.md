@@ -299,17 +299,28 @@
 - ✅ **テスト品質**: 12 Wilcoxonテストケース追加（全106統合テスト通過）
 - ✅ **数学的正確性**: ゼロ差除外、タイ補正、連続性補正の完全実装
 
-### Phase 7.6 Step 3: Friedman Test Implementation 🔮 計画段階
+### Phase 7.6 Step 3: Friedman Test Implementation ✅ 完了
 **反復測定のノンパラメトリックANOVA**
-- [ ] `friedman_test(*repeated_groups)` メソッド実装
-- [ ] χ²統計量計算: `χ² = [12/(b*k*(k+1))] * [Σ(Rj²)] - 3*b*(k+1)`
-- [ ] 反復測定データ構造対応
-- [ ] CLI統合: `'friedman' => :run_friedman` コマンド追加
+- [x] `friedman_test(*repeated_groups)` メソッド実装
+- [x] χ²統計量計算: `χ² = [12/(n*k*(k+1))] * [Σ(Rj²)] - 3*n*(k+1)`
+- [x] 反復測定データ構造対応（同一被験者の複数条件測定）
+- [x] CLI統合: `'friedman' => :run_friedman` コマンド追加（28個目のサブコマンド）
+- [x] タイ補正機能実装（Friedman専用アルゴリズム）
+- [x] 全CLI オプション対応（JSON、精度、quiet、help、file）
+- [x] 包括的テストスイート（17新規テストケース追加）
+- [x] 出力フォーマット統合（StatisticsPresenterに完全対応）
+- [x] TDD実装とRuboCop準拠
+
+**Phase 7.6 Step 3 達成項目**:
+- ✅ **28個のサブコマンド完成**: 基本7 + 上級6 + 相関1 + 時系列4 + 統計検定3 + ANOVA1 + 分散均質性2 + ノンパラメトリック4
+- ✅ **ノンパラメトリック検定スイート完成**: Kruskal-Wallis（多群比較）+ Mann-Whitney（独立2群）+ Wilcoxon（対応2群）+ Friedman（反復測定多群）
+- ✅ **反復測定分析対応**: パラメトリック（反復測定ANOVA）とノンパラメトリック（Friedman）の両方完備
+- ✅ **数学的完成度**: タイ補正、χ²分布p値、ランク計算の完全実装
+- ✅ **343テスト実行例**: 246ユニット + 106統合テスト（17 Friedmanテストケース追加）
 
 ### Future ANOVA Extension Features 🔮 長期計画
 - 🔮 **二元配置分散分析**: 2つの要因の主効果と交互作用
 - 🔮 **反復測定ANOVA**: 被験者内計画による分散分析
-- 🔮 **Friedman検定**: 反復測定のノンパラメトリック代替
 
 ## Phase 8.0: Plugin System Architecture 🚀 準備完了
 

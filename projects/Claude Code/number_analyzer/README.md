@@ -33,6 +33,7 @@ NumberAnalyzer provides the following statistical calculations:
 - **Kruskal-Wallis Test** - Non-parametric test for comparing medians across multiple groups with H-statistic and chi-square distribution
 - **Mann-Whitney U Test** - Non-parametric test for comparing two independent groups with U-statistic and normal approximation (Wilcoxon rank-sum test)
 - **Wilcoxon Signed-Rank Test** - Non-parametric test for comparing paired samples with W-statistic and effect size calculation
+- **Friedman Test** - Non-parametric test for repeated measures across multiple conditions with chi-square statistic and tie correction
 - **Frequency Distribution** - Count occurrences of each value for data distribution analysis
 - **Histogram Display** - ASCII art visualization of frequency distribution with automatic scaling
 - **File Input Support** - Read data from CSV, JSON, and TXT files
@@ -107,6 +108,11 @@ bundle exec number_analyzer chi-square --independence --file contingency_table.c
 bundle exec number_analyzer wilcoxon 10 12 14 -- 15 18 20
 bundle exec number_analyzer wilcoxon before.csv after.csv
 bundle exec number_analyzer wilcoxon --format=json --precision=3 1 2 3 -- 4 5 6
+
+# Friedman test (repeated measures across multiple conditions)
+bundle exec number_analyzer friedman 1 2 3 -- 4 5 6 -- 7 8 9
+bundle exec number_analyzer friedman condition1.csv condition2.csv condition3.csv
+bundle exec number_analyzer friedman --format=json --precision=3 1 2 3 -- 4 5 6 -- 7 8 9
 ```
 
 #### Using the bin file directly
@@ -121,7 +127,7 @@ number_analyzer 1 2 3 4 5
 
 #### Advanced Usage with Options (Phase 6.3)
 
-NumberAnalyzer supports advanced output formatting and control options for all 27 subcommands:
+NumberAnalyzer supports advanced output formatting and control options for all 28 subcommands:
 
 **JSON Output Format**
 ```bash
@@ -173,7 +179,7 @@ bundle exec number_analyzer histogram --help
 
 **Subcommands with Options**
 
-All 26 subcommands support the new options:
+All 28 subcommands support the new options:
 
 ```bash
 # Basic Statistics with Options
@@ -459,7 +465,7 @@ number_analyzer/
 ├── lib/
 │   ├── number_analyzer.rb          # Core statistical calculations
 │   └── number_analyzer/
-│       ├── cli.rb                  # Command line interface + 20 subcommands
+│       ├── cli.rb                  # Command line interface + 28 subcommands
 │       ├── file_reader.rb          # File input support (CSV/JSON/TXT)
 │       ├── statistics_presenter.rb # Display and formatting logic
 │       └── output_formatter.rb     # Advanced output formatting (JSON, precision, quiet)
@@ -481,7 +487,7 @@ number_analyzer/
 The project follows clean architecture principles with separation of concerns:
 
 - **NumberAnalyzer** - Pure statistical calculation library (no dependencies)
-- **NumberAnalyzer::CLI** - Command line interface and argument parsing with 20 subcommands
+- **NumberAnalyzer::CLI** - Command line interface and argument parsing with 28 subcommands
 - **NumberAnalyzer::FileReader** - File input handling (CSV/JSON/TXT support)
 - **NumberAnalyzer::StatisticsPresenter** - Display and formatting logic for full analysis
 - **NumberAnalyzer::OutputFormatter** - Advanced output formatting (JSON, precision, quiet mode)

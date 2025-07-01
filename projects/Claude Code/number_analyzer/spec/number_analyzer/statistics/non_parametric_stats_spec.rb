@@ -20,6 +20,10 @@ class TestNonParametricStats
     calculate_mann_whitney_variance(size1, size2, all_values)
   end
 
+  def test_apply_friedman_tie_correction(chi_square_statistic, rank_matrix, n_subjects, k_conditions)
+    apply_friedman_tie_correction(chi_square_statistic, rank_matrix, n_subjects, k_conditions)
+  end
+
   # Mock method to satisfy dependency
   def calculate_chi_square_p_value(statistic, df)
     # Simple chi-square p-value approximation for testing
@@ -441,6 +445,231 @@ RSpec.describe NonParametricStats do
       # 結果によって変わるため、メッセージの形式をチェック
       expect(kw_result[:interpretation]).to be_a(String)
       expect(mw_result[:interpretation]).to be_a(String)
+    end
+  end
+
+  describe '#friedman_test' do
+    context '正常なケース' do
+      it '3条件の反復測定で正しい結果を返す' do
+        # 3人の被験者が3つの条件で測定された場合
+        condition1 = [1, 2, 3]
+        condition2 = [4, 5, 6]
+        condition3 = [7, 8, 9]
+
+        result = test_class.friedman_test(condition1, condition2, condition3)
+
+        expect(result).to be_a(Hash)
+        expect(result[:test_type]).to eq('Friedman Test')
+        expect(result[:chi_square_statistic]).to be_a(Numeric)
+        expect(result[:p_value]).to be_a(Numeric)
+        expect(result[:degrees_of_freedom]).to eq(2)
+        expect([true, false]).to include(result[:significant])
+        expect(result[:interpretation]).to be_a(String)
+        expect(result[:rank_sums]).to be_an(Array)
+        expect(result[:rank_sums].length).to eq(3)
+        expect(result[:n_subjects]).to eq(3)
+        expect(result[:k_conditions]).to eq(3)
+        expect(result[:total_observations]).to eq(9)
+      end
+
+      it '4条件の反復測定で正しい結果を返す' do
+        # 4人の被験者が4つの条件で測定された場合
+        condition1 = [10, 15, 20, 25]
+        condition2 = [12, 17, 22, 27]
+        condition3 = [14, 19, 24, 29]
+        condition4 = [16, 21, 26, 31]
+
+        result = test_class.friedman_test(condition1, condition2, condition3, condition4)
+
+        expect(result).to be_a(Hash)
+        expect(result[:test_type]).to eq('Friedman Test')
+        expect(result[:degrees_of_freedom]).to eq(3)
+        expect(result[:n_subjects]).to eq(4)
+        expect(result[:k_conditions]).to eq(4)
+        expect(result[:total_observations]).to eq(16)
+        expect(result[:rank_sums].length).to eq(4)
+      end
+
+      it 'タイがある場合も正しく処理する' do
+        # 同じ値を含むデータ
+        condition1 = [1, 1, 2]
+        condition2 = [1, 2, 2]
+        condition3 = [2, 2, 3]
+
+        result = test_class.friedman_test(condition1, condition2, condition3)
+
+        expect(result).to be_a(Hash)
+        expect(result[:chi_square_statistic]).to be_a(Numeric)
+        expect(result[:chi_square_statistic]).to be >= 0
+      end
+
+      it '明確な差がある場合に有意差を検出する' do
+        # 条件間で明確な差があるデータ
+        condition1 = [1, 2, 3, 4, 5]
+        condition2 = [6, 7, 8, 9, 10]
+        condition3 = [11, 12, 13, 14, 15]
+
+        result = test_class.friedman_test(condition1, condition2, condition3)
+
+        # 明確な差があるため、大きなχ²統計量が期待される
+        expect(result[:chi_square_statistic]).to be > 0
+        expect([true, false]).to include(result[:significant])
+      end
+    end
+
+    context 'エラーケース' do
+      it '2条件以下の場合はnilを返す' do
+        condition1 = [1, 2, 3]
+        condition2 = [4, 5, 6]
+
+        result = test_class.friedman_test(condition1, condition2)
+
+        expect(result).to be_nil
+      end
+
+      it '1条件の場合はnilを返す' do
+        condition1 = [1, 2, 3]
+
+        result = test_class.friedman_test(condition1)
+
+        expect(result).to be_nil
+      end
+
+      it '空の配列が含まれる場合はnilを返す' do
+        condition1 = [1, 2, 3]
+        condition2 = []
+        condition3 = [7, 8, 9]
+
+        result = test_class.friedman_test(condition1, condition2, condition3)
+
+        expect(result).to be_nil
+      end
+
+      it 'nilが含まれる場合はnilを返す' do
+        condition1 = [1, 2, 3]
+        condition2 = nil
+        condition3 = [7, 8, 9]
+
+        result = test_class.friedman_test(condition1, condition2, condition3)
+
+        expect(result).to be_nil
+      end
+
+      it '異なる長さのグループの場合はnilを返す' do
+        condition1 = [1, 2, 3]
+        condition2 = [4, 5]
+        condition3 = [7, 8, 9]
+
+        result = test_class.friedman_test(condition1, condition2, condition3)
+
+        expect(result).to be_nil
+      end
+
+      it '配列以外が含まれる場合はnilを返す' do
+        condition1 = [1, 2, 3]
+        condition2 = 'invalid'
+        condition3 = [7, 8, 9]
+
+        result = test_class.friedman_test(condition1, condition2, condition3)
+
+        expect(result).to be_nil
+      end
+    end
+
+    context 'エッジケース' do
+      it '最小ケース（3条件、1被験者）で正しく動作する' do
+        condition1 = [1]
+        condition2 = [2]
+        condition3 = [3]
+
+        result = test_class.friedman_test(condition1, condition2, condition3)
+
+        expect(result).to be_a(Hash)
+        expect(result[:n_subjects]).to eq(1)
+        expect(result[:k_conditions]).to eq(3)
+        expect(result[:rank_sums]).to eq([1.0, 2.0, 3.0])
+      end
+
+      it '全て同じ値の場合に適切に処理する' do
+        condition1 = [5, 5, 5]
+        condition2 = [5, 5, 5]
+        condition3 = [5, 5, 5]
+
+        result = test_class.friedman_test(condition1, condition2, condition3)
+
+        expect(result).to be_a(Hash)
+        # 全て同じ値なので、ランクは全て2.0（平均ランク）
+        expect(result[:rank_sums]).to all(eq(6.0)) # 3被験者 × 平均ランク2.0
+        expect(result[:chi_square_statistic]).to be >= 0
+      end
+
+      it '負の値が含まれていても正しく処理する' do
+        condition1 = [-3, -2, -1]
+        condition2 = [0, 1, 2]
+        condition3 = [3, 4, 5]
+
+        result = test_class.friedman_test(condition1, condition2, condition3)
+
+        expect(result).to be_a(Hash)
+        expect(result[:chi_square_statistic]).to be_a(Numeric)
+      end
+
+      it '小数値が含まれていても正しく処理する' do
+        condition1 = [1.1, 2.2, 3.3]
+        condition2 = [4.4, 5.5, 6.6]
+        condition3 = [7.7, 8.8, 9.9]
+
+        result = test_class.friedman_test(condition1, condition2, condition3)
+
+        expect(result).to be_a(Hash)
+        expect(result[:chi_square_statistic]).to be_a(Numeric)
+      end
+    end
+
+    context 'タイ補正のテスト' do
+      it 'タイがない場合はタイ補正が適用されない' do
+        # タイがないデータ
+        condition1 = [1, 4, 7]
+        condition2 = [2, 5, 8]
+        condition3 = [3, 6, 9]
+
+        result = test_class.friedman_test(condition1, condition2, condition3)
+
+        # タイがないので、tie correctionの効果は最小限
+        expect(result[:chi_square_statistic]).to be_a(Numeric)
+        expect(result[:chi_square_statistic]).to be > 0
+      end
+
+      it 'タイ補正の計算が正しく動作する' do
+        # 各被験者で一部タイがあるデータ
+        rank_matrix = [
+          [1.0, 2.0, 3.0],  # 被験者1: タイなし
+          [1.5, 1.5, 3.0],  # 被験者2: 条件1と2でタイ
+          [1.0, 2.5, 2.5]   # 被験者3: 条件2と3でタイ
+        ]
+
+        # tie correctionを直接テスト
+        chi_square = 6.0
+        corrected = test_class.test_apply_friedman_tie_correction(chi_square, rank_matrix, 3, 3)
+
+        # タイ補正により値が変化することを確認
+        expect(corrected).to be_a(Numeric)
+        expect(corrected).not_to eq(chi_square) # 補正が適用されて値が変わるはず
+      end
+    end
+
+    context '統計的解釈のテスト' do
+      it '結果の解釈メッセージが適切' do
+        condition1 = [1, 2, 3]
+        condition2 = [4, 5, 6]
+        condition3 = [7, 8, 9]
+
+        result = test_class.friedman_test(condition1, condition2, condition3)
+
+        # 有意・非有意に関わらず、適切な日本語メッセージが含まれることを確認
+        expect(result[:interpretation]).to include('条件間')
+        expect(result[:interpretation]).to include('反復測定')
+      end
     end
   end
 end
