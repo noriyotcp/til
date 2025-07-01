@@ -379,6 +379,105 @@ class NumberAnalyzer
       ].join("\n")
     end
 
+    def self.format_wilcoxon_test(result, options = {})
+      case options[:format]
+      when 'json'
+        format_wilcoxon_test_json(result, options)
+      when 'quiet'
+        format_wilcoxon_test_quiet(result, options)
+      else
+        format_wilcoxon_test_verbose(result, options)
+      end
+    end
+
+    def self.format_wilcoxon_test_verbose(result, options = {})
+      precision = options[:precision] || 6
+
+      output = []
+      output << build_wilcoxon_header
+      output << build_wilcoxon_statistics(result, precision)
+      output << build_wilcoxon_interpretation(result)
+      output << build_wilcoxon_notes
+
+      output.compact.join("\n")
+    end
+
+    def self.format_wilcoxon_test_json(result, options = {})
+      precision = options[:precision] || 6
+
+      formatted_result = {
+        test_type: result[:test_type],
+        w_statistic: result[:w_statistic].round(precision),
+        w_plus: result[:w_plus].round(precision),
+        w_minus: result[:w_minus].round(precision),
+        z_statistic: result[:z_statistic].round(precision),
+        p_value: result[:p_value].round(precision),
+        significant: result[:significant],
+        interpretation: result[:interpretation],
+        effect_size: result[:effect_size].round(precision),
+        n_pairs: result[:n_pairs],
+        n_effective: result[:n_effective],
+        n_zeros: result[:n_zeros]
+      }
+
+      JSON.generate(formatted_result)
+    end
+
+    def self.format_wilcoxon_test_quiet(result, options = {})
+      precision = options[:precision] || 6
+      w_stat = result[:w_statistic].round(precision)
+      p_value = result[:p_value].round(precision)
+      "#{w_stat} #{p_value}"
+    end
+
+    def self.build_wilcoxon_header
+      '=== Wilcoxon符号順位検定 ==='
+    end
+
+    def self.build_wilcoxon_statistics(result, precision)
+      [
+        "W統計量: #{result[:w_statistic].round(precision)}",
+        "W+ (正の順位和): #{result[:w_plus].round(precision)}",
+        "W- (負の順位和): #{result[:w_minus].round(precision)}",
+        "z統計量: #{result[:z_statistic].round(precision)}",
+        "p値: #{result[:p_value].round(precision)}",
+        "効果サイズ (r): #{result[:effect_size].round(precision)}",
+        "ペア数: #{result[:n_pairs]}",
+        "有効ペア数: #{result[:n_effective]} (ゼロ差除外: #{result[:n_zeros]})"
+      ].join("\n")
+    end
+
+    def self.build_wilcoxon_interpretation(result)
+      significance = result[:significant] ? '**有意**' : '非有意'
+      effect_magnitude = case result[:effect_size]
+                         when 0.0...0.1
+                           '効果サイズ: 極小'
+                         when 0.1...0.3
+                           '効果サイズ: 小'
+                         when 0.3...0.5
+                           '効果サイズ: 中'
+                         else
+                           '効果サイズ: 大'
+                         end
+
+      [
+        "結果: #{significance} (α = 0.05)",
+        "解釈: #{result[:interpretation]}",
+        effect_magnitude
+      ].join("\n")
+    end
+
+    def self.build_wilcoxon_notes
+      [
+        '',
+        '注意事項:',
+        '・ Wilcoxon符号順位検定は対応のあるデータのノンパラメトリック検定です',
+        '・ 対応のあるt検定の代替として正規分布を仮定しない場合に使用します',
+        '・ 差の対称分布を仮定しますが、正規性は不要です',
+        '・ ゼロ差は検定から除外されます'
+      ].join("\n")
+    end
+
     private_class_method :format_mode, :format_outliers, :format_deviation_scores, :display_histogram,
                          :format_levene_test_verbose, :format_levene_test_json, :format_levene_test_quiet,
                          :format_bartlett_test_verbose, :format_bartlett_test_json, :format_bartlett_test_quiet,
@@ -391,6 +490,10 @@ class NumberAnalyzer
                          :format_mann_whitney_test_verbose, :format_mann_whitney_test_json,
                          :format_mann_whitney_test_quiet, :build_mann_whitney_header,
                          :build_mann_whitney_statistics, :build_mann_whitney_interpretation,
-                         :build_mann_whitney_notes
+                         :build_mann_whitney_notes,
+                         :format_wilcoxon_test_verbose, :format_wilcoxon_test_json,
+                         :format_wilcoxon_test_quiet, :build_wilcoxon_header,
+                         :build_wilcoxon_statistics, :build_wilcoxon_interpretation,
+                         :build_wilcoxon_notes
   end
 end

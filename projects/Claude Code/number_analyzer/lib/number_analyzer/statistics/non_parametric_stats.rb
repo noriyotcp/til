@@ -169,6 +169,100 @@ module NonParametricStats
     }
   end
 
+  def wilcoxon_signed_rank_test(before, after)
+    # Validate input - need paired data of same length
+    return nil if before.nil? || after.nil?
+    return nil unless before.is_a?(Array) && after.is_a?(Array)
+    return nil if before.empty? || after.empty?
+    return nil if before.length != after.length
+
+    n = before.length
+
+    # Calculate differences for each pair
+    differences = before.zip(after).map { |b, a| a - b }
+
+    # Remove zero differences (they don't contribute to the test)
+    non_zero_diffs = differences.reject(&:zero?)
+    n_effective = non_zero_diffs.length
+
+    # If all differences are zero, no significant difference
+    if n_effective.zero?
+      return {
+        test_type: 'Wilcoxon Signed-Rank Test',
+        w_statistic: 0,
+        w_plus: 0,
+        w_minus: 0,
+        z_statistic: 0,
+        p_value: 1.0,
+        significant: false,
+        interpretation: '全ての差がゼロのため、有意差は認められない',
+        n_pairs: n,
+        n_effective: 0,
+        n_zeros: n
+      }
+    end
+
+    # Calculate absolute values of differences
+    abs_diffs = non_zero_diffs.map(&:abs)
+
+    # Rank the absolute differences
+    ranks = calculate_ranks_with_ties(abs_diffs)
+
+    # Calculate signed ranks
+    signed_ranks = non_zero_diffs.zip(ranks).map do |diff, rank|
+      diff.positive? ? rank : -rank
+    end
+
+    # Calculate W+ and W- (sum of positive and negative ranks)
+    w_plus = signed_ranks.select(&:positive?).sum
+    w_minus = signed_ranks.select(&:negative?).map(&:abs).sum
+
+    # Test statistic is the smaller of W+ and W-
+    w_statistic = [w_plus, w_minus].min
+
+    # Calculate mean and variance for normal approximation
+    mean_w = (n_effective * (n_effective + 1)) / 4.0
+
+    # Calculate variance with tie correction
+    variance_w = calculate_wilcoxon_variance(n_effective, abs_diffs)
+
+    # Calculate z-statistic with continuity correction
+    z_statistic = if w_statistic > mean_w
+                    (w_statistic - mean_w - 0.5) / Math.sqrt(variance_w)
+                  else
+                    (w_statistic - mean_w + 0.5) / Math.sqrt(variance_w)
+                  end
+
+    # Two-tailed p-value
+    p_value = 2 * (1 - MathUtils.standard_normal_cdf(z_statistic.abs))
+
+    # Calculate effect size (r = z / sqrt(n))
+    effect_size = z_statistic.abs / Math.sqrt(n_effective)
+
+    # Determine significance and interpretation
+    significant = p_value < 0.05
+    interpretation = if significant
+                       '対応のあるデータ間に統計的有意差が認められる'
+                     else
+                       '対応のあるデータ間に統計的有意差は認められない'
+                     end
+
+    {
+      test_type: 'Wilcoxon Signed-Rank Test',
+      w_statistic: w_statistic.round(6),
+      w_plus: w_plus.round(6),
+      w_minus: w_minus.round(6),
+      z_statistic: z_statistic.round(6),
+      p_value: p_value.round(6),
+      significant: significant,
+      interpretation: interpretation,
+      effect_size: effect_size.round(6),
+      n_pairs: n,
+      n_effective: n_effective,
+      n_zeros: n - n_effective
+    }
+  end
+
   private
 
   def calculate_ranks_with_ties(values)
@@ -239,6 +333,28 @@ module NonParametricStats
       total_n = size1 + size2
       tie_factor = tie_correction / (total_n * (total_n - 1))
       basic_variance * (1 - (tie_factor / (size1 + size2 + 1)))
+    else
+      basic_variance
+    end
+  end
+
+  def calculate_wilcoxon_variance(n, abs_diffs)
+    # Basic variance without tie correction
+    basic_variance = (n * (n + 1) * ((2 * n) + 1)) / 24.0
+
+    # Apply tie correction
+    value_counts = abs_diffs.tally
+    tie_correction = value_counts.values.sum do |count|
+      if count > 1
+        count * ((count**2) - 1)
+      else
+        0
+      end
+    end
+
+    # Corrected variance: σ²W = [n(n+1)(2n+1) - Σ(ti(ti²-1)/2)] / 24
+    if tie_correction.positive?
+      (((n * (n + 1) * ((2 * n) + 1)) - (tie_correction / 2.0)) / 24.0)
     else
       basic_variance
     end

@@ -93,6 +93,9 @@ NumberAnalyzer is a comprehensive statistical analysis tool built in Ruby. Origi
 - `bundle exec number_analyzer mann-whitney --file group1.csv group2.csv` (Mann-Whitney test with file input)
 - `bundle exec number_analyzer mann-whitney --format=json --precision=3 1 2 3 -- 6 7 8` (JSON output with precision)
 - `bundle exec number_analyzer mann-whitney --quiet 10 20 30 -- 40 50 60` (quiet output for scripting)
+- `bundle exec number_analyzer wilcoxon 10 12 14 -- 15 18 20` (Wilcoxon signed-rank test for paired samples)
+- `bundle exec number_analyzer wilcoxon before.csv after.csv` (Wilcoxon test with file input)
+- `bundle exec number_analyzer wilcoxon --format=json --precision=3 1 2 3 -- 4 5 6` (JSON output with precision)
 
 **Development Tools**:
 - `bundle install` - Install dependencies
@@ -379,11 +382,11 @@ git status                   # README.md, ROADMAP.md, CLAUDE.md が含まれて�
 
 ## Quick Reference
 
-**Current State**: ✅ Phase 7.7 Step 8 Complete (NonParametricStats Module Architecture + Non-parametric Tests Extraction) - 基盤リファクタリング完了
-**Next Phase**: Phase 8.0 - Plugin System Architecture (プラグインシステム移行準備完了)
-**Test Count**: 326+ examples total (220 unit tests: 32 BasicStats + 26 AdvancedStats + 28 CorrelationStats + 38 TimeSeriesStats + 32 HypothesisTesting + 38 ANOVAStats + 26 NonParametricStats + 106 integration test cases)
+**Current State**: ✅ Phase 7.6 Step 2 Complete (Wilcoxon Signed-Rank Test) - 対応データのノンパラメトリック検定実装完了
+**Next Phase**: Phase 7.6 Step 3 - Friedman Test (反復測定ノンパラメトリックANOVA)
+**Test Count**: 338+ examples total (232 unit tests: 32 BasicStats + 26 AdvancedStats + 28 CorrelationStats + 38 TimeSeriesStats + 32 HypothesisTesting + 38 ANOVAStats + 38 NonParametricStats + 106 integration test cases)
 **RuboCop Status**: ✅ Zero violations (8 modular architecture with BasicStats + MathUtils + AdvancedStats + CorrelationStats + TimeSeriesStats + HypothesisTesting + ANOVAStats + NonParametricStats)
-**Subcommand Count**: 26 total (7 basic + 6 advanced + 1 correlation + 4 time series + 3 statistical test + 1 ANOVA + 2 variance homogeneity + 2 non-parametric commands)
+**Subcommand Count**: 27 total (7 basic + 6 advanced + 1 correlation + 4 time series + 3 statistical test + 1 ANOVA + 2 variance homogeneity + 3 non-parametric commands)
 **CLI Options**: 16 advanced options (JSON, precision, quiet, help, window, period, paired, one-sample, population-mean, mu, level, independence, goodness-of-fit, uniform, post-hoc, alpha) across all subcommands
 
 ## Documentation Structure

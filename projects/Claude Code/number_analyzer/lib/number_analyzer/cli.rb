@@ -36,7 +36,8 @@ class NumberAnalyzer
       'levene' => :run_levene,
       'bartlett' => :run_bartlett,
       'kruskal-wallis' => :run_kruskal_wallis,
-      'mann-whitney' => :run_mann_whitney
+      'mann-whitney' => :run_mann_whitney,
+      'wilcoxon' => :run_wilcoxon
     }.freeze
 
     # Main entry point for CLI
@@ -80,7 +81,8 @@ class NumberAnalyzer
 
     private_class_method def self.run_subcommand(command, args)
       # Special handling for commands that use '--' separators
-      if %w[chi-square anova levene bartlett kruskal-wallis mann-whitney].include?(command) && args.include?('--')
+      if %w[chi-square anova levene bartlett kruskal-wallis mann-whitney
+            wilcoxon].include?(command) && args.include?('--')
         # Find where options end and data begins
         options = default_options
         data_start_index = 0
@@ -1388,6 +1390,46 @@ class NumberAnalyzer
 
       # Format and display results
       puts StatisticsPresenter.format_mann_whitney_test(result, options)
+    end
+
+    private_class_method def self.run_wilcoxon(args, options = {})
+      if options[:help]
+        show_help('wilcoxon', 'Non-parametric test for comparing paired samples (Wilcoxon signed-rank test)')
+        return
+      end
+
+      # Parse data sources (files or command line groups)
+      groups = if options[:file] || args.any? { |arg| arg.end_with?('.csv', '.json', '.txt') }
+                 parse_file_groups(args, options)
+               else
+                 parse_command_line_groups(args)
+               end
+
+      if groups.nil? || groups.empty? || groups.length != 2
+        puts 'エラー: Wilcoxon符号順位検定には正確に2つのグループ（対応のあるデータ）が必要です。'
+        puts '使用例: bundle exec number_analyzer wilcoxon 10 12 14 -- 15 18 16'
+        puts '        bundle exec number_analyzer wilcoxon before.csv after.csv'
+        exit 1
+      end
+
+      # Check that both groups have the same length (paired data requirement)
+      if groups[0].length != groups[1].length
+        puts 'エラー: 対応のあるデータのため、両グループは同じ長さである必要があります。'
+        puts "グループ1: #{groups[0].length}個, グループ2: #{groups[1].length}個"
+        exit 1
+      end
+
+      # Execute Wilcoxon signed-rank test
+      analyzer = NumberAnalyzer.new([])
+      result = analyzer.wilcoxon_signed_rank_test(groups[0], groups[1])
+
+      if result.nil?
+        puts 'エラー: Wilcoxon符号順位検定を実行できませんでした。データを確認してください。'
+        exit 1
+      end
+
+      # Format and display results
+      puts StatisticsPresenter.format_wilcoxon_test(result, options)
     end
 
     private_class_method def self.parse_file_groups(args, options)

@@ -32,6 +32,7 @@ NumberAnalyzer provides the following statistical calculations:
 - **Bartlett Test** - Test for variance homogeneity with high precision under normality assumptions using chi-square distribution
 - **Kruskal-Wallis Test** - Non-parametric test for comparing medians across multiple groups with H-statistic and chi-square distribution
 - **Mann-Whitney U Test** - Non-parametric test for comparing two independent groups with U-statistic and normal approximation (Wilcoxon rank-sum test)
+- **Wilcoxon Signed-Rank Test** - Non-parametric test for comparing paired samples with W-statistic and effect size calculation
 - **Frequency Distribution** - Count occurrences of each value for data distribution analysis
 - **Histogram Display** - ASCII art visualization of frequency distribution with automatic scaling
 - **File Input Support** - Read data from CSV, JSON, and TXT files
@@ -101,6 +102,11 @@ bundle exec number_analyzer chi-square --independence 10 20 30 -- 15 25 35 -- 20
 bundle exec number_analyzer chi-square --goodness-of-fit 8 12 10 15 10 10 10 10
 bundle exec number_analyzer chi-square --uniform 8 12 10 15 9 6
 bundle exec number_analyzer chi-square --independence --file contingency_table.csv
+
+# Wilcoxon signed-rank test (paired samples)
+bundle exec number_analyzer wilcoxon 10 12 14 -- 15 18 20
+bundle exec number_analyzer wilcoxon before.csv after.csv
+bundle exec number_analyzer wilcoxon --format=json --precision=3 1 2 3 -- 4 5 6
 ```
 
 #### Using the bin file directly
@@ -115,7 +121,7 @@ number_analyzer 1 2 3 4 5
 
 #### Advanced Usage with Options (Phase 6.3)
 
-NumberAnalyzer supports advanced output formatting and control options for all 24 subcommands:
+NumberAnalyzer supports advanced output formatting and control options for all 27 subcommands:
 
 **JSON Output Format**
 ```bash

@@ -33,7 +33,7 @@
 - [x] StatisticsPresenterへの自動統合
 - [x] 包括的テストスイート（12テストケース）
 
-**現在の成果**: 262テスト実行例、32統計指標、Phase 7.7 Step 6完全実装、6モジュール抽出アーキテクチャ（866行・50.1%削減）、企業レベル品質
+**現在の成果**: 338テスト実行例、33統計指標、Phase 7.6 Step 2完全実装、8モジュール抽出アーキテクチャ（96.1%コード削減）、企業レベル品質
 
 ### Phase 6: CLI Subcommands Implementation ✅ 完了
 - [x] 13個の統計サブコマンド実装 (median, mean, mode, sum, min, max, histogram, outliers, percentile, quartiles, variance, std, deviation-scores)
@@ -283,13 +283,21 @@
 - Step 7: ANOVAStats Module ✅ **完了**
 - Step 8: NonParametricStats Module ✅ **完了** (kruskal_wallis, mann_whitney)
 
-### Phase 7.6 Step 2: Wilcoxon Signed-Rank Test Implementation 🔮 計画段階
+### Phase 7.6 Step 2: Wilcoxon Signed-Rank Test Implementation ✅ 完了
 **対応のある2群比較のノンパラメトリック検定**
-- [ ] `wilcoxon_signed_rank_test(before, after)` メソッド実装
-- [ ] 符号順位統計量計算とタイ補正
-- [ ] 正規近似による検定統計量計算
-- [ ] CLI統合: `'wilcoxon' => :run_wilcoxon` コマンド追加
-- [ ] 対応のあるt検定との比較機能
+- [x] `wilcoxon_signed_rank_test(before, after)` メソッド実装
+- [x] 符号順位統計量計算とタイ補正（W+, W-, タイ補正分散計算）
+- [x] 正規近似による検定統計量計算（連続性補正付きz統計量）
+- [x] CLI統合: `'wilcoxon' => :run_wilcoxon` コマンド追加（27個目のサブコマンド）
+- [x] 効果サイズ計算（r = z/√n）と統計的解釈機能
+- [x] 新規テストファイル: NonParametricStats specに12テストケース追加
+- [x] 全CLI オプション対応（JSON、精度、quiet、help、file）とRuboCop準拠
+
+**Phase 7.6 Step 2 達成項目**:
+- ✅ **27個のサブコマンド完成**: 基本7 + 上級6 + 相関1 + 時系列4 + 統計検定3 + ANOVA1 + 分散均質性2 + ノンパラメトリック3
+- ✅ **対応データ分析完成**: パラメトリック（対応t検定）+ ノンパラメトリック（Wilcoxon）の両方対応
+- ✅ **テスト品質**: 12 Wilcoxonテストケース追加（全106統合テスト通過）
+- ✅ **数学的正確性**: ゼロ差除外、タイ補正、連続性補正の完全実装
 
 ### Phase 7.6 Step 3: Friedman Test Implementation 🔮 計画段階
 **反復測定のノンパラメトリックANOVA**
