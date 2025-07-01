@@ -222,6 +222,128 @@ module ANOVAStats
     }
   end
 
+  # Performs two-way Analysis of Variance (ANOVA) on factorial design data
+  # Returns main effects, interaction effect, F-statistics, p-values, and effect sizes
+  def two_way_anova(data, factor_a_levels, factor_b_levels, values)
+    # Validate input data structure
+    return nil unless valid_two_way_anova_input?(data, factor_a_levels, factor_b_levels, values)
+
+    # Extract unique levels for each factor
+    a_levels = factor_a_levels.uniq.sort
+    b_levels = factor_b_levels.uniq.sort
+
+    # Create factorial design matrix
+    cell_data = create_factorial_matrix(data, factor_a_levels, factor_b_levels, values, a_levels, b_levels)
+
+    # Calculate basic statistics
+    grand_mean = values.sum.to_f / values.length
+    n_total = values.length
+    a = a_levels.length  # number of levels in factor A
+    b = b_levels.length  # number of levels in factor B
+
+    # Calculate cell means and marginal means
+    cell_means, marginal_means_a, marginal_means_b = calculate_factorial_means(cell_data, a_levels, b_levels)
+
+    # Calculate sum of squares
+    ss_total = calculate_total_sum_of_squares(values, grand_mean)
+    ss_a = calculate_factor_a_sum_of_squares(cell_data, marginal_means_a, grand_mean, a_levels, b)
+    ss_b = calculate_factor_b_sum_of_squares(cell_data, marginal_means_b, grand_mean, b_levels, a)
+    ss_ab = calculate_interaction_sum_of_squares(cell_data, cell_means, marginal_means_a, marginal_means_b, grand_mean,
+                                                 a_levels, b_levels)
+    ss_error = ss_total - ss_a - ss_b - ss_ab
+
+    # Calculate degrees of freedom
+    df_a = a - 1
+    df_b = b - 1
+    df_ab = (a - 1) * (b - 1)
+
+    # Calculate error degrees of freedom (total cells minus parameters)
+    cell_sample_sizes = calculate_cell_sample_sizes(cell_data, a_levels, b_levels)
+    df_error = cell_sample_sizes.values.sum - (a * b)
+    df_total = n_total - 1
+
+    # Calculate mean squares
+    ms_a = df_a.zero? ? 0.0 : ss_a / df_a
+    ms_b = df_b.zero? ? 0.0 : ss_b / df_b
+    ms_ab = df_ab.zero? ? 0.0 : ss_ab / df_ab
+    ms_error = df_error.zero? ? 0.0 : ss_error / df_error
+
+    # Calculate F-statistics
+    f_a = if ms_error.zero?
+            ms_a.zero? ? 0.0 : Float::INFINITY
+          else
+            ms_a / ms_error
+          end
+    f_b = if ms_error.zero?
+            ms_b.zero? ? 0.0 : Float::INFINITY
+          else
+            ms_b / ms_error
+          end
+    f_ab = if ms_error.zero?
+             ms_ab.zero? ? 0.0 : Float::INFINITY
+           else
+             ms_ab / ms_error
+           end
+
+    # Calculate p-values
+    p_a = MathUtils.calculate_f_distribution_p_value(f_a, df_a, df_error)
+    p_b = MathUtils.calculate_f_distribution_p_value(f_b, df_b, df_error)
+    p_ab = MathUtils.calculate_f_distribution_p_value(f_ab, df_ab, df_error)
+
+    # Calculate effect sizes (partial eta squared)
+    eta_squared_a = ss_total.zero? ? 0.0 : ss_a / (ss_a + ss_error)
+    eta_squared_b = ss_total.zero? ? 0.0 : ss_b / (ss_b + ss_error)
+    eta_squared_ab = ss_total.zero? ? 0.0 : ss_ab / (ss_ab + ss_error)
+
+    {
+      main_effects: {
+        factor_a: {
+          f_statistic: f_a.round(6),
+          p_value: p_a.round(6),
+          degrees_of_freedom: [df_a, df_error],
+          sum_of_squares: ss_a.round(6),
+          mean_squares: ms_a.round(6),
+          eta_squared: eta_squared_a.round(6),
+          significant: p_a < 0.05
+        },
+        factor_b: {
+          f_statistic: f_b.round(6),
+          p_value: p_b.round(6),
+          degrees_of_freedom: [df_b, df_error],
+          sum_of_squares: ss_b.round(6),
+          mean_squares: ms_b.round(6),
+          eta_squared: eta_squared_b.round(6),
+          significant: p_b < 0.05
+        }
+      },
+      interaction: {
+        f_statistic: f_ab.round(6),
+        p_value: p_ab.round(6),
+        degrees_of_freedom: [df_ab, df_error],
+        sum_of_squares: ss_ab.round(6),
+        mean_squares: ms_ab.round(6),
+        eta_squared: eta_squared_ab.round(6),
+        significant: p_ab < 0.05
+      },
+      error: {
+        sum_of_squares: ss_error.round(6),
+        mean_squares: ms_error.round(6),
+        degrees_of_freedom: df_error
+      },
+      total: {
+        sum_of_squares: ss_total.round(6),
+        degrees_of_freedom: df_total
+      },
+      grand_mean: grand_mean.round(6),
+      cell_means: format_cell_means(cell_means, a_levels, b_levels),
+      marginal_means: {
+        factor_a: marginal_means_a.transform_values { |v| v.round(6) },
+        factor_b: marginal_means_b.transform_values { |v| v.round(6) }
+      },
+      interpretation: interpret_two_way_anova_results(p_a, p_b, p_ab, eta_squared_a, eta_squared_b, eta_squared_ab)
+    }
+  end
+
   # Bartlett test for variance homogeneity (assumes normality)
   # Provides high precision variance equality testing under normal distribution
   def bartlett_test(*groups)
@@ -562,5 +684,186 @@ module ANOVAStats
 
     # Two-tailed test
     2.0 * p_one_tail
+  end
+
+  # Two-way ANOVA helper methods
+
+  # Validate input data structure for two-way ANOVA
+  def valid_two_way_anova_input?(data, factor_a_levels, factor_b_levels, values)
+    return false unless data.is_a?(Hash) || data.nil?
+    return false unless factor_a_levels.is_a?(Array) && factor_b_levels.is_a?(Array) && values.is_a?(Array)
+    return false if factor_a_levels.empty? || factor_b_levels.empty? || values.empty?
+    return false unless factor_a_levels.length == factor_b_levels.length && factor_b_levels.length == values.length
+
+    # Check that we have at least 2 levels for each factor
+    return false if factor_a_levels.uniq.length < 2 || factor_b_levels.uniq.length < 2
+
+    # Check that all values are numeric
+    values.all? { |v| v.is_a?(Numeric) }
+  end
+
+  # Create factorial design matrix from input data
+  def create_factorial_matrix(_data, factor_a_levels, factor_b_levels, values, a_levels, b_levels)
+    cell_data = {}
+
+    # Initialize empty cells
+    a_levels.each do |a_level|
+      b_levels.each do |b_level|
+        cell_data[[a_level, b_level]] = []
+      end
+    end
+
+    # Fill cells with data
+    factor_a_levels.each_with_index do |a_val, i|
+      b_val = factor_b_levels[i]
+      value = values[i]
+      cell_data[[a_val, b_val]] << value
+    end
+
+    cell_data
+  end
+
+  # Calculate cell means and marginal means for factorial design
+  def calculate_factorial_means(cell_data, a_levels, b_levels)
+    cell_means = {}
+    marginal_means_a = {}
+    marginal_means_b = {}
+
+    # Calculate cell means
+    a_levels.each do |a_level|
+      b_levels.each do |b_level|
+        cell_values = cell_data[[a_level, b_level]]
+        cell_means[[a_level, b_level]] = cell_values.empty? ? 0.0 : cell_values.sum.to_f / cell_values.length
+      end
+
+      # Calculate marginal means for factor A
+      all_values = b_levels.flat_map { |b_level| cell_data[[a_level, b_level]] }
+      marginal_means_a[a_level] = all_values.empty? ? 0.0 : all_values.sum.to_f / all_values.length
+    end
+
+    # Calculate marginal means for factor B
+    b_levels.each do |b_level|
+      all_values = a_levels.flat_map { |a_level| cell_data[[a_level, b_level]] }
+      marginal_means_b[b_level] = all_values.empty? ? 0.0 : all_values.sum.to_f / all_values.length
+    end
+
+    [cell_means, marginal_means_a, marginal_means_b]
+  end
+
+  # Calculate total sum of squares
+  def calculate_total_sum_of_squares(values, grand_mean)
+    values.sum { |value| (value - grand_mean)**2 }
+  end
+
+  # Calculate sum of squares for factor A main effect
+  def calculate_factor_a_sum_of_squares(cell_data, marginal_means_a, grand_mean, a_levels, b)
+    a_levels.sum do |a_level|
+      # Calculate sample size for this level of factor A
+      n_a = cell_data.select { |key, _| key[0] == a_level }.values.flatten.length
+      b * ((marginal_means_a[a_level] - grand_mean)**2) * (n_a / b.to_f)
+    end
+  end
+
+  # Calculate sum of squares for factor B main effect
+  def calculate_factor_b_sum_of_squares(cell_data, marginal_means_b, grand_mean, b_levels, a)
+    b_levels.sum do |b_level|
+      # Calculate sample size for this level of factor B
+      n_b = cell_data.select { |key, _| key[1] == b_level }.values.flatten.length
+      a * ((marginal_means_b[b_level] - grand_mean)**2) * (n_b / a.to_f)
+    end
+  end
+
+  # Calculate sum of squares for interaction effect
+  def calculate_interaction_sum_of_squares(cell_data, cell_means, marginal_means_a, marginal_means_b, grand_mean,
+                                           a_levels, b_levels)
+    total_interaction_ss = 0.0
+
+    a_levels.each do |a_level|
+      b_levels.each do |b_level|
+        cell_mean = cell_means[[a_level, b_level]]
+        marginal_a = marginal_means_a[a_level]
+        marginal_b = marginal_means_b[b_level]
+
+        # Sample size for this cell
+        n_ab = cell_data[[a_level, b_level]].length
+
+        interaction_effect = cell_mean - marginal_a - marginal_b + grand_mean
+        total_interaction_ss += n_ab * (interaction_effect**2)
+      end
+    end
+
+    total_interaction_ss
+  end
+
+  # Calculate sample sizes for each cell
+  def calculate_cell_sample_sizes(cell_data, a_levels, b_levels)
+    cell_sizes = {}
+
+    a_levels.each do |a_level|
+      b_levels.each do |b_level|
+        cell_sizes[[a_level, b_level]] = cell_data[[a_level, b_level]].length
+      end
+    end
+
+    cell_sizes
+  end
+
+  # Format cell means for output
+  def format_cell_means(cell_means, a_levels, b_levels)
+    formatted = {}
+
+    a_levels.each do |a_level|
+      formatted[a_level] = {}
+      b_levels.each do |b_level|
+        formatted[a_level][b_level] = cell_means[[a_level, b_level]].round(6)
+      end
+    end
+
+    formatted
+  end
+
+  # Interpret two-way ANOVA results
+  def interpret_two_way_anova_results(p_a, p_b, p_ab, eta_a, eta_b, eta_ab)
+    interpretations = []
+
+    # Main effect A
+    if p_a < 0.05
+      effect_size_a = interpret_effect_size(eta_a)
+      interpretations << "要因A: 有意な主効果あり (p = #{p_a.round(3)}), #{effect_size_a}"
+    else
+      interpretations << "要因A: 主効果なし (p = #{p_a.round(3)})"
+    end
+
+    # Main effect B
+    if p_b < 0.05
+      effect_size_b = interpret_effect_size(eta_b)
+      interpretations << "要因B: 有意な主効果あり (p = #{p_b.round(3)}), #{effect_size_b}"
+    else
+      interpretations << "要因B: 主効果なし (p = #{p_b.round(3)})"
+    end
+
+    # Interaction effect
+    if p_ab < 0.05
+      effect_size_ab = interpret_effect_size(eta_ab)
+      interpretations << "交互作用A×B: 有意な交互作用あり (p = #{p_ab.round(3)}), #{effect_size_ab}"
+    else
+      interpretations << "交互作用A×B: 交互作用なし (p = #{p_ab.round(3)})"
+    end
+
+    interpretations.join(', ')
+  end
+
+  # Interpret effect size (partial eta squared)
+  def interpret_effect_size(eta_squared)
+    case eta_squared
+    when 0.0...0.01
+      "効果サイズ: 極小 (η² = #{eta_squared.round(3)})"
+    when 0.01...0.06
+      "効果サイズ: 小 (η² = #{eta_squared.round(3)})"
+    when 0.06...0.14
+      "効果サイズ: 中 (η² = #{eta_squared.round(3)})"
+    else
+      "効果サイズ: 大 (η² = #{eta_squared.round(3)})"
+    end
   end
 end

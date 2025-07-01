@@ -99,6 +99,9 @@ NumberAnalyzer is a comprehensive statistical analysis tool built in Ruby. Origi
 - `bundle exec number_analyzer friedman 1 2 3 -- 4 5 6 -- 7 8 9` (Friedman test for repeated measures across multiple conditions)
 - `bundle exec number_analyzer friedman condition1.csv condition2.csv condition3.csv` (Friedman test with file input)
 - `bundle exec number_analyzer friedman --format=json --precision=3 1 2 3 -- 4 5 6 -- 7 8 9` (JSON output with precision)
+- `bundle exec number_analyzer two-way-anova --factor-a A1,A1,A2,A2 --factor-b B1,B2,B1,B2 10,12,20,22` (two-way ANOVA with factorial design)
+- `bundle exec number_analyzer two-way-anova --file factorial_data.csv` (two-way ANOVA with CSV file input)
+- `bundle exec number_analyzer two-way-anova --format=json --precision=3 --factor-a Drug,Drug,Placebo,Placebo --factor-b Male,Female,Male,Female 5.2,7.1,3.8,4.5` (JSON output with precision)
 
 **Development Tools**:
 - `bundle install` - Install dependencies

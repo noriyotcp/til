@@ -318,9 +318,27 @@
 - ✅ **数学的完成度**: タイ補正、χ²分布p値、ランク計算の完全実装
 - ✅ **106テスト実行例**: 包括的テストスイート（Friedmanテストケース追加）
 
+### Phase 7.8: Two-way ANOVA Implementation ✅ 完了
+**二元配置分散分析の実装 - 実験計画法の標準手法**
+- [x] `two_way_anova(data, factor_a_levels, factor_b_levels, values)` メソッド実装
+- [x] 主効果A・主効果B・交互作用A×Bの完全分離
+- [x] F統計量、p値、効果サイズ（Partial η²）の正確な計算
+- [x] CLI統合: `'two-way-anova' => :run_two_way_anova` コマンド追加（29個目のサブコマンド）
+- [x] 因子水準指定: `--factor-a`, `--factor-b` オプション対応
+- [x] CSVファイル入力対応: 3列形式（factor_a, factor_b, value）
+- [x] 包括的テストスイート: 13新規テストケース（2×2、2×3設計、交互作用検出）
+- [x] OutputFormatter統合: JSON、精度、quiet、helpオプション完全対応
+- [x] セル平均値・周辺平均値・分散分析表の詳細出力
+
+**Phase 7.8 達成項目**:
+- ✅ **29個のサブコマンド完成**: 基本7 + 上級6 + 相関1 + 時系列4 + 統計検定3 + ANOVA2 + 分散均質性2 + ノンパラメトリック4
+- ✅ **実験計画法対応**: One-way ANOVA + Two-way ANOVA で完全な分散分析基盤
+- ✅ **主効果・交互作用分析**: 複雑な要因実験への対応完了
+- ✅ **数学的正確性**: 平方和分解、F分布p値、効果サイズの完全実装
+
 ### Future ANOVA Extension Features 🔮 長期計画
-- 🔮 **二元配置分散分析**: 2つの要因の主効果と交互作用
 - 🔮 **反復測定ANOVA**: 被験者内計画による分散分析
+- 🔮 **Mixed ANOVA**: 被験者間・被験者内要因の混合設計
 
 ## Phase 8.0: Plugin System Architecture 🚀 準備完了
 

@@ -380,4 +380,192 @@ RSpec.describe ANOVAStats do
       end
     end
   end
+
+  describe '#two_way_anova' do
+    context 'with valid 2x2 factorial design' do
+      it 'calculates two-way ANOVA with main effects only' do
+        # 2x2 design: Factor A (A1, A2) × Factor B (B1, B2)
+        factor_a = %w[A1 A1 A2 A2]
+        factor_b = %w[B1 B2 B1 B2]
+        values = [10, 12, 20, 22]
+
+        result = stats.two_way_anova(nil, factor_a, factor_b, values)
+
+        expect(result).to be_a(Hash)
+        expect(result[:main_effects]).to have_key(:factor_a)
+        expect(result[:main_effects]).to have_key(:factor_b)
+        expect(result[:interaction]).to be_a(Hash)
+        expect(result[:grand_mean]).to eq(16.0)
+
+        # Check main effects structure
+        expect(result[:main_effects][:factor_a]).to have_key(:f_statistic)
+        expect(result[:main_effects][:factor_a]).to have_key(:p_value)
+        expect(result[:main_effects][:factor_a]).to have_key(:significant)
+
+        expect(result[:main_effects][:factor_b]).to have_key(:f_statistic)
+        expect(result[:main_effects][:factor_b]).to have_key(:p_value)
+        expect(result[:main_effects][:factor_b]).to have_key(:significant)
+
+        # Check interaction structure
+        expect(result[:interaction]).to have_key(:f_statistic)
+        expect(result[:interaction]).to have_key(:p_value)
+        expect(result[:interaction]).to have_key(:significant)
+      end
+
+      it 'calculates correct marginal means' do
+        factor_a = %w[A1 A1 A2 A2]
+        factor_b = %w[B1 B2 B1 B2]
+        values = [10, 12, 20, 22]
+
+        result = stats.two_way_anova(nil, factor_a, factor_b, values)
+
+        # Factor A marginal means: A1 = (10+12)/2 = 11, A2 = (20+22)/2 = 21
+        expect(result[:marginal_means][:factor_a]['A1']).to eq(11.0)
+        expect(result[:marginal_means][:factor_a]['A2']).to eq(21.0)
+
+        # Factor B marginal means: B1 = (10+20)/2 = 15, B2 = (12+22)/2 = 17
+        expect(result[:marginal_means][:factor_b]['B1']).to eq(15.0)
+        expect(result[:marginal_means][:factor_b]['B2']).to eq(17.0)
+      end
+
+      it 'calculates correct cell means' do
+        factor_a = %w[A1 A1 A2 A2]
+        factor_b = %w[B1 B2 B1 B2]
+        values = [10, 12, 20, 22]
+
+        result = stats.two_way_anova(nil, factor_a, factor_b, values)
+
+        expect(result[:cell_means]['A1']['B1']).to eq(10.0)
+        expect(result[:cell_means]['A1']['B2']).to eq(12.0)
+        expect(result[:cell_means]['A2']['B1']).to eq(20.0)
+        expect(result[:cell_means]['A2']['B2']).to eq(22.0)
+      end
+
+      it 'identifies main effects correctly' do
+        # Strong main effect for factor A, no main effect for factor B, no interaction
+        factor_a = %w[A1 A1 A2 A2]
+        factor_b = %w[B1 B2 B1 B2]
+        values = [10, 10, 20, 20]
+
+        result = stats.two_way_anova(nil, factor_a, factor_b, values)
+
+        # Factor A should have significant main effect
+        expect(result[:main_effects][:factor_a][:f_statistic]).to be > 0
+        # Factor B should have no main effect (means are equal)
+        expect(result[:main_effects][:factor_b][:f_statistic]).to be_within(0.001).of(0)
+        # No interaction (parallel lines)
+        expect(result[:interaction][:f_statistic]).to be_within(0.001).of(0)
+      end
+    end
+
+    context 'with 2x3 factorial design' do
+      it 'handles unbalanced factorial designs' do
+        factor_a = %w[A1 A1 A1 A2 A2 A2]
+        factor_b = %w[B1 B2 B3 B1 B2 B3]
+        values = [10, 12, 14, 20, 22, 24]
+
+        result = stats.two_way_anova(nil, factor_a, factor_b, values)
+
+        expect(result).to be_a(Hash)
+        expect(result[:main_effects][:factor_a][:degrees_of_freedom]).to eq([1, 0])
+        expect(result[:main_effects][:factor_b][:degrees_of_freedom]).to eq([2, 0])
+        expect(result[:interaction][:degrees_of_freedom]).to eq([2, 0])
+      end
+    end
+
+    context 'with multiple observations per cell' do
+      it 'handles replicated factorial design' do
+        # 2x2 design with 2 observations per cell
+        factor_a = %w[A1 A1 A1 A1 A2 A2 A2 A2]
+        factor_b = %w[B1 B1 B2 B2 B1 B1 B2 B2]
+        values = [9, 11, 11, 13, 19, 21, 21, 23]
+
+        result = stats.two_way_anova(nil, factor_a, factor_b, values)
+
+        expect(result).to be_a(Hash)
+        expect(result[:error][:degrees_of_freedom]).to eq(4) # 8 total - 4 cells
+        expect(result[:grand_mean]).to eq(16.0)
+      end
+    end
+
+    context 'with interaction effects' do
+      it 'detects interaction when present' do
+        # Designed interaction: A1B1=10, A1B2=20, A2B1=20, A2B2=10 (crossover)
+        factor_a = %w[A1 A1 A2 A2]
+        factor_b = %w[B1 B2 B1 B2]
+        values = [10, 20, 20, 10]
+
+        result = stats.two_way_anova(nil, factor_a, factor_b, values)
+
+        # No main effects (marginal means are equal)
+        expect(result[:marginal_means][:factor_a]['A1']).to eq(15.0)
+        expect(result[:marginal_means][:factor_a]['A2']).to eq(15.0)
+        expect(result[:marginal_means][:factor_b]['B1']).to eq(15.0)
+        expect(result[:marginal_means][:factor_b]['B2']).to eq(15.0)
+
+        # Should detect interaction
+        expect(result[:interaction][:f_statistic]).to be > 0
+      end
+    end
+
+    context 'with invalid input' do
+      it 'returns nil for mismatched array lengths' do
+        factor_a = %w[A1 A1]
+        factor_b = %w[B1 B2]
+        values = [10, 12, 14] # Different length
+
+        result = stats.two_way_anova(nil, factor_a, factor_b, values)
+        expect(result).to be_nil
+      end
+
+      it 'returns nil for insufficient factor levels' do
+        factor_a = %w[A1 A1] # Only one level
+        factor_b = %w[B1 B2]
+        values = [10, 12]
+
+        result = stats.two_way_anova(nil, factor_a, factor_b, values)
+        expect(result).to be_nil
+      end
+
+      it 'returns nil for empty arrays' do
+        result = stats.two_way_anova(nil, [], [], [])
+        expect(result).to be_nil
+      end
+
+      it 'returns nil for non-numeric values' do
+        factor_a = %w[A1 A1]
+        factor_b = %w[B1 B2]
+        values = %w[a b]
+
+        result = stats.two_way_anova(nil, factor_a, factor_b, values)
+        expect(result).to be_nil
+      end
+    end
+
+    context 'edge cases' do
+      it 'handles single observation per cell gracefully' do
+        factor_a = %w[A1 A1 A2 A2]
+        factor_b = %w[B1 B2 B1 B2]
+        values = [10, 12, 20, 22]
+
+        result = stats.two_way_anova(nil, factor_a, factor_b, values)
+
+        expect(result).to be_a(Hash)
+        expect(result[:error][:degrees_of_freedom]).to eq(0) # No error df with single obs per cell
+      end
+
+      it 'provides interpretation' do
+        factor_a = %w[A1 A1 A2 A2]
+        factor_b = %w[B1 B2 B1 B2]
+        values = [10, 12, 20, 22]
+
+        result = stats.two_way_anova(nil, factor_a, factor_b, values)
+
+        expect(result[:interpretation]).to be_a(String)
+        expect(result[:interpretation]).to include('要因A')
+        expect(result[:interpretation]).to include('要因B')
+        expect(result[:interpretation]).to include('交互作用')
+      end
+    end
+  end
 end

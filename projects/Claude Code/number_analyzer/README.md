@@ -28,6 +28,7 @@ NumberAnalyzer provides the following statistical calculations:
 - **Confidence Intervals** - Calculate confidence intervals for population mean using t-distribution (small samples) and normal approximation (large samples)
 - **Chi-square Test** - Test for independence between categorical variables and goodness-of-fit to expected distributions with Cramér's V effect size
 - **Analysis of Variance (ANOVA)** - One-way ANOVA for comparing means across multiple groups with F-statistic, p-value, and effect size measures (η², ω²)
+- **Two-way ANOVA** - Factorial design analysis with two independent factors, main effects, and interaction effects with F-statistics, p-values, and partial eta squared effect sizes
 - **Levene Test** - Test for variance homogeneity across multiple groups using Brown-Forsythe modification for robust variance equality testing
 - **Bartlett Test** - Test for variance homogeneity with high precision under normality assumptions using chi-square distribution
 - **Kruskal-Wallis Test** - Non-parametric test for comparing medians across multiple groups with H-statistic and chi-square distribution
@@ -218,6 +219,12 @@ bundle exec number_analyzer anova 1 2 3 -- 4 5 6 -- 7 8 9
 bundle exec number_analyzer anova --file group1.csv group2.csv group3.csv
 bundle exec number_analyzer anova --format=json --precision=3 1 2 3 -- 4 5 6 -- 7 8 9
 bundle exec number_analyzer anova --alpha=0.01 --quiet 1 2 3 -- 4 5 6 -- 7 8 9
+
+# Two-way ANOVA (Factorial Design)
+bundle exec number_analyzer two-way-anova --factor-a A1,A1,A2,A2 --factor-b B1,B2,B1,B2 10,12,20,22
+bundle exec number_analyzer two-way-anova --file factorial_data.csv
+bundle exec number_analyzer two-way-anova --format=json --precision=3 --factor-a Drug,Drug,Placebo,Placebo --factor-b Male,Female,Male,Female 5.2,7.1,3.8,4.5
+bundle exec number_analyzer two-way-anova --quiet --factor-a Treatment,Treatment,Control,Control --factor-b Young,Old,Young,Old 15,18,12,14
 
 # Levene Test for Variance Homogeneity  
 bundle exec number_analyzer levene 1 2 3 -- 4 5 6 -- 7 8 9

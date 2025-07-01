@@ -787,6 +787,202 @@ class NumberAnalyzer
       "#{f_stat} #{df_between} #{df_within} #{p_value} #{eta_sq} #{significant}"
     end
 
+    # Format two-way ANOVA results based on options
+    def self.format_two_way_anova(anova_data, options = {})
+      case options[:format]
+      when 'json'
+        format_two_way_anova_json(anova_data, options)
+      when 'quiet'
+        format_two_way_anova_quiet(anova_data, options)
+      else
+        format_two_way_anova_default(anova_data, options)
+      end
+    end
+
+    private_class_method def self.format_two_way_anova_json(anova_data, options)
+      formatted_data = build_formatted_two_way_anova_data(anova_data, options)
+      JSON.generate(formatted_data)
+    end
+
+    private_class_method def self.format_two_way_anova_default(anova_data, options)
+      output = []
+      output << '=== 二元配置分散分析結果 ==='
+      output << ''
+
+      # Marginal means
+      output << "全体平均値: #{apply_precision(anova_data[:grand_mean], options[:precision])}"
+      output << ''
+
+      # Factor A marginal means
+      output << '【要因A 水準別平均値】'
+      anova_data[:marginal_means][:factor_a].each do |level, mean|
+        formatted_mean = apply_precision(mean, options[:precision])
+        output << "  #{level}: #{formatted_mean}"
+      end
+      output << ''
+
+      # Factor B marginal means
+      output << '【要因B 水準別平均値】'
+      anova_data[:marginal_means][:factor_b].each do |level, mean|
+        formatted_mean = apply_precision(mean, options[:precision])
+        output << "  #{level}: #{formatted_mean}"
+      end
+      output << ''
+
+      # Cell means
+      output << '【セル平均値 (要因A × 要因B)】'
+      anova_data[:cell_means].each do |a_level, b_hash|
+        b_hash.each do |b_level, mean|
+          formatted_mean = apply_precision(mean, options[:precision])
+          output << "  #{a_level} × #{b_level}: #{formatted_mean}"
+        end
+      end
+      output << ''
+
+      # Two-way ANOVA table
+      output << '【二元配置分散分析表】'
+      output << '変動要因                  平方和      自由度         平均平方           F値          p値'
+      output << ('-' * 80)
+
+      # Main effect A
+      format_two_way_anova_row(output, '主効果A (要因A)', anova_data[:main_effects][:factor_a], options)
+
+      # Main effect B
+      format_two_way_anova_row(output, '主効果B (要因B)', anova_data[:main_effects][:factor_b], options)
+
+      # Interaction
+      format_two_way_anova_row(output, '交互作用A×B', anova_data[:interaction], options)
+
+      # Error
+      ss_error = apply_precision(anova_data[:error][:sum_of_squares], options[:precision])
+      ms_error = apply_precision(anova_data[:error][:mean_squares], options[:precision])
+      df_error = anova_data[:error][:degrees_of_freedom]
+      output << format('%-20s %10s %10s %15s %12s %12s', '誤差', ss_error, df_error, ms_error, '-', '-')
+
+      # Total
+      ss_total = apply_precision(anova_data[:total][:sum_of_squares], options[:precision])
+      df_total = anova_data[:total][:degrees_of_freedom]
+      output << format('%-20s %10s %10s %15s %12s %12s', '全体', ss_total, df_total, '-', '-', '-')
+
+      output << ('-' * 80)
+      output << ''
+
+      # Effect sizes
+      output << '【効果サイズ (Partial η²)】'
+      eta_a = apply_precision(anova_data[:main_effects][:factor_a][:eta_squared], options[:precision])
+      eta_b = apply_precision(anova_data[:main_effects][:factor_b][:eta_squared], options[:precision])
+      eta_ab = apply_precision(anova_data[:interaction][:eta_squared], options[:precision])
+
+      output << "要因A: #{eta_a}"
+      output << "要因B: #{eta_b}"
+      output << "交互作用A×B: #{eta_ab}"
+      output << ''
+
+      # Interpretation
+      output << '【解釈】'
+      output << anova_data[:interpretation]
+
+      output.join("\n")
+    end
+
+    private_class_method def self.format_two_way_anova_row(output, label, effect_data, options)
+      ss = apply_precision(effect_data[:sum_of_squares], options[:precision])
+      ms = apply_precision(effect_data[:mean_squares], options[:precision])
+      f_stat = apply_precision(effect_data[:f_statistic], options[:precision])
+      p_value = apply_precision(effect_data[:p_value], options[:precision])
+      df_num, = effect_data[:degrees_of_freedom]
+
+      significance = effect_data[:significant] ? '*' : ''
+      output << format('%-20s %10s %10s %15s %12s %10s%s', label, ss, df_num, ms, f_stat, p_value, significance)
+    end
+
+    private_class_method def self.format_two_way_anova_quiet(anova_data, options)
+      # Main effect A
+      f_a = apply_precision(anova_data[:main_effects][:factor_a][:f_statistic], options[:precision])
+      p_a = apply_precision(anova_data[:main_effects][:factor_a][:p_value], options[:precision])
+      sig_a = anova_data[:main_effects][:factor_a][:significant]
+
+      # Main effect B
+      f_b = apply_precision(anova_data[:main_effects][:factor_b][:f_statistic], options[:precision])
+      p_b = apply_precision(anova_data[:main_effects][:factor_b][:p_value], options[:precision])
+      sig_b = anova_data[:main_effects][:factor_b][:significant]
+
+      # Interaction
+      f_ab = apply_precision(anova_data[:interaction][:f_statistic], options[:precision])
+      p_ab = apply_precision(anova_data[:interaction][:p_value], options[:precision])
+      sig_ab = anova_data[:interaction][:significant]
+
+      "A:#{f_a},#{p_a},#{sig_a} B:#{f_b},#{p_b},#{sig_b} AB:#{f_ab},#{p_ab},#{sig_ab}"
+    end
+
+    private_class_method def self.build_formatted_two_way_anova_data(anova_data, options)
+      {
+        type: 'two_way_anova',
+        grand_mean: json_safe_number(apply_precision(anova_data[:grand_mean], options[:precision])),
+        main_effects: {
+          factor_a: build_formatted_effect_data(anova_data[:main_effects][:factor_a], options),
+          factor_b: build_formatted_effect_data(anova_data[:main_effects][:factor_b], options)
+        },
+        interaction: build_formatted_effect_data(anova_data[:interaction], options),
+        error: {
+          sum_of_squares: json_safe_number(apply_precision(anova_data[:error][:sum_of_squares], options[:precision])),
+          mean_squares: json_safe_number(apply_precision(anova_data[:error][:mean_squares], options[:precision])),
+          degrees_of_freedom: anova_data[:error][:degrees_of_freedom]
+        },
+        total: {
+          sum_of_squares: json_safe_number(apply_precision(anova_data[:total][:sum_of_squares], options[:precision])),
+          degrees_of_freedom: anova_data[:total][:degrees_of_freedom]
+        },
+        cell_means: format_cell_means_for_json(anova_data[:cell_means], options),
+        marginal_means: {
+          factor_a: format_marginal_means_for_json(anova_data[:marginal_means][:factor_a], options),
+          factor_b: format_marginal_means_for_json(anova_data[:marginal_means][:factor_b], options)
+        },
+        interpretation: anova_data[:interpretation]
+      }
+    end
+
+    private_class_method def self.build_formatted_effect_data(effect_data, options)
+      {
+        f_statistic: json_safe_number(apply_precision(effect_data[:f_statistic], options[:precision])),
+        p_value: json_safe_number(apply_precision(effect_data[:p_value], options[:precision])),
+        degrees_of_freedom: effect_data[:degrees_of_freedom],
+        sum_of_squares: json_safe_number(apply_precision(effect_data[:sum_of_squares], options[:precision])),
+        mean_squares: json_safe_number(apply_precision(effect_data[:mean_squares], options[:precision])),
+        eta_squared: json_safe_number(apply_precision(effect_data[:eta_squared], options[:precision])),
+        significant: effect_data[:significant]
+      }
+    end
+
+    private_class_method def self.format_cell_means_for_json(cell_means, options)
+      formatted = {}
+      cell_means.each do |a_level, b_hash|
+        formatted[a_level] = {}
+        b_hash.each do |b_level, mean|
+          formatted[a_level][b_level] = json_safe_number(apply_precision(mean, options[:precision]))
+        end
+      end
+      formatted
+    end
+
+    private_class_method def self.format_marginal_means_for_json(marginal_means, options)
+      marginal_means.transform_values { |mean| json_safe_number(apply_precision(mean, options[:precision])) }
+    end
+
+    # Convert special numeric values to JSON-safe representations
+    private_class_method def self.json_safe_number(value)
+      case value
+      when Float::INFINITY
+        nil
+      when -Float::INFINITY
+        nil
+      when Float
+        value.nan? ? nil : value
+      else
+        value
+      end
+    end
+
     def self.format_post_hoc(post_hoc_data, options = {})
       return format_post_hoc_json(post_hoc_data, options) if options[:format] == 'json'
       return format_post_hoc_quiet(post_hoc_data, options) if options[:quiet]

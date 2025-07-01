@@ -33,6 +33,7 @@ class NumberAnalyzer
       'confidence-interval' => :run_confidence_interval,
       'chi-square' => :run_chi_square,
       'anova' => :run_anova,
+      'two-way-anova' => :run_two_way_anova,
       'levene' => :run_levene,
       'bartlett' => :run_bartlett,
       'kruskal-wallis' => :run_kruskal_wallis,
@@ -165,7 +166,9 @@ class NumberAnalyzer
         confidence_level: 95,
         independence: false,
         goodness_of_fit: false,
-        uniform: false
+        uniform: false,
+        factor_a: nil,
+        factor_b: nil
       }
     end
 
@@ -191,6 +194,12 @@ class NumberAnalyzer
         opts.on('--independence', 'Perform independence test for chi-square') { options[:independence] = true }
         opts.on('--goodness-of-fit', 'Perform goodness-of-fit test for chi-square') { options[:goodness_of_fit] = true }
         opts.on('--uniform', 'Use uniform distribution for goodness-of-fit test') { options[:uniform] = true }
+        opts.on('--factor-a LEVELS', 'Factor A levels (comma-separated)') do |levels|
+          options[:factor_a] = levels.split(',')
+        end
+        opts.on('--factor-b LEVELS', 'Factor B levels (comma-separated)') do |levels|
+          options[:factor_b] = levels.split(',')
+        end
       end
     end
 
@@ -1219,6 +1228,178 @@ class NumberAnalyzer
         puts "エラー: #{e.message}"
         exit 1
       end
+    end
+
+    def self.run_two_way_anova(args, options = {})
+      two_way_options = {
+        format: options[:format],
+        precision: options[:precision],
+        quiet: options[:quiet],
+        help: options[:help] || false,
+        file: options[:file] || nil,
+        factor_a: options[:factor_a],
+        factor_b: options[:factor_b]
+      }
+
+      # If we have parsed options (from global parser), use them directly
+      if two_way_options[:factor_a] && two_way_options[:factor_b]
+        # Options already parsed by global parser
+        remaining_args = args
+      else
+        # Parse options using local OptionParser for --help or direct calls
+        parser = OptionParser.new do |opts|
+          opts.banner = 'Usage: bundle exec number_analyzer two-way-anova [options] --factor-a A1,A1,A2,A2 --factor-b B1,B2,B1,B2 data1,data2,data3,data4'
+          opts.separator '       bundle exec number_analyzer two-way-anova [options] --file data.csv'
+          opts.separator ''
+          opts.separator 'Options:'
+
+          opts.on('--format=FORMAT', ['json'], 'Output format (json)') do |format|
+            two_way_options[:format] = format
+          end
+
+          opts.on('--precision=N', Integer, 'Number of decimal places') do |precision|
+            two_way_options[:precision] = precision
+          end
+
+          opts.on('--quiet', 'Suppress descriptive text') do
+            two_way_options[:quiet] = true
+          end
+
+          opts.on('--factor-a=LEVELS', 'Factor A levels (comma-separated)') do |levels|
+            two_way_options[:factor_a] = levels.split(',')
+          end
+
+          opts.on('--factor-b=LEVELS', 'Factor B levels (comma-separated)') do |levels|
+            two_way_options[:factor_b] = levels.split(',')
+          end
+
+          opts.on('--file', 'Read from CSV file with factor columns') do
+            two_way_options[:file] = true
+          end
+
+          opts.on('-h', '--help', 'Show this help') do
+            two_way_options[:help] = true
+          end
+        end
+
+        begin
+          remaining_args = parser.parse(args)
+        rescue OptionParser::InvalidOption, OptionParser::MissingArgument => e
+          puts "エラー: #{e.message}"
+          puts parser
+          exit 1
+        end
+
+        if two_way_options[:help]
+          puts parser
+          puts ''
+          puts 'Examples:'
+          puts '  bundle exec number_analyzer two-way-anova --factor-a A1,A1,A2,A2 --factor-b B1,B2,B1,B2 10,15,20,25'
+          puts '  bundle exec number_analyzer two-way-anova --file factorial_data.csv'
+          puts '  bundle exec number_analyzer two-way-anova --format=json --precision=3 --factor-a Drug,Drug,Placebo,Placebo --factor-b Male,Female,Male,Female 5.2,7.1,3.8,4.5'
+          return
+        end
+      end
+
+      begin
+        # Parse data - either from file or command line arguments
+        if two_way_options[:file]
+          parse_two_way_anova_from_file(remaining_args, two_way_options)
+        else
+          parse_two_way_anova_from_args(remaining_args, two_way_options)
+        end
+      rescue StandardError => e
+        puts "エラー: #{e.message}"
+        exit 1
+      end
+    end
+
+    def self.parse_two_way_anova_from_args(args, options)
+      # Validate required factors
+      unless options[:factor_a] && options[:factor_b]
+        puts 'エラー: --factor-a と --factor-b オプションが必要です。'
+        puts '使用例: bundle exec number_analyzer two-way-anova --factor-a A1,A1,A2,A2 --factor-b B1,B2,B1,B2 10,15,20,25'
+        exit 1
+      end
+
+      if args.empty?
+        puts 'エラー: 数値データが指定されていません。'
+        exit 1
+      end
+
+      # Parse values
+      values = if args.length == 1 && args[0].include?(',')
+                 # Comma-separated values in single argument
+                 args[0].split(',').map { |v| Float(v) }
+               else
+                 # Space-separated values
+                 args.map { |v| Float(v) }
+               end
+
+      factor_a_levels = options[:factor_a]
+      factor_b_levels = options[:factor_b]
+
+      # Validate data consistency
+      if factor_a_levels.length != factor_b_levels.length || factor_b_levels.length != values.length
+        puts 'エラー: 要因A、要因B、数値データの数が一致しません。'
+        puts "要因A: #{factor_a_levels.length}, 要因B: #{factor_b_levels.length}, 数値: #{values.length}"
+        exit 1
+      end
+
+      execute_two_way_anova(factor_a_levels, factor_b_levels, values, options)
+    rescue ArgumentError => e
+      puts "エラー: 無効な数値が含まれています: #{e.message}"
+      exit 1
+    end
+
+    def self.parse_two_way_anova_from_file(args, options)
+      if args.empty?
+        puts 'エラー: CSVファイルが指定されていません。'
+        exit 1
+      end
+
+      filename = args[0]
+      unless File.exist?(filename)
+        puts "エラー: ファイルが見つかりません: #{filename}"
+        exit 1
+      end
+
+      # For file input, assume CSV format with columns: factor_a, factor_b, value
+      require 'csv'
+      data = CSV.read(filename, headers: true)
+
+      factor_a_levels = data['factor_a'] || data['FactorA'] || data['A']
+      factor_b_levels = data['factor_b'] || data['FactorB'] || data['B']
+      values = (data['value'] || data['Value'] || data['Y']).map(&:to_f)
+
+      unless factor_a_levels && factor_b_levels && values
+        puts 'エラー: CSVファイルに factor_a, factor_b, value 列が見つかりません。'
+        puts '必要な列名: factor_a (or FactorA, A), factor_b (or FactorB, B), value (or Value, Y)'
+        exit 1
+      end
+
+      execute_two_way_anova(factor_a_levels, factor_b_levels, values, options)
+    end
+
+    def self.execute_two_way_anova(factor_a_levels, factor_b_levels, values, options)
+      # Create NumberAnalyzer instance
+      analyzer = NumberAnalyzer.new([])
+      result = analyzer.two_way_anova(nil, factor_a_levels, factor_b_levels, values)
+
+      if result.nil?
+        puts 'エラー: Two-way ANOVAの計算ができませんでした。有効なデータを確認してください。'
+        exit 1
+      end
+
+      # Format and display results
+      format_options = {
+        format: options[:format],
+        precision: options[:precision],
+        quiet: options[:quiet]
+      }
+
+      formatted_result = OutputFormatter.format_two_way_anova(result, format_options)
+      puts formatted_result
     end
 
     def self.parse_anova_groups(args)
