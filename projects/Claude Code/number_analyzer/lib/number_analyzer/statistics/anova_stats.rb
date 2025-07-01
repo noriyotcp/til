@@ -233,7 +233,13 @@ module ANOVAStats
     b_levels = factor_b_levels.uniq.sort
 
     # Create factorial design matrix
-    cell_data = create_factorial_matrix(data, factor_a_levels, factor_b_levels, values, a_levels, b_levels)
+    cell_data = create_factorial_matrix({
+                                          factor_a_levels: factor_a_levels,
+                                          factor_b_levels: factor_b_levels,
+                                          values: values,
+                                          a_levels: a_levels,
+                                          b_levels: b_levels
+                                        })
 
     # Calculate basic statistics
     grand_mean = values.sum.to_f / values.length
@@ -248,8 +254,15 @@ module ANOVAStats
     ss_total = calculate_total_sum_of_squares(values, grand_mean)
     ss_a = calculate_factor_a_sum_of_squares(cell_data, marginal_means_a, grand_mean, a_levels, b)
     ss_b = calculate_factor_b_sum_of_squares(cell_data, marginal_means_b, grand_mean, b_levels, a)
-    ss_ab = calculate_interaction_sum_of_squares(cell_data, cell_means, marginal_means_a, marginal_means_b, grand_mean,
-                                                 a_levels, b_levels)
+    ss_ab = calculate_interaction_sum_of_squares({
+                                                   cell_data: cell_data,
+                                                   cell_means: cell_means,
+                                                   marginal_means_a: marginal_means_a,
+                                                   marginal_means_b: marginal_means_b,
+                                                   grand_mean: grand_mean,
+                                                   a_levels: a_levels,
+                                                   b_levels: b_levels
+                                                 })
     ss_error = ss_total - ss_a - ss_b - ss_ab
 
     # Calculate degrees of freedom
@@ -340,7 +353,12 @@ module ANOVAStats
         factor_a: marginal_means_a.transform_values { |v| v.round(6) },
         factor_b: marginal_means_b.transform_values { |v| v.round(6) }
       },
-      interpretation: interpret_two_way_anova_results(p_a, p_b, p_ab, eta_squared_a, eta_squared_b, eta_squared_ab)
+      interpretation: interpret_two_way_anova_results({
+                                                        p_a: p_a, p_b: p_b, p_ab: p_ab,
+                                                        eta_a: eta_squared_a,
+                                                        eta_b: eta_squared_b,
+                                                        eta_ab: eta_squared_ab
+                                                      })
     }
   end
 
@@ -703,7 +721,12 @@ module ANOVAStats
   end
 
   # Create factorial design matrix from input data
-  def create_factorial_matrix(_data, factor_a_levels, factor_b_levels, values, a_levels, b_levels)
+  def create_factorial_matrix(data_params)
+    factor_a_levels = data_params[:factor_a_levels]
+    factor_b_levels = data_params[:factor_b_levels]
+    values = data_params[:values]
+    a_levels = data_params[:a_levels]
+    b_levels = data_params[:b_levels]
     cell_data = {}
 
     # Initialize empty cells
@@ -774,8 +797,14 @@ module ANOVAStats
   end
 
   # Calculate sum of squares for interaction effect
-  def calculate_interaction_sum_of_squares(cell_data, cell_means, marginal_means_a, marginal_means_b, grand_mean,
-                                           a_levels, b_levels)
+  def calculate_interaction_sum_of_squares(interaction_params)
+    cell_data = interaction_params[:cell_data]
+    cell_means = interaction_params[:cell_means]
+    marginal_means_a = interaction_params[:marginal_means_a]
+    marginal_means_b = interaction_params[:marginal_means_b]
+    grand_mean = interaction_params[:grand_mean]
+    a_levels = interaction_params[:a_levels]
+    b_levels = interaction_params[:b_levels]
     total_interaction_ss = 0.0
 
     a_levels.each do |a_level|
@@ -823,7 +852,13 @@ module ANOVAStats
   end
 
   # Interpret two-way ANOVA results
-  def interpret_two_way_anova_results(p_a, p_b, p_ab, eta_a, eta_b, eta_ab)
+  def interpret_two_way_anova_results(interpretation_params)
+    p_a = interpretation_params[:p_a]
+    p_b = interpretation_params[:p_b]
+    p_ab = interpretation_params[:p_ab]
+    eta_a = interpretation_params[:eta_a]
+    eta_b = interpretation_params[:eta_b]
+    eta_ab = interpretation_params[:eta_ab]
     interpretations = []
 
     # Main effect A

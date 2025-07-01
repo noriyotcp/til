@@ -857,12 +857,14 @@ class NumberAnalyzer
       ss_error = apply_precision(anova_data[:error][:sum_of_squares], options[:precision])
       ms_error = apply_precision(anova_data[:error][:mean_squares], options[:precision])
       df_error = anova_data[:error][:degrees_of_freedom]
-      output << format('%-20s %10s %10s %15s %12s %12s', '誤差', ss_error, df_error, ms_error, '-', '-')
+      output << format('%-<label>20s %<ss>10s %<df>10s %<ms>15s %<f>12s %<p>12s',
+                       label: '誤差', ss: ss_error, df: df_error, ms: ms_error, f: '-', p: '-')
 
       # Total
       ss_total = apply_precision(anova_data[:total][:sum_of_squares], options[:precision])
       df_total = anova_data[:total][:degrees_of_freedom]
-      output << format('%-20s %10s %10s %15s %12s %12s', '全体', ss_total, df_total, '-', '-', '-')
+      output << format('%-<label>20s %<ss>10s %<df>10s %<ms>15s %<f>12s %<p>12s',
+                       label: '全体', ss: ss_total, df: df_total, ms: '-', f: '-', p: '-')
 
       output << ('-' * 80)
       output << ''
@@ -893,7 +895,8 @@ class NumberAnalyzer
       df_num, = effect_data[:degrees_of_freedom]
 
       significance = effect_data[:significant] ? '*' : ''
-      output << format('%-20s %10s %10s %15s %12s %10s%s', label, ss, df_num, ms, f_stat, p_value, significance)
+      output << format('%-<label>20s %<ss>10s %<df>10s %<ms>15s %<f>12s %<p>10s%<sig>s',
+                       label: label, ss: ss, df: df_num, ms: ms, f: f_stat, p: p_value, sig: significance)
     end
 
     private_class_method def self.format_two_way_anova_quiet(anova_data, options)
@@ -972,9 +975,7 @@ class NumberAnalyzer
     # Convert special numeric values to JSON-safe representations
     private_class_method def self.json_safe_number(value)
       case value
-      when Float::INFINITY
-        nil
-      when -Float::INFINITY
+      when Float::INFINITY, -Float::INFINITY
         nil
       when Float
         value.nan? ? nil : value

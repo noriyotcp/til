@@ -1248,7 +1248,8 @@ class NumberAnalyzer
       else
         # Parse options using local OptionParser for --help or direct calls
         parser = OptionParser.new do |opts|
-          opts.banner = 'Usage: bundle exec number_analyzer two-way-anova [options] --factor-a A1,A1,A2,A2 --factor-b B1,B2,B1,B2 data1,data2,data3,data4'
+          opts.banner = 'Usage: bundle exec number_analyzer two-way-anova [options] ' \
+                        '--factor-a A1,A1,A2,A2 --factor-b B1,B2,B1,B2 data1,data2,data3,data4'
           opts.separator '       bundle exec number_analyzer two-way-anova [options] --file data.csv'
           opts.separator ''
           opts.separator 'Options:'
@@ -1296,7 +1297,8 @@ class NumberAnalyzer
           puts 'Examples:'
           puts '  bundle exec number_analyzer two-way-anova --factor-a A1,A1,A2,A2 --factor-b B1,B2,B1,B2 10,15,20,25'
           puts '  bundle exec number_analyzer two-way-anova --file factorial_data.csv'
-          puts '  bundle exec number_analyzer two-way-anova --format=json --precision=3 --factor-a Drug,Drug,Placebo,Placebo --factor-b Male,Female,Male,Female 5.2,7.1,3.8,4.5'
+          puts '  bundle exec number_analyzer two-way-anova --format=json --precision=3 ' \
+               '--factor-a Drug,Drug,Placebo,Placebo --factor-b Male,Female,Male,Female 5.2,7.1,3.8,4.5'
           return
         end
       end
