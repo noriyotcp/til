@@ -144,31 +144,28 @@ last_modified_at: "2025-06-25 22:44:36 +0900"
 ---
 
 ## MCP Clients
+MCP（Model Context Protocol）クライアントは、AIアプリケーション（ホスト）とMCPサーバーが提供する外部機能との間の橋渡し役として機能します。クライアントには、チャットインターフェースクライアントやインタラクティブ開発クライアントなどの種類があり、設定ファイル（mcp.json）を通じてMCPサーバーとの接続を管理します。
+
 ### Understanding MCP Clients
+MCPクライアントは、ホスト内のMCP通信を処理する専用モジュールとして機能し、ユーザーからの入力をMCPサーバーに送信し、サーバーからの応答をユーザーに提示する役割を担います。これにより、AIアプリケーションはファイルシステムの操作、Webの閲覧、コードの実行といった外部の能力を活用できます。
+
 ### User Interface Client
+ユーザーがMCPサーバーと対話するためのフロントエンドとして機能するクライアントで、主にチャットインターフェースクライアントとインタラクティブ開発クライアントの2つのタイプがあります。
+
 #### Chat Interface Clients
+ユーザーが自然言語でAIエージェントと対話できるチャットベースのインターフェースです。Hugging Faceは、GradioをベースにしたオープンソースのチャットUIクライアントを提供しています。
+
 #### Interactive Development Clients
+開発者がMCPサーバーを操作し、デバッグするためのツールで、JupyterノートブックやIDEの拡張機能などが含まれ、サーバーの機能を直接テストしたり、リクエストやレスポンスを確認したりするのに役立ちます。主要な実装例として、AnthropicのClaude Desktop、CursorのMCPクライアント実装、Continue.devなどがあります。
+
 ### Configuring MCP Clients
+MCPクライアントがMCPサーバーと通信するための設定方法について説明します。設定は通常mcp.jsonという名前のJSONファイルで行われ、接続するサーバーのリストと通信方法を定義します。
+
 #### MCP Configuration Files
+MCPクライアントの設定ファイルは、クライアントが接続するサーバーのリストを定義し、各サーバーには名前とトランスポート（通信方法）タイプが指定されます。
+
 ##### mcp.json Structure
-##### Configuration for stdio Transport
-##### Configuration for HTTP+SSE Transport
-##### Environment Variables in Configuration
-
-#### Configuration Examples
-##### Scenario 1: Local Server Configuration
-##### Scenario 2: Remote Server Configuration
-
-### Tiny Agents Clients
-#### Setup
-#### Connecting to MCP Servers
-### Next Steps
-
-1.  **MCPクライアントの概要:** MCP（Model Context Protocol）クライアントは、AIアプリケーション（ホスト）とMCPサーバーが提供する外部機能との間の橋渡し役として機能します。ホストはAIアシスタントやIDEなどの主要なアプリケーションであり、クライアントはホスト内のMCP通信を処理する専用モジュールと考えることができます。
-
-2.  **主要なMCPクライアントの実装:** AnthropicのClaude Desktopは、様々なMCPサーバーとの統合を提供する主要なMCPクライアントの一つです。また、CursorのMCPクライアント実装は、コード編集機能との直接統合を通じてAIを活用したコーディング支援を可能にします。さらに、Continue.devは、VS CodeからMCPサーバーに接続する対話型の開発クライアントの一例です。
-
-3.  **MCP設定ファイルの構造（mcp.json）:** MCPホストは、サーバー接続を管理するために設定ファイルを使用します。標準的な設定ファイルは`mcp.json`という名前で、基本的な構造は以下の通りです。このファイルは、Claude Desktop、Cursor、VS Codeなどのアプリケーションに渡すことができます。
+基本的な構造は以下の通りです：
 
 ```json
 {
@@ -183,7 +180,8 @@ last_modified_at: "2025-06-25 22:44:36 +0900"
 }
 ```
 
-4.  **stdioトランスポートの設定:** ローカルサーバーでstdioトランスポートを使用する場合、設定にはサーバープロセスを起動するためのコマンドと引数が含まれます。
+##### Configuration for stdio Transport
+ローカルで実行されるサーバーでstdioトランスポートを使用する場合、設定にはサーバープロセスを起動するためのコマンドと引数が含まれます：
 
 ```json
 {
@@ -200,10 +198,8 @@ last_modified_at: "2025-06-25 22:44:36 +0900"
 }
 ```
 
-この例では、"ファイルエクスプローラー"という名前のサーバーがローカルスクリプトとして設定されています。
-
-5.  **HTTP+SSEトランスポートの設定:** リモートサーバーでHTTP+SSEトランスポートを使用する場合、設定にはサーバーのURLが含まれます。
-
+##### Configuration for HTTP+SSE Transport
+リモートサーバーでHTTP+SSEトランスポートを使用する場合、設定にはサーバーのURLが含まれます：
 
 ```json
 {
@@ -219,21 +215,8 @@ last_modified_at: "2025-06-25 22:44:36 +0900"
 }
 ```
 
-6.  **設定における環境変数の利用:** サーバープロセスに環境変数を渡すには、`env`フィールドを使用します。Pythonで環境変数にアクセスするには、`os`モジュールを使用します。
-
-
-```python
-import os
-
-github_token = os.environ.get("GITHUB_TOKEN")
-if not github_token:
-  raise ValueError("GITHUB_TOKEN environment variable is required")
-
-def make_github_request():
-  headers = {"Authorization": f"Bearer {github_token}"}
-```
-
-対応する`mcp.json`の設定は次のようになります。
+##### Environment Variables in Configuration
+APIキーのような機密情報を安全に渡すために、`env` フィールドを使ってサーバープロセスに環境変数を設定できます：
 
 ```json
 {
@@ -253,9 +236,67 @@ def make_github_request():
 }
 ```
 
-7.  **Tiny Agentsクライアントの利用:** Tiny AgentsをMCPクライアントとして使用して、コードからMCPサーバーに直接接続することも可能です。 Tiny Agentsは、MCPサーバーからのツールを使用できるAIエージェントを簡単に作成する方法を提供します。これを使用するためには、npmをインストールし、npxでサーバーを実行する必要があります。
+Pythonで環境変数にアクセスするには、`os`モジュールを使用します：
 
-8.  **Tiny Agentsの設定と実行:** まず、npxがインストールされていない場合はインストールします。次に、MCPサポートを含む`huggingface_hub`パッケージをインストールします。その後、Hugging Face HubにログインしてMCPサーバーにアクセスします。エージェント設定ファイル(`agent.json`)の例を示します。
+```python
+import os
+
+github_token = os.environ.get("GITHUB_TOKEN")
+if not github_token:
+  raise ValueError("GITHUB_TOKEN environment variable is required")
+
+def make_github_request():
+  headers = {"Authorization": f"Bearer {github_token}"}
+```
+
+#### Configuration Examples
+実際の使用例を通じて、異なるシナリオでの設定方法を説明します。
+
+##### Scenario 1: Local Server Configuration
+ローカルサーバーの設定例として、ファイルエクスプローラーサーバーをstdioトランスポートで設定する方法を示します。
+
+```python
+{
+  "servers": [
+    {
+      "name": "File Explorer",
+      "transport": {
+        "type": "stdio",
+        "command": "python",
+        "args": ["/path/to/file_explorer_server.py"] // This is an example, we'll use a real server in the next unit
+      }
+    }
+  ]
+}
+```
+
+##### Scenario 2: Remote Server Configuration
+リモートサーバーの設定例として、HTTP+SSEトランスポートを使用したAPIサーバーの設定方法を示します。
+
+```python
+{
+  "servers": [
+    {
+      "name": "Weather API",
+      "transport": {
+        "type": "sse",
+        "url": "https://example.com/mcp-server" // This is an example, we'll use a real server in the next unit
+      }
+    }
+  ]
+}
+```
+### Tiny Agents Clients
+`tiny-agents` は、コードから直接MCPサーバーに接続するためのクライアントとして機能するシンプルなAIエージェントです。コマンドライン環境でMCPサーバーを実行でき、MCPサーバーからのツールを使用できるAIエージェントを簡単に作成する方法を提供します。
+
+#### Setup
+セットアップには以下のステップが必要です：
+1. `npx` をインストール (`npm install -g npx`)
+2. MCPをサポートする `huggingface_hub` ライブラリをインストール (`pip install "huggingface_hub[mcp]>=0.32.0"`)
+3. Hugging Face HubにログインしてMCPサーバーにアクセス (`huggingface-cli login`)
+
+#### Connecting to MCP Servers
+エージェント設定ファイル(`agent.json`)を作成し、使用するモデル、プロバイダー、そして接続するMCPサーバーの情報を記述します：
 
 ```json
 {
@@ -273,81 +314,11 @@ def make_github_request():
 }
 ```
 
-この設定では、`@playwright/mcp` MCPサーバーを使用しています。 これは、Playwrightでブラウザを制御できるMCPサーバーです。 エージェントは、`tiny-agents run agent.json` コマンドで実行できます。
+エージェントは、`tiny-agents run agent.json` コマンドで実行できます。
 
----
-
-Gemini CLI による要約
-
-## MCP Clients
-
-### **MCPクライアントの理解 (Understanding MCP Clients)**
-
-**日本語訳:**
-MCPクライアントは、AIアプリケーション（例：エージェント）と外部のツールや機能を公開するMCPサーバーとの間の対話を可能にするコンポーネントです。クライアントは、ユーザーからの入力を受け取り、それをMCPサーバーに送信し、サーバーからの応答をユーザーに提示する役割を担います。これにより、AIアプリケーションはファイルシステムの操作、Webの閲覧、コードの実行といった外部の能力を活用できます。
-
-**要約:**
-MCPクライアントは、AIアプリケーションと外部ツール（MCPサーバー）を繋ぐ「橋渡し役」です。ユーザーの指示をサーバーに伝え、結果を返すことで、AIがファイル操作やWeb閲覧などの機能を使えるようにします。
-
----
-
-### **ユーザーインターフェースクライアント (User Interface Client)**
-
-**日本語訳:**
-ユーザーがMCPサーバーと対話するためのフロントエンドとして機能するクライアントには、主に2つのタイプがあります。
-
-1.  **チャットインターフェースクライアント:**
-    *   これらは、ユーザーが自然言語でAIエージェントと対話できるチャットベースのインターフェースです。ユーザーはタスクを指示し、エージェントはMCPサーバーを利用してそのタスクを実行します。Hugging Faceは、GradioをベースにしたオープンソースのチャットUIクライアントを提供しています。
-
-2.  **インタラクティブ開発クライアント:**
-    *   これらは、開発者がMCPサーバーを操作し、デバッグするためのツールです。JupyterノートブックやIDEの拡張機能などが含まれ、サーバーの機能を直接テストしたり、リクエストやレスポンスを確認したりするのに役立ちます。
-
-**要約:**
-ユーザーがMCPサーバーと対話するためのUIクライアントには2種類あります。一つは、ユーザーがチャット形式でAIに指示を出す「チャットインターフェース」。もう一つは、開発者がサーバーの動作をテスト・デバッグするための「インタラクティブ開発クライアント」です。
-
----
-
-### **MCPクライアントの設定 (Configuring MCP Clients)**
-
-**日本語訳:**
-MCPクライアントがMCPサーバーと通信するためには、設定ファイルが必要です。この設定は通常 `mcp.json` という名前のJSONファイルで行われます。
-
-*   **`mcp.json` の構造:**
-    *   このファイルは、クライアントが接続するサーバーのリストを定義します。各サーバーには名前とトランスポート（通信方法）タイプが指定されます。トランスポートタイプには `stdio`（ローカルサーバー用）と `sse`（リモートサーバー用）があります。
-
-*   **`stdio` トランスポートの設定:**
-    *   ローカルで実行されるサーバーの場合、`command`（例: `python`）と `args`（例: `[/path/to/server.py]`）を指定して、サーバープロセスを起動する方法を定義します。
-
-*   **HTTP+SSE トランスポートの設定:**
-    *   リモートサーバーの場合、`url` フィールドにサーバーのエンドポイントURLを指定します。
-
-*   **設定ファイルでの環境変数の利用:**
-    *   APIキーのような機密情報を安全に渡すために、`env` フィールドを使ってサーバープロセスに環境変数を設定できます。例えば、`GITHUB_TOKEN` を設定ファイルに記述し、サーバー側のコード（Pythonなら `os.environ.get()`）で読み取ることができます。
-
-**要約:**
-MCPクライアントの設定は `mcp.json` ファイルで行います。このファイルで、接続したいサーバーのリストを定義します。ローカルサーバーなら起動コマンド (`stdio`) を、リモートサーバーならURL (`sse`) を指定します。APIキーなどの秘密情報は、環境変数 (`env`) を使って安全にサーバーへ渡せます。
-
----
-
-### **Tiny Agentsクライアント (Tiny Agents Clients)**
-
-**日本語訳:**
-`tiny-agents` は、コードから直接MCPサーバーに接続するためのクライアントとして機能するシンプルなAIエージェントです。コマンドライン環境でMCPサーバーを実行できます。
-
-*   **セットアップ:**
-    1.  `npx` をインストールします (`npm install -g npx`)。
-    2.  MCPをサポートする `huggingface_hub` ライブラリをインストールします (`pip install "huggingface_hub[mcp]>=0.32.0"`)。
-    3.  Hugging Face Hubにログインします (`huggingface-cli login`)。
-
-*   **MCPサーバーへの接続:**
-    1.  `agent.json` という設定ファイルを作成します。
-    2.  このファイルに、使用するモデル、プロバイダー、そして接続するMCPサーバーの情報を記述します。例えば、Playwrightを使ってブラウザを操作する `@playwright/mcp` サーバーを指定できます。
-
-*   **エージェントの実行:**
-    *   `tiny-agents run agent.json` コマンドでエージェントを実行します。これにより、例えば「ブラウザで新しいタブを開いて」といった指示をエージェントに与えることができます。
-
-**要約:**
-`tiny-agents` を使うと、簡単な設定で自作のAIエージェント（クライアント）をコマンドラインから実行できます。セットアップ後、`agent.json` ファイルに使用したいモデルとMCPサーバー（例：ブラウザ操作用サーバー）を定義し、`tiny-agents run` コマンドで起動します。これにより、コードベースでMCPの機能を活用できます。
+### Next Steps
+MCPクライアントの基本的な理解と設定が完了したら、次は実際のMCPサーバーとの統合やより複雑な設定への進展を検討できます。
+```
 
 ---
 
