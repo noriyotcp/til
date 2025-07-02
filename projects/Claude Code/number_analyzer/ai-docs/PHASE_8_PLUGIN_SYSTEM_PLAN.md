@@ -41,7 +41,9 @@ lib/number_analyzer/statistics/
 ## 🔧 Phase 8.0 実装計画
 
 ### Step 1: Plugin Registry System
-**プラグイン管理の中核システム**
+**プラグイン管理の中核システム + 重複管理機能**
+
+**重要**: プラグイン名重複管理の詳細は **[PLUGIN_CONFLICT_RESOLUTION_PLAN.md](PLUGIN_CONFLICT_RESOLUTION_PLAN.md)** を参照
 
 ```ruby
 # lib/number_analyzer/plugin_registry.rb
@@ -51,14 +53,57 @@ class NumberAnalyzer
     @loaded_plugins = {}
     
     def self.register(name, module_class, options = {})
+      # 重複チェック（新機能）
+      if @plugins.key?(name)
+        existing_plugin = @plugins[name]
+        new_plugin = build_plugin_info(name, module_class, options)
+        
+        # 重複解決システム実行
+        resolution_result = PluginConflictResolver.resolve_conflict(
+          new_plugin, existing_plugin
+        )
+        
+        handle_resolution_result(resolution_result)
+        return resolution_result
+      end
+      
       @plugins[name] = {
         module: module_class,
         enabled: options.fetch(:enabled, true),
         dependencies: options.fetch(:dependencies, []),
         version: options.fetch(:version, '1.0.0'),
         description: options.fetch(:description, ''),
-        commands: options.fetch(:commands, [])
+        commands: options.fetch(:commands, []),
+        priority: PluginPriority.get(options.fetch(:type, :third_party_gems))
       }
+    end
+    
+    def self.override_plugin(name, new_plugin)
+      @plugins[name] = new_plugin
+      @loaded_plugins.delete(name)  # 再ロード強制
+    end
+    
+    private
+    
+    def self.build_plugin_info(name, module_class, options)
+      {
+        name: name,
+        module: module_class,
+        type: options.fetch(:type, :third_party_gems),
+        source_gem: options.fetch(:source_gem, 'unknown'),
+        version: options.fetch(:version, '1.0.0')
+      }
+    end
+    
+    def self.handle_resolution_result(result)
+      case result.action
+      when :override
+        override_plugin(result.new_plugin.name, result.new_plugin)
+      when :namespace
+        register(result.namespaced_name, result.new_plugin)
+      when :rejection
+        # 登録せずに終了
+      end
     end
     
     def self.load_plugin(name)
@@ -768,26 +813,38 @@ puts info[:commands]     # => ["linear-regression", "clustering", "pca"]
 
 ## 🛠️ 実装ステップ詳細
 
-### Phase 8.0 Step 1: Foundation Setup
-**期間: 1-2週間**
+### Phase 8.0 Step 1: Foundation Setup + Conflict Resolution
+**期間: 2-3週間（重複管理機能統合により拡張）**
 
 1. **PluginRegistry作成**
    - `lib/number_analyzer/plugin_registry.rb`
    - プラグイン登録・ロード・依存関係管理
+   - **重複検出・解決機能統合**
    - エラークラス定義
 
-2. **Configuration System**
+2. **Plugin Conflict Resolution System** ⭐ **新機能**
+   - `lib/number_analyzer/plugin_priority.rb` - ハイブリッド優先度システム
+   - `lib/number_analyzer/plugin_conflict_resolver.rb` - 重複解決エンジン
+   - `lib/number_analyzer/plugin_namespace.rb` - 名前空間管理
+   - `lib/number_analyzer/plugin_configuration.rb` - 3層設定システム
+
+3. **Configuration System**
    - `lib/number_analyzer/configuration.rb`  
    - Singleton パターンでの設定管理
    - `config/plugins.yml` 作成
+   - **重複管理設定統合**
 
-3. **既存モジュールのプラグイン化準備**
+4. **既存モジュールのプラグイン化準備**
    - 8つのモジュールの情報整理
    - 依存関係マッピング
+   - **優先度割り当て** (core_plugins: 90)
 
-4. **基本テスト作成**
+5. **基本テスト作成**
    - PluginRegistry のユニットテスト
    - Configuration のユニットテスト
+   - **重複管理システムテスト** (50+ テストケース)
+
+**重複管理機能詳細**: [PLUGIN_CONFLICT_RESOLUTION_PLAN.md](PLUGIN_CONFLICT_RESOLUTION_PLAN.md) 参照
 
 ### Phase 8.0 Step 2: Dynamic Loading
 **期間: 2-3週間**
@@ -894,19 +951,31 @@ puts info[:commands]     # => ["linear-regression", "clustering", "pca"]
 - **複雑性増加**: プラグインシステムによる複雑性 → 段階的実装・十分なテスト
 - **パフォーマンス低下**: 動的ロードオーバーヘッド → ベンチマーク測定・最適化
 - **互換性問題**: 既存APIの破壊 → :legacy モードによる完全互換性保証
+- **🆕 プラグイン名重複**: 意図しない機能上書き → **ハイブリッド重複管理システム**で解決
 
 ### 運用リスク  
 - **プラグイン品質**: 外部プラグインの品質 → API標準・ガイドライン整備
 - **依存関係問題**: 複雑な依存関係 → 自動依存解決・エラーハンドリング
 - **セキュリティ**: 外部コード実行 → サンドボックス・検証機能
+- **🆕 名前空間汚染**: 予期しないプラグイン干渉 → **階層的優先度システム**で制御
+
+### 重複管理リスク詳細
+- **Core機能の保護**: core_plugins (優先度90) により既存8モジュールを保護
+- **開発時の柔軟性**: development (優先度100) により開発時の自由度確保
+- **予測可能性**: 明確な優先度ルールによる一貫した動作
+- **エコシステム健全性**: 名前空間システムによる平和的共存
+
+**詳細対策**: [PLUGIN_CONFLICT_RESOLUTION_PLAN.md](PLUGIN_CONFLICT_RESOLUTION_PLAN.md) を参照
 
 ### 回避策
 - **段階的実装**: 各ステップでの品質ゲート
 - **継続テスト**: CI/CDによる継続的品質保証
 - **ロールバック計画**: 各段階でのコミット管理・復旧手順
+- **🆕 重複テスト**: 包括的な重複解決シナリオテスト
 
 ## 📚 関連ドキュメント
 
+- **[PLUGIN_CONFLICT_RESOLUTION_PLAN.md](PLUGIN_CONFLICT_RESOLUTION_PLAN.md)**: **🆕 プラグイン名重複管理システム詳細設計**
 - **[ROADMAP.md](ROADMAP.md)**: Phase 7.8までの開発履歴
 - **[REFACTORING_PLAN.md](REFACTORING_PLAN.md)**: Phase 7.7基盤リファクタリング詳細
 - **[FEATURES.md](FEATURES.md)**: 実装済み機能一覧
@@ -921,5 +990,12 @@ Phase 8.0 Plugin System Architecture は、Phase 7.7で構築した完璧なモ�
 - **段階的進化**: リスクを最小化した安全な移行
 - **拡張エコシステム**: 外部開発者による機能拡張基盤
 - **企業レベル品質**: 326テストによる品質保証継続
+- **🆕 安全な重複管理**: ハイブリッド優先度システムによる予測可能な動作**
 
-この計画により、NumberAnalyzerは単なる統計ライブラリから、拡張可能で持続可能な統計分析プラットフォームへと生まれ変わります。
+**重複管理システムの特長**:
+- **階層的優先度**: Development(100) > Core(90) > Official(70) > ThirdParty(50) > Local(30)
+- **柔軟な設定**: プロジェクト・環境・実行時の3層設定システム
+- **名前空間共存**: 重複プラグインの平和的共存機能
+- **CLI支援**: インタラクティブな重複解決コマンド
+
+この計画により、NumberAnalyzerは単なる統計ライブラリから、安全で拡張可能、かつ持続可能な統計分析プラットフォームへと生まれ変わります。
