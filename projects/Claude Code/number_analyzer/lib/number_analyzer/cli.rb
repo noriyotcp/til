@@ -4,13 +4,14 @@ require 'optparse'
 require_relative '../number_analyzer'
 require_relative 'file_reader'
 require_relative 'output_formatter'
+require_relative 'plugin_system'
 
 # Command Line Interface for NumberAnalyzer
 class NumberAnalyzer
   # Handles command-line argument parsing and validation for NumberAnalyzer
   class CLI
-    # Mapping of subcommands to their handler methods
-    COMMANDS = {
+    # Core built-in commands
+    CORE_COMMANDS = {
       'median' => :run_median,
       'mean' => :run_mean,
       'mode' => :run_mode,
@@ -42,17 +43,53 @@ class NumberAnalyzer
       'friedman' => :run_friedman
     }.freeze
 
+    # Dynamic commands from plugins
+    @@plugin_commands = {}
+    @@plugin_system = nil
+
+    class << self
+      # Get all available commands (core + plugin)
+      def commands
+        CORE_COMMANDS.merge(@@plugin_commands)
+      end
+
+      # Register a new command from a plugin
+      def register_command(command_name, plugin_class, method_name)
+        @@plugin_commands[command_name] = {
+          plugin_class: plugin_class,
+          method: method_name
+        }
+      end
+
+      # Initialize plugin system
+      def plugin_system
+        @@plugin_system ||= PluginSystem.new
+      end
+
+      # Load plugins on CLI initialization
+      def initialize_plugins
+        plugin_system.load_enabled_plugins
+      end
+    end
+
     # Main entry point for CLI
     def self.run(argv = ARGV)
+      # Initialize plugins before processing commands
+      initialize_plugins
+
       return run_full_analysis(argv) if argv.empty?
 
       # Check if first argument is a subcommand
       command = argv.first
-      if COMMANDS.key?(command)
+      if commands.key?(command)
         run_subcommand(command, argv[1..])
-      else
-        # No subcommand provided, treat as full analysis with numeric arguments
+      elsif command.start_with?('-') || command.match?(/^\d+(\.\d+)?$/)
+        # Option or numeric argument, treat as full analysis
         run_full_analysis(argv)
+      else
+        # Unknown command
+        puts "Unknown command: #{command}"
+        exit 1
       end
     end
 
@@ -137,8 +174,29 @@ class NumberAnalyzer
         # Standard option parsing for other commands
         options, remaining_args = parse_options(args)
       end
-      method_name = COMMANDS[command]
-      send(method_name, remaining_args, options)
+      # Check if it's a core command or plugin command
+      if CORE_COMMANDS.key?(command)
+        method_name = CORE_COMMANDS[command]
+        send(method_name, remaining_args, options)
+      elsif @@plugin_commands.key?(command)
+        # Execute plugin command
+        plugin_info = @@plugin_commands[command]
+        plugin_class = plugin_info[:plugin_class]
+        method_name = plugin_info[:method]
+
+        # Create instance if needed and call the method
+        result = if plugin_class.respond_to?(method_name)
+                   plugin_class.send(method_name, remaining_args, options)
+                 else
+                   instance = plugin_class.new
+                   instance.send(method_name, remaining_args, options)
+                 end
+
+        puts result if result
+      else
+        puts "Unknown command: #{command}"
+        exit 1
+      end
     end
 
     # Parse command-line options using OptionParser

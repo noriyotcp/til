@@ -1,0 +1,64 @@
+# NumberAnalyzer Plugin Configuration
+# This file controls which plugins are loaded and their configuration
+
+plugins:
+  # Automatically load these plugins on startup
+  enabled: []
+    # - 'machine_learning'
+    # - 'advanced_visualization'
+    # - 'database_connector'
+  
+  # Plugin discovery paths (directories to search for plugins)
+  paths:
+    - './plugins'
+    - './lib/number_analyzer/plugins'
+    - '~/.number_analyzer/plugins'
+  
+  # Plugin repositories (for future plugin installation)
+  repositories:
+    official: 'https://github.com/number-analyzer/plugins'
+    community: 'https://github.com/number-analyzer/community-plugins'
+
+# Plugin-specific configuration
+plugin_config:
+  # Example plugin configurations
+  machine_learning:
+    algorithms:
+      - 'linear_regression'
+      - 'decision_tree'
+      - 'neural_network'
+    max_features: 1000
+    
+  database_connector:
+    default_adapter: 'postgresql'
+    connection_timeout: 30
+    
+  advanced_visualization:
+    default_format: 'svg'
+    chart_width: 800
+    chart_height: 600
+    
+# Security settings
+security:
+  # Allow plugins to execute system commands
+  allow_system_commands: false
+  
+  # Allow plugins to access network
+  allow_network_access: false
+  
+  # Require plugins to be signed
+  require_signature: false
+  
+  # Trusted plugin authors
+  trusted_authors: []
+
+# Performance settings
+performance:
+  # Maximum memory usage per plugin (MB)
+  max_memory_per_plugin: 512
+  
+  # Maximum execution time per command (seconds)
+  max_execution_time: 300
+  
+  # Enable plugin caching
+  enable_caching: true
