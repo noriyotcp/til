@@ -1,5 +1,5 @@
 ---
-title: "1. Introduction to Model Context Protocol"
+title: "Hugging Face MCP Course - 1. Introduction to Model Context Protocol"
 date: "2025-06-25 22:44:36 +0900"
 last_modified_at: "2025-06-25 22:44:36 +0900"
 ---
