@@ -38,7 +38,10 @@ NumberAnalyzer provides the following statistical calculations:
 - **Frequency Distribution** - Count occurrences of each value for data distribution analysis
 - **Histogram Display** - ASCII art visualization of frequency distribution with automatic scaling
 - **File Input Support** - Read data from CSV, JSON, and TXT files
-- **Plugin System Foundation** - Extensible architecture with plugin support infrastructure (Phase 8.0 Step 1)
+- **Plugin System Implementation** - Working plugin system with 3 implemented plugins and automatic CLI integration (Phase 8.0 Step 2):
+  - **BasicStats Plugin**: `sum`, `mean`, `mode`, `variance`, `std-dev` commands
+  - **AdvancedStats Plugin**: `percentile`, `quartiles`, `outliers`, `deviation-scores` commands  
+  - **MathUtils Plugin**: Internal mathematical utility functions
 
 ## Installation
 
@@ -129,7 +132,7 @@ number_analyzer 1 2 3 4 5
 
 #### Advanced Usage with Options (Phase 6.3)
 
-NumberAnalyzer supports advanced output formatting and control options for all 28 subcommands:
+NumberAnalyzer supports advanced output formatting and control options for all 29 core subcommands (plus additional plugin commands):
 
 **JSON Output Format**
 ```bash
@@ -181,7 +184,7 @@ bundle exec number_analyzer histogram --help
 
 **Subcommands with Options**
 
-All 28 subcommands support the new options:
+All 29 core subcommands (plus plugin commands) support the new options:
 
 ```bash
 # Basic Statistics with Options
@@ -506,7 +509,7 @@ number_analyzer/
 ├── lib/
 │   ├── number_analyzer.rb          # Core statistical calculations
 │   └── number_analyzer/
-│       ├── cli.rb                  # Command line interface + 28 subcommands
+│       ├── cli.rb                  # Command line interface + 29 core subcommands + plugin commands
 │       ├── file_reader.rb          # File input support (CSV/JSON/TXT)
 │       ├── statistics_presenter.rb # Display and formatting logic
 │       └── output_formatter.rb     # Advanced output formatting (JSON, precision, quiet)
@@ -528,7 +531,7 @@ number_analyzer/
 The project follows clean architecture principles with separation of concerns:
 
 - **NumberAnalyzer** - Pure statistical calculation library (no dependencies)
-- **NumberAnalyzer::CLI** - Command line interface and argument parsing with 28 subcommands
+- **NumberAnalyzer::CLI** - Command line interface and argument parsing with 29 core subcommands plus plugin commands
 - **NumberAnalyzer::FileReader** - File input handling (CSV/JSON/TXT support)
 - **NumberAnalyzer::StatisticsPresenter** - Display and formatting logic for full analysis
 - **NumberAnalyzer::OutputFormatter** - Advanced output formatting (JSON, precision, quiet mode)
