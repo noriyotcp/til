@@ -133,6 +133,13 @@ class NumberAnalyzer
     def load_statistics_module(_plugin_name, plugin_class)
       # Dynamically include the statistics module into NumberAnalyzer
       NumberAnalyzer.include(plugin_class) if plugin_class.is_a?(Module)
+
+      # Also register CLI commands if the plugin provides them
+      return unless plugin_class.respond_to?(:plugin_commands)
+
+      plugin_class.plugin_commands.each do |command_name, method_name|
+        CLI.register_command(command_name, plugin_class, method_name)
+      end
     end
 
     def load_cli_command(_plugin_name, plugin_class)
