@@ -372,6 +372,12 @@ class NumberAnalyzer
     end
 
     def compare_versions(version1, version2)
+      parts1, parts2 = normalize_version_parts(version1, version2)
+
+      compare_version_parts(parts1, parts2)
+    end
+
+    def normalize_version_parts(version1, version2)
       parts1 = version1.split('.').map(&:to_i)
       parts2 = version2.split('.').map(&:to_i)
 
@@ -380,7 +386,10 @@ class NumberAnalyzer
       parts1 += [0] * (max_length - parts1.size)
       parts2 += [0] * (max_length - parts2.size)
 
-      # Compare each part
+      [parts1, parts2]
+    end
+
+    def compare_version_parts(parts1, parts2)
       parts1.zip(parts2).each do |p1, p2|
         return 1 if p1 > p2
         return -1 if p1 < p2

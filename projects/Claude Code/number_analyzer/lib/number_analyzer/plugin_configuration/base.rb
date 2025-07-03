@@ -6,6 +6,7 @@ require 'fileutils'
 
 # Base configuration module for NumberAnalyzer plugin system
 class NumberAnalyzer
+  # Configuration management system for plugin settings and validation
   module PluginConfiguration
     # Configuration errors
     class ConfigurationError < StandardError; end

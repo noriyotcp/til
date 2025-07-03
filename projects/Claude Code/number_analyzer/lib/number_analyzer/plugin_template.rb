@@ -192,7 +192,7 @@ class NumberAnalyzer
       end
 
       def render_documentation_template(config)
-        template_content = get_documentation_template_content
+        template_content = documentation_template_content
         erb = ERB.new(template_content, trim_mode: '-')
         erb.result(binding)
       end
@@ -221,11 +221,11 @@ class NumberAnalyzer
         end
       end
 
-      def get_test_template_content
+      def test_template_content
         plugin_test_template
       end
 
-      def get_documentation_template_content
+      def documentation_template_content
         plugin_documentation_template
       end
 
