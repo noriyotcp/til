@@ -134,7 +134,7 @@ class NumberAnalyzer
       end
 
       # Recursively build graph for dependencies
-      dependencies.keys.each { |dep| build_dependency_graph(dep, visited) }
+      dependencies.each_key { |dep| build_dependency_graph(dep, visited) }
     end
 
     def extract_dependencies(plugin_info)
@@ -165,8 +165,8 @@ class NumberAnalyzer
       visited = Set.new
       stack = []
 
-      @dependency_graph.keys.each do |node|
-        if cycle = find_cycle(node, visited, stack)
+      @dependency_graph.each_key do |node|
+        if (cycle = find_cycle(node, visited, stack))
           return cycle
         end
       end
@@ -187,7 +187,7 @@ class NumberAnalyzer
           return stack[cycle_start..] + [child]
         end
 
-        if cycle = find_cycle(child, visited, stack)
+        if (cycle = find_cycle(child, visited, stack))
           return cycle
         end
       end
@@ -223,7 +223,7 @@ class NumberAnalyzer
     end
 
     def tsort_nodes(nodes)
-      subgraph = @dependency_graph.select { |k, _| nodes.include?(k) }
+      subgraph = @dependency_graph.slice(*nodes)
 
       # Create a temporary resolver for the subgraph
       temp_resolver = self.class.new(@plugin_registry)
@@ -292,13 +292,13 @@ class NumberAnalyzer
         compare_versions(version, ::Regexp.last_match(1).strip) >= 0
       when /^>(.+)$/
         # Greater than
-        compare_versions(version, ::Regexp.last_match(1).strip) > 0
+        compare_versions(version, ::Regexp.last_match(1).strip).positive?
       when /^<=(.+)$/
         # Less than or equal
         compare_versions(version, ::Regexp.last_match(1).strip) <= 0
       when /^<(.+)$/
         # Less than
-        compare_versions(version, ::Regexp.last_match(1).strip) < 0
+        compare_versions(version, ::Regexp.last_match(1).strip).negative?
       when /^=(.+)$/, /^==(.+)$/
         # Exact match
         version == ::Regexp.last_match(1).strip

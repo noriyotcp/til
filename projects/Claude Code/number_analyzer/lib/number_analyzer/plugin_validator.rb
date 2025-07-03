@@ -467,7 +467,7 @@ class NumberAnalyzer
 
         # Security recommendations
         high_risk_count = validation_results.count { |r| %i[high critical].include?(r[:risk_level]) }
-        recommendations << "Review #{high_risk_count} high-risk plugins before enabling" if high_risk_count > 0
+        recommendations << "Review #{high_risk_count} high-risk plugins before enabling" if high_risk_count.positive?
 
         # Common issues
         all_issues = validation_results.flat_map { |r| r[:security_issues] }

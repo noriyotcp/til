@@ -55,7 +55,7 @@ module VisualizationPlugin
 
       @numbers.each do |num|
         if i == bins - 1 # Last bin includes the maximum
-          bin_counts[i] += 1 if num >= bin_start && num <= bin_end
+          bin_counts[i] += 1 if num.between?(bin_start, bin_end)
         elsif num >= bin_start && num < bin_end
           bin_counts[i] += 1
         end
@@ -145,14 +145,14 @@ module VisualizationPlugin
 
     # Draw whiskers
     (positions[:lower_fence]..positions[:upper_fence]).each do |pos|
-      next if pos < 0 || pos >= chart_width
+      next if pos.negative? || pos >= chart_width
 
       whisker_line[pos] = '─'
     end
 
     # Draw box
     (positions[:q1]..positions[:q3]).each do |pos|
-      next if pos < 0 || pos >= chart_width
+      next if pos.negative? || pos >= chart_width
 
       box_line[pos] = '█'
     end
@@ -178,7 +178,7 @@ module VisualizationPlugin
     scale_line = ''
     [min_val, q1, median, q3, max_val].each do |value|
       pos = ((value - min_val) * scale_factor).round
-      scale_line += format('%-8.2f', value) if pos % 15 == 0
+      scale_line += format('%-8.2f', value) if (pos % 15).zero?
     end
     box_plot_lines << scale_line
     box_plot_lines << ''
@@ -219,8 +219,8 @@ module VisualizationPlugin
     y_range = y_max - y_min
 
     # Avoid division by zero
-    x_range = 1 if x_range == 0
-    y_range = 1 if y_range == 0
+    x_range = 1 if x_range.zero?
+    y_range = 1 if y_range.zero?
 
     # Create grid
     grid = Array.new(chart_height) { Array.new(chart_width, ' ') }
@@ -243,11 +243,11 @@ module VisualizationPlugin
     # Y-axis labels and grid
     grid.each_with_index do |row, i|
       y_value = y_max - (i * y_range / (chart_height - 1))
-      scatter_lines << format('%8.2f |%s|', y_value, row.join(''))
+      scatter_lines << format('%8.2f |%s|', y_value, row.join)
     end
 
     # X-axis
-    x_axis = (' ' * 10) + '+' + ('-' * chart_width) + '+'
+    x_axis = "#{' ' * 10}+#{'-' * chart_width}+"
     scatter_lines << x_axis
 
     # X-axis labels
@@ -283,7 +283,7 @@ module VisualizationPlugin
 
     min_val, max_val = @numbers.minmax
     value_range = max_val - min_val
-    value_range = 1 if value_range == 0
+    value_range = 1 if value_range.zero?
 
     # Create grid
     grid = Array.new(chart_height) { Array.new(chart_width, ' ') }
@@ -300,7 +300,7 @@ module VisualizationPlugin
       grid[y_pos][x_pos] = '*'
 
       # Connect points with lines
-      next unless i > 0
+      next unless i.positive?
 
       prev_x = ((i - 1) * x_step).round
       prev_y = chart_height - 1 - ((@numbers[i - 1] - min_val) * (chart_height - 1) / value_range).round
@@ -317,11 +317,11 @@ module VisualizationPlugin
     # Y-axis and grid
     grid.each_with_index do |row, i|
       y_value = max_val - (i * value_range / (chart_height - 1))
-      line_chart_lines << format('%8.2f |%s|', y_value, row.join(''))
+      line_chart_lines << format('%8.2f |%s|', y_value, row.join)
     end
 
     # X-axis
-    x_axis = (' ' * 10) + '+' + ('-' * chart_width) + '+'
+    x_axis = "#{' ' * 10}+#{'-' * chart_width}+"
     line_chart_lines << x_axis
     line_chart_lines << ''
 
@@ -414,7 +414,7 @@ module VisualizationPlugin
 
     # Add actual data points
     @numbers.each do |value|
-      next unless value >= x_min && value <= x_max
+      next unless value.between?(x_min, x_max)
 
       x_pos = ((value - x_min) * (chart_width - 1) / x_range).round
       y_expected = normal_pdf(value, mean, std_dev)
@@ -429,7 +429,7 @@ module VisualizationPlugin
     distribution_lines << '* = actual data, ─ = normal curve'
     distribution_lines << ''
 
-    grid.each { |row| distribution_lines << ('  ' + row.join('')) }
+    grid.each { |row| distribution_lines << "  #{row.join}" }
     distribution_lines << ''
 
     # Calculate normality indicators
@@ -584,10 +584,10 @@ module VisualizationPlugin
       slope: slope,
       intercept: intercept,
       correlation: correlation,
-      direction: if slope > 0
+      direction: if slope.positive?
                    'upward'
                  else
-                   slope < 0 ? 'downward' : 'flat'
+                   slope.negative? ? 'downward' : 'flat'
                  end,
       strength: interpret_correlation_strength(correlation.abs)
     }
@@ -629,7 +629,7 @@ module VisualizationPlugin
     dy = (y2 - y1).abs
 
     steps = [dx, dy].max
-    return if steps == 0
+    return if steps.zero?
 
     x_step = (x2 - x1).to_f / steps
     y_step = (y2 - y1).to_f / steps
@@ -793,9 +793,9 @@ module VisualizationPlugin
     total = frequency.map { |_, count| count }.sum
     entropy = 0.0
 
-    frequency.each do |_, count|
+    frequency.each_value do |count|
       p = count.to_f / total
-      entropy -= p * Math.log2(p) if p > 0
+      entropy -= p * Math.log2(p) if p.positive?
     end
 
     entropy
@@ -811,7 +811,7 @@ module VisualizationPlugin
     recommendations << 'Data is highly skewed - consider transformation' if stats[:skewness].abs > 1
 
     # Outliers
-    if stats[:outliers] > 0
+    if stats[:outliers].positive?
       recommendations << "#{stats[:outliers]} outliers detected - investigate or use robust methods"
     end
 

@@ -161,19 +161,19 @@ class NumberAnalyzer
 
       def determine_output_path(plugin_name, output_dir)
         base_dir = output_dir || 'plugins'
-        FileUtils.mkdir_p(base_dir) unless Dir.exist?(base_dir)
+        FileUtils.mkdir_p(base_dir)
         File.join(base_dir, "#{plugin_name}_plugin.rb")
       end
 
       def determine_test_path(plugin_name, output_dir)
         base_dir = output_dir ? File.join(output_dir, '..', 'spec') : 'spec'
-        FileUtils.mkdir_p(base_dir) unless Dir.exist?(base_dir)
+        FileUtils.mkdir_p(base_dir)
         File.join(base_dir, "#{plugin_name}_plugin_spec.rb")
       end
 
       def determine_doc_path(plugin_name, output_dir)
         base_dir = output_dir ? File.join(output_dir, '..', 'docs') : 'docs'
-        FileUtils.mkdir_p(base_dir) unless Dir.exist?(base_dir)
+        FileUtils.mkdir_p(base_dir)
         File.join(base_dir, "#{plugin_name}_plugin.md")
       end
 

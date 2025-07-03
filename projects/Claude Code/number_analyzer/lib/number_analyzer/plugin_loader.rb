@@ -218,10 +218,8 @@ class NumberAnalyzer
       else
         # Check if it includes StatisticsPlugin module
         if plugin_class.included_modules.any? { |mod| mod.name&.include?('StatisticsPlugin') }
-          :statistics_module
-        else
-          :statistics_module
         end
+        :statistics_module
       end
     end
 
@@ -264,7 +262,7 @@ class NumberAnalyzer
       end
 
       # Medium risk plugins are allowed by default unless sandbox mode is strict
-      return true if (validation_result[:risk_level] == :medium) && !(security_config['sandbox_mode'] == 'strict')
+      return true if (validation_result[:risk_level] == :medium) && security_config['sandbox_mode'] != 'strict'
 
       true
     end

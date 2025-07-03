@@ -311,9 +311,9 @@ module MachineLearningPlugin
   end
 
   def generate_clustering_interpretation(k, clusters, wcss)
-    non_empty_clusters = clusters.count { |c| c[:size] > 0 }
+    non_empty_clusters = clusters.count { |c| c[:size].positive? }
     largest_cluster = clusters.max_by { |c| c[:size] }
-    smallest_cluster = clusters.select { |c| c[:size] > 0 }.min_by { |c| c[:size] }
+    smallest_cluster = clusters.select { |c| c[:size].positive? }.min_by { |c| c[:size] }
 
     "K-means clustering with k=#{k} identified #{non_empty_clusters} non-empty clusters. " \
       "Largest cluster has #{largest_cluster[:size]} points, smallest has #{smallest_cluster[:size]} points. " \
@@ -377,7 +377,7 @@ module MachineLearningPlugin
   end
 
   def generate_quadratic_interpretation(a, b, c, r_squared)
-    curve_direction = a > 0 ? 'upward' : 'downward'
+    curve_direction = a.positive? ? 'upward' : 'downward'
     vertex_x = -b / (2 * a)
     vertex_y = (a * (vertex_x**2)) + (b * vertex_x) + c
     fit_quality = case r_squared

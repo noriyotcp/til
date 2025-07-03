@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+require 'set'
 require_relative 'plugin_priority'
 
 # Plugin Conflict Resolution System for NumberAnalyzer
@@ -23,7 +24,7 @@ class NumberAnalyzer
       file_format: :strict,
       output_format: :namespace,
       validator: :auto
-    }.freeze
+    }
 
     def initialize(priority_system = nil)
       @priority_system = priority_system || PluginPriority.new
@@ -131,10 +132,11 @@ class NumberAnalyzer
 
     # Check if conflict exists for specific plugins
     def conflict_exists?(plugin_a, plugin_b, conflict_type = nil)
-      @conflict_log.any? do |conflict|
-        conflict[:plugins].include?(plugin_a) &&
+      @conflict_log.any? do |log_entry|
+        conflict = log_entry[:conflict]
+        conflict[:plugins]&.include?(plugin_a) &&
           conflict[:plugins].include?(plugin_b) &&
-          (conflict_type.nil? || conflict[:type] == conflict_type)
+          (conflict_type.nil? || log_entry[:type] == conflict_type)
       end
     end
 
@@ -142,8 +144,9 @@ class NumberAnalyzer
     def get_conflicting_plugins(plugin_name)
       conflicting = Set.new
 
-      @conflict_log.each do |conflict|
-        if conflict[:plugins].include?(plugin_name)
+      @conflict_log.each do |log_entry|
+        conflict = log_entry[:conflict]
+        if conflict[:plugins]&.include?(plugin_name)
           conflict[:plugins].each { |p| conflicting.add(p) unless p == plugin_name }
         end
       end
@@ -174,6 +177,12 @@ class NumberAnalyzer
       end
     end
 
+    # Method to set interactive responses for testing
+    def set_interactive_response(conflict_type, conflicting_plugins, response)
+      cache_key = "interactive_#{conflict_type}_#{conflicting_plugins.sort.join('_')}"
+      @interactive_responses[cache_key] = response
+    end
+
     private
 
     def detect_command_conflicts(plugins_registry)
@@ -182,7 +191,7 @@ class NumberAnalyzer
       plugins_registry.each do |plugin_name, plugin_info|
         commands = plugin_info[:metadata][:commands] || []
 
-        commands.each do |command_name, _method_name|
+        commands.each_key do |command_name|
           command_conflicts[command_name] << plugin_name
         end
       end
@@ -216,8 +225,8 @@ class NumberAnalyzer
     def detect_namespace_conflicts(plugins_registry)
       namespace_conflicts = []
 
-      plugins_registry.each do |plugin_a, _info_a|
-        plugins_registry.each do |plugin_b, _info_b|
+      plugins_registry.each_key do |plugin_a|
+        plugins_registry.each_key do |plugin_b|
           next if plugin_a >= plugin_b # Avoid duplicate comparisons
 
           # Check if plugin names are too similar
@@ -392,7 +401,7 @@ class NumberAnalyzer
     def similar_plugin_names?(name_a, name_b)
       # Simple similarity check - could be enhanced with more sophisticated algorithms
       similarity = calculate_name_similarity(name_a.to_s, name_b.to_s)
-      similarity > 0.8
+      similarity > 0.7
     end
 
     def calculate_name_similarity(name_a, name_b)
@@ -484,7 +493,7 @@ class NumberAnalyzer
       end
 
       unresolved_count = @conflict_log.count { |log| !log[:resolved] }
-      recommendations << "#{unresolved_count} conflicts remain unresolved" if unresolved_count > 0
+      recommendations << "#{unresolved_count} conflicts remain unresolved" if unresolved_count.positive?
 
       recommendations.empty? ? ['No specific recommendations'] : recommendations
     end
@@ -494,12 +503,6 @@ class NumberAnalyzer
 
       raise ArgumentError, "Invalid resolution strategy: #{strategy}. " \
                            "Valid strategies: #{RESOLUTION_STRATEGIES.keys.join(', ')}"
-    end
-
-    # Method to set interactive responses for testing
-    def set_interactive_response(conflict_type, conflicting_plugins, response)
-      cache_key = "interactive_#{conflict_type}_#{conflicting_plugins.sort.join('_')}"
-      @interactive_responses[cache_key] = response
     end
   end
 end

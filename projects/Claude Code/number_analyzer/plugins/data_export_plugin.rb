@@ -353,7 +353,7 @@ module DataExportPlugin
       central_tendency: "Mean: #{stats[:mean].round(2)}, Median: #{stats[:median].round(2)}",
       variability: "Std Dev: #{stats[:standard_deviation].round(2)}, CV: #{stats[:coefficient_of_variation].round(1)}%",
       distribution: interpret_distribution_shape(stats[:skewness], stats[:kurtosis]),
-      data_quality: stats[:outliers] > 0 ? "#{stats[:outliers]} outliers detected" : 'No outliers detected'
+      data_quality: stats[:outliers].positive? ? "#{stats[:outliers]} outliers detected" : 'No outliers detected'
     }
   end
 
@@ -579,7 +579,7 @@ module DataExportPlugin
     case data
     when Hash
       count += 1
-      data.values.each { |value| count = count_json_objects(value, count) }
+      data.each_value { |value| count = count_json_objects(value, count) }
     when Array
       data.each { |item| count = count_json_objects(item, count) }
     end
@@ -621,7 +621,7 @@ module DataExportPlugin
       },
       spread_analysis: {
         cv_category: categorize_cv(stats[:coefficient_of_variation]),
-        outlier_impact: stats[:outliers] > 0 ? 'outliers_present' : 'no_outliers'
+        outlier_impact: stats[:outliers].positive? ? 'outliers_present' : 'no_outliers'
       }
     }
   end
@@ -662,7 +662,7 @@ module DataExportPlugin
   end
 
   def generate_outlier_recommendations(outlier_count)
-    if outlier_count == 0
+    if outlier_count.zero?
       ['No outliers detected - data appears clean']
     elsif outlier_count < @numbers.length * 0.05
       ['Few outliers detected - investigate individual cases', 'Consider robust statistical methods']
@@ -724,7 +724,7 @@ module DataExportPlugin
     recommendations << 'Data is highly skewed - consider data transformation' if stats[:skewness].abs > 1
 
     # Outlier recommendations
-    recommendations << 'Outliers detected - investigate and consider robust methods' if stats[:outliers] > 0
+    recommendations << 'Outliers detected - investigate and consider robust methods' if stats[:outliers].positive?
 
     # Variability recommendations
     if stats[:coefficient_of_variation] > 50
