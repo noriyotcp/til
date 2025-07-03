@@ -38,12 +38,15 @@ NumberAnalyzer provides the following statistical calculations:
 - **Frequency Distribution** - Count occurrences of each value for data distribution analysis
 - **Histogram Display** - ASCII art visualization of frequency distribution with automatic scaling
 - **File Input Support** - Read data from CSV, JSON, and TXT files
-- **Advanced Plugin System** - Enterprise-grade plugin architecture with dependency validation and error handling (Phase 8.0 Step 3):
-  - **BasicStats Plugin**: `sum`, `mean`, `mode`, `variance`, `std-dev` commands
-  - **AdvancedStats Plugin**: `percentile`, `quartiles`, `outliers`, `deviation-scores` commands  
-  - **MathUtils Plugin**: Internal mathematical utility functions
-  - **Dependency Validation**: Circular dependency detection with version compatibility checking
-  - **Error Recovery**: 5 recovery strategies with exponential backoff retry and plugin health monitoring
+- **Plugin API Framework** - Production-ready plugin development framework for third-party extensions (Phase 8.0 Step 4):
+  - **Plugin Registry**: Centralized plugin management with discovery and metadata validation
+  - **Security Validation**: 76 dangerous pattern detection rules with 4-level risk assessment (low/medium/high/critical)
+  - **Plugin Templates**: ERB-based standardized plugin generation for 5 plugin types
+  - **Configuration Management**: Multi-layer configuration (default/file/environment) with security policies
+  - **Sample Plugins**: 3 comprehensive examples demonstrating machine learning, data export, and visualization capabilities
+  - **19 Plugin Commands**: `linear-regression`, `k-means`, `pca`, `export-csv`, `histogram`, `dashboard`, etc.
+  - **Developer Tools**: Automated test generation, documentation creation, and security validation
+  - **Enterprise Security**: Code integrity checking (SHA256), author verification, and risk-based loading
 
 ## Installation
 
@@ -494,6 +497,93 @@ bundle exec rspec
 bundle exec rubocop
 ```
 
+## Plugin Development
+
+### Getting Started with Plugin API
+
+NumberAnalyzer provides a comprehensive plugin framework for extending statistical capabilities. Create custom plugins for new algorithms, data formats, or visualization methods.
+
+#### Creating a New Plugin
+
+Generate a plugin template using the built-in generator:
+
+```ruby
+# Generate a statistics plugin template
+NumberAnalyzer::PluginTemplate.generate('my_stats', :statistics, {
+  author: 'Your Name',
+  description: 'Custom statistical analysis methods'
+})
+```
+
+#### Plugin Types Available
+
+1. **Statistics Plugin** - Add new statistical methods
+2. **CLI Command Plugin** - Create new command-line interfaces  
+3. **File Format Plugin** - Support additional data input formats
+4. **Output Format Plugin** - Add new export formats
+5. **Validator Plugin** - Custom data validation rules
+
+#### Sample Plugin Usage
+
+```bash
+# Machine Learning Plugin Commands
+bundle exec number_analyzer linear-regression 1 2 3 4 5
+bundle exec number_analyzer k-means --k=3 1 2 3 4 5 6 7 8 9
+bundle exec number_analyzer pca --components=2 1 2 3 4 5
+
+# Data Export Plugin Commands  
+bundle exec number_analyzer export-csv --file data.txt
+bundle exec number_analyzer export-json --precision=3 1 2 3 4 5
+bundle exec number_analyzer export-profile --file results.csv
+
+# Visualization Plugin Commands
+bundle exec number_analyzer histogram --width=60 1 2 3 4 5
+bundle exec number_analyzer dashboard 1 2 3 4 5 6 7 8 9 10
+bundle exec number_analyzer scatter 1 2 3 4 5 -- 2 4 6 8 10
+```
+
+#### Plugin Security & Validation
+
+All plugins undergo comprehensive security validation:
+
+- **76 Security Patterns** detected (system calls, file operations, network access)
+- **4-Level Risk Assessment** (low/medium/high/critical)
+- **Code Integrity Verification** using SHA256 hashing
+- **Author Trust System** with trusted developer lists
+- **Sandboxed Loading** for high-risk plugins
+
+#### Plugin Directory Structure
+
+```
+plugins/
+├── my_plugin.rb                # Plugin implementation
+├── spec/
+│   └── my_plugin_spec.rb       # Plugin tests
+└── README.md                   # Plugin documentation
+```
+
+#### Configuration Management
+
+Configure plugins via `plugins.yml`:
+
+```yaml
+plugins:
+  enabled:
+    - machine_learning
+    - data_export
+    - visualization
+  paths:
+    - ./plugins
+    - ~/.number_analyzer/plugins
+security:
+  sandbox_mode: standard
+  allow_network_access: false
+  trusted_authors:
+    - "NumberAnalyzer Team"
+```
+
+For detailed plugin development guides, see [FEATURES.md](ai-docs/FEATURES.md).
+
 ## Documentation
 
 ### Complete Documentation
@@ -514,7 +604,26 @@ number_analyzer/
 │       ├── cli.rb                  # Command line interface + 29 core subcommands + plugin commands
 │       ├── file_reader.rb          # File input support (CSV/JSON/TXT)
 │       ├── statistics_presenter.rb # Display and formatting logic
-│       └── output_formatter.rb     # Advanced output formatting (JSON, precision, quiet)
+│       ├── output_formatter.rb     # Advanced output formatting (JSON, precision, quiet)
+│       ├── plugin_system.rb        # Core plugin management system
+│       ├── plugin_registry.rb      # Centralized plugin registration and discovery
+│       ├── plugin_configuration.rb # Multi-layer configuration management
+│       ├── plugin_validator.rb     # Security validation and integrity checking
+│       ├── plugin_template.rb      # ERB-based plugin template generator
+│       ├── plugin_loader.rb        # Secure plugin discovery and loading
+│       └── statistics/             # Modular statistics (8 modules, 96.1% code reduction)
+│           ├── basic_stats.rb      # BasicStats module
+│           ├── advanced_stats.rb   # AdvancedStats module  
+│           ├── math_utils.rb       # MathUtils module
+│           ├── correlation_stats.rb # CorrelationStats module
+│           ├── time_series_stats.rb # TimeSeriesStats module
+│           ├── hypothesis_testing.rb # HypothesisTesting module
+│           ├── anova_stats.rb      # ANOVAStats module
+│           └── non_parametric_stats.rb # NonParametricStats module
+├── plugins/
+│   ├── machine_learning_plugin.rb # ML algorithms (regression, clustering, PCA)
+│   ├── data_export_plugin.rb      # Data export (CSV, JSON, XML, YAML, TSV)
+│   └── visualization_plugin.rb    # ASCII visualization (charts, plots, dashboard)
 ├── bin/
 │   └── number_analyzer             # Executable file
 ├── spec/
@@ -523,7 +632,9 @@ number_analyzer/
 │       ├── cli_spec.rb             # CLI functionality tests
 │       ├── file_reader_spec.rb     # File reader functionality tests
 │       ├── statistics_presenter_spec.rb # Presentation logic tests
-│       └── output_formatter_spec.rb # Output formatting tests
+│       ├── output_formatter_spec.rb # Output formatting tests
+│       ├── plugin_*_spec.rb        # Plugin system test suite
+│       └── statistics/             # Modular statistics tests
 ├── number_analyzer.gemspec         # Gem specification
 └── README.md                       # This file
 ```
@@ -532,14 +643,31 @@ number_analyzer/
 
 The project follows clean architecture principles with separation of concerns:
 
-- **NumberAnalyzer** - Pure statistical calculation library (no dependencies)
+### Core Components
+- **NumberAnalyzer** - Pure statistical calculation library (8 modular components, 96.1% code reduction)
 - **NumberAnalyzer::CLI** - Command line interface and argument parsing with 29 core subcommands plus plugin commands
 - **NumberAnalyzer::FileReader** - File input handling (CSV/JSON/TXT support)
 - **NumberAnalyzer::StatisticsPresenter** - Display and formatting logic for full analysis
 - **NumberAnalyzer::OutputFormatter** - Advanced output formatting (JSON, precision, quiet mode)
-- **bin/number_analyzer** - Executable entry point
 
-This modular design allows the core statistical functionality to be used independently, while maintaining clear responsibilities for each component. The Phase 6.3 additions provide enterprise-level CLI capabilities with flexible output formatting for API integration and scripting automation.
+### Plugin API Framework
+- **NumberAnalyzer::PluginSystem** - Core plugin management and lifecycle control
+- **NumberAnalyzer::PluginRegistry** - Centralized plugin discovery and registration system
+- **NumberAnalyzer::PluginConfiguration** - Multi-layer configuration management (default/file/environment)
+- **NumberAnalyzer::PluginValidator** - Security validation with 76 dangerous pattern detection rules
+- **NumberAnalyzer::PluginTemplate** - ERB-based standardized plugin generation for 5 plugin types
+- **NumberAnalyzer::PluginLoader** - Secure plugin loading with risk-based strategies
+
+### Modular Statistics (8 Extracted Modules)
+- **BasicStats**, **AdvancedStats**, **MathUtils**, **CorrelationStats**
+- **TimeSeriesStats**, **HypothesisTesting**, **ANOVAStats**, **NonParametricStats**
+
+### Sample Plugins
+- **MachineLearningPlugin** - Advanced ML algorithms (regression, clustering, PCA)
+- **DataExportPlugin** - Multi-format data export with quality assessment
+- **VisualizationPlugin** - ASCII visualization with statistical interpretation
+
+This modular design enables independent use of statistical functionality while providing a secure, extensible plugin framework for third-party developers. The Phase 8.0 Step 4 plugin API standardization establishes NumberAnalyzer as a platform for statistical analysis extensions.
 
 ## License
 
