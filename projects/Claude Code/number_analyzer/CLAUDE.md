@@ -419,7 +419,6 @@ git status                   # README.md, ROADMAP.md, CLAUDE.md が含まれて�
 - **Modular Architecture**: 完全モジュラー設計による拡張性
 
 ### Integration Possibilities
-- **R/Python Interoperability**: 他言語統計ライブラリとの連携
 - **Web API Endpoints**: RESTful API提供機能
 - **Jupyter Notebook Integration**: ノートブック環境での統計分析
 

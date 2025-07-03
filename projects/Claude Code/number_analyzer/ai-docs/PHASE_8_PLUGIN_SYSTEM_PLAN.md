@@ -198,12 +198,6 @@ plugins:
       path: "plugins/ml_plugin.rb"
       description: "Machine learning algorithms"
       commands: ["linear-regression", "clustering", "pca"]
-    r_integration:
-      enabled: false
-      source: "external"
-      path: "plugins/r_plugin.rb"
-      description: "R language integration"
-      commands: ["r-summary", "r-plot"]
 ```
 
 ```ruby
@@ -795,7 +789,6 @@ puts info[:commands]     # => ["linear-regression", "clustering", "pca"]
 - **依存関係管理**: 明示的な依存関係解決
 
 ### 3. 統合可能性
-- **R/Python連携**: 他言語統計ライブラリとの統合
 - **Web API**: RESTful API提供機能
 - **Jupyter統合**: ノートブック環境対応
 
@@ -942,7 +935,7 @@ puts info[:commands]     # => ["linear-regression", "clustering", "pca"]
 
 ### 中期効果（Phase 8.1-8.5）
 - **エコシステム形成**: 外部開発者による拡張機能貢献
-- **統合機能拡張**: R/Python等の外部システム統合（将来実装）
+- **統合機能拡張**: 外部システム統合（将来実装）
 - **企業採用**: 安全で柔軟な機能構成による企業利用拡大
 - **プラグイン品質向上**: 重複管理システムによる高品質プラグイン促進
 
