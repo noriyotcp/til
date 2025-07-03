@@ -112,11 +112,20 @@ NumberAnalyzer is a comprehensive statistical analysis tool built in Ruby. Origi
 - `/project:commit-message` - Generate commit messages **ONLY** (no auto-commit)
 - `/project:gemini-search` - Web search integration
 
-**Plugin System Development (Phase 8.0 Step 1)**:
+**Plugin System Development (Phase 8.0)**:
 - `rspec spec/plugin_system_spec.rb` - Test plugin system core (14 tests)
 - `rspec spec/cli_plugin_integration_spec.rb` - Test CLI plugin integration (7 tests)  
 - `rspec spec/plugin_interface_spec.rb` - Test plugin interfaces (24 tests)
 - Plugin configuration: `plugins.yml` - YAML-based plugin management
+
+**Plugin Conflict Management (Phase 8.0 Step 5)**:
+- `bundle exec number_analyzer plugins list --show-conflicts` - プラグイン一覧と重複表示
+- `bundle exec number_analyzer plugins --conflicts` - 重複検出と表示
+- `bundle exec number_analyzer plugins resolve <plugin> --strategy=interactive` - インタラクティブ重複解決
+- `bundle exec number_analyzer plugins resolve <plugin> --strategy=namespace` - 名前空間による解決
+- `bundle exec number_analyzer --dev-mode <command>` - 開発モード（全上書き許可）
+- Plugin configuration: `config/number_analyzer.yml` - 重複管理設定
+- Plugin priority system: Development(100) > Core(90) > Official(70) > ThirdParty(50) > Local(30)
 
 **Git Command Usage**:
 - `/commit-message` = Message generation only (no commit execution)
@@ -424,11 +433,11 @@ git status                   # README.md, ROADMAP.md, CLAUDE.md が含まれて�
 
 ## Quick Reference
 
-**Current State**: ✅ Phase 8.0 Step 3 Complete - Advanced Plugin Features - 詳細は [ai-docs/ROADMAP.md](ai-docs/ROADMAP.md) を参照  
-**Architecture**: 8 modular components + 3 working plugins + dependency validation + error handling, 96.1% code reduction achieved  
-**Commands**: 29 core subcommands + plugin commands (sum, mean, mode, variance, std-dev, percentile, quartiles, outliers, deviation-scores), 18 CLI options  
-**Quality**: Zero RuboCop violations, 163 tests (advanced features with dependency validation and error handling)  
-**Next Steps**: Phase 8.0 Steps 4-5 - Plugin API Standardization and Advanced Features
+**Current State**: ✅ Phase 8.0 Step 4 Complete - Plugin API Standardization - 詳細は [ai-docs/ROADMAP.md](ai-docs/ROADMAP.md) を参照  
+**Architecture**: 8 modular components + comprehensive plugin infrastructure + security validation, 96.1% code reduction achieved  
+**Commands**: 29 core subcommands + 19 plugin commands + conflict resolution commands, 18 CLI options  
+**Quality**: Zero RuboCop violations, 163 tests (enterprise-level plugin system with security features)  
+**Next Steps**: Phase 8.0 Step 5 - Conflict Resolution System (2-3週間) - 重複管理システム実装
 
 ## Documentation Structure
 
