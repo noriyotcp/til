@@ -6,6 +6,22 @@ require_relative 'plugin_priority'
 # Plugin Conflict Resolution System for NumberAnalyzer
 # Handles conflicts when multiple plugins provide the same functionality
 class NumberAnalyzer
+  # Comprehensive plugin conflict detection and resolution system
+  #
+  # This class provides intelligent conflict management for the NumberAnalyzer plugin ecosystem,
+  # supporting multiple resolution strategies and automatic conflict detection across different
+  # plugin interaction points (commands, methods, namespaces).
+  #
+  # @example Basic usage
+  #   priority_system = PluginPriority.new
+  #   resolver = PluginConflictResolver.new(priority_system)
+  #
+  #   conflicts = resolver.detect_conflicts(plugins_registry)
+  #   resolutions = resolver.resolve_all_conflicts(conflicts)
+  #
+  # @example Custom strategy
+  #   resolver.set_default_strategy(:command_name, :namespace)
+  #   resolution = resolver.resolve_conflict(:command_name, ['plugin_a', 'plugin_b'], :strict)
   class PluginConflictResolver
     # Available conflict resolution strategies
     RESOLUTION_STRATEGIES = {
@@ -24,7 +40,7 @@ class NumberAnalyzer
       file_format: :strict,
       output_format: :namespace,
       validator: :auto
-    }
+    }.freeze
 
     def initialize(priority_system = nil)
       @priority_system = priority_system || PluginPriority.new
@@ -32,6 +48,7 @@ class NumberAnalyzer
       @resolution_cache = {}
       @interactive_responses = {} # Cache for interactive responses
       @namespace_mappings = {}    # Track namespace mappings
+      @default_strategies = DEFAULT_STRATEGIES.dup # Mutable copy for runtime changes
     end
 
     # Detect conflicts between plugins
@@ -48,7 +65,7 @@ class NumberAnalyzer
 
     # Resolve a specific conflict using given strategy
     def resolve_conflict(conflict_type, conflicting_plugins, strategy = nil)
-      strategy ||= DEFAULT_STRATEGIES[conflict_type] || :auto
+      strategy ||= @default_strategies[conflict_type] || :auto
 
       validate_strategy!(strategy)
 
@@ -81,7 +98,7 @@ class NumberAnalyzer
         conflict_list.each do |conflict|
           strategy = strategy_overrides[conflict_type] ||
                      strategy_overrides[:global] ||
-                     DEFAULT_STRATEGIES[conflict_type.to_s.gsub('_conflicts', '').to_sym] ||
+                     @default_strategies[conflict_type.to_s.gsub('_conflicts', '').to_sym] ||
                      :auto
 
           resolution = resolve_conflict(
@@ -121,7 +138,7 @@ class NumberAnalyzer
     # Set strategy for specific conflict type
     def set_default_strategy(conflict_type, strategy)
       validate_strategy!(strategy)
-      DEFAULT_STRATEGIES[conflict_type] = strategy
+      @default_strategies[conflict_type] = strategy
     end
 
     # Get cached resolution if available
@@ -305,48 +322,10 @@ class NumberAnalyzer
       # For testing/automation, we'll use cached responses or fallback to auto
       cache_key = "interactive_#{conflict_type}_#{conflicting_plugins.sort.join('_')}"
 
-      if @interactive_responses.key?(cache_key)
-        response = @interactive_responses[cache_key]
-      else
-        # Fallback to auto resolution for non-interactive environments
-        return resolve_auto(conflict_type, conflicting_plugins).merge(
-          strategy: :interactive,
-          message: 'Interactive resolution unavailable, used automatic fallback'
-        )
-      end
+      response = get_interactive_response(cache_key, conflict_type, conflicting_plugins)
+      return response if response # Early return for fallback
 
-      case response[:action]
-      when :select_plugin
-        winner = response[:plugin]
-        losers = conflicting_plugins - [winner]
-
-        {
-          success: true,
-          strategy: :interactive,
-          winner: winner,
-          losers: losers,
-          user_choice: true,
-          message: "User selected #{winner} for #{conflict_type}"
-        }
-      when :namespace_all
-        resolve_namespace(conflict_type, conflicting_plugins).merge(
-          strategy: :interactive,
-          user_choice: true
-        )
-      when :cancel
-        {
-          success: false,
-          strategy: :interactive,
-          winner: nil,
-          error: 'User cancelled conflict resolution',
-          message: 'Interactive resolution cancelled by user'
-        }
-      else
-        resolve_auto(conflict_type, conflicting_plugins).merge(
-          strategy: :interactive,
-          message: 'Invalid interactive response, used automatic fallback'
-        )
-      end
+      handle_interactive_response(@interactive_responses[cache_key], conflict_type, conflicting_plugins)
     end
 
     def resolve_auto(conflict_type, conflicting_plugins)
@@ -355,9 +334,6 @@ class NumberAnalyzer
       when :command_name
         # For CLI commands, prioritize but warn
         resolve_warn_override(conflict_type, conflicting_plugins)
-      when :statistics_method
-        # For statistical methods, use namespacing to preserve all functionality
-        resolve_namespace(conflict_type, conflicting_plugins)
       when :file_format, :output_format
         # For file/output formats, use highest priority but allow override
         resolve_silent_override(conflict_type, conflicting_plugins)
@@ -365,7 +341,7 @@ class NumberAnalyzer
         # For validators, chain them together if possible
         resolve_chain_validators(conflicting_plugins)
       else
-        # Default to namespace for unknown types
+        # For statistical methods and unknown types, use namespacing to preserve functionality
         resolve_namespace(conflict_type, conflicting_plugins)
       end
     end
@@ -385,6 +361,59 @@ class NumberAnalyzer
 
     def select_highest_priority_plugin(conflicting_plugins)
       @priority_system.sort_by_priority(conflicting_plugins).first
+    end
+
+    def get_interactive_response(cache_key, conflict_type, conflicting_plugins)
+      return nil if @interactive_responses.key?(cache_key)
+
+      # Fallback to auto resolution for non-interactive environments
+      resolve_auto(conflict_type, conflicting_plugins).merge(
+        strategy: :interactive,
+        message: 'Interactive resolution unavailable, used automatic fallback'
+      )
+    end
+
+    def handle_interactive_response(response, conflict_type, conflicting_plugins)
+      case response[:action]
+      when :select_plugin
+        handle_select_plugin_response(response, conflict_type, conflicting_plugins)
+      when :namespace_all
+        resolve_namespace(conflict_type, conflicting_plugins).merge(
+          strategy: :interactive,
+          user_choice: true
+        )
+      when :cancel
+        handle_cancel_response
+      else
+        resolve_auto(conflict_type, conflicting_plugins).merge(
+          strategy: :interactive,
+          message: 'Invalid interactive response, used automatic fallback'
+        )
+      end
+    end
+
+    def handle_select_plugin_response(response, conflict_type, conflicting_plugins)
+      winner = response[:plugin]
+      losers = conflicting_plugins - [winner]
+
+      {
+        success: true,
+        strategy: :interactive,
+        winner: winner,
+        losers: losers,
+        user_choice: true,
+        message: "User selected #{winner} for #{conflict_type}"
+      }
+    end
+
+    def handle_cancel_response
+      {
+        success: false,
+        strategy: :interactive,
+        winner: nil,
+        error: 'User cancelled conflict resolution',
+        message: 'Interactive resolution cancelled by user'
+      }
     end
 
     def generate_namespace(plugin_name)

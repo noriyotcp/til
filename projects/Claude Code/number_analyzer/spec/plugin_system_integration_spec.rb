@@ -9,13 +9,12 @@ RSpec.describe 'Plugin System Integration' do
 
   before do
     # Reset plugin state for clean tests
-    cli_class.class_variable_set(:@@plugin_commands, {})
-    cli_class.class_variable_set(:@@plugin_system, nil)
+    cli_class.reset_plugin_state!
   end
 
   after do
     # Clean up
-    cli_class.class_variable_set(:@@plugin_commands, {})
+    cli_class.reset_plugin_state!
   end
 
   describe 'Single plugin integration' do

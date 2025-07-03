@@ -43,19 +43,15 @@ class NumberAnalyzer
       'friedman' => :run_friedman
     }.freeze
 
-    # Dynamic commands from plugins
-    @@plugin_commands = {}
-    @@plugin_system = nil
-
     class << self
       # Get all available commands (core + plugin)
       def commands
-        CORE_COMMANDS.merge(@@plugin_commands)
+        CORE_COMMANDS.merge(plugin_commands)
       end
 
       # Register a new command from a plugin
       def register_command(command_name, plugin_class, method_name)
-        @@plugin_commands[command_name] = {
+        plugin_commands[command_name] = {
           plugin_class: plugin_class,
           method: method_name
         }
@@ -63,12 +59,25 @@ class NumberAnalyzer
 
       # Initialize plugin system
       def plugin_system
-        @@plugin_system ||= PluginSystem.new
+        @plugin_system ||= PluginSystem.new
       end
 
       # Load plugins on CLI initialization
       def initialize_plugins
         plugin_system.load_enabled_plugins
+      end
+
+      # Reset plugin state (for testing)
+      def reset_plugin_state!
+        @plugin_commands = {}
+        @plugin_system = nil
+      end
+
+      private
+
+      # Dynamic commands from plugins (class instance variable)
+      def plugin_commands
+        @plugin_commands ||= {}
       end
     end
 
@@ -178,9 +187,9 @@ class NumberAnalyzer
       if CORE_COMMANDS.key?(command)
         method_name = CORE_COMMANDS[command]
         send(method_name, remaining_args, options)
-      elsif @@plugin_commands.key?(command)
+      elsif plugin_commands.key?(command)
         # Execute plugin command
-        plugin_info = @@plugin_commands[command]
+        plugin_info = plugin_commands[command]
         plugin_class = plugin_info[:plugin_class]
         method_name = plugin_info[:method]
 

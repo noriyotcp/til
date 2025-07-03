@@ -31,8 +31,8 @@ RSpec.describe NumberAnalyzer::CLI, 'Plugin Integration' do
   end
 
   before do
-    # Reset plugin commands
-    described_class.class_variable_set(:@@plugin_commands, {})
+    # Reset plugin state
+    described_class.reset_plugin_state!
 
     # Mock plugin system initialization
     allow(described_class).to receive(:initialize_plugins)
@@ -94,8 +94,8 @@ RSpec.describe NumberAnalyzer::CLI, 'Plugin Integration' do
 
   describe 'plugin system integration' do
     before do
-      # Reset the plugin system class variable to ensure clean state
-      described_class.class_variable_set(:@@plugin_system, nil)
+      # Reset plugin state to ensure clean state
+      described_class.reset_plugin_state!
     end
 
     it 'initializes plugin system on CLI run' do

@@ -3,6 +3,25 @@
 # Plugin Priority System for NumberAnalyzer
 # Manages hierarchical plugin priority levels for conflict resolution
 class NumberAnalyzer
+  # Hierarchical plugin priority management system
+  #
+  # This class implements a 5-tier priority system for NumberAnalyzer plugins,
+  # enabling intelligent conflict resolution and plugin loading order management.
+  # Priority levels range from development (100) to local (30), with automatic
+  # detection based on plugin metadata and naming conventions.
+  #
+  # @example Basic usage
+  #   priority = PluginPriority.new
+  #   priority.set_priority('my_plugin', :core)
+  #   priority.get_priority('my_plugin') # => :core
+  #
+  # @example Auto-detection
+  #   metadata = { author: 'NumberAnalyzer Team', name: 'Official Plugin' }
+  #   detected = priority.auto_detect_priority('official_plugin', metadata) # => :official
+  #
+  # @example Priority comparison
+  #   plugins = ['plugin_a', 'plugin_b', 'plugin_c']
+  #   sorted = priority.sort_by_priority(plugins) # Highest priority first
   class PluginPriority
     # Priority levels for different plugin types
     PRIORITY_LEVELS = {

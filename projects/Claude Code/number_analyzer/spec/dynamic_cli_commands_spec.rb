@@ -8,13 +8,12 @@ RSpec.describe 'Dynamic CLI Command Registration' do
 
   before do
     # Reset plugin commands for clean state
-    cli_class.class_variable_set(:@@plugin_commands, {})
-    cli_class.class_variable_set(:@@plugin_system, nil)
+    cli_class.reset_plugin_state!
   end
 
   after do
     # Clean up after tests
-    cli_class.class_variable_set(:@@plugin_commands, {})
+    cli_class.reset_plugin_state!
   end
 
   describe 'command registration' do
@@ -124,7 +123,7 @@ RSpec.describe 'Dynamic CLI Command Registration' do
       mock_system = instance_double(NumberAnalyzer::PluginSystem)
       expect(mock_system).to receive(:load_enabled_plugins)
 
-      cli_class.class_variable_set(:@@plugin_system, mock_system)
+      allow(cli_class).to receive(:plugin_system).and_return(mock_system)
       cli_class.initialize_plugins
     end
   end
