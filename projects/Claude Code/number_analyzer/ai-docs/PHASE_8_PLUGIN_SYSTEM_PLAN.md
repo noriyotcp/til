@@ -790,7 +790,6 @@ puts info[:commands]     # => ["linear-regression", "clustering", "pca"]
 
 ### 3. 統合可能性
 - **Web API**: RESTful API提供機能
-- **Jupyter統合**: ノートブック環境対応
 
 ### 4. パフォーマンス
 - **軽量起動**: 必要機能のみロード

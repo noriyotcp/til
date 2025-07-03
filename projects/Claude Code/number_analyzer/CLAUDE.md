@@ -420,7 +420,6 @@ git status                   # README.md, ROADMAP.md, CLAUDE.md が含まれて�
 
 ### Integration Possibilities
 - **Web API Endpoints**: RESTful API提供機能
-- **Jupyter Notebook Integration**: ノートブック環境での統計分析
 
 ### Implementation Strategy
 1. **Plugin Architecture Design**: プラグインシステムの設計
