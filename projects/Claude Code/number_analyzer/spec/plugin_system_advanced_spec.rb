@@ -3,43 +3,61 @@
 require 'spec_helper'
 require 'number_analyzer/plugin_system'
 
+# Define test plugin modules outside of RSpec block
+module TestPluginA
+  def self.plugin_name = 'test_plugin_a'
+  def self.plugin_version = '1.0.0'
+  def self.plugin_dependencies = []
+  def self.plugin_commands = { 'test-a' => :test_a_method }
+  def test_a_method = 'Result from Plugin A'
+end
+
+module TestPluginB
+  def self.plugin_name = 'test_plugin_b'
+  def self.plugin_version = '2.0.0'
+  def self.plugin_dependencies = ['test_plugin_a']
+  def self.plugin_commands = { 'test-b' => :test_b_method }
+  def test_b_method = 'Result from Plugin B'
+end
+
+module TestPluginC
+  def self.plugin_name = 'test_plugin_c'
+  def self.plugin_version = '1.0.0'
+  def self.plugin_dependencies = %w[test_plugin_b test_plugin_a]
+  def self.plugin_commands = { 'test-c' => :test_c_method }
+  def test_c_method = 'Result from Plugin C'
+end
+
+module FailingPlugin
+  def self.plugin_name = 'failing_plugin'
+  def self.plugin_version = '1.0.0'
+  def self.plugin_dependencies = []
+
+  def self.included(_base)
+    raise LoadError, 'Plugin failed to load'
+  end
+end
+
+module VersionedPluginA
+  def self.plugin_name = 'versioned_a'
+  def self.plugin_version = '1.5.0'
+  def self.plugin_dependencies = []
+end
+
+module VersionedPluginB
+  def self.plugin_name = 'versioned_b'
+  def self.plugin_version = '1.0.0'
+  def self.plugin_dependencies = { 'versioned_a' => '~> 1.0' }
+end
+
+module VersionedPluginC
+  def self.plugin_name = 'versioned_c'
+  def self.plugin_version = '1.0.0'
+  def self.plugin_dependencies = { 'versioned_a' => '>= 2.0' }
+end
+
 RSpec.describe 'PluginSystem with Advanced Features' do
   let(:plugin_system) { NumberAnalyzer::PluginSystem.new }
-
-  # Define test plugin modules
-  module TestPluginA
-    def self.plugin_name = 'test_plugin_a'
-    def self.plugin_version = '1.0.0'
-    def self.plugin_dependencies = []
-    def self.plugin_commands = { 'test-a' => :test_a_method }
-    def test_a_method = 'Result from Plugin A'
-  end
-
-  module TestPluginB
-    def self.plugin_name = 'test_plugin_b'
-    def self.plugin_version = '2.0.0'
-    def self.plugin_dependencies = ['test_plugin_a']
-    def self.plugin_commands = { 'test-b' => :test_b_method }
-    def test_b_method = 'Result from Plugin B'
-  end
-
-  module TestPluginC
-    def self.plugin_name = 'test_plugin_c'
-    def self.plugin_version = '1.0.0'
-    def self.plugin_dependencies = %w[test_plugin_b test_plugin_a]
-    def self.plugin_commands = { 'test-c' => :test_c_method }
-    def test_c_method = 'Result from Plugin C'
-  end
-
-  module FailingPlugin
-    def self.plugin_name = 'failing_plugin'
-    def self.plugin_version = '1.0.0'
-    def self.plugin_dependencies = []
-
-    def self.included(_base)
-      raise LoadError, 'Plugin failed to load'
-    end
-  end
 
   describe 'dependency resolution' do
     before do
@@ -234,24 +252,6 @@ RSpec.describe 'PluginSystem with Advanced Features' do
   end
 
   describe 'version compatibility' do
-    module VersionedPluginA
-      def self.plugin_name = 'versioned_a'
-      def self.plugin_version = '1.5.0'
-      def self.plugin_dependencies = []
-    end
-
-    module VersionedPluginB
-      def self.plugin_name = 'versioned_b'
-      def self.plugin_version = '1.0.0'
-      def self.plugin_dependencies = { 'versioned_a' => '~> 1.0' }
-    end
-
-    module VersionedPluginC
-      def self.plugin_name = 'versioned_c'
-      def self.plugin_version = '1.0.0'
-      def self.plugin_dependencies = { 'versioned_a' => '>= 2.0' }
-    end
-
     before do
       plugin_system.register_plugin('versioned_a', VersionedPluginA)
       plugin_system.register_plugin('versioned_b', VersionedPluginB)

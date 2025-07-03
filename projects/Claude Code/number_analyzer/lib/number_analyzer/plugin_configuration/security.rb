@@ -37,7 +37,7 @@ class NumberAnalyzer
         end
 
         # Check if plugin has specific permission
-        def has_permission?(plugin_name, permission, config = nil)
+        def permission?(plugin_name, permission, config = nil)
           settings = security_settings(plugin_name, config)
           !!settings[permission.to_s]
         end

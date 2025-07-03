@@ -18,6 +18,7 @@ class NumberAnalyzer
       end
     end
 
+    # Raised when a plugin has dependencies that cannot be found
     class UnresolvedDependencyError < StandardError
       attr_reader :plugin, :missing_dependencies
 
@@ -28,6 +29,7 @@ class NumberAnalyzer
       end
     end
 
+    # Raised when there are version conflicts between plugin dependencies
     class VersionConflictError < StandardError
       attr_reader :plugin, :dependency, :required_version, :available_version
 
@@ -94,7 +96,7 @@ class NumberAnalyzer
     end
 
     # Validate version compatibility
-    def validate_version_compatibility(_plugin_name, dependency_name, required_version)
+    def version_compatible?(_plugin_name, dependency_name, required_version)
       available_version = get_plugin_version(dependency_name)
       return true unless required_version && available_version
 
@@ -279,36 +281,81 @@ class NumberAnalyzer
     end
 
     def satisfy_version_requirement?(version, requirement)
-      # Simple version comparison for now
-      # Can be enhanced with gem version comparison logic
       return true if requirement.nil? || requirement == '*'
 
-      case requirement
-      when /^~>(.+)$/
-        # Pessimistic version constraint
-        satisfy_pessimistic_version?(::Regexp.last_match(1).strip, version)
-      when /^>=(.+)$/
-        # Greater than or equal
-        compare_versions(version, ::Regexp.last_match(1).strip) >= 0
-      when /^>(.+)$/
-        # Greater than
-        compare_versions(version, ::Regexp.last_match(1).strip).positive?
-      when /^<=(.+)$/
-        # Less than or equal
-        compare_versions(version, ::Regexp.last_match(1).strip) <= 0
-      when /^<(.+)$/
-        # Less than
-        compare_versions(version, ::Regexp.last_match(1).strip).negative?
-      when /^=(.+)$/, /^==(.+)$/
-        # Exact match
-        version == ::Regexp.last_match(1).strip
+      match_version_pattern?(version, requirement)
+    end
+
+    def match_version_pattern?(version, requirement)
+      if pessimistic_constraint?(requirement)
+        handle_pessimistic_constraint(version, requirement)
+      elsif comparison_constraint?(requirement)
+        handle_comparison_constraint(version, requirement)
+      elsif exact_match_constraint?(requirement)
+        handle_exact_match(version, requirement)
       else
-        # Default to exact match
         version == requirement
       end
     end
 
-    def satisfy_pessimistic_version?(required, actual)
+    def pessimistic_constraint?(requirement)
+      requirement.match?(/^~>(.+)$/)
+    end
+
+    def comparison_constraint?(requirement)
+      requirement.match?(/^(>=|>|<=|<)(.+)$/)
+    end
+
+    def exact_match_constraint?(requirement)
+      requirement.match?(/^(=|==)(.+)$/)
+    end
+
+    def handle_pessimistic_constraint(version, requirement)
+      required_version = requirement.match(/^~>(.+)$/)[1].strip
+      pessimistic_version_satisfied?(required_version, version)
+    end
+
+    def handle_comparison_constraint(version, requirement)
+      operator, required_version = parse_comparison_constraint(requirement)
+      case operator
+      when '>='
+        version_greater_or_equal?(version, required_version)
+      when '>'
+        version_greater?(version, required_version)
+      when '<='
+        version_less_or_equal?(version, required_version)
+      when '<'
+        version_less?(version, required_version)
+      end
+    end
+
+    def handle_exact_match(version, requirement)
+      required_version = requirement.match(/^(=|==)(.+)$/)[2].strip
+      version == required_version
+    end
+
+    def parse_comparison_constraint(requirement)
+      match = requirement.match(/^(>=|>|<=|<)(.+)$/)
+      [match[1], match[2].strip]
+    end
+
+    def version_greater_or_equal?(version, required)
+      compare_versions(version, required) >= 0
+    end
+
+    def version_greater?(version, required)
+      compare_versions(version, required).positive?
+    end
+
+    def version_less_or_equal?(version, required)
+      compare_versions(version, required) <= 0
+    end
+
+    def version_less?(version, required)
+      compare_versions(version, required).negative?
+    end
+
+    def pessimistic_version_satisfied?(required, actual)
       required_parts = required.split('.')
       actual_parts = actual.split('.')
 
@@ -324,9 +371,9 @@ class NumberAnalyzer
       actual_parts[required_parts.size - 1].to_i >= required_parts.last.to_i
     end
 
-    def compare_versions(v1, v2)
-      parts1 = v1.split('.').map(&:to_i)
-      parts2 = v2.split('.').map(&:to_i)
+    def compare_versions(version1, version2)
+      parts1 = version1.split('.').map(&:to_i)
+      parts2 = version2.split('.').map(&:to_i)
 
       # Pad with zeros to make equal length
       max_length = [parts1.size, parts2.size].max

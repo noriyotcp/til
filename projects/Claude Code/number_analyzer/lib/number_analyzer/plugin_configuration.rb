@@ -69,8 +69,8 @@ class NumberAnalyzer
         PluginConfiguration::Security.performance_settings(plugin_name, config)
       end
 
-      def has_permission?(plugin_name, permission, config = nil)
-        PluginConfiguration::Security.has_permission?(plugin_name, permission, config)
+      def permission?(plugin_name, permission, config = nil)
+        PluginConfiguration::Security.permission?(plugin_name, permission, config)
       end
 
       def trusted_authors(config = nil)
@@ -96,14 +96,18 @@ class NumberAnalyzer
 
       # Utility methods
       def create_template(config_path)
+        default_plugins = PluginConfiguration::DEFAULT_CONFIG['plugins']
+        plugins_config = default_plugins.merge({
+                                                 'enabled' => %w[basic_stats advanced_stats],
+                                                 'paths' => [
+                                                   './plugins',
+                                                   './lib/number_analyzer/plugins',
+                                                   '~/.number_analyzer/plugins'
+                                                 ]
+                                               })
+
         template_config = PluginConfiguration::DEFAULT_CONFIG.merge({
-                                                                      'plugins' => PluginConfiguration::DEFAULT_CONFIG['plugins'].merge({
-                                                                                                                                          'enabled' => %w[
-                                                                                                                                            basic_stats advanced_stats
-                                                                                                                                          ],
-                                                                                                                                          'paths' => ['./plugins',
-                                                                                                                                                      './lib/number_analyzer/plugins', '~/.number_analyzer/plugins']
-                                                                                                                                        }),
+                                                                      'plugins' => plugins_config,
                                                                       'plugin_config' => {
                                                                         'example_plugin' => {
                                                                           'enabled' => true,

@@ -175,56 +175,56 @@ RSpec.describe NumberAnalyzer::DependencyResolver do
     end
   end
 
-  describe '#validate_version_compatibility' do
+  describe '#version_compatible?' do
     before do
       plugin_registry['plugin_a'] = create_plugin('plugin_a', [], '1.2.3')
     end
 
     context 'with pessimistic version constraint (~>)' do
       it 'accepts compatible versions' do
-        expect(resolver.validate_version_compatibility('test', 'plugin_a', '~> 1.2')).to be true
-        expect(resolver.validate_version_compatibility('test', 'plugin_a', '~> 1.2.0')).to be true
+        expect(resolver.version_compatible?('test', 'plugin_a', '~> 1.2')).to be true
+        expect(resolver.version_compatible?('test', 'plugin_a', '~> 1.2.0')).to be true
       end
 
       it 'rejects incompatible versions' do
-        expect(resolver.validate_version_compatibility('test', 'plugin_a', '~> 2.0')).to be false
-        expect(resolver.validate_version_compatibility('test', 'plugin_a', '~> 1.3')).to be false
+        expect(resolver.version_compatible?('test', 'plugin_a', '~> 2.0')).to be false
+        expect(resolver.version_compatible?('test', 'plugin_a', '~> 1.3')).to be false
       end
     end
 
     context 'with comparison operators' do
       it 'handles >= correctly' do
-        expect(resolver.validate_version_compatibility('test', 'plugin_a', '>= 1.0.0')).to be true
-        expect(resolver.validate_version_compatibility('test', 'plugin_a', '>= 2.0.0')).to be false
+        expect(resolver.version_compatible?('test', 'plugin_a', '>= 1.0.0')).to be true
+        expect(resolver.version_compatible?('test', 'plugin_a', '>= 2.0.0')).to be false
       end
 
       it 'handles > correctly' do
-        expect(resolver.validate_version_compatibility('test', 'plugin_a', '> 1.2.2')).to be true
-        expect(resolver.validate_version_compatibility('test', 'plugin_a', '> 1.2.3')).to be false
+        expect(resolver.version_compatible?('test', 'plugin_a', '> 1.2.2')).to be true
+        expect(resolver.version_compatible?('test', 'plugin_a', '> 1.2.3')).to be false
       end
 
       it 'handles <= correctly' do
-        expect(resolver.validate_version_compatibility('test', 'plugin_a', '<= 2.0.0')).to be true
-        expect(resolver.validate_version_compatibility('test', 'plugin_a', '<= 1.0.0')).to be false
+        expect(resolver.version_compatible?('test', 'plugin_a', '<= 2.0.0')).to be true
+        expect(resolver.version_compatible?('test', 'plugin_a', '<= 1.0.0')).to be false
       end
 
       it 'handles < correctly' do
-        expect(resolver.validate_version_compatibility('test', 'plugin_a', '< 1.2.4')).to be true
-        expect(resolver.validate_version_compatibility('test', 'plugin_a', '< 1.2.3')).to be false
+        expect(resolver.version_compatible?('test', 'plugin_a', '< 1.2.4')).to be true
+        expect(resolver.version_compatible?('test', 'plugin_a', '< 1.2.3')).to be false
       end
 
       it 'handles = correctly' do
-        expect(resolver.validate_version_compatibility('test', 'plugin_a', '= 1.2.3')).to be true
-        expect(resolver.validate_version_compatibility('test', 'plugin_a', '= 1.2.4')).to be false
+        expect(resolver.version_compatible?('test', 'plugin_a', '= 1.2.3')).to be true
+        expect(resolver.version_compatible?('test', 'plugin_a', '= 1.2.4')).to be false
       end
     end
 
     it 'returns true for wildcard version' do
-      expect(resolver.validate_version_compatibility('test', 'plugin_a', '*')).to be true
+      expect(resolver.version_compatible?('test', 'plugin_a', '*')).to be true
     end
 
     it 'returns true when no version requirement specified' do
-      expect(resolver.validate_version_compatibility('test', 'plugin_a', nil)).to be true
+      expect(resolver.version_compatible?('test', 'plugin_a', nil)).to be true
     end
   end
 
@@ -235,9 +235,9 @@ RSpec.describe NumberAnalyzer::DependencyResolver do
       plugin_registry['v2'] = create_plugin('v2', [], '1.0.1')
       plugin_registry['v3'] = create_plugin('v3', [], '2.0.0')
 
-      expect(resolver.validate_version_compatibility('test', 'v1', '>= 1.0.0')).to be true
-      expect(resolver.validate_version_compatibility('test', 'v2', '> 1.0.0')).to be true
-      expect(resolver.validate_version_compatibility('test', 'v3', '> 1.9.9')).to be true
+      expect(resolver.version_compatible?('test', 'v1', '>= 1.0.0')).to be true
+      expect(resolver.version_compatible?('test', 'v2', '> 1.0.0')).to be true
+      expect(resolver.version_compatible?('test', 'v3', '> 1.9.9')).to be true
     end
   end
 end
