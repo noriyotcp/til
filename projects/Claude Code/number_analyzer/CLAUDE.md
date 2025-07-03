@@ -420,7 +420,6 @@ git status                   # README.md, ROADMAP.md, CLAUDE.md が含まれて�
 
 ### Integration Possibilities
 - **R/Python Interoperability**: 他言語統計ライブラリとの連携
-- **Database Connectivity**: データベース直接接続機能
 - **Web API Endpoints**: RESTful API提供機能
 - **Jupyter Notebook Integration**: ノートブック環境での統計分析
 

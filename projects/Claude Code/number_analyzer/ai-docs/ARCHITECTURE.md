@@ -340,7 +340,6 @@ COMMANDS = {
 - **Configuration System**: YAML/JSON config file support
 - **Plugin Loading**: Dynamic module loading mechanism
 - **API Layer**: HTTP API for web integration
-- **Database Support**: Direct database query integration
 
 ## Quality Assurance
 

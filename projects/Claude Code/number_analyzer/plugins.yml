@@ -6,7 +6,6 @@ plugins:
   enabled: []
     # - 'machine_learning'
     # - 'advanced_visualization'
-    # - 'database_connector'
   
   # Plugin discovery paths (directories to search for plugins)
   paths:
@@ -28,10 +27,6 @@ plugin_config:
       - 'decision_tree'
       - 'neural_network'
     max_features: 1000
-    
-  database_connector:
-    default_adapter: 'postgresql'
-    connection_timeout: 30
     
   advanced_visualization:
     default_format: 'svg'

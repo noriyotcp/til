@@ -167,7 +167,7 @@ Comprehensive statistical analysis with:
 
 ### Future Enhancement Support
 - **Output Format Extension**: Foundation for JSON/XML output
-- **Input Method Extension**: Framework for database connectivity
+- **Input Method Extension**: Framework for additional input formats
 - **Visualization Extension**: Base for advanced charting capabilities
 
 ## Documentation & Usability
