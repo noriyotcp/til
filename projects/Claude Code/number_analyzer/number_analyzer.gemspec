@@ -20,6 +20,7 @@ Gem::Specification.new do |spec|
   # Runtime dependencies
   spec.add_dependency 'csv', '~> 3.0'
   spec.add_dependency 'json', '~> 2.0'
+  spec.add_dependency 'logger', '~> 1.5'
 
   # Specify which files should be added to the gem when it is released.
   spec.files = Dir['lib/**/*.rb'] + Dir['bin/*'] + ['number_analyzer.gemspec', 'Gemfile', 'CLAUDE.md']
