@@ -3,13 +3,23 @@
 require 'pathname'
 require_relative 'plugin_system'
 require_relative 'plugin_interface'
+require_relative 'plugin_validator'
+require_relative 'plugin_configuration'
+require_relative 'plugin_registry'
 
-# Plugin discovery and loading utilities
+# Enhanced Plugin discovery and loading utilities with security validation
 class NumberAnalyzer
-  # Handles plugin discovery and automatic loading
+  # Handles plugin discovery, validation, and secure loading
   class PluginLoader
-    def self.discover_plugins(search_paths = [])
+    # Loading errors
+    class LoadingError < StandardError; end
+    class SecurityError < LoadingError; end
+    class ValidationError < LoadingError; end
+
+    # Discover plugins with security validation
+    def self.discover_plugins(search_paths = [], options = {})
       plugins = []
+      config = PluginConfiguration.load_configuration
 
       default_paths = [
         './plugins',
@@ -22,17 +32,74 @@ class NumberAnalyzer
       all_paths.each do |path|
         next unless Dir.exist?(path)
 
-        plugins.concat(discover_plugins_in_path(path))
+        discovered = discover_plugins_in_path(path, config, options)
+        plugins.concat(discovered)
       end
 
       plugins
     end
 
-    def self.discover_plugins_in_path(path)
-      plugins = []
+    # Load plugins with comprehensive validation and security checks
+    def self.load_plugins_securely(plugin_files, options = {})
+      config = PluginConfiguration.load_configuration
+      security_config = config['security'] || {}
 
-      Dir.glob(File.join(path, '*.rb')).each do |plugin_file|
-        plugin_info = analyze_plugin_file(plugin_file)
+      loaded_plugins = []
+      validation_results = []
+
+      plugin_files.each do |plugin_file|
+        # Validate plugin security
+        validation_result = PluginValidator.validate_plugin_file(plugin_file, {
+                                                                   security_config: security_config
+                                                                 })
+        validation_results << validation_result
+
+        # Check if plugin passes security requirements
+        next unless security_check_passed?(validation_result, security_config, options)
+
+        # Load the plugin if validation passed
+        if load_plugin_file_securely(plugin_file, validation_result, options)
+          loaded_plugins << {
+            file_path: plugin_file,
+            metadata: validation_result[:metadata],
+            validation: validation_result
+          }
+        end
+      rescue SecurityError => e
+        warn "Security error loading plugin #{plugin_file}: #{e.message}"
+      rescue ValidationError => e
+        warn "Validation error loading plugin #{plugin_file}: #{e.message}"
+      rescue StandardError => e
+        warn "Unexpected error loading plugin #{plugin_file}: #{e.message}"
+      end
+
+      {
+        loaded_plugins: loaded_plugins,
+        validation_results: validation_results,
+        security_report: PluginValidator.generate_security_report(validation_results)
+      }
+    end
+
+    # Register plugins with enhanced registry system
+    def self.auto_register_plugins_securely(search_paths = [], options = {})
+      discovered_plugins = discover_plugins(search_paths, options)
+      plugin_files = discovered_plugins.map { |p| p[:file_path] }
+
+      loading_result = load_plugins_securely(plugin_files, options)
+
+      loading_result[:loaded_plugins].each do |plugin_info|
+        register_plugin_with_registry(plugin_info, options)
+      end
+
+      loading_result
+    end
+
+    def self.discover_plugins_in_path(path, config = nil, options = {})
+      plugins = []
+      config ||= PluginConfiguration.load_configuration
+
+      Dir.glob(File.join(path, '**', '*_plugin.rb')).each do |plugin_file|
+        plugin_info = analyze_plugin_file_enhanced(plugin_file, config, options)
         plugins << plugin_info if plugin_info
       rescue StandardError => e
         warn "Failed to analyze plugin #{plugin_file}: #{e.message}"
@@ -151,9 +218,167 @@ class NumberAnalyzer
       else
         # Check if it includes StatisticsPlugin module
         if plugin_class.included_modules.any? { |mod| mod.name&.include?('StatisticsPlugin') }
+          :statistics_module
+        else
+          :statistics_module
         end
-        :statistics_module
       end
+    end
+
+    # Enhanced plugin file analysis with security considerations
+    def self.analyze_plugin_file_enhanced(plugin_file, config, options = {})
+      # Basic file analysis first
+      basic_info = analyze_plugin_file(plugin_file)
+      return nil unless basic_info&.dig(:valid)
+
+      # Add security and configuration checks
+      enhanced_info = basic_info.dup
+      enhanced_info[:config_enabled] = PluginConfiguration.plugin_enabled?(basic_info[:name], config)
+      enhanced_info[:trusted_author] = check_trusted_author(basic_info[:author], config)
+      enhanced_info[:preliminary_security] = perform_quick_security_check(plugin_file)
+
+      # Only proceed with full analysis if basic checks pass
+      if should_analyze_further?(enhanced_info, options)
+        enhanced_info[:full_validation] = PluginValidator.validate_plugin_file(plugin_file, {
+                                                                                 security_config: config['security'] || {}
+                                                                               })
+      end
+
+      enhanced_info
+    end
+
+    # Check if plugin passes security requirements
+    def self.security_check_passed?(validation_result, security_config, options = {})
+      # Always reject critical risk plugins
+      return false if validation_result[:risk_level] == :critical
+
+      # Check validation errors
+      return false unless validation_result[:valid]
+
+      # High risk plugins require explicit approval or trusted author
+      if (validation_result[:risk_level] == :high) && !(options[:allow_high_risk] ||
+                            (validation_result[:metadata] &&
+                            trusted_author?(validation_result[:metadata]['author'],
+                                            security_config['trusted_authors'] || [])))
+        return false
+      end
+
+      # Medium risk plugins are allowed by default unless sandbox mode is strict
+      return true if (validation_result[:risk_level] == :medium) && !(security_config['sandbox_mode'] == 'strict')
+
+      true
+    end
+
+    # Securely load a plugin file with additional protections
+    def self.load_plugin_file_securely(plugin_file, validation_result, options = {})
+      # Additional runtime security measures
+      if validation_result[:risk_level] == :low
+        # Normal loading for low-risk plugins
+        load_plugin_file(plugin_file)
+      else
+        # Load in restricted environment for non-low risk plugins
+        load_with_restrictions(plugin_file, validation_result, options)
+      end
+    end
+
+    # Load plugin with security restrictions
+    def self.load_with_restrictions(plugin_file, _validation_result, _options = {})
+      # Create a more restricted loading environment
+      original_verbose = $VERBOSE
+      $VERBOSE = nil
+
+      # TODO: Implement actual sandboxing/restrictions
+      # For now, use basic loading with monitoring
+      begin
+        require plugin_file
+        true
+      rescue SecurityError => e
+        raise SecurityError, "Security violation in plugin #{plugin_file}: #{e.message}"
+      rescue StandardError => e
+        raise ValidationError, "Failed to load plugin #{plugin_file}: #{e.message}"
+      ensure
+        $VERBOSE = original_verbose
+      end
+    end
+
+    # Register plugin with the enhanced registry system
+    def self.register_plugin_with_registry(plugin_info, options = {})
+      plugin_name = plugin_info[:metadata]['name'] || File.basename(plugin_info[:file_path], '.rb')
+
+      # Try to find the plugin class
+      plugin_class = find_plugin_class(plugin_name)
+      return false unless plugin_class
+
+      # Determine extension point
+      extension_point = determine_extension_point(plugin_class)
+
+      # Register with the registry
+      PluginRegistry.register(plugin_name, plugin_class, {
+                                extension_point: extension_point,
+                                override: options[:allow_override]
+                              })
+
+      true
+    rescue StandardError => e
+      warn "Failed to register plugin #{plugin_name}: #{e.message}"
+      false
+    end
+
+    # Check if author is trusted
+    def self.check_trusted_author(author, config)
+      return false unless author
+
+      trusted_authors = config.dig('security', 'trusted_authors') || []
+      PluginValidator.trusted_author?(author, trusted_authors)
+    end
+
+    # Perform quick security check without full validation
+    def self.perform_quick_security_check(plugin_file)
+      content = File.read(plugin_file)
+
+      # Quick checks for obvious security issues
+      has_system_calls = content.match?(/`|system\(|exec\(|spawn\(/)
+      has_file_deletion = content.match?(/File\.(delete|unlink|rm)|FileUtils\.(rm|remove)/)
+      has_network_access = content.match?(/Net::|URI\.open|TCPSocket|UDPSocket/)
+
+      risk_level = if has_system_calls || has_file_deletion
+                     :high
+                   elsif has_network_access
+                     :medium
+                   else
+                     :low
+                   end
+
+      {
+        risk_level: risk_level,
+        has_system_calls: has_system_calls,
+        has_file_deletion: has_file_deletion,
+        has_network_access: has_network_access
+      }
+    end
+
+    # Determine if plugin should be analyzed further
+    def self.should_analyze_further?(plugin_info, options = {})
+      # Always analyze if explicitly requested
+      return true if options[:full_analysis]
+
+      # Skip analysis for disabled plugins unless forced
+      return false if !plugin_info[:config_enabled] && !options[:analyze_disabled]
+
+      # Analyze if preliminary check shows medium or high risk
+      preliminary = plugin_info[:preliminary_security]
+      return true if preliminary && %i[medium high critical].include?(preliminary[:risk_level])
+
+      # Analyze trusted author plugins
+      return true if plugin_info[:trusted_author]
+
+      # Default to not analyzing (performance optimization)
+      false
+    end
+
+    # Check if author is trusted (helper method)
+    def self.trusted_author?(author, trusted_authors)
+      PluginValidator.trusted_author?(author, trusted_authors)
     end
   end
 end
