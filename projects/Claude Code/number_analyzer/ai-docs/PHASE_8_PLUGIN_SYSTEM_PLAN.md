@@ -43,7 +43,7 @@ lib/number_analyzer/statistics/
 ### Step 1: Plugin Registry System
 **プラグイン管理の中核システム + 重複管理機能**
 
-**重要**: プラグイン名重複管理の詳細は **[PLUGIN_CONFLICT_RESOLUTION_PLAN.md](PLUGIN_CONFLICT_RESOLUTION_PLAN.md)** を参照
+**重要**: プラグイン名重複管理の詳細は **[PHASE_8_STEP_5_CONFLICT_RESOLUTION_PLAN.md](PHASE_8_STEP_5_CONFLICT_RESOLUTION_PLAN.md)** を参照
 
 ```ruby
 # lib/number_analyzer/plugin_registry.rb
@@ -829,7 +829,7 @@ puts info[:commands]     # => ["linear-regression", "clustering", "pca"]
    - Configuration のユニットテスト
    - **重複管理システムテスト** (50+ テストケース)
 
-**重複管理機能詳細**: [PLUGIN_CONFLICT_RESOLUTION_PLAN.md](PLUGIN_CONFLICT_RESOLUTION_PLAN.md) 参照
+**重複管理機能詳細**: [PHASE_8_STEP_5_CONFLICT_RESOLUTION_PLAN.md](PHASE_8_STEP_5_CONFLICT_RESOLUTION_PLAN.md) 参照
 
 ### Phase 8.0 Step 2: Dynamic Loading
 **期間: 2-3週間**

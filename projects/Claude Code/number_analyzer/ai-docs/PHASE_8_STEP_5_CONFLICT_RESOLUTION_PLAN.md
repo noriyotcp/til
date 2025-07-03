@@ -4,7 +4,29 @@
 
 NumberAnalyzer Plugin System の最終ステップとして、安全で持続可能なプラグインエコシステムを確立するための重複管理システムを実装します。これにより、Phase 8.0 Plugin System Architecture が完全に完成し、エンタープライズレベルの統計分析プラットフォームとしての地位を確立します。
 
-**統合文書**: この計画は **[PHASE_8_PLUGIN_SYSTEM_PLAN.md](PHASE_8_PLUGIN_SYSTEM_PLAN.md)** の Step 5 として実装され、**[PLUGIN_CONFLICT_RESOLUTION_PLAN.md](PLUGIN_CONFLICT_RESOLUTION_PLAN.md)** の詳細設計に基づきます。
+**統合文書**: この計画は **[PHASE_8_PLUGIN_SYSTEM_PLAN.md](PHASE_8_PLUGIN_SYSTEM_PLAN.md)** の Step 5 として実装され、重複管理システムの詳細設計と実装計画を統合して提供します。
+
+## 🤔 Problem Analysis & Industry Best Practices
+
+### プラグイン名重複の課題
+- **既存プラグインとの名前衝突**: 新しいプラグインが既存のものを意図せず上書き
+- **開発者の自由度 vs 安全性**: 厳格制御か自由度重視かのジレンマ
+- **エコシステムの健全性**: gem配布時の名前空間管理
+- **デバッグの困難性**: どのプラグインが実際に動作しているか不明
+
+### 業界ベストプラクティス分析
+- **Jekyll**: 重複許可、後ロード優先（警告あり）
+- **Rails**: 重複許可、定数再定義警告
+- **NPM**: 厳格な一意性、スコープによる名前空間分離
+- **RubyGems**: gem名厳格管理、所有権システム
+
+## 🏗️ Design Approach: ハイブリッド重複管理
+
+### 基本原則
+1. **コンテキスト依存**: プラグインの種類に応じた重複ポリシー
+2. **階層的優先度**: 明確な優先順位による予測可能性
+3. **設定可能性**: プロジェクト・環境に応じた柔軟な制御
+4. **後方互換性**: 既存機能への影響ゼロ
 
 ## 📊 Current Status (Step 4 Complete)
 
@@ -33,9 +55,9 @@ lib/number_analyzer/
 
 ### **実装期間**: 2-3週間 (修正済み - 3-4週間から短縮)
 
-## Week 1: PluginPriority System (基盤優先度管理)
+## 🔢 Detailed Architecture Design
 
-### 1.1 Core Priority Infrastructure
+### PluginPriority System (階層的優先度システム)
 
 **実装ファイル**: `lib/number_analyzer/plugin_priority.rb`
 
@@ -52,8 +74,16 @@ class NumberAnalyzer
       local_plugins: 30     # プロジェクト内 - 最低優先度
     }.freeze
     
+    @custom_priorities = {}
+    @conflict_policies = {}
+    
     def self.get(plugin_type)
       @custom_priorities[plugin_type] || DEFAULT_PRIORITIES[plugin_type] || 0
+    end
+    
+    def self.set(plugin_type, priority)
+      @custom_priorities[plugin_type] = priority
+      notify_priority_change(plugin_type, priority)
     end
     
     def self.can_override?(new_plugin, existing_plugin)
@@ -63,11 +93,406 @@ class NumberAnalyzer
     end
     
     def self.load_from_config(config_path)
-      # YAML設定ファイルからの優先度読み込み
+      return unless File.exist?(config_path)
+      
+      config = YAML.load_file(config_path)
+      config['plugin_priorities']&.each do |type, priority|
+        set(type.to_sym, priority)
+      end
+    end
+    
+    def self.reset_custom_priorities!
+      @custom_priorities.clear
+      @conflict_policies.clear
+    end
+    
+    def self.all_priorities
+      DEFAULT_PRIORITIES.merge(@custom_priorities)
+    end
+    
+    private
+    
+    def self.notify_priority_change(plugin_type, priority)
+      if ENV['NUMBER_ANALYZER_DEBUG']
+        puts "Priority updated: #{plugin_type} = #{priority}"
+      end
     end
   end
 end
 ```
+
+### ConflictResolver System (重複解決エンジン)
+
+**実装ファイル**: `lib/number_analyzer/plugin_conflict_resolver.rb`
+
+```ruby
+class NumberAnalyzer
+  class PluginConflictResolver
+    RESOLUTION_STRATEGIES = {
+      strict: :reject_duplicates,        # 重複完全拒否
+      warn_override: :warn_and_override, # 警告付き上書き
+      silent_override: :silent_override, # 無警告上書き
+      namespace: :use_namespace,         # 名前空間で共存
+      interactive: :prompt_user,         # ユーザー選択
+      auto: :auto_resolve                # 優先度ベース自動解決
+    }.freeze
+    
+    def self.resolve_conflict(new_plugin, existing_plugin, strategy = :auto)
+      validator = ConflictValidator.new(new_plugin, existing_plugin)
+      
+      unless validator.valid_conflict?
+        raise InvalidConflictError, validator.error_message
+      end
+      
+      strategy = determine_strategy(strategy, new_plugin, existing_plugin)
+      send(RESOLUTION_STRATEGIES[strategy], new_plugin, existing_plugin)
+    end
+    
+    private
+    
+    def self.determine_strategy(requested_strategy, new_plugin, existing_plugin)
+      return requested_strategy unless requested_strategy == :auto
+      
+      # 優先度ベース自動決定
+      case
+      when new_plugin.type == :development
+        :silent_override
+      when existing_plugin.type == :core_plugins && new_plugin.type != :development
+        :strict
+      when PluginPriority.can_override?(new_plugin, existing_plugin)
+        :warn_override
+      else
+        :namespace
+      end
+    end
+    
+    def self.reject_duplicates(new_plugin, existing_plugin)
+      raise PluginConflictError, build_conflict_message(new_plugin, existing_plugin, :rejected)
+    end
+    
+    def self.warn_and_override(new_plugin, existing_plugin)
+      warning_message = build_conflict_message(new_plugin, existing_plugin, :overriding)
+      warn warning_message
+      
+      PluginRegistry.override_plugin(existing_plugin.name, new_plugin)
+      
+      ConflictResolutionResult.new(
+        action: :override,
+        message: warning_message,
+        new_plugin: new_plugin,
+        replaced_plugin: existing_plugin
+      )
+    end
+    
+    def self.silent_override(new_plugin, existing_plugin)
+      PluginRegistry.override_plugin(existing_plugin.name, new_plugin)
+      
+      ConflictResolutionResult.new(
+        action: :override,
+        message: "Plugin '#{existing_plugin.name}' silently overridden",
+        new_plugin: new_plugin,
+        replaced_plugin: existing_plugin
+      )
+    end
+    
+    def self.use_namespace(new_plugin, existing_plugin)
+      namespaced_name = PluginNamespace.auto_namespace(new_plugin.name, new_plugin.source_gem)
+      new_plugin.namespaced_name = namespaced_name
+      
+      PluginRegistry.register(namespaced_name, new_plugin)
+      
+      ConflictResolutionResult.new(
+        action: :namespace,
+        message: "Plugin registered with namespace: #{namespaced_name}",
+        new_plugin: new_plugin,
+        namespaced_name: namespaced_name
+      )
+    end
+    
+    def self.prompt_user(new_plugin, existing_plugin)
+      return auto_resolve(new_plugin, existing_plugin) unless $stdin.tty?
+      
+      puts build_conflict_message(new_plugin, existing_plugin, :prompt)
+      puts "1) Override existing plugin"
+      puts "2) Use namespace for new plugin"  
+      puts "3) Reject new plugin"
+      print "Choose an option (1-3): "
+      
+      choice = $stdin.gets.chomp.to_i
+      
+      case choice
+      when 1 then warn_and_override(new_plugin, existing_plugin)
+      when 2 then use_namespace(new_plugin, existing_plugin)
+      when 3 then reject_duplicates(new_plugin, existing_plugin)
+      else
+        puts "Invalid choice, using auto-resolution"
+        auto_resolve(new_plugin, existing_plugin)
+      end
+    end
+    
+    def self.auto_resolve(new_plugin, existing_plugin)
+      if PluginPriority.can_override?(new_plugin, existing_plugin)
+        warn_and_override(new_plugin, existing_plugin)
+      else
+        use_namespace(new_plugin, existing_plugin)
+      end
+    end
+    
+    def self.build_conflict_message(new_plugin, existing_plugin, action)
+      <<~MESSAGE
+        Plugin Conflict Detected:
+          Existing: #{existing_plugin.name} (#{existing_plugin.type}, priority: #{PluginPriority.get(existing_plugin.type)})
+          New:      #{new_plugin.name} (#{new_plugin.type}, priority: #{PluginPriority.get(new_plugin.type)})
+          Action:   #{action.to_s.humanize}
+      MESSAGE
+    end
+  end
+  
+  class ConflictResolutionResult
+    attr_reader :action, :message, :new_plugin, :replaced_plugin, :namespaced_name
+    
+    def initialize(action:, message:, new_plugin:, replaced_plugin: nil, namespaced_name: nil)
+      @action = action
+      @message = message
+      @new_plugin = new_plugin
+      @replaced_plugin = replaced_plugin
+      @namespaced_name = namespaced_name
+    end
+    
+    def override?
+      @action == :override
+    end
+    
+    def namespace?
+      @action == :namespace
+    end
+    
+    def rejection?
+      @action == :rejection
+    end
+  end
+  
+  class ConflictValidator
+    attr_reader :error_message
+    
+    def initialize(new_plugin, existing_plugin)
+      @new_plugin = new_plugin
+      @existing_plugin = existing_plugin
+      @error_message = nil
+    end
+    
+    def valid_conflict?
+      return false unless plugins_same_name?
+      return false unless plugins_different_sources?
+      true
+    end
+    
+    private
+    
+    def plugins_same_name?
+      same = @new_plugin.name == @existing_plugin.name
+      @error_message = "Plugin names don't match" unless same
+      same
+    end
+    
+    def plugins_different_sources?
+      different = @new_plugin.source_gem != @existing_plugin.source_gem
+      @error_message = "Plugins are from the same source" unless different
+      different
+    end
+  end
+  
+  class PluginConflictError < StandardError; end
+  class InvalidConflictError < StandardError; end
+end
+```
+
+### PluginNamespace System (名前空間管理)
+
+**実装ファイル**: `lib/number_analyzer/plugin_namespace.rb`
+
+```ruby
+class NumberAnalyzer
+  class PluginNamespace
+    NAMESPACE_PATTERNS = {
+      gem: ->(plugin_name, source_gem) {
+        case source_gem
+        when /^number_analyzer-(.+)/
+          "na_#{$1.tr('-', '_')}_#{plugin_name}"
+        else
+          "ext_#{source_gem.tr('-', '_')}_#{plugin_name}"
+        end
+      },
+      source: ->(plugin_name, source_gem) {
+        "#{source_gem.tr('-', '_')}::#{plugin_name}"
+      },
+      priority: ->(plugin_name, plugin_type) {
+        "#{plugin_type}_#{plugin_name}"
+      }
+    }.freeze
+    
+    def self.auto_namespace(plugin_name, source_gem, pattern: :gem)
+      namespace_func = NAMESPACE_PATTERNS[pattern]
+      namespace_func.call(plugin_name, source_gem)
+    end
+    
+    def self.register_with_namespace(plugin, namespace = nil, pattern: :gem)
+      namespace ||= auto_namespace(plugin.name, plugin.source_gem, pattern: pattern)
+      namespaced_name = "#{namespace}::#{plugin.name}"
+      
+      PluginRegistry.register(namespaced_name, plugin)
+      
+      {
+        original_name: plugin.name,
+        namespaced_name: namespaced_name,
+        namespace: namespace
+      }
+    end
+    
+    def self.resolve_namespace(namespaced_name)
+      if namespaced_name.include?('::')
+        namespace, name = namespaced_name.split('::', 2)
+        { namespace: namespace, name: name }
+      else
+        { namespace: nil, name: namespaced_name }
+      end
+    end
+    
+    def self.find_plugin_by_name(search_name)
+      # 完全一致を最優先
+      exact_match = PluginRegistry.find(search_name)
+      return exact_match if exact_match
+      
+      # 名前空間付きで検索
+      namespaced_matches = PluginRegistry.all_plugins.select do |name, _|
+        resolved = resolve_namespace(name)
+        resolved[:name] == search_name
+      end
+      
+      case namespaced_matches.size
+      when 0
+        nil
+      when 1
+        namespaced_matches.first
+      else
+        handle_multiple_matches(search_name, namespaced_matches)
+      end
+    end
+    
+    private
+    
+    def self.handle_multiple_matches(search_name, matches)
+      warn "Multiple plugins found for '#{search_name}':"
+      matches.each_with_index do |(name, plugin), index|
+        namespace = resolve_namespace(name)[:namespace]
+        puts "  #{index + 1}) #{name} (from #{namespace})"
+      end
+      
+      # デフォルトで最初のマッチを返す
+      matches.first
+    end
+  end
+end
+```
+
+### 3-Layer Configuration System (3層設定システム)
+
+**実装ファイル**: `lib/number_analyzer/plugin_configuration.rb`
+
+```ruby
+class NumberAnalyzer
+  class PluginConfiguration
+    include Singleton
+    
+    attr_accessor :conflict_strategy, :development_mode, :namespace_pattern
+    attr_reader :custom_priorities, :per_plugin_policies
+    
+    def initialize
+      @conflict_strategy = :auto
+      @development_mode = false
+      @namespace_pattern = :gem
+      @custom_priorities = {}
+      @per_plugin_policies = {}
+      
+      load_from_env
+      load_from_file
+    end
+    
+    def plugin_priority(plugin_type, priority = nil)
+      if priority
+        @custom_priorities[plugin_type.to_sym] = priority
+        PluginPriority.set(plugin_type.to_sym, priority)
+      else
+        PluginPriority.get(plugin_type.to_sym)
+      end
+    end
+    
+    def conflict_strategy_for(plugin_name)
+      # パターンマッチング
+      @per_plugin_policies.each do |pattern, strategy|
+        if pattern.include?('*')
+          regex = Regexp.new(pattern.gsub('*', '.*'))
+          return strategy if plugin_name.match?(regex)
+        elsif pattern == plugin_name
+          return strategy
+        end
+      end
+      
+      @conflict_strategy
+    end
+    
+    def set_plugin_policy(plugin_pattern, strategy)
+      @per_plugin_policies[plugin_pattern] = strategy.to_sym
+    end
+    
+    def development_mode?
+      @development_mode || ENV['NUMBER_ANALYZER_PLUGIN_MODE'] == 'development'
+    end
+    
+    def load_from_file(config_path = 'config/number_analyzer.yml')
+      return unless File.exist?(config_path)
+      
+      config = YAML.load_file(config_path)
+      plugin_config = config['plugin_system'] || {}
+      
+      load_priorities(plugin_config['priorities'] || {})
+      load_conflict_settings(plugin_config['conflict_resolution'] || {})
+      load_namespace_settings(plugin_config['namespaces'] || {})
+    end
+    
+    private
+    
+    def load_from_env
+      @conflict_strategy = ENV['NUMBER_ANALYZER_CONFLICT_STRATEGY']&.to_sym || @conflict_strategy
+      @development_mode = ENV['NUMBER_ANALYZER_PLUGIN_MODE'] == 'development'
+    end
+    
+    def load_priorities(priorities_config)
+      priorities_config.each do |type, priority|
+        plugin_priority(type, priority)
+      end
+    end
+    
+    def load_conflict_settings(conflict_config)
+      @conflict_strategy = conflict_config['default_strategy']&.to_sym || @conflict_strategy
+      
+      (conflict_config['per_plugin'] || {}).each do |pattern, strategy|
+        set_plugin_policy(pattern, strategy)
+      end
+    end
+    
+    def load_namespace_settings(namespace_config)
+      @namespace_pattern = namespace_config['patterns']&.keys&.first&.to_sym || @namespace_pattern
+    end
+  end
+end
+```
+
+## Week 1: PluginPriority System Implementation
+
+### 1.1 Core Priority Infrastructure
+
+**実装ファイル**: `lib/number_analyzer/plugin_priority.rb` (上記詳細設計参照)
 
 ### 1.2 Testing Implementation (Week 1)
 
@@ -358,7 +783,44 @@ class NumberAnalyzer::CLI
 end
 ```
 
-### 3.4 Configuration File Template
+### CLI Integration with Conflict Resolution Commands
+
+**ファイル強化**: `lib/number_analyzer/cli.rb`
+
+```bash
+# 重複確認・解決コマンド例
+bundle exec number_analyzer plugins --conflicts
+# Plugin Conflicts Detected:
+#   basic_stats: core_plugins vs third_party_gems (my-stats-gem)
+#   mean: builtin vs plugin (advanced-stats-plugin)
+
+# 特定の重複解決
+bundle exec number_analyzer plugins resolve basic_stats --strategy=interactive
+# Plugin Conflict: basic_stats
+#   1) Override existing (core_plugins) with new (third_party_gems)
+#   2) Use namespace for new plugin
+#   3) Reject new plugin
+# Choose an option (1-3): 2
+# Plugin registered as: ext_my_stats_gem_basic_stats
+
+# 開発モード（全上書き許可）
+bundle exec number_analyzer --dev-mode mean 1 2 3
+# Warning: Development mode - all plugin overrides allowed
+
+# 名前空間付きコマンド実行
+bundle exec number_analyzer ml::linear-regression data.csv
+bundle exec number_analyzer ext_advanced_stats_mean 1 2 3
+
+# プラグイン一覧（重複も表示）
+bundle exec number_analyzer plugins list --show-conflicts
+# Available Plugins:
+#   basic_stats (core_plugins, priority: 90)
+#   ext_my_stats_gem_basic_stats (third_party_gems, priority: 50) [NAMESPACED]
+#   mean (builtin)
+#   advanced_stats::mean (plugin) [NAMESPACED]
+```
+
+### Configuration File Template
 
 **新規ファイル**: `config/number_analyzer.yml.example`
 
@@ -406,32 +868,130 @@ plugin_system:
 
 ---
 
-## 🧪 Testing Strategy
+## 🧪 Comprehensive Testing Strategy
 
-### 新規テスト合計: 25+ tests
+### Testing Overview
+**新規テスト合計**: 25+ tests (163 existing + 25 new = 188+ total tests)
 
-1. **Priority System Tests** (10 tests) - `spec/plugin_priority_spec.rb`
-   - 優先度比較機能
-   - カスタム優先度設定
-   - 設定ファイル読み込み
-   - 境界値テスト
+### Unit Testing by Component
 
-2. **Conflict Resolution Tests** (10 tests) - `spec/plugin_conflict_resolver_spec.rb`
-   - 各解決戦略テスト (6戦略)
-   - 自動解決ロジック
-   - ConflictValidator機能
-   - エラーケース処理
+#### 1. Priority System Tests (10 tests) - `spec/plugin_priority_spec.rb`
 
-3. **Namespace Tests** (5 tests) - `spec/plugin_namespace_spec.rb`
-   - 自動名前空間生成
-   - パターンマッチング
-   - 名前解決機能
-   - 複数マッチ処理
+```ruby
+RSpec.describe NumberAnalyzer::PluginPriority do
+  describe '.can_override?' do
+    let(:development_plugin) { double(:plugin, type: :development) }
+    let(:core_plugin) { double(:plugin, type: :core_plugins) }
+    let(:third_party_plugin) { double(:plugin, type: :third_party_gems) }
+    
+    it 'allows development to override core' do
+      expect(described_class.can_override?(development_plugin, core_plugin)).to be true
+    end
+    
+    it 'allows core to override third party' do
+      expect(described_class.can_override?(core_plugin, third_party_plugin)).to be true
+    end
+    
+    it 'prevents third party from overriding core' do
+      expect(described_class.can_override?(third_party_plugin, core_plugin)).to be false
+    end
+  end
+  
+  describe 'custom priority management' do
+    after { described_class.reset_custom_priorities! }
+    
+    it 'allows custom priority setting' do
+      described_class.set(:my_custom_type, 95)
+      expect(described_class.get(:my_custom_type)).to eq(95)
+    end
+    
+    it 'loads from configuration file' do
+      config_content = { 'plugin_priorities' => { 'special_plugins' => 85 } }
+      allow(YAML).to receive(:load_file).and_return(config_content)
+      
+      described_class.load_from_config('test_config.yml')
+      expect(described_class.get(:special_plugins)).to eq(85)
+    end
+  end
+end
+```
 
-4. **CLI Integration Tests** (Bonus) - `spec/cli_conflict_resolution_spec.rb`
-   - CLI コマンド実行
-   - インタラクティブ解決
-   - 出力フォーマット
+#### 2. Conflict Resolution Tests (10 tests) - `spec/plugin_conflict_resolver_spec.rb`
+
+```ruby
+RSpec.describe NumberAnalyzer::PluginConflictResolver do
+  let(:core_plugin) { double(:plugin, name: 'basic_stats', type: :core_plugins, source_gem: 'number_analyzer') }
+  let(:third_party_plugin) { double(:plugin, name: 'basic_stats', type: :third_party_gems, source_gem: 'my-stats-gem') }
+  let(:development_plugin) { double(:plugin, name: 'basic_stats', type: :development, source_gem: 'local') }
+  
+  describe '.resolve_conflict' do
+    context 'with strict strategy' do
+      it 'rejects all duplicates' do
+        expect {
+          described_class.resolve_conflict(third_party_plugin, core_plugin, :strict)
+        }.to raise_error(NumberAnalyzer::PluginConflictError)
+      end
+    end
+    
+    context 'with development plugin' do
+      it 'allows development plugins to override anything' do
+        result = described_class.resolve_conflict(development_plugin, core_plugin, :auto)
+        expect(result.action).to eq(:override)
+      end
+    end
+    
+    context 'with priority-based resolution' do
+      it 'allows higher priority to override lower priority' do
+        result = described_class.resolve_conflict(core_plugin, third_party_plugin, :auto)
+        expect(result.action).to eq(:override)
+      end
+      
+      it 'uses namespace for lower priority conflicts' do
+        result = described_class.resolve_conflict(third_party_plugin, core_plugin, :auto)
+        expect(result.action).to eq(:namespace)
+      end
+    end
+  end
+end
+```
+
+#### 3. Namespace Tests (5 tests) - `spec/plugin_namespace_spec.rb`
+
+```ruby
+RSpec.describe NumberAnalyzer::PluginNamespace do
+  describe '.auto_namespace' do
+    it 'generates namespace for number_analyzer gems' do
+      result = described_class.auto_namespace('stats', 'number_analyzer-ml')
+      expect(result).to eq('na_ml_stats')
+    end
+    
+    it 'generates namespace for external gems' do
+      result = described_class.auto_namespace('analyze', 'my-awesome-gem')
+      expect(result).to eq('ext_my_awesome_gem_analyze')
+    end
+  end
+  
+  describe '.find_plugin_by_name' do
+    before do
+      allow(PluginRegistry).to receive(:find).with('stats').and_return(nil)
+      allow(PluginRegistry).to receive(:all_plugins).and_return({
+        'na_ml_stats' => double(:plugin),
+        'ext_custom_stats' => double(:plugin)
+      })
+    end
+    
+    it 'finds namespaced plugins by original name' do
+      result = described_class.find_plugin_by_name('stats')
+      expect(result).not_to be_nil
+    end
+    
+    it 'handles multiple matches' do
+      expect { described_class.find_plugin_by_name('stats') }
+        .to output(/Multiple plugins found/).to_stdout
+    end
+  end
+end
+```
 
 ### Integration Testing
 
@@ -439,6 +999,16 @@ plugin_system:
 # spec/integration/conflict_resolution_integration_spec.rb
 RSpec.describe 'Conflict Resolution Integration' do
   let(:analyzer) { NumberAnalyzer.new([1, 2, 3, 4, 5]) }
+  
+  before do
+    # テスト用プラグインの準備
+    create_test_plugin('BasicStatsOverride', :third_party_gems)
+    create_test_plugin('AdvancedAnalytics', :official_gems)
+  end
+  
+  after do
+    cleanup_test_plugins
+  end
   
   context 'with default conflict resolution' do
     it 'maintains core plugin precedence' do
@@ -464,6 +1034,79 @@ RSpec.describe 'Conflict Resolution Integration' do
       expect(analyzer.mean).to eq(3.0)  # 元の実装
       expect(analyzer.send('ext_override_basic_stats_mean')).to eq(4.0)  # 名前空間版
     end
+  end
+end
+```
+
+### CLI Integration Testing
+
+```ruby
+# spec/cli/conflict_resolution_cli_spec.rb
+RSpec.describe 'CLI Conflict Resolution' do
+  describe 'plugins conflicts command' do
+    it 'displays current conflicts' do
+      create_conflicting_plugins
+      
+      output = capture_output do
+        NumberAnalyzer::CLI.run(['plugins', '--conflicts'])
+      end
+      
+      expect(output).to include('Plugin Conflicts Detected')
+      expect(output).to include('basic_stats:')
+      expect(output).to include('Recommended:')
+    end
+  end
+  
+  describe 'plugins resolve command' do
+    it 'resolves conflicts interactively' do
+      create_conflicting_plugins
+      
+      allow($stdin).to receive(:gets).and_return("2\n")  # namespace選択
+      
+      output = capture_output do
+        NumberAnalyzer::CLI.run(['plugins', 'resolve', 'basic_stats', '--strategy=interactive'])
+      end
+      
+      expect(output).to include('Plugin registered with namespace')
+    end
+  end
+  
+  describe 'development mode' do
+    it 'shows development mode warning' do
+      output = capture_output do
+        NumberAnalyzer::CLI.run(['--dev-mode', 'mean', '1', '2', '3'])
+      end
+      
+      expect(output).to include('Warning: Development mode')
+    end
+  end
+end
+```
+
+### Performance Testing
+
+```ruby
+# spec/performance/conflict_resolution_performance_spec.rb
+RSpec.describe 'Conflict Resolution Performance' do
+  it 'resolves conflicts within acceptable time' do
+    plugins = create_many_conflicting_plugins(100)
+    
+    start_time = Time.now
+    plugins.each { |plugin| register_plugin_with_conflict_resolution(plugin) }
+    resolution_time = Time.now - start_time
+    
+    expect(resolution_time).to be < 1.0  # 100プラグインを1秒以内
+  end
+  
+  it 'maintains memory efficiency during resolution' do
+    initial_memory = measure_memory_usage
+    
+    50.times { create_and_resolve_conflict }
+    
+    final_memory = measure_memory_usage
+    memory_growth = final_memory - initial_memory
+    
+    expect(memory_growth).to be < 10_000_000  # 10MB以内
   end
 end
 ```
@@ -558,4 +1201,103 @@ Step 5の完了により、NumberAnalyzerは以下を達成します：
 - **[FEATURES.md](FEATURES.md)**: 実装済み機能一覧
 - **[ARCHITECTURE.md](ARCHITECTURE.md)**: 技術アーキテクチャ詳細
 
-この文書により、Phase 8.0 Step 5の実装が完全にガイドされ、NumberAnalyzer Plugin System Architectureの完成を確実にします。
+## 🛡️ Quality Assurance & Safety
+
+### 後方互換性保証
+
+```ruby
+# 既存APIの完全保持確認
+RSpec.describe 'Backward Compatibility' do
+  it 'maintains all existing APIs' do
+    analyzer = NumberAnalyzer.new([1, 2, 3, 4, 5])
+    
+    # Phase 7.8と同じAPIが動作
+    expect(analyzer.mean).to eq(3.0)
+    expect(analyzer.correlation([2, 4, 6, 8, 10])).to eq(1.0)
+    expect(analyzer.one_way_anova([1, 2], [3, 4])).to be_a(Hash)
+  end
+  
+  it 'maintains legacy mode compatibility' do
+    analyzer = NumberAnalyzer.new([1, 2, 3], plugins: :legacy)
+    
+    # 全機能が利用可能
+    expect(analyzer).to respond_to(:mean)
+    expect(analyzer).to respond_to(:kruskal_wallis_test)
+    expect(analyzer.loaded_plugins.size).to eq(7)
+  end
+end
+```
+
+### 品質ゲート
+
+```bash
+# 各Phase完了時の必須チェック
+#!/bin/bash
+# scripts/quality_gate.sh
+
+echo "Running quality gate checks..."
+
+# 1. 全テスト通過
+bundle exec rspec
+if [ $? -ne 0 ]; then
+  echo "❌ Tests failed"
+  exit 1
+fi
+
+# 2. RuboCop準拠
+bundle exec rubocop
+if [ $? -ne 0 ]; then
+  echo "❌ RuboCop violations found"
+  exit 1
+fi
+
+# 3. 後方互換性
+bundle exec rspec spec/backward_compatibility_spec.rb
+if [ $? -ne 0 ]; then
+  echo "❌ Backward compatibility broken"
+  exit 1
+fi
+
+# 4. パフォーマンス要件
+bundle exec rspec spec/performance/conflict_resolution_performance_spec.rb
+if [ $? -ne 0 ]; then
+  echo "❌ Performance requirements not met"
+  exit 1
+fi
+
+echo "✅ All quality gates passed"
+```
+
+### ロールバック戦略
+
+```bash
+#!/bin/bash
+# scripts/conflict_system_rollback.sh
+
+case "$1" in
+  "phase_1")
+    echo "Rolling back to pre-priority-system state..."
+    git checkout conflict-resolution-start
+    bundle install
+    bundle exec rspec spec/integration/
+    ;;
+  "phase_2")
+    echo "Rolling back to priority-system-only..."
+    git checkout phase-1-complete
+    bundle install
+    bundle exec rspec
+    ;;
+  "emergency")
+    echo "Emergency rollback to stable state..."
+    git checkout phase-7.8-stable
+    bundle install
+    bundle exec rspec
+    ;;
+esac
+```
+
+---
+
+この統合文書により、Phase 8.0 Step 5の実装が完全にガイドされ、NumberAnalyzer Plugin System Architectureの完成を確実にします。
+
+**統合完了**: 詳細設計から実装計画、テスト戦略、品質保証まで、重複管理システムの完全な実装ガイドを統合文書として提供します。
