@@ -5,6 +5,7 @@ require 'json'
 require 'set'
 require_relative 'dependency_resolver'
 require_relative 'plugin_error_handler'
+require_relative 'plugin_priority'
 
 # Plugin System for NumberAnalyzer
 # Enables dynamic loading of statistical analysis plugins
@@ -26,20 +27,26 @@ class NumberAnalyzer
       @config = load_configuration
       @dependency_resolver = DependencyResolver.new(@plugins)
       @error_handler = PluginErrorHandler.new
+      @priority_system = PluginPriority.new
     end
 
     # Register a plugin with the system
     def register_plugin(plugin_name, plugin_class, extension_point: :statistics_module)
       validate_extension_point!(extension_point)
 
+      metadata = extract_plugin_metadata(plugin_class)
+
       @plugins[plugin_name] = {
         class: plugin_class,
         extension_point: extension_point,
         loaded: false,
-        metadata: extract_plugin_metadata(plugin_class)
+        metadata: metadata
       }
 
       @extension_points[extension_point] << plugin_name
+
+      # Auto-detect and set priority based on plugin metadata
+      @priority_system.set_priority_with_auto_detection(plugin_name, metadata)
 
       # Update the dependency resolver with the new registry state
       @dependency_resolver = DependencyResolver.new(@plugins)
@@ -222,6 +229,58 @@ class NumberAnalyzer
       end
 
       success_count
+    end
+
+    # Priority system integration methods
+
+    # Set priority for a plugin
+    def set_plugin_priority(plugin_name, priority_level)
+      @priority_system.set_priority(plugin_name, priority_level)
+    end
+
+    # Get priority for a plugin
+    def get_plugin_priority(plugin_name)
+      @priority_system.get_priority(plugin_name)
+    end
+
+    # Get priority value for a plugin
+    def get_plugin_priority_value(plugin_name)
+      @priority_system.get_priority_value(plugin_name)
+    end
+
+    # Sort plugins by priority
+    def sort_plugins_by_priority(plugin_names)
+      @priority_system.sort_by_priority(plugin_names)
+    end
+
+    # Get plugins at specific priority level
+    def plugins_at_priority(priority_level)
+      @priority_system.plugins_at_priority(priority_level)
+    end
+
+    # Get priority statistics
+    def priority_statistics
+      @priority_system.priority_statistics
+    end
+
+    # Generate priority report
+    def generate_priority_report
+      @priority_system.generate_priority_report
+    end
+
+    # Check if plugin A has higher priority than plugin B
+    def higher_priority?(plugin_a, plugin_b)
+      @priority_system.higher_priority?(plugin_a, plugin_b)
+    end
+
+    # Get all priority levels
+    def all_priority_levels
+      @priority_system.all_priority_levels
+    end
+
+    # Get priority level description
+    def priority_description(priority_level)
+      @priority_system.priority_description(priority_level)
     end
 
     private
