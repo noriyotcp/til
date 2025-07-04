@@ -218,8 +218,10 @@ class NumberAnalyzer
       else
         # Check if it includes StatisticsPlugin module
         if plugin_class.included_modules.any? { |mod| mod.name&.include?('StatisticsPlugin') }
+          :statistics_plugin
+        else
+          :statistics_module
         end
-        :statistics_module
       end
     end
 
