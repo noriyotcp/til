@@ -127,9 +127,7 @@ module ANOVAStats
     result[:adjusted_alpha] = 0.05 / comparisons.length if method == :bonferroni
 
     # Add warning if ANOVA was not significant
-    unless anova_result[:significant]
-      result[:warning] = 'ANOVA was not significant. Post-hoc tests may not be appropriate.'
-    end
+    result[:warning] = 'ANOVA was not significant. Post-hoc tests may not be appropriate.' unless anova_result[:significant]
 
     result
   end

@@ -256,9 +256,7 @@ class NumberAnalyzer
 
       def extract_plugin_attribute(plugin_class, attribute)
         return plugin_class.public_send(attribute) if plugin_class.respond_to?(attribute)
-        if plugin_class.instance_variable_defined?("@#{attribute}")
-          return plugin_class.instance_variable_get("@#{attribute}")
-        end
+        return plugin_class.instance_variable_get("@#{attribute}") if plugin_class.instance_variable_defined?("@#{attribute}")
 
         nil
       end

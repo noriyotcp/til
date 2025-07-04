@@ -224,9 +224,7 @@ class NumberAnalyzer
     end
 
     private_class_method def self.format_moving_average_json(moving_avg_data, options)
-      if moving_avg_data.nil?
-        return JSON.generate({ moving_average: nil, error: 'データが不十分です' }.merge(dataset_metadata(options)))
-      end
+      return JSON.generate({ moving_average: nil, error: 'データが不十分です' }.merge(dataset_metadata(options))) if moving_avg_data.nil?
 
       formatted_values = moving_avg_data.map { |value| apply_precision(value, options[:precision]) }
       result = {
@@ -276,9 +274,7 @@ class NumberAnalyzer
         compound_annual_growth_rate: if growth_data[:compound_annual_growth_rate]
                                        apply_precision(growth_data[:compound_annual_growth_rate], options[:precision])
                                      end,
-        average_growth_rate: if growth_data[:average_growth_rate]
-                               apply_precision(growth_data[:average_growth_rate], options[:precision])
-                             end
+        average_growth_rate: (apply_precision(growth_data[:average_growth_rate], options[:precision]) if growth_data[:average_growth_rate])
       }
     end
 
@@ -333,9 +329,7 @@ class NumberAnalyzer
     end
 
     private_class_method def self.format_seasonal_json(seasonal_data, options)
-      if seasonal_data.nil?
-        return JSON.generate({ seasonal_analysis: nil, error: 'データが不十分です' }.merge(dataset_metadata(options)))
-      end
+      return JSON.generate({ seasonal_analysis: nil, error: 'データが不十分です' }.merge(dataset_metadata(options))) if seasonal_data.nil?
 
       formatted_data = build_formatted_seasonal_data(seasonal_data, options)
       JSON.generate({ seasonal_analysis: formatted_data }.merge(dataset_metadata(options)))
@@ -638,9 +632,7 @@ class NumberAnalyzer
       ]
 
       # Add effect size for independence tests
-      if formatted_data[:test_type] == 'independence' && formatted_data[:cramers_v]
-        lines << "効果サイズ (Cramér's V): #{formatted_data[:cramers_v]}"
-      end
+      lines << "効果サイズ (Cramér's V): #{formatted_data[:cramers_v]}" if formatted_data[:test_type] == 'independence' && formatted_data[:cramers_v]
 
       # Add frequency validation warning if needed
       lines << (formatted_data[:warning] || '期待度数条件: 満たしている')
@@ -686,18 +678,12 @@ class NumberAnalyzer
       }
 
       # Add effect size for independence tests
-      if chi_square_data[:cramers_v]
-        formatted_data[:cramers_v] = apply_precision(chi_square_data[:cramers_v], options[:precision])
-      end
+      formatted_data[:cramers_v] = apply_precision(chi_square_data[:cramers_v], options[:precision]) if chi_square_data[:cramers_v]
 
       # Add frequency data for detailed analysis
-      if chi_square_data[:observed_frequencies]
-        formatted_data[:observed_frequencies] = chi_square_data[:observed_frequencies]
-      end
+      formatted_data[:observed_frequencies] = chi_square_data[:observed_frequencies] if chi_square_data[:observed_frequencies]
 
-      if chi_square_data[:expected_frequencies]
-        formatted_data[:expected_frequencies] = chi_square_data[:expected_frequencies]
-      end
+      formatted_data[:expected_frequencies] = chi_square_data[:expected_frequencies] if chi_square_data[:expected_frequencies]
 
       formatted_data
     end
@@ -1004,9 +990,7 @@ class NumberAnalyzer
       lines << "\n#{post_hoc_data[:warning]}" if post_hoc_data[:warning]
 
       # Add adjusted alpha for Bonferroni
-      if post_hoc_data[:adjusted_alpha]
-        lines << "調整済みα値: #{apply_precision(post_hoc_data[:adjusted_alpha], options[:precision])}"
-      end
+      lines << "調整済みα値: #{apply_precision(post_hoc_data[:adjusted_alpha], options[:precision])}" if post_hoc_data[:adjusted_alpha]
 
       lines << "\nペアワイズ比較:"
       lines << ('-' * 60)

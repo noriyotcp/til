@@ -517,9 +517,7 @@ class NumberAnalyzer
         recommendations << 'Consider using more specific command names to reduce conflicts'
       end
 
-      if @namespace_mappings.size > 5
-        recommendations << 'High number of namespace conflicts detected, consider plugin naming conventions'
-      end
+      recommendations << 'High number of namespace conflicts detected, consider plugin naming conventions' if @namespace_mappings.size > 5
 
       unresolved_count = @conflict_log.count { |log| !log[:resolved] }
       recommendations << "#{unresolved_count} conflicts remain unresolved" if unresolved_count.positive?

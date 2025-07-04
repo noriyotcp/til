@@ -148,9 +148,7 @@ class NumberAnalyzer
         # Dependencies validation
         if metadata['dependencies']
           deps = metadata['dependencies']
-          unless deps.is_a?(Array) && deps.all? { |dep| dep.is_a?(String) }
-            errors << 'Dependencies must be an array of strings'
-          end
+          errors << 'Dependencies must be an array of strings' unless deps.is_a?(Array) && deps.all? { |dep| dep.is_a?(String) }
         end
 
         # Commands validation
@@ -198,9 +196,7 @@ class NumberAnalyzer
       def perform_integrity_checks(file_path, content, results)
         # File size check
         file_size = File.size(file_path)
-        if file_size > 1_048_576 # 1MB
-          results[:warnings] << "Large plugin file (#{file_size} bytes). Consider splitting into multiple files."
-        end
+        results[:warnings] << "Large plugin file (#{file_size} bytes). Consider splitting into multiple files." if file_size > 1_048_576 # 1MB
 
         # Encoding check
         unless content.valid_encoding?
@@ -473,9 +469,7 @@ class NumberAnalyzer
         all_issues = validation_results.flat_map { |r| r[:security_issues] }
         issue_types = all_issues.group_by { |issue| issue[:type] }
 
-        if issue_types['system_command']&.any?
-          recommendations << 'Consider sandboxing plugins that execute system commands'
-        end
+        recommendations << 'Consider sandboxing plugins that execute system commands' if issue_types['system_command']&.any?
 
         recommendations << 'Review network access requirements for plugins' if issue_types['network_access']&.any?
 

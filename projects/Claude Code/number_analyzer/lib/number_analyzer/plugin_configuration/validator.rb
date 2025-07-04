@@ -40,9 +40,7 @@ class NumberAnalyzer
           # Check required fields
           if plugin_config.key?('dependencies')
             deps = plugin_config['dependencies']
-            unless deps.is_a?(Array) && deps.all? { |dep| dep.is_a?(String) }
-              errors << 'dependencies must be an array of strings'
-            end
+            errors << 'dependencies must be an array of strings' unless deps.is_a?(Array) && deps.all? { |dep| dep.is_a?(String) }
           end
 
           # Validate security settings
@@ -90,17 +88,13 @@ class NumberAnalyzer
             next unless plugins_config.key?(key)
 
             value = plugins_config[key]
-            unless value.is_a?(Array) && value.all? { |item| item.is_a?(String) }
-              errors << "plugins.#{key} must be an array of strings"
-            end
+            errors << "plugins.#{key} must be an array of strings" unless value.is_a?(Array) && value.all? { |item| item.is_a?(String) }
           end
 
           # Validate paths
           if plugins_config.key?('paths')
             paths = plugins_config['paths']
-            unless paths.is_a?(Array) && paths.all? { |path| path.is_a?(String) }
-              errors << 'plugins.paths must be an array of strings'
-            end
+            errors << 'plugins.paths must be an array of strings' unless paths.is_a?(Array) && paths.all? { |path| path.is_a?(String) }
           end
 
           # Validate auto_discovery

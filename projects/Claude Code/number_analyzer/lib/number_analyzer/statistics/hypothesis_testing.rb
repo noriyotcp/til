@@ -187,9 +187,7 @@ module HypothesisTesting
     end
 
     # Validate input dimensions
-    if observed_frequencies.length != expected_frequencies.length
-      raise ArgumentError, 'Observed and expected frequencies must have same length'
-    end
+    raise ArgumentError, 'Observed and expected frequencies must have same length' if observed_frequencies.length != expected_frequencies.length
 
     return nil if observed_frequencies.empty?
 

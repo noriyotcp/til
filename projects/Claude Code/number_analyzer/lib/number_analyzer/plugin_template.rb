@@ -114,9 +114,7 @@ class NumberAnalyzer
         end
 
         # Validate version format
-        unless config[:version].match?(/^\d+\.\d+\.\d+$/)
-          raise InvalidTemplateError, 'Version must follow semantic versioning (x.y.z)'
-        end
+        raise InvalidTemplateError, 'Version must follow semantic versioning (x.y.z)' unless config[:version].match?(/^\d+\.\d+\.\d+$/)
 
         true
       end
