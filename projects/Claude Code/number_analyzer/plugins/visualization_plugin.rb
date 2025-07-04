@@ -76,11 +76,11 @@ module VisualizationPlugin
       bar = options[:char] || '█'
       percentage = (count.to_f / @numbers.length * 100).round(1)
 
-      histogram_lines << format('%-15s |%s %d (%.1f%%)',
-                                bin_labels[i],
-                                bar * bar_length,
-                                count,
-                                percentage)
+      histogram_lines << format('%-15<label>s |%<bar>s %<count>d (%<percentage>.1f%%)',
+                                label: bin_labels[i],
+                                bar: bar * bar_length,
+                                count: count,
+                                percentage: percentage)
     end
 
     histogram_lines << ''
@@ -178,7 +178,7 @@ module VisualizationPlugin
     scale_line = ''
     [min_val, q1, median, q3, max_val].each do |value|
       pos = ((value - min_val) * scale_factor).round
-      scale_line += format('%-8.2f', value) if (pos % 15).zero?
+      scale_line += format('%-8.2<value>f', value: value) if (pos % 15).zero?
     end
     box_plot_lines << scale_line
     box_plot_lines << ''
@@ -243,7 +243,7 @@ module VisualizationPlugin
     # Y-axis labels and grid
     grid.each_with_index do |row, i|
       y_value = y_max - (i * y_range / (chart_height - 1))
-      scatter_lines << format('%8.2f |%s|', y_value, row.join)
+      scatter_lines << format('%8.2<y_value>f |%<row>s|', y_value: y_value, row: row.join)
     end
 
     # X-axis
@@ -254,7 +254,7 @@ module VisualizationPlugin
     x_labels = ' ' * 11
     (0...chart_width).step(10) do |i|
       x_value = x_min + (i * x_range / (chart_width - 1))
-      x_labels += format('%-10.1f', x_value)
+      x_labels += format('%-10.1<x_value>f', x_value: x_value)
     end
     scatter_lines << x_labels
     scatter_lines << ''
@@ -317,7 +317,7 @@ module VisualizationPlugin
     # Y-axis and grid
     grid.each_with_index do |row, i|
       y_value = max_val - (i * value_range / (chart_height - 1))
-      line_chart_lines << format('%8.2f |%s|', y_value, row.join)
+      line_chart_lines << format('%8.2<y_value>f |%<row>s|', y_value: y_value, row: row.join)
     end
 
     # X-axis
@@ -359,11 +359,11 @@ module VisualizationPlugin
       bar = options[:char] || '█'
       percentage = (count.to_f / @numbers.length * 100).round(1)
 
-      bar_chart_lines << format('%-8s |%s %d (%.1f%%)',
-                                value.to_s,
-                                bar * bar_length,
-                                count,
-                                percentage)
+      bar_chart_lines << format('%-8<value>s |%<bar>s %<count>d (%<percentage>.1f%%)',
+                                value: value.to_s,
+                                bar: bar * bar_length,
+                                count: count,
+                                percentage: percentage)
     end
 
     bar_chart_lines << ''
@@ -465,12 +465,12 @@ module VisualizationPlugin
     stats = calculate_comprehensive_stats
     dashboard_lines << 'DESCRIPTIVE STATISTICS'
     dashboard_lines << ('-' * 30)
-    dashboard_lines << format('Mean: %10.3f    Median: %10.3f    Mode: %s',
-                              stats[:mean], stats[:median], stats[:mode].join(', '))
-    dashboard_lines << format('Min:  %10.3f    Max:    %10.3f    Range: %10.3f',
-                              stats[:min], stats[:max], stats[:range])
-    dashboard_lines << format('Std:  %10.3f    Var:    %10.3f    CV: %7.1f%%',
-                              stats[:std_dev], stats[:variance], stats[:cv])
+    dashboard_lines << format('Mean: %10.3<mean>f    Median: %10.3<median>f    Mode: %<mode>s',
+                              mean: stats[:mean], median: stats[:median], mode: stats[:mode].join(', '))
+    dashboard_lines << format('Min:  %10.3<min>f    Max:    %10.3<max>f    Range: %10.3<range>f',
+                              min: stats[:min], max: stats[:max], range: stats[:range])
+    dashboard_lines << format('Std:  %10.3<std_dev>f    Var:    %10.3<variance>f    CV: %7.1<cv>f%%',
+                              std_dev: stats[:std_dev], variance: stats[:variance], cv: stats[:cv])
     dashboard_lines << ''
 
     # Mini histogram
@@ -484,20 +484,22 @@ module VisualizationPlugin
     mini_box = box_plot({ width: 50 })
     dashboard_lines << 'QUARTILE ANALYSIS'
     dashboard_lines << ('-' * 30)
-    dashboard_lines << format('Q1: %.3f  |  Q2 (Median): %.3f  |  Q3: %.3f',
-                              stats[:q1], stats[:median], stats[:q3])
-    dashboard_lines << format('IQR: %.3f  |  Outliers: %d', stats[:iqr], stats[:outliers])
+    dashboard_lines << format('Q1: %<q1>.3f  |  Q2 (Median): %<median>.3f  |  Q3: %<q3>.3f',
+                              q1: stats[:q1], median: stats[:median], q3: stats[:q3])
+    dashboard_lines << format('IQR: %<iqr>.3f  |  Outliers: %<outliers>d', iqr: stats[:iqr], outliers: stats[:outliers])
     mini_box[:chart].lines[4..6].each { |line| dashboard_lines << line.chomp }
     dashboard_lines << ''
 
     # Distribution characteristics
     dashboard_lines << 'DISTRIBUTION CHARACTERISTICS'
     dashboard_lines << ('-' * 30)
-    dashboard_lines << format('Skewness: %8.3f (%s)', stats[:skewness], interpret_skewness(stats[:skewness]))
-    dashboard_lines << format('Kurtosis: %8.3f (%s)', stats[:kurtosis], interpret_kurtosis(stats[:kurtosis]))
-    dashboard_lines << format('Normality Score: %.1f%% (%s)',
-                              stats[:normality_score],
-                              stats[:normality_score] > 80 ? 'Likely Normal' : 'Non-Normal')
+    dashboard_lines << format('Skewness: %8.3<skewness>f (%<interpretation>s)', skewness: stats[:skewness],
+                                                                                interpretation: interpret_skewness(stats[:skewness]))
+    dashboard_lines << format('Kurtosis: %8.3<kurtosis>f (%<interpretation>s)', kurtosis: stats[:kurtosis],
+                                                                                interpretation: interpret_kurtosis(stats[:kurtosis]))
+    dashboard_lines << format('Normality Score: %<score>.1f%% (%<interpretation>s)',
+                              score: stats[:normality_score],
+                              interpretation: stats[:normality_score] > 80 ? 'Likely Normal' : 'Non-Normal')
     dashboard_lines << ''
 
     # Recommendations
@@ -730,8 +732,8 @@ module VisualizationPlugin
   def generate_boxplot_stats(q1, median, q3, iqr, outliers)
     [
       'Box Plot Statistics:',
-      format('Q1: %.3f  |  Median: %.3f  |  Q3: %.3f', q1, median, q3),
-      format('IQR: %.3f  |  Outliers: %d', iqr, outliers.length),
+      format('Q1: %<q1>.3f  |  Median: %<median>.3f  |  Q3: %<q3>.3f', q1: q1, median: median, q3: q3),
+      format('IQR: %<iqr>.3f  |  Outliers: %<outliers>d', iqr: iqr, outliers: outliers.length),
       outliers.empty? ? 'No outliers detected' : "Outliers: #{outliers.map { |x| x.round(2) }.join(', ')}"
     ].join("\n")
   end
@@ -742,22 +744,22 @@ module VisualizationPlugin
 
     [
       'Scatter Plot Statistics:',
-      format('Points: %d  |  Correlation: %.4f (%s)',
-             x_data.length, correlation, interpret_correlation_strength(correlation.abs)),
-      format('X: mean=%.3f, range=[%.3f, %.3f]', x_mean, x_data.min, x_data.max),
-      format('Y: mean=%.3f, range=[%.3f, %.3f]', y_mean, y_data.min, y_data.max)
+      format('Points: %<points>d  |  Correlation: %<correlation>.4f (%<strength>s)',
+             points: x_data.length, correlation: correlation, strength: interpret_correlation_strength(correlation.abs)),
+      format('X: mean=%<mean>.3f, range=[%<min>.3f, %<max>.3f]', mean: x_mean, min: x_data.min, max: x_data.max),
+      format('Y: mean=%<mean>.3f, range=[%<min>.3f, %<max>.3f]', mean: y_mean, min: y_data.min, max: y_data.max)
     ].join("\n")
   end
 
   def generate_line_chart_stats(trend)
     [
       'Line Chart Statistics:',
-      format('Trend: %s (slope: %.4f)', trend[:direction], trend[:slope]),
-      format('Correlation: %.4f (%s %s)',
-             trend[:correlation],
-             trend[:strength],
-             trend[:correlation] >= 0 ? 'positive' : 'negative'),
-      format('Equation: y = %.4fx + %.4f', trend[:slope], trend[:intercept])
+      format('Trend: %<direction>s (slope: %<slope>.4f)', direction: trend[:direction], slope: trend[:slope]),
+      format('Correlation: %<correlation>.4f (%<strength>s %<sign>s)',
+             correlation: trend[:correlation],
+             strength: trend[:strength],
+             sign: trend[:correlation] >= 0 ? 'positive' : 'negative'),
+      format('Equation: y = %<slope>.4fx + %<intercept>.4f', slope: trend[:slope], intercept: trend[:intercept])
     ].join("\n")
   end
 
@@ -768,10 +770,10 @@ module VisualizationPlugin
 
     [
       'Bar Chart Statistics:',
-      format('Unique values: %d  |  Total observations: %d', frequency.length, total),
-      format('Most frequent: %s (count: %d, %.1f%%)',
-             modal_value, max_freq, max_freq.to_f / total * 100),
-      format('Distribution entropy: %.3f', calculate_entropy(frequency))
+      format('Unique values: %<unique>d  |  Total observations: %<total>d', unique: frequency.length, total: total),
+      format('Most frequent: %<value>s (count: %<count>d, %<percentage>.1f%%)',
+             value: modal_value, count: max_freq, percentage: max_freq.to_f / total * 100),
+      format('Distribution entropy: %<entropy>.3f', entropy: calculate_entropy(frequency))
     ].join("\n")
   end
 
@@ -780,12 +782,14 @@ module VisualizationPlugin
 
     [
       'Distribution Statistics:',
-      format('Mean: %.4f  |  Std Dev: %.4f', mean, std_dev),
-      format('Skewness: %.4f (%s)', skewness, interpret_skewness(skewness)),
-      format('Kurtosis: %.4f (%s)', kurtosis, interpret_kurtosis(kurtosis)),
-      format('Normality Score: %.1f%% (%s)',
-             normality_score,
-             normality_score > 80 ? 'Likely Normal' : 'Non-Normal')
+      format('Mean: %<mean>.4f  |  Std Dev: %<std_dev>.4f', mean: mean, std_dev: std_dev),
+      format('Skewness: %<skewness>.4f (%<interpretation>s)', skewness: skewness,
+                                                              interpretation: interpret_skewness(skewness)),
+      format('Kurtosis: %<kurtosis>.4f (%<interpretation>s)', kurtosis: kurtosis,
+                                                              interpretation: interpret_kurtosis(kurtosis)),
+      format('Normality Score: %<score>.1f%% (%<interpretation>s)',
+             score: normality_score,
+             interpretation: normality_score > 80 ? 'Likely Normal' : 'Non-Normal')
     ].join("\n")
   end
 

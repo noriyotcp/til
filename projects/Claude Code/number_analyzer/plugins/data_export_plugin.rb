@@ -532,29 +532,31 @@ module DataExportPlugin
 
     report << 'DESCRIPTIVE STATISTICS'
     report << ('-' * 30)
-    report << format('%-20s: %15.6f', 'Mean', stats[:mean])
-    report << format('%-20s: %15.6f', 'Median', stats[:median])
-    report << format('%-20s: %15s', 'Mode', stats[:mode].empty? ? 'No mode' : stats[:mode].join(', '))
-    report << format('%-20s: %15.6f', 'Standard Deviation', stats[:standard_deviation])
-    report << format('%-20s: %15.6f', 'Variance', stats[:variance])
-    report << format('%-20s: %15.2f%%', 'Coeff. of Variation', stats[:coefficient_of_variation])
+    report << format('%<label>-20s: %<value>15.6f', label: 'Mean', value: stats[:mean])
+    report << format('%<label>-20s: %<value>15.6f', label: 'Median', value: stats[:median])
+    report << format('%<label>-20s: %<value>15s', label: 'Mode',
+                                                  value: stats[:mode].empty? ? 'No mode' : stats[:mode].join(', '))
+    report << format('%<label>-20s: %<value>15.6f', label: 'Standard Deviation', value: stats[:standard_deviation])
+    report << format('%<label>-20s: %<value>15.6f', label: 'Variance', value: stats[:variance])
+    report << format('%<label>-20s: %<value>15.2f%%', label: 'Coeff. of Variation',
+                                                      value: stats[:coefficient_of_variation])
     report << ''
 
     report << 'DATA RANGE'
     report << ('-' * 30)
-    report << format('%-20s: %15.6f', 'Minimum', stats[:min])
-    report << format('%-20s: %15.6f', 'Maximum', stats[:max])
-    report << format('%-20s: %15.6f', 'Range', stats[:range])
-    report << format('%-20s: %15.6f', 'Q1 (25th percentile)', stats[:quartiles][0])
-    report << format('%-20s: %15.6f', 'Q3 (75th percentile)', stats[:quartiles][2])
-    report << format('%-20s: %15.6f', 'IQR', stats[:iqr])
+    report << format('%<label>-20s: %<value>15.6f', label: 'Minimum', value: stats[:min])
+    report << format('%<label>-20s: %<value>15.6f', label: 'Maximum', value: stats[:max])
+    report << format('%<label>-20s: %<value>15.6f', label: 'Range', value: stats[:range])
+    report << format('%<label>-20s: %<value>15.6f', label: 'Q1 (25th percentile)', value: stats[:quartiles][0])
+    report << format('%<label>-20s: %<value>15.6f', label: 'Q3 (75th percentile)', value: stats[:quartiles][2])
+    report << format('%<label>-20s: %<value>15.6f', label: 'IQR', value: stats[:iqr])
     report << ''
 
     report << 'DISTRIBUTION CHARACTERISTICS'
     report << ('-' * 30)
-    report << format('%-20s: %15.6f', 'Skewness', stats[:skewness])
-    report << format('%-20s: %15.6f', 'Kurtosis', stats[:kurtosis])
-    report << format('%-20s: %15d', 'Outliers', stats[:outliers])
+    report << format('%<label>-20s: %<value>15.6f', label: 'Skewness', value: stats[:skewness])
+    report << format('%<label>-20s: %<value>15.6f', label: 'Kurtosis', value: stats[:kurtosis])
+    report << format('%<label>-20s: %<value>15d', label: 'Outliers', value: stats[:outliers])
     report << ''
 
     summary = generate_data_summary(stats)
