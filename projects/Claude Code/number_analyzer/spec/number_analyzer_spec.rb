@@ -7,7 +7,7 @@ RSpec.describe NumberAnalyzer do
   describe '#calculate_statistics' do
     it 'outputs correct statistics for the given numbers' do
       expected_output = "合計: 55\n平均: 5.5\n最大値: 10\n最小値: 1\n中央値: 5.5\n分散: 8.25\n最頻値: なし\n標準偏差: 2.87\n四分位範囲(IQR): 4.5\n外れ値: なし\n偏差値: 34.33, 37.81, 41.3, 44.78, 48.26, 51.74, 55.22, 58.7, 62.19, 65.67\n\n度数分布ヒストグラム:\n1: ■ (1)\n2: ■ (1)\n3: ■ (1)\n4: ■ (1)\n5: ■ (1)\n6: ■ (1)\n7: ■ (1)\n8: ■ (1)\n9: ■ (1)\n10: ■ (1)\n"
-      
+
       expect { analyzer.calculate_statistics }.to output(expected_output).to_stdout
     end
   end
@@ -17,7 +17,7 @@ RSpec.describe NumberAnalyzer do
 
     it 'calculates statistics correctly' do
       expected_output = "合計: 42\n平均: 42.0\n最大値: 42\n最小値: 42\n中央値: 42\n分散: 0.0\n最頻値: なし\n標準偏差: 0.0\n四分位範囲(IQR): 0\n外れ値: なし\n偏差値: 50.0\n\n度数分布ヒストグラム:\n42: ■ (1)\n"
-      
+
       expect { single_analyzer.calculate_statistics }.to output(expected_output).to_stdout
     end
   end
@@ -27,7 +27,7 @@ RSpec.describe NumberAnalyzer do
 
     it 'handles negative numbers correctly' do
       expected_output = "合計: -18\n平均: -4.5\n最大値: -1\n最小値: -10\n中央値: -3.5\n分散: 12.25\n最頻値: なし\n標準偏差: 3.5\n四分位範囲(IQR): 4.5\n外れ値: なし\n偏差値: 48.57, 57.14, 34.29, 60.0\n\n度数分布ヒストグラム:\n-10: ■ (1)\n-5: ■ (1)\n-2: ■ (1)\n-1: ■ (1)\n"
-      
+
       expect { negative_analyzer.calculate_statistics }.to output(expected_output).to_stdout
     end
   end
@@ -37,7 +37,7 @@ RSpec.describe NumberAnalyzer do
 
     it 'calculates statistics correctly' do
       expected_output = "合計: 3\n平均: 0.6\n最大値: 5\n最小値: -3\n中央値: 0\n分散: 7.44\n最頻値: なし\n標準偏差: 2.73\n四分位範囲(IQR): 3\n外れ値: なし\n偏差値: 36.8, 47.8, 66.13, 44.13, 55.13\n\n度数分布ヒストグラム:\n-3: ■ (1)\n-1: ■ (1)\n0: ■ (1)\n2: ■ (1)\n5: ■ (1)\n"
-      
+
       expect { mixed_analyzer.calculate_statistics }.to output(expected_output).to_stdout
     end
   end
@@ -47,7 +47,7 @@ RSpec.describe NumberAnalyzer do
 
     it 'handles duplicate values correctly' do
       expected_output = "合計: 12\n平均: 3.0\n最大値: 3\n最小値: 3\n中央値: 3.0\n分散: 0.0\n最頻値: 3\n標準偏差: 0.0\n四分位範囲(IQR): 0.0\n外れ値: なし\n偏差値: 50.0, 50.0, 50.0, 50.0\n\n度数分布ヒストグラム:\n3: ■■■■ (4)\n"
-      
+
       expect { duplicate_analyzer.calculate_statistics }.to output(expected_output).to_stdout
     end
   end
@@ -58,7 +58,7 @@ RSpec.describe NumberAnalyzer do
 
       it 'calculates correct trend slope and intercept' do
         result = trend_analyzer.linear_trend
-        
+
         expect(result[:slope]).to be_within(0.001).of(1.0)
         expect(result[:intercept]).to be_within(0.001).of(1.0)
         expect(result[:r_squared]).to be_within(0.001).of(1.0)
@@ -71,7 +71,7 @@ RSpec.describe NumberAnalyzer do
 
       it 'detects downward trend' do
         result = downward_analyzer.linear_trend
-        
+
         expect(result[:slope]).to be_within(0.001).of(-1.0)
         expect(result[:direction]).to eq('下降')
       end
@@ -82,7 +82,7 @@ RSpec.describe NumberAnalyzer do
 
       it 'detects flat trend' do
         result = flat_analyzer.linear_trend
-        
+
         expect(result[:slope]).to be_within(0.001).of(0.0)
         expect(result[:direction]).to eq('横ばい')
       end
@@ -108,7 +108,7 @@ RSpec.describe NumberAnalyzer do
   describe '#median' do
     context 'with odd number of elements' do
       let(:odd_analyzer) { NumberAnalyzer.new([1, 3, 5, 7, 9]) }
-      
+
       it 'returns the middle value' do
         expect(odd_analyzer.median).to eq(5)
       end
@@ -116,7 +116,7 @@ RSpec.describe NumberAnalyzer do
 
     context 'with even number of elements' do
       let(:even_analyzer) { NumberAnalyzer.new([1, 2, 3, 4]) }
-      
+
       it 'returns the average of two middle values' do
         expect(even_analyzer.median).to eq(2.5)
       end
@@ -124,7 +124,7 @@ RSpec.describe NumberAnalyzer do
 
     context 'with single element' do
       let(:single_analyzer) { NumberAnalyzer.new([42]) }
-      
+
       it 'returns the single element' do
         expect(single_analyzer.median).to eq(42)
       end
@@ -132,7 +132,7 @@ RSpec.describe NumberAnalyzer do
 
     context 'with unsorted array' do
       let(:unsorted_analyzer) { NumberAnalyzer.new([5, 1, 9, 3, 7]) }
-      
+
       it 'correctly finds median of unsorted data' do
         expect(unsorted_analyzer.median).to eq(5)
       end
@@ -142,7 +142,7 @@ RSpec.describe NumberAnalyzer do
   describe '#mode' do
     context 'with single mode' do
       let(:single_mode_analyzer) { NumberAnalyzer.new([1, 2, 2, 3, 4]) }
-      
+
       it 'returns the most frequent value' do
         expect(single_mode_analyzer.mode).to eq([2])
       end
@@ -150,7 +150,7 @@ RSpec.describe NumberAnalyzer do
 
     context 'with multiple modes' do
       let(:multi_mode_analyzer) { NumberAnalyzer.new([1, 1, 2, 2, 3]) }
-      
+
       it 'returns array of most frequent values' do
         expect(multi_mode_analyzer.mode).to contain_exactly(1, 2)
       end
@@ -158,7 +158,7 @@ RSpec.describe NumberAnalyzer do
 
     context 'with no mode (all unique)' do
       let(:no_mode_analyzer) { NumberAnalyzer.new([1, 2, 3, 4, 5]) }
-      
+
       it 'returns empty array' do
         expect(no_mode_analyzer.mode).to eq([])
       end
@@ -166,7 +166,7 @@ RSpec.describe NumberAnalyzer do
 
     context 'with all same values' do
       let(:all_same_analyzer) { NumberAnalyzer.new([5, 5, 5, 5]) }
-      
+
       it 'returns the repeated value' do
         expect(all_same_analyzer.mode).to eq([5])
       end
@@ -176,7 +176,7 @@ RSpec.describe NumberAnalyzer do
   describe '#variance' do
     context 'with known values' do
       let(:known_analyzer) { NumberAnalyzer.new([2, 4, 4, 4, 5, 5, 7, 9]) }
-      
+
       it 'calculates variance correctly' do
         expect(known_analyzer.variance).to be_within(0.01).of(4.0)
       end
@@ -184,7 +184,7 @@ RSpec.describe NumberAnalyzer do
 
     context 'with single value' do
       let(:single_analyzer) { NumberAnalyzer.new([5]) }
-      
+
       it 'returns zero for single value' do
         expect(single_analyzer.variance).to eq(0)
       end
@@ -192,7 +192,7 @@ RSpec.describe NumberAnalyzer do
 
     context 'with identical values' do
       let(:identical_analyzer) { NumberAnalyzer.new([3, 3, 3, 3]) }
-      
+
       it 'returns zero for identical values' do
         expect(identical_analyzer.variance).to eq(0)
       end
@@ -200,7 +200,7 @@ RSpec.describe NumberAnalyzer do
 
     context 'with simple case' do
       let(:simple_analyzer) { NumberAnalyzer.new([1, 2, 3, 4, 5]) }
-      
+
       it 'calculates variance for simple sequence' do
         expect(simple_analyzer.variance).to be_within(0.01).of(2.0)
       end
@@ -210,19 +210,19 @@ RSpec.describe NumberAnalyzer do
   describe '#percentile' do
     context 'with known dataset' do
       let(:percentile_analyzer) { NumberAnalyzer.new([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]) }
-      
+
       it 'calculates 25th percentile correctly' do
         expect(percentile_analyzer.percentile(25)).to be_within(0.01).of(3.25)
       end
-      
+
       it 'calculates 50th percentile correctly (median)' do
         expect(percentile_analyzer.percentile(50)).to be_within(0.01).of(5.5)
       end
-      
+
       it 'calculates 75th percentile correctly' do
         expect(percentile_analyzer.percentile(75)).to be_within(0.01).of(7.75)
       end
-      
+
       it 'calculates 95th percentile correctly' do
         expect(percentile_analyzer.percentile(95)).to be_within(0.01).of(9.55)
       end
@@ -230,11 +230,11 @@ RSpec.describe NumberAnalyzer do
 
     context 'with boundary values' do
       let(:boundary_analyzer) { NumberAnalyzer.new([1, 2, 3, 4, 5]) }
-      
+
       it 'returns minimum for 0th percentile' do
         expect(boundary_analyzer.percentile(0)).to eq(1)
       end
-      
+
       it 'returns maximum for 100th percentile' do
         expect(boundary_analyzer.percentile(100)).to eq(5)
       end
@@ -243,13 +243,13 @@ RSpec.describe NumberAnalyzer do
     context 'with edge cases' do
       let(:single_analyzer) { NumberAnalyzer.new([42]) }
       let(:two_analyzer) { NumberAnalyzer.new([1, 3]) }
-      
+
       it 'handles single value correctly' do
         expect(single_analyzer.percentile(25)).to eq(42)
         expect(single_analyzer.percentile(50)).to eq(42)
         expect(single_analyzer.percentile(75)).to eq(42)
       end
-      
+
       it 'handles two values correctly' do
         expect(two_analyzer.percentile(25)).to eq(1.5)
         expect(two_analyzer.percentile(50)).to eq(2.0)
@@ -259,7 +259,7 @@ RSpec.describe NumberAnalyzer do
 
     context 'with unsorted data' do
       let(:unsorted_analyzer) { NumberAnalyzer.new([5, 1, 9, 3, 7]) }
-      
+
       it 'correctly sorts data before calculation' do
         expect(unsorted_analyzer.percentile(50)).to eq(5)
       end
@@ -269,16 +269,16 @@ RSpec.describe NumberAnalyzer do
   describe '#quartiles' do
     context 'with known dataset' do
       let(:quartiles_analyzer) { NumberAnalyzer.new([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]) }
-      
+
       it 'returns hash with correct quartile values' do
         result = quartiles_analyzer.quartiles
-        
+
         expect(result).to be_a(Hash)
         expect(result[:q1]).to eq(3.25)
         expect(result[:q2]).to eq(5.5)
         expect(result[:q3]).to eq(7.75)
       end
-      
+
       it 'has q2 equal to median' do
         result = quartiles_analyzer.quartiles
         expect(result[:q2]).to eq(quartiles_analyzer.median)
@@ -288,14 +288,14 @@ RSpec.describe NumberAnalyzer do
     context 'with different datasets' do
       let(:small_analyzer) { NumberAnalyzer.new([1, 2, 3, 4, 5]) }
       let(:even_analyzer) { NumberAnalyzer.new([2, 4, 6, 8]) }
-      
+
       it 'calculates quartiles for small dataset' do
         result = small_analyzer.quartiles
         expect(result[:q1]).to eq(2.0)
         expect(result[:q2]).to eq(3.0)
         expect(result[:q3]).to eq(4.0)
       end
-      
+
       it 'calculates quartiles for even-length dataset' do
         result = even_analyzer.quartiles
         expect(result[:q1]).to eq(3.5)
@@ -307,14 +307,14 @@ RSpec.describe NumberAnalyzer do
     context 'with edge cases' do
       let(:single_analyzer) { NumberAnalyzer.new([42]) }
       let(:identical_analyzer) { NumberAnalyzer.new([5, 5, 5, 5]) }
-      
+
       it 'handles single value correctly' do
         result = single_analyzer.quartiles
         expect(result[:q1]).to eq(42)
         expect(result[:q2]).to eq(42)
         expect(result[:q3]).to eq(42)
       end
-      
+
       it 'handles identical values correctly' do
         result = identical_analyzer.quartiles
         expect(result[:q1]).to eq(5)
@@ -327,7 +327,7 @@ RSpec.describe NumberAnalyzer do
   describe '#standard_deviation' do
     context 'with known values' do
       let(:known_analyzer) { NumberAnalyzer.new([2, 4, 4, 4, 5, 5, 7, 9]) }
-      
+
       it 'calculates standard deviation correctly' do
         expect(known_analyzer.standard_deviation).to be_within(0.01).of(2.0)
       end
@@ -335,7 +335,7 @@ RSpec.describe NumberAnalyzer do
 
     context 'with single value' do
       let(:single_analyzer) { NumberAnalyzer.new([5]) }
-      
+
       it 'returns zero for single value' do
         expect(single_analyzer.standard_deviation).to eq(0)
       end
@@ -343,7 +343,7 @@ RSpec.describe NumberAnalyzer do
 
     context 'with identical values' do
       let(:identical_analyzer) { NumberAnalyzer.new([3, 3, 3, 3]) }
-      
+
       it 'returns zero for identical values' do
         expect(identical_analyzer.standard_deviation).to eq(0)
       end
@@ -351,7 +351,7 @@ RSpec.describe NumberAnalyzer do
 
     context 'with simple case' do
       let(:simple_analyzer) { NumberAnalyzer.new([1, 2, 3, 4, 5]) }
-      
+
       it 'calculates standard deviation for simple sequence' do
         expect(simple_analyzer.standard_deviation).to be_within(0.01).of(1.41)
       end
@@ -361,7 +361,7 @@ RSpec.describe NumberAnalyzer do
   describe '#interquartile_range' do
     context 'with known dataset' do
       let(:iqr_analyzer) { NumberAnalyzer.new([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]) }
-      
+
       it 'calculates IQR correctly' do
         # Q1 = 3.25, Q3 = 7.75, so IQR = 7.75 - 3.25 = 4.5
         expect(iqr_analyzer.interquartile_range).to be_within(0.01).of(4.5)
@@ -370,7 +370,7 @@ RSpec.describe NumberAnalyzer do
 
     context 'with simple sequence' do
       let(:simple_analyzer) { NumberAnalyzer.new([1, 3, 5, 7, 9]) }
-      
+
       it 'calculates IQR for odd number of values' do
         # Q1 = 3, Q3 = 7, so IQR = 7 - 3 = 4
         expect(simple_analyzer.interquartile_range).to eq(4)
@@ -380,11 +380,11 @@ RSpec.describe NumberAnalyzer do
     context 'with edge cases' do
       let(:single_analyzer) { NumberAnalyzer.new([42]) }
       let(:two_analyzer) { NumberAnalyzer.new([1, 5]) }
-      
+
       it 'handles single value' do
         expect(single_analyzer.interquartile_range).to eq(0)
       end
-      
+
       it 'handles two values' do
         # For [1, 5]: using linear interpolation, Q1 = 2, Q3 = 4, so IQR = 4 - 2 = 2
         expect(two_analyzer.interquartile_range).to eq(2.0)
@@ -393,7 +393,7 @@ RSpec.describe NumberAnalyzer do
 
     context 'with empty array' do
       let(:empty_analyzer) { NumberAnalyzer.new([]) }
-      
+
       it 'returns nil for empty array' do
         expect(empty_analyzer.interquartile_range).to be_nil
       end
@@ -408,7 +408,7 @@ RSpec.describe NumberAnalyzer do
       # Upper bound = Q3 + 1.5*IQR = 4.75 + 3.75 = 8.5
       # So 100 is an outlier (100 > 8.5)
       let(:outlier_analyzer) { NumberAnalyzer.new([1, 2, 3, 4, 5, 100]) }
-      
+
       it 'identifies upper outliers correctly' do
         expect(outlier_analyzer.outliers).to contain_exactly(100)
       end
@@ -421,7 +421,7 @@ RSpec.describe NumberAnalyzer do
       # Upper bound = Q3 + 1.5*IQR = 3.75 + 3.75 = 7.5
       # So -50 is an outlier (-50 < -2.5)
       let(:lower_outlier_analyzer) { NumberAnalyzer.new([-50, 1, 2, 3, 4, 5]) }
-      
+
       it 'identifies lower outliers correctly' do
         expect(lower_outlier_analyzer.outliers).to contain_exactly(-50)
       end
@@ -434,7 +434,7 @@ RSpec.describe NumberAnalyzer do
       # Upper bound = Q3 + 1.5*IQR = 3.75 + 3.75 = 7.5
       # So -100 and 200 are outliers
       let(:multi_outlier_analyzer) { NumberAnalyzer.new([-100, 1, 2, 3, 4, 5, 200]) }
-      
+
       it 'identifies multiple outliers correctly' do
         expect(multi_outlier_analyzer.outliers).to contain_exactly(-100, 200)
       end
@@ -442,7 +442,7 @@ RSpec.describe NumberAnalyzer do
 
     context 'with no outliers' do
       let(:no_outlier_analyzer) { NumberAnalyzer.new([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]) }
-      
+
       it 'returns empty array when no outliers present' do
         expect(no_outlier_analyzer.outliers).to eq([])
       end
@@ -452,15 +452,15 @@ RSpec.describe NumberAnalyzer do
       let(:single_analyzer) { NumberAnalyzer.new([42]) }
       let(:two_analyzer) { NumberAnalyzer.new([1, 5]) }
       let(:empty_analyzer) { NumberAnalyzer.new([]) }
-      
+
       it 'handles single value' do
         expect(single_analyzer.outliers).to eq([])
       end
-      
+
       it 'handles two values' do
         expect(two_analyzer.outliers).to eq([])
       end
-      
+
       it 'handles empty array' do
         expect(empty_analyzer.outliers).to eq([])
       end
@@ -468,7 +468,7 @@ RSpec.describe NumberAnalyzer do
 
     context 'with identical values' do
       let(:identical_analyzer) { NumberAnalyzer.new([5, 5, 5, 5, 5]) }
-      
+
       it 'returns no outliers for identical values' do
         expect(identical_analyzer.outliers).to eq([])
       end
@@ -486,7 +486,7 @@ RSpec.describe NumberAnalyzer do
       # 90: (90-80)/14.14*10+50 = 57.07
       # 100: (100-80)/14.14*10+50 = 64.14
       let(:deviation_analyzer) { NumberAnalyzer.new([60, 70, 80, 90, 100]) }
-      
+
       it 'calculates deviation scores correctly' do
         scores = deviation_analyzer.deviation_scores
         expect(scores).to be_a(Array)
@@ -497,7 +497,7 @@ RSpec.describe NumberAnalyzer do
         expect(scores[3]).to be_within(0.01).of(57.07)
         expect(scores[4]).to be_within(0.01).of(64.14)
       end
-      
+
       it 'has mean value as deviation score 50' do
         scores = deviation_analyzer.deviation_scores
         mean_score = scores[2] # 80 is the mean
@@ -509,7 +509,7 @@ RSpec.describe NumberAnalyzer do
       # Dataset: [1, 2, 3, 4, 5]
       # Mean = 3, Standard Deviation = 1.41
       let(:simple_analyzer) { NumberAnalyzer.new([1, 2, 3, 4, 5]) }
-      
+
       it 'calculates deviation scores for simple sequence' do
         scores = simple_analyzer.deviation_scores
         expect(scores.length).to eq(5)
@@ -522,13 +522,13 @@ RSpec.describe NumberAnalyzer do
     context 'with edge cases' do
       let(:single_analyzer) { NumberAnalyzer.new([42]) }
       let(:identical_analyzer) { NumberAnalyzer.new([5, 5, 5, 5]) }
-      
+
       it 'handles single value' do
         # Standard deviation is 0, so deviation score calculation is undefined
         # Should return array with NaN or handle gracefully
         expect { single_analyzer.deviation_scores }.not_to raise_error
       end
-      
+
       it 'handles identical values' do
         # Standard deviation is 0, so deviation score calculation is undefined
         expect { identical_analyzer.deviation_scores }.not_to raise_error
@@ -537,7 +537,7 @@ RSpec.describe NumberAnalyzer do
 
     context 'with negative numbers' do
       let(:negative_analyzer) { NumberAnalyzer.new([-10, -5, 0, 5, 10]) }
-      
+
       it 'handles negative numbers correctly' do
         scores = negative_analyzer.deviation_scores
         expect(scores.length).to eq(5)
@@ -547,7 +547,7 @@ RSpec.describe NumberAnalyzer do
 
     context 'with precision' do
       let(:precision_analyzer) { NumberAnalyzer.new([1, 2, 3, 4, 5]) }
-      
+
       it 'returns values rounded to 2 decimal places' do
         scores = precision_analyzer.deviation_scores
         scores.each do |score|
@@ -560,10 +560,10 @@ RSpec.describe NumberAnalyzer do
 
   describe '#frequency_distribution' do
     context 'with basic dataset' do
-      # Dataset: [1, 2, 2, 3, 3, 3] 
+      # Dataset: [1, 2, 2, 3, 3, 3]
       # Expected: {1=>1, 2=>2, 3=>3}
       let(:basic_analyzer) { NumberAnalyzer.new([1, 2, 2, 3, 3, 3]) }
-      
+
       it 'counts frequency of each value correctly' do
         freq_dist = basic_analyzer.frequency_distribution
         expect(freq_dist).to be_a(Hash)
@@ -571,7 +571,7 @@ RSpec.describe NumberAnalyzer do
         expect(freq_dist[2]).to eq(2)
         expect(freq_dist[3]).to eq(3)
       end
-      
+
       it 'includes all unique values as keys' do
         freq_dist = basic_analyzer.frequency_distribution
         expect(freq_dist.keys).to contain_exactly(1, 2, 3)
@@ -582,7 +582,7 @@ RSpec.describe NumberAnalyzer do
       # Dataset: [1.5, 2.5, 1.5, 3.0]
       # Expected: {1.5=>2, 2.5=>1, 3.0=>1}
       let(:float_analyzer) { NumberAnalyzer.new([1.5, 2.5, 1.5, 3.0]) }
-      
+
       it 'handles float values correctly' do
         freq_dist = float_analyzer.frequency_distribution
         expect(freq_dist[1.5]).to eq(2)
@@ -595,17 +595,17 @@ RSpec.describe NumberAnalyzer do
       let(:single_analyzer) { NumberAnalyzer.new([42]) }
       let(:empty_analyzer) { NumberAnalyzer.new([]) }
       let(:identical_analyzer) { NumberAnalyzer.new([5, 5, 5, 5]) }
-      
+
       it 'handles single value' do
         freq_dist = single_analyzer.frequency_distribution
         expect(freq_dist).to eq({ 42 => 1 })
       end
-      
+
       it 'handles empty array' do
         freq_dist = empty_analyzer.frequency_distribution
         expect(freq_dist).to eq({})
       end
-      
+
       it 'handles identical values' do
         freq_dist = identical_analyzer.frequency_distribution
         expect(freq_dist).to eq({ 5 => 4 })
@@ -616,7 +616,7 @@ RSpec.describe NumberAnalyzer do
       # Dataset: [5, 1, 3, 1, 5, 2]
       # Expected: {1=>2, 2=>1, 3=>1, 5=>2}
       let(:unsorted_analyzer) { NumberAnalyzer.new([5, 1, 3, 1, 5, 2]) }
-      
+
       it 'works correctly with unsorted data' do
         freq_dist = unsorted_analyzer.frequency_distribution
         expect(freq_dist[1]).to eq(2)
@@ -629,13 +629,13 @@ RSpec.describe NumberAnalyzer do
 
   describe '#display_histogram' do
     context 'with basic dataset' do
-      # Dataset: [1, 2, 2, 3, 3, 3] 
+      # Dataset: [1, 2, 2, 3, 3, 3]
       # Expected histogram:
       # 1: ■ (1)
       # 2: ■■ (2)
       # 3: ■■■ (3)
       let(:basic_analyzer) { NumberAnalyzer.new([1, 2, 2, 3, 3, 3]) }
-      
+
       it 'displays histogram with ASCII art bars' do
         expected_output = <<~OUTPUT
           度数分布ヒストグラム:
@@ -650,7 +650,7 @@ RSpec.describe NumberAnalyzer do
 
     context 'with single value' do
       let(:single_analyzer) { NumberAnalyzer.new([42]) }
-      
+
       it 'displays single bar histogram' do
         expected_output = <<~OUTPUT
           度数分布ヒストグラム:
@@ -663,7 +663,7 @@ RSpec.describe NumberAnalyzer do
 
     context 'with empty array' do
       let(:empty_analyzer) { NumberAnalyzer.new([]) }
-      
+
       it 'displays empty histogram message' do
         expected_output = "度数分布ヒストグラム:\n(データが空です)\n"
 
@@ -674,7 +674,7 @@ RSpec.describe NumberAnalyzer do
     context 'with varied frequencies' do
       # Dataset: [1, 2, 2, 2, 2, 2] (1 appears 1 time, 2 appears 5 times)
       let(:varied_analyzer) { NumberAnalyzer.new([1, 2, 2, 2, 2, 2]) }
-      
+
       it 'scales bars correctly based on frequency' do
         expected_output = <<~OUTPUT
           度数分布ヒストグラム:
@@ -688,7 +688,7 @@ RSpec.describe NumberAnalyzer do
 
     context 'with decimal values' do
       let(:decimal_analyzer) { NumberAnalyzer.new([1.5, 1.5, 2.0, 2.5]) }
-      
+
       it 'handles decimal values correctly' do
         expected_output = <<~OUTPUT
           度数分布ヒストグラム:
@@ -706,7 +706,7 @@ RSpec.describe NumberAnalyzer do
     context 'with perfect positive correlation' do
       let(:analyzer) { NumberAnalyzer.new([1, 2, 3, 4, 5]) }
       let(:other_dataset) { [2, 4, 6, 8, 10] }
-      
+
       it 'calculates perfect positive correlation' do
         result = analyzer.correlation(other_dataset)
         expect(result).to eq(1.0)
@@ -716,7 +716,7 @@ RSpec.describe NumberAnalyzer do
     context 'with perfect negative correlation' do
       let(:analyzer) { NumberAnalyzer.new([1, 2, 3, 4, 5]) }
       let(:other_dataset) { [10, 8, 6, 4, 2] }
-      
+
       it 'calculates perfect negative correlation' do
         result = analyzer.correlation(other_dataset)
         expect(result).to eq(-1.0)
@@ -726,7 +726,7 @@ RSpec.describe NumberAnalyzer do
     context 'with no correlation' do
       let(:analyzer) { NumberAnalyzer.new([1, 2, 3, 4, 5]) }
       let(:other_dataset) { [5, 1, 3, 2, 4] }
-      
+
       it 'calculates near-zero correlation' do
         result = analyzer.correlation(other_dataset)
         expect(result).to be_within(0.3).of(0.0)
@@ -735,17 +735,17 @@ RSpec.describe NumberAnalyzer do
 
     context 'with edge cases' do
       let(:analyzer) { NumberAnalyzer.new([1, 2, 3]) }
-      
+
       it 'returns nil for empty dataset' do
         result = analyzer.correlation([])
         expect(result).to be_nil
       end
-      
+
       it 'returns nil for mismatched lengths' do
         result = analyzer.correlation([1, 2])
         expect(result).to be_nil
       end
-      
+
       it 'handles identical values' do
         identical_analyzer = NumberAnalyzer.new([5, 5, 5])
         result = identical_analyzer.correlation([5, 5, 5])
@@ -755,7 +755,7 @@ RSpec.describe NumberAnalyzer do
 
     context 'with empty analyzer' do
       let(:empty_analyzer) { NumberAnalyzer.new([]) }
-      
+
       it 'returns nil for empty analyzer' do
         result = empty_analyzer.correlation([1, 2, 3])
         expect(result).to be_nil
@@ -769,7 +769,7 @@ RSpec.describe NumberAnalyzer do
 
       it 'calculates 3-period moving average correctly' do
         result = ma_analyzer.moving_average(3)
-        
+
         expect(result).to be_an(Array)
         expect(result.length).to eq(8) # 10 - 3 + 1 = 8
         expect(result[0]).to be_within(0.001).of(2.0) # (1+2+3)/3
@@ -784,7 +784,7 @@ RSpec.describe NumberAnalyzer do
 
       it 'calculates 5-period moving average correctly' do
         result = ma_analyzer.moving_average(5)
-        
+
         expect(result.length).to eq(6) # 10 - 5 + 1 = 6
         expect(result[0]).to be_within(0.001).of(6.0) # (2+4+6+8+10)/5
         expect(result.last).to be_within(0.001).of(16.0) # (12+14+16+18+20)/5
@@ -820,7 +820,7 @@ RSpec.describe NumberAnalyzer do
 
       it 'handles decimal values correctly' do
         result = decimal_analyzer.moving_average(3)
-        
+
         expect(result.length).to eq(3)
         expect(result[0]).to be_within(0.001).of(2.5) # (1.5+2.5+3.5)/3
         expect(result[1]).to be_within(0.001).of(3.5) # (2.5+3.5+4.5)/3
@@ -835,7 +835,7 @@ RSpec.describe NumberAnalyzer do
 
       it 'calculates period-over-period growth rates correctly' do
         result = growth_analyzer.growth_rates
-        
+
         expect(result.length).to eq(3)
         expect(result[0]).to be_within(0.0001).of(10.0)      # (110-100)/100 * 100
         expect(result[1]).to be_within(0.0001).of(10.0)      # (121-110)/110 * 100
@@ -857,7 +857,7 @@ RSpec.describe NumberAnalyzer do
       it 'handles zero values correctly' do
         zero_analyzer = NumberAnalyzer.new([0, 10, 0])
         result = zero_analyzer.growth_rates
-        
+
         expect(result.length).to eq(2)
         expect(result[0]).to eq(Float::INFINITY) # 10/0 = infinity
         expect(result[1]).to be_within(0.0001).of(-100.0) # (0-10)/10 * 100
@@ -866,7 +866,7 @@ RSpec.describe NumberAnalyzer do
       it 'handles negative values correctly' do
         negative_analyzer = NumberAnalyzer.new([100, 90, 110])
         result = negative_analyzer.growth_rates
-        
+
         expect(result.length).to eq(2)
         expect(result[0]).to be_within(0.0001).of(-10.0) # (90-100)/100 * 100
         expect(result[1]).to be_within(0.0001).of(22.2222222222) # (110-90)/90 * 100
@@ -875,7 +875,7 @@ RSpec.describe NumberAnalyzer do
       it 'handles zero to zero transition' do
         zero_to_zero_analyzer = NumberAnalyzer.new([0, 0, 5])
         result = zero_to_zero_analyzer.growth_rates
-        
+
         expect(result.length).to eq(2)
         expect(result[0]).to eq(0.0)              # (0-0)/0 = 0 (special case)
         expect(result[1]).to eq(Float::INFINITY)  # (5-0)/0 = infinity
@@ -908,7 +908,7 @@ RSpec.describe NumberAnalyzer do
       it 'returns nil for zero or negative initial value' do
         zero_analyzer = NumberAnalyzer.new([0, 100])
         negative_analyzer = NumberAnalyzer.new([-50, 100])
-        
+
         expect(zero_analyzer.compound_annual_growth_rate).to be_nil
         expect(negative_analyzer.compound_annual_growth_rate).to be_nil
       end
@@ -1086,7 +1086,7 @@ RSpec.describe NumberAnalyzer do
 
       it 'performs independent samples t-test correctly' do
         result = group1.t_test(group2, type: :independent)
-        
+
         expect(result).not_to be_nil
         expect(result[:test_type]).to eq('independent_samples')
         expect(result[:t_statistic]).to be_a(Float)
@@ -1102,9 +1102,9 @@ RSpec.describe NumberAnalyzer do
       it 'handles equal groups with known result' do
         equal_group1 = NumberAnalyzer.new([1, 2, 3, 4, 5])
         equal_group2 = [1, 2, 3, 4, 5]
-        
+
         result = equal_group1.t_test(equal_group2, type: :independent)
-        
+
         expect(result[:t_statistic]).to be_within(0.001).of(0.0)
         expect(result[:p_value]).to be > 0.05
         expect(result[:significant]).to be false
@@ -1127,7 +1127,7 @@ RSpec.describe NumberAnalyzer do
 
       it 'performs paired samples t-test correctly' do
         result = before.t_test(after, type: :paired)
-        
+
         expect(result).not_to be_nil
         expect(result[:test_type]).to eq('paired_samples')
         expect(result[:t_statistic]).to be_a(Float)
@@ -1140,9 +1140,9 @@ RSpec.describe NumberAnalyzer do
 
       it 'handles identical pairs with known result' do
         identical = NumberAnalyzer.new([1, 2, 3, 4, 5])
-        
+
         result = identical.t_test([1, 2, 3, 4, 5], type: :paired)
-        
+
         # When all differences are zero, standard error is zero, so result is nil
         expect(result).to be_nil
       end
@@ -1168,7 +1168,7 @@ RSpec.describe NumberAnalyzer do
 
       it 'performs one sample t-test correctly' do
         result = sample.t_test(nil, type: :one_sample, population_mean: 20)
-        
+
         expect(result).not_to be_nil
         expect(result[:test_type]).to eq('one_sample')
         expect(result[:t_statistic]).to be_a(Float)
@@ -1182,9 +1182,9 @@ RSpec.describe NumberAnalyzer do
 
       it 'handles sample mean equal to population mean' do
         equal_sample = NumberAnalyzer.new([20, 20, 20, 20, 20])
-        
+
         result = equal_sample.t_test(nil, type: :one_sample, population_mean: 20)
-        
+
         expect(result).to be_nil # Standard error is zero
       end
 
@@ -1195,7 +1195,7 @@ RSpec.describe NumberAnalyzer do
 
       it 'returns nil for insufficient sample size' do
         single_sample = NumberAnalyzer.new([20])
-        
+
         result = single_sample.t_test(nil, type: :one_sample, population_mean: 20)
         expect(result).to be_nil
       end
@@ -1223,9 +1223,9 @@ RSpec.describe NumberAnalyzer do
         # Known test case: group1 mean = 3, group2 mean = 2, with specific variances
         group1_data = NumberAnalyzer.new([1, 3, 5])
         group2_data = [0, 2, 4]
-        
+
         result = group1_data.t_test(group2_data, type: :independent)
-        
+
         # With these specific values, we expect a t-statistic around 0.612
         expect(result[:t_statistic]).to be_within(0.1).of(0.612)
         expect(result[:mean1]).to eq(3.0)
@@ -1235,9 +1235,9 @@ RSpec.describe NumberAnalyzer do
       it 'produces expected results for paired test with known differences' do
         before_data = NumberAnalyzer.new([10, 12, 14, 16, 18])
         after_data = [11, 14, 15, 18, 22]
-        
+
         result = before_data.t_test(after_data, type: :paired)
-        
+
         # Should have negative mean difference and t-statistic
         expect(result).not_to be_nil
         expect(result[:mean_difference]).to be < 0
@@ -1255,7 +1255,7 @@ RSpec.describe NumberAnalyzer do
 
       it 'calculates 95% confidence interval for mean' do
         result = basic_analyzer.confidence_interval(95)
-        
+
         expect(result).to be_a(Hash)
         expect(result[:confidence_level]).to eq(95)
         expect(result[:point_estimate]).to be_within(0.01).of(3.0)
@@ -1267,7 +1267,7 @@ RSpec.describe NumberAnalyzer do
 
       it 'calculates 90% confidence interval for mean' do
         result = basic_analyzer.confidence_interval(90)
-        
+
         expect(result[:confidence_level]).to eq(90)
         expect(result[:lower_bound]).to be_within(0.01).of(1.43) # 90% CI should be narrower
         expect(result[:upper_bound]).to be_within(0.01).of(4.57) # than 95% CI
@@ -1275,7 +1275,7 @@ RSpec.describe NumberAnalyzer do
 
       it 'calculates 99% confidence interval for mean' do
         result = basic_analyzer.confidence_interval(99)
-        
+
         expect(result[:confidence_level]).to eq(99)
         expect(result[:lower_bound]).to be_within(0.01).of(0.448) # 99% CI should be wider
         expect(result[:upper_bound]).to be_within(0.01).of(5.552) # than 95% CI
@@ -1286,21 +1286,21 @@ RSpec.describe NumberAnalyzer do
       it 'handles single value dataset' do
         single_analyzer = NumberAnalyzer.new([42])
         result = single_analyzer.confidence_interval(95)
-        
+
         expect(result).to be_nil # Cannot calculate CI with n=1
       end
 
       it 'handles empty dataset' do
         empty_analyzer = NumberAnalyzer.new([])
         result = empty_analyzer.confidence_interval(95)
-        
+
         expect(result).to be_nil
       end
 
       it 'handles two-value dataset' do
         two_analyzer = NumberAnalyzer.new([10, 20])
         result = two_analyzer.confidence_interval(95)
-        
+
         expect(result).not_to be_nil
         expect(result[:point_estimate]).to eq(15.0)
         expect(result[:sample_size]).to eq(2)
@@ -1314,7 +1314,7 @@ RSpec.describe NumberAnalyzer do
 
       it 'calculates confidence interval for large sample' do
         result = large_analyzer.confidence_interval(95)
-        
+
         expect(result[:point_estimate]).to eq(25.5)
         expect(result[:sample_size]).to eq(50)
         expect(result[:lower_bound]).to be < 25.5
@@ -1342,7 +1342,7 @@ RSpec.describe NumberAnalyzer do
 
       it 'handles floating point data correctly' do
         result = float_analyzer.confidence_interval(95)
-        
+
         expect(result[:point_estimate]).to be_within(0.01).of(3.3)
         expect(result[:lower_bound]).to be < result[:point_estimate]
         expect(result[:upper_bound]).to be > result[:point_estimate]
@@ -1361,7 +1361,7 @@ RSpec.describe NumberAnalyzer do
 
       it 'calculates independence test correctly for 2x2 table' do
         result = independence_analyzer.chi_square_test(contingency_data, type: :independence)
-        
+
         expect(result).to be_a(Hash)
         expect(result[:test_type]).to eq('independence')
         expect(result[:chi_square_statistic]).to be_within(0.01).of(9.091)
@@ -1374,7 +1374,7 @@ RSpec.describe NumberAnalyzer do
 
       it 'includes expected frequencies in result' do
         result = independence_analyzer.chi_square_test(contingency_data, type: :independence)
-        
+
         expect(result[:expected_frequencies]).to eq([[22.5, 27.5], [22.5, 27.5]])
         expect(result[:observed_frequencies]).to eq([[30, 20], [15, 35]])
       end
@@ -1387,7 +1387,7 @@ RSpec.describe NumberAnalyzer do
 
       it 'calculates independence test for larger tables' do
         result = larger_analyzer.chi_square_test(larger_table, type: :independence)
-        
+
         expect(result[:test_type]).to eq('independence')
         expect(result[:degrees_of_freedom]).to eq(4) # (3-1) × (3-1)
         expect(result[:chi_square_statistic]).to be > 0
@@ -1407,7 +1407,7 @@ RSpec.describe NumberAnalyzer do
 
       it 'calculates goodness-of-fit test correctly' do
         result = dice_analyzer.chi_square_test(dice_expected, type: :goodness_of_fit)
-        
+
         expect(result[:test_type]).to eq('goodness_of_fit')
         expect(result[:chi_square_statistic]).to be_within(0.01).of(5.0)
         expect(result[:degrees_of_freedom]).to eq(5) # categories - 1
@@ -1419,7 +1419,7 @@ RSpec.describe NumberAnalyzer do
 
       it 'handles uniform distribution assumption' do
         result = dice_analyzer.chi_square_test(nil, type: :goodness_of_fit)
-        
+
         expected_uniform = [10, 10, 10, 10, 10, 10] # 60/6 = 10 each
         expect(result[:expected_frequencies]).to eq(expected_uniform)
         expect(result[:test_type]).to eq('goodness_of_fit')
@@ -1445,7 +1445,7 @@ RSpec.describe NumberAnalyzer do
         # Low expected frequencies (< 5 in some cells)
         low_freq_data = [[2, 1], [1, 2]]
         low_freq_analyzer = NumberAnalyzer.new(low_freq_data.flatten)
-        
+
         result = low_freq_analyzer.chi_square_test(low_freq_data, type: :independence)
         expect(result[:expected_frequencies_valid]).to be false
         expect(result[:warning]).to include('期待度数')
@@ -1470,7 +1470,7 @@ RSpec.describe NumberAnalyzer do
 
       it 'correctly identifies non-significant results' do
         result = marginal_analyzer.chi_square_test(marginal_data, type: :independence)
-        
+
         expect(result[:significant]).to be false
         expect(result[:p_value]).to be > 0.05
         expect(result[:cramers_v]).to be < 0.3 # Weak effect size
@@ -1484,7 +1484,7 @@ RSpec.describe NumberAnalyzer do
 
       it 'identifies perfect independence' do
         result = perfect_analyzer.chi_square_test(perfect_data, type: :independence)
-        
+
         expect(result[:chi_square_statistic]).to be_within(0.001).of(0.0)
         expect(result[:p_value]).to be_within(0.001).of(1.0)
         expect(result[:significant]).to be false
