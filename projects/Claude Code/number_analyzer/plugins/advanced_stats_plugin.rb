@@ -31,7 +31,6 @@ module AdvancedStatsPlugin
     }
   end
 
-  # rubocop:disable Metrics/AbcSize
   def percentile(percentile_value)
     return nil if @numbers.empty?
     return @numbers.first if @numbers.length == 1
@@ -49,7 +48,6 @@ module AdvancedStatsPlugin
       (sorted[lower_index] * (1 - weight)) + (sorted[upper_index] * weight)
     end
   end
-  # rubocop:enable Metrics/AbcSize
 
   def quartiles
     {

@@ -36,7 +36,6 @@ module MathUtilsPlugin
 
   # Error function approximation using Abramowitz and Stegun formula
   # Abramowitz and Stegun公式を使用した誤差関数の近似
-  # rubocop:disable Metrics/AbcSize
   def self.erf(value)
     # Approximation of error function using Abramowitz and Stegun formula
     # Maximum error: 1.5 × 10^−7
@@ -55,7 +54,6 @@ module MathUtilsPlugin
 
     sign * y
   end
-  # rubocop:enable Metrics/AbcSize
 
   # Approximate t-distribution cumulative distribution function
   # t分布の累積分布関数の近似
