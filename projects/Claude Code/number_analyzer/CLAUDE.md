@@ -224,12 +224,40 @@ lib/
 - **Auto-correction First**: Always apply `bundle exec rubocop -a` before manual fixes
 - **Configuration Changes**: RuboCop config modifications require documentation update
 
+**Ruby Naming Conventions** (MANDATORY - Consistency Policy):
+- **Getter Methods**: Must match instance variable names exactly
+- **Collections**: Use plural names for arrays/hashes containing multiple items
+- **Consistency**: Maintain alignment between `@instance_variable` and `def method_name`
+- **attr_reader Pattern**: Follow standard Ruby accessor patterns
+
+```ruby
+# ✅ Correct - Consistent naming
+@namespace_mappings = {}
+def namespace_mappings
+  @namespace_mappings.dup
+end
+
+# ❌ Incorrect - Inconsistent naming  
+@namespace_mappings = {}
+def namespace_mapping  # Don't mix singular/plural
+  @namespace_mappings.dup
+end
+```
+
+**External References**:
+- [Ruby Style Guide (GitHub)](https://github.com/rubocop/ruby-style-guide)
+- [Ruby & Rails Naming Conventions](https://gist.github.com/alexpchin/f5d2be2ef3735889d315)
+- [Stack Overflow - Hash Naming](https://stackoverflow.com/questions/27667460/good-explicit-naming-style-for-hash-in-ruby-and-other-languages)
+- [RubyGuides - attr_accessor](https://www.rubyguides.com/2018/11/attr_accessor/)
+- [Shopify Ruby Style Guide](https://ruby-style-guide.shopify.dev/)
+
 **Quality Checklist** (MANDATORY - Zero Tolerance Policy):
 1. **RuboCop compliance** - REQUIRED: `bundle exec rubocop` must show zero violations
 2. **Auto-correction applied** - REQUIRED: `bundle exec rubocop -a` before manual review
-3. **Test coverage** - All new features require comprehensive tests
-4. **Documentation updates** - REQUIRED: Update ALL relevant docs (see Documentation Update Checklist below)
-5. **Mathematical accuracy** - Verify statistical correctness
+3. **Naming conventions** - REQUIRED: Follow Ruby naming conventions (getter methods match instance variables)
+4. **Test coverage** - All new features require comprehensive tests
+5. **Documentation updates** - REQUIRED: Update ALL relevant docs (see Documentation Update Checklist below)
+6. **Mathematical accuracy** - Verify statistical correctness
 
 ### Documentation Update Checklist (MANDATORY - 責務分離対応)
 **新機能実装時の必須ドキュメント更新**:
