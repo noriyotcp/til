@@ -47,9 +47,9 @@ RSpec.describe NumberAnalyzer::PluginConflictResolver do
   end
 
   before do
-    # Set up priority system
-    priority_system.set_priority('plugin_a', :core)
-    priority_system.set_priority('plugin_b', :local)
+    # Set up priority system using auto-detection
+    priority_system.set_priority_with_auto_detection('plugin_a', { core: true })
+    priority_system.set_priority_with_auto_detection('plugin_b', { development: false })
   end
 
   describe '#initialize' do

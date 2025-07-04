@@ -91,4 +91,83 @@ RSpec.describe NumberAnalyzer::PluginPriority do
       expect(all_priorities[:custom_type]).to eq(85)
     end
   end
+
+  describe 'instance methods' do
+    let(:instance) { described_class.new }
+
+    describe '#sort_by_priority' do
+      let(:plugins_list) do
+        %w[local_plugin core_plugin third_party_plugin development_plugin official_plugin]
+      end
+
+      before do
+        # Set up plugin priorities
+        instance.set_priority_with_auto_detection('local_plugin', { development: false })
+        instance.set_priority_with_auto_detection('core_plugin', { core: true })
+        instance.set_priority_with_auto_detection('third_party_plugin', { trusted: true })
+        instance.set_priority_with_auto_detection('development_plugin', { development: true })
+        instance.set_priority_with_auto_detection('official_plugin', { official: true })
+      end
+
+      it 'sorts plugins by priority in descending order' do
+        sorted = instance.sort_by_priority(plugins_list)
+
+        # Expected order: development (100) > core (90) > official (70) > third_party (50) > local (30)
+        expect(sorted).to eq(%w[
+                               development_plugin
+                               core_plugin
+                               official_plugin
+                               third_party_plugin
+                               local_plugin
+                             ])
+      end
+
+      it 'handles empty plugin list' do
+        sorted = instance.sort_by_priority([])
+        expect(sorted).to eq([])
+      end
+
+      it 'handles single plugin' do
+        sorted = instance.sort_by_priority(['single_plugin'])
+        expect(sorted).to eq(['single_plugin'])
+      end
+
+      it 'maintains relative order for plugins with same priority' do
+        # Two local plugins should maintain their relative order
+        local_plugins = %w[local_plugin_a local_plugin_b]
+        local_plugins.each do |plugin|
+          instance.set_priority_with_auto_detection(plugin, { development: false })
+        end
+
+        sorted = instance.sort_by_priority(local_plugins)
+        expect(sorted).to eq(local_plugins) # Original order maintained
+      end
+    end
+  end
+
+  describe 'class method integration' do
+    # Mock plugin objects for class method testing
+    let(:plugin_a) { double('PluginA', type: :development, name: 'plugin_a') }
+    let(:plugin_b) { double('PluginB', type: :core_plugins, name: 'plugin_b') }
+    let(:plugin_c) { double('PluginC', type: :local_plugins, name: 'plugin_c') }
+
+    describe '.sort_plugins_by_priority' do
+      it 'sorts plugin objects by their type priority' do
+        plugins = [plugin_c, plugin_a, plugin_b]
+        sorted = described_class.sort_plugins_by_priority(plugins)
+
+        expect(sorted).to eq([plugin_a, plugin_b, plugin_c])
+      end
+
+      it 'handles plugins with custom priorities' do
+        described_class.set(:custom_priority, 95)
+        plugin_custom = double('PluginCustom', type: :custom_priority, name: 'plugin_custom')
+
+        plugins = [plugin_c, plugin_custom, plugin_b]
+        sorted = described_class.sort_plugins_by_priority(plugins)
+
+        expect(sorted).to eq([plugin_custom, plugin_b, plugin_c])
+      end
+    end
+  end
 end

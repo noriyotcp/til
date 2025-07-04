@@ -54,6 +54,28 @@ class NumberAnalyzer
       @instance_priorities.fetch(plugin_name, :local_plugins)
     end
 
+    # Sort plugin names by their priority in descending order
+    #
+    # @param plugin_names [Array<String>] Array of plugin names
+    # @return [Array<String>] Sorted plugin names (highest priority first)
+    def sort_by_priority(plugin_names)
+      plugin_names.sort do |a, b|
+        priority_a = get_priority_value(get_priority(a))
+        priority_b = get_priority_value(get_priority(b))
+        priority_b <=> priority_a # Descending order (higher priority first)
+      end
+    end
+
+    private
+
+    # Get numeric priority value for a priority type
+    #
+    # @param priority_type [Symbol] Priority type
+    # @return [Integer] Numeric priority value
+    def get_priority_value(priority_type)
+      DEFAULT_PRIORITIES[priority_type] || 0
+    end
+
     # Class methods (new API)
     class << self
       def get(plugin_type)
@@ -76,6 +98,18 @@ class NumberAnalyzer
 
       def all_priorities
         DEFAULT_PRIORITIES.merge(@custom_priorities)
+      end
+
+      # Sort plugin objects by their type priority in descending order
+      #
+      # @param plugins [Array] Array of plugin objects with .type method
+      # @return [Array] Sorted plugin objects (highest priority first)
+      def sort_plugins_by_priority(plugins)
+        plugins.sort do |a, b|
+          priority_a = get(a.type)
+          priority_b = get(b.type)
+          priority_b <=> priority_a # Descending order (higher priority first)
+        end
       end
     end
   end
