@@ -18,22 +18,22 @@ class NumberAnalyzer
   #   resolution = namespace_system.resolve_naming_conflict(conflicting_plugins)
   #
   # @example Generated namespace patterns
-  #   # Development plugins: 'de_my_custom_plugin'
-  #   # Core plugins: 'co_advanced_statistics'
-  #   # Official gems: 'of_ml_extension'
-  #   # Third party: 'th_external_analyzer'
-  #   # Local plugins: 'lo_project_specific'
+  #   # Development plugins: 'dev_my_custom_plugin'
+  #   # Core plugins: 'core_advanced_statistics'
+  #   # Official gems: 'official_ml_extension'
+  #   # Third party: 'third_external_analyzer'
+  #   # Local plugins: 'local_project_specific'
   class PluginNamespace
     # Similarity threshold for detecting naming conflicts
     SIMILARITY_THRESHOLD = 0.7
 
     # Priority prefix mapping for namespace generation
     PRIORITY_PREFIXES = {
-      development: 'de',      # Development/test plugins
-      core_plugins: 'co',     # Core NumberAnalyzer plugins
-      official_gems: 'of',    # Official number_analyzer-* gems
-      third_party_gems: 'th', # Third-party gems
-      local_plugins: 'lo'     # Local project plugins
+      development: 'dev',         # Development/test plugins
+      core_plugins: 'core',       # Core NumberAnalyzer plugins
+      official_gems: 'official',  # Official number_analyzer-* gems
+      third_party_gems: 'third',  # Third-party gems
+      local_plugins: 'local'      # Local project plugins
     }.freeze
 
     def initialize(priority_system = nil)

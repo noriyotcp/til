@@ -468,8 +468,8 @@ RSpec.describe NumberAnalyzer::PluginConflictResolver do
         namespace_a = resolver.send(:generate_namespace, 'plugin_a')
         namespace_b = resolver.send(:generate_namespace, 'plugin_b')
 
-        expect(namespace_a).to start_with('co_') # core priority
-        expect(namespace_b).to start_with('lo_') # local priority
+        expect(namespace_a).to start_with('core_') # core priority
+        expect(namespace_b).to start_with('local_') # local priority
         expect(namespace_a).not_to eq(namespace_b)
       end
     end

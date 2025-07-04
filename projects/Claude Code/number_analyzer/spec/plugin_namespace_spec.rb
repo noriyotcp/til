@@ -60,8 +60,8 @@ RSpec.describe NumberAnalyzer::PluginNamespace do
       it 'includes priority prefix in namespace' do
         namespace = namespace_system.generate_namespace(plugin_metadata_a)
 
-        # Official gems should get 'of' prefix (official = 70)
-        expect(namespace).to start_with('of_')
+        # Official gems should get 'official' prefix (official = 70)
+        expect(namespace).to start_with('official_')
       end
 
       it 'sanitizes plugin name for namespace' do
@@ -78,26 +78,26 @@ RSpec.describe NumberAnalyzer::PluginNamespace do
         dev_metadata = plugin_metadata_a.merge(priority_type: :development)
         namespace = namespace_system.generate_namespace(dev_metadata)
 
-        expect(namespace).to start_with('de_') # development = 100
+        expect(namespace).to start_with('dev_') # development = 100
       end
 
       it 'generates correct prefix for core plugins' do
         namespace = namespace_system.generate_namespace(plugin_metadata_c)
 
-        expect(namespace).to start_with('co_') # core_plugins = 90
+        expect(namespace).to start_with('core_') # core_plugins = 90
       end
 
       it 'generates correct prefix for third party gems' do
         namespace = namespace_system.generate_namespace(plugin_metadata_b)
 
-        expect(namespace).to start_with('th_') # third_party_gems = 50
+        expect(namespace).to start_with('third_') # third_party_gems = 50
       end
 
       it 'generates correct prefix for local plugins' do
         local_metadata = plugin_metadata_a.merge(priority_type: :local_plugins)
         namespace = namespace_system.generate_namespace(local_metadata)
 
-        expect(namespace).to start_with('lo_') # local_plugins = 30
+        expect(namespace).to start_with('local_') # local_plugins = 30
       end
     end
 
@@ -191,8 +191,8 @@ RSpec.describe NumberAnalyzer::PluginNamespace do
       namespaced_a = resolution[:namespaced_plugins][plugin_metadata_a[:name]]
       namespaced_b = resolution[:namespaced_plugins][plugin_metadata_b[:name]]
 
-      # Official gems (70) should have shorter/simpler namespace than third party (50)
-      expect(namespaced_a[:namespace].length).to be <= namespaced_b[:namespace].length
+      # Official gems (70) should have higher priority rank than third party (50)
+      expect(namespaced_a[:priority_rank]).to be < namespaced_b[:priority_rank]
     end
   end
 
@@ -270,7 +270,7 @@ RSpec.describe NumberAnalyzer::PluginNamespace do
         .and_return(:official_gems)
 
       namespace = namespace_system.generate_namespace(plugin_metadata_a)
-      expect(namespace).to start_with('of_')
+      expect(namespace).to start_with('official_')
     end
 
     it 'handles custom priority types' do
@@ -278,7 +278,7 @@ RSpec.describe NumberAnalyzer::PluginNamespace do
 
       # Should fall back to local_plugins for unknown priority
       namespace = namespace_system.generate_namespace(custom_metadata)
-      expect(namespace).to start_with('lo_')
+      expect(namespace).to start_with('local_')
     end
   end
 end

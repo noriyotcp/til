@@ -2,6 +2,7 @@
 
 require 'set'
 require_relative 'plugin_priority'
+require_relative 'plugin_namespace'
 
 # Plugin Conflict Resolution System for NumberAnalyzer
 # Handles conflicts when multiple plugins provide the same functionality
@@ -44,6 +45,7 @@ class NumberAnalyzer
 
     def initialize(priority_system = nil)
       @priority_system = priority_system || PluginPriority.new
+      @namespace_system = PluginNamespace.new(@priority_system)
       @conflict_log = []
       @resolution_cache = {}
       @interactive_responses = {} # Cache for interactive responses
@@ -417,14 +419,13 @@ class NumberAnalyzer
     end
 
     def generate_namespace(plugin_name)
-      # Generate a unique namespace for the plugin
-      base_name = plugin_name.to_s.downcase.gsub(/[^a-z0-9_]/, '_')
-
-      # Add priority prefix for disambiguation
-      priority = @priority_system.get_priority(plugin_name)
-      priority_prefix = priority.to_s.chars.first(2).join
-
-      "#{priority_prefix}_#{base_name}"
+      # Delegate to PluginNamespace for consistent namespace generation
+      priority_type = @priority_system.get_priority(plugin_name)
+      plugin_metadata = {
+        name: plugin_name,
+        priority_type: priority_type
+      }
+      @namespace_system.generate_namespace(plugin_metadata)
     end
 
     def similar_plugin_names?(name_a, name_b)
