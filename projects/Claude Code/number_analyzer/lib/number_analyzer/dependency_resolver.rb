@@ -288,11 +288,11 @@ class NumberAnalyzer
 
     def match_version_pattern?(version, requirement)
       if pessimistic_constraint?(requirement)
-        handle_pessimistic_constraint(version, requirement)
+        handle_pessimistic_constraint?(version, requirement)
       elsif comparison_constraint?(requirement)
-        handle_comparison_constraint(version, requirement)
+        handle_comparison_constraint?(version, requirement)
       elsif exact_match_constraint?(requirement)
-        handle_exact_match(version, requirement)
+        handle_exact_match?(version, requirement)
       else
         version == requirement
       end
@@ -310,12 +310,12 @@ class NumberAnalyzer
       requirement.match?(/^(=|==)(.+)$/)
     end
 
-    def handle_pessimistic_constraint(version, requirement)
+    def handle_pessimistic_constraint?(version, requirement)
       required_version = requirement.match(/^~>(.+)$/)[1].strip
       pessimistic_version_satisfied?(required_version, version)
     end
 
-    def handle_comparison_constraint(version, requirement)
+    def handle_comparison_constraint?(version, requirement)
       operator, required_version = parse_comparison_constraint(requirement)
       case operator
       when '>='
@@ -329,7 +329,7 @@ class NumberAnalyzer
       end
     end
 
-    def handle_exact_match(version, requirement)
+    def handle_exact_match?(version, requirement)
       required_version = requirement.match(/^(=|==)(.+)$/)[2].strip
       version == required_version
     end

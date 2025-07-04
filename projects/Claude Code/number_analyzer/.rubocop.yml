@@ -53,6 +53,7 @@ Metrics/AbcSize:
     - 'spec/number_analyzer/statistics/**/*'  # Test helper methods for statistical calculations
 
 Layout/LineLength:
+  Max: 140
   Exclude:
     - 'number_analyzer.gemspec'  # Gemspec descriptions often exceed line length limits
     - 'spec/**/*'               # Test files often have long expectation strings
@@ -65,3 +66,4 @@ Naming/MethodParameterName:
     - 'lib/number_analyzer.rb'  # Mathematical variables (z, t, f) follow standard statistical notation
     - 'lib/number_analyzer/statistics/**/*'  # Statistical modules use standard mathematical parameter names (z, t, f, p)
     - 'spec/number_analyzer/statistics/**/*'  # Test helper methods use mathematical notation
+    - 'plugins/**/*'  # Plugin modules use standard mathematical parameter names (k, x, y, z, p, t)

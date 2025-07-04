@@ -815,9 +815,7 @@ module VisualizationPlugin
     recommendations << 'Data is highly skewed - consider transformation' if stats[:skewness].abs > 1
 
     # Outliers
-    if stats[:outliers].positive?
-      recommendations << "#{stats[:outliers]} outliers detected - investigate or use robust methods"
-    end
+    recommendations << "#{stats[:outliers]} outliers detected - investigate or use robust methods" if stats[:outliers].positive?
 
     # Variability
     recommendations << "High variability (CV=#{stats[:cv].round(1)}%) - consider stratification" if stats[:cv] > 50

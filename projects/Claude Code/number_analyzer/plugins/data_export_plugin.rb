@@ -729,9 +729,7 @@ module DataExportPlugin
     recommendations << 'Outliers detected - investigate and consider robust methods' if stats[:outliers].positive?
 
     # Variability recommendations
-    if stats[:coefficient_of_variation] > 50
-      recommendations << 'High variability detected - consider segmentation analysis'
-    end
+    recommendations << 'High variability detected - consider segmentation analysis' if stats[:coefficient_of_variation] > 50
 
     recommendations << 'Data appears suitable for standard statistical analysis' if recommendations.empty?
 
