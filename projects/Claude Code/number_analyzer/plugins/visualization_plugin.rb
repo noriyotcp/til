@@ -264,13 +264,20 @@ module VisualizationPlugin
 
     scatter_lines << generate_scatter_stats(x_data, y_data, correlation)
 
+    # Prepare interpretation components for better readability
+    strength = interpret_correlation_strength(correlation.abs)
+    direction = correlation >= 0 ? 'positive' : 'negative'
+    r_value = correlation.round(3)
+
     {
       chart: scatter_lines.join("\n"),
       correlation: correlation,
       data_points: x_data.length,
       x_range: [x_min, x_max],
       y_range: [y_min, y_max],
-      interpretation: "Scatter plot shows #{interpret_correlation_strength(correlation.abs)} #{correlation >= 0 ? 'positive' : 'negative'} correlation (r=#{correlation.round(3)})"
+      interpretation: <<~INTERPRETATION.strip
+        Scatter plot shows #{strength} #{direction} correlation (r=#{r_value})
+      INTERPRETATION
     }
   end
 

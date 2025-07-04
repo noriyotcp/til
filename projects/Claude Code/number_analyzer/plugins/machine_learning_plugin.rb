@@ -338,8 +338,11 @@ module MachineLearningPlugin
     sum_x2y = x_values.zip(y_values).map { |x, y| (x**2) * y }.sum
 
     # Solve normal equations for quadratic: y = ax² + bx + c
-    # Using simplified matrix operations
-    det = (n * ((sum_x2 * sum_x4) - (sum_x3**2))) - (sum_x * ((sum_x * sum_x4) - (sum_x2 * sum_x3))) + (sum_x2 * ((sum_x * sum_x3) - (sum_x2**2)))
+    # Using simplified matrix operations - split complex determinant calculation
+    term1 = n * ((sum_x2 * sum_x4) - (sum_x3**2))
+    term2 = sum_x * ((sum_x * sum_x4) - (sum_x2 * sum_x3))
+    term3 = sum_x2 * ((sum_x * sum_x3) - (sum_x2**2))
+    det = term1 - term2 + term3
 
     if det.abs < 1e-10
       # Fallback to linear regression if matrix is singular

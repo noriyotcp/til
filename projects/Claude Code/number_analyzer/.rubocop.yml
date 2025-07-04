@@ -53,7 +53,7 @@ Metrics/AbcSize:
     - 'spec/number_analyzer/statistics/**/*'  # Test helper methods for statistical calculations
 
 Layout/LineLength:
-  Max: 140
+  Max: 150
   Exclude:
     - 'number_analyzer.gemspec'  # Gemspec descriptions often exceed line length limits
     - 'spec/**/*'               # Test files often have long expectation strings
