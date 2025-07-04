@@ -196,9 +196,9 @@ RSpec.describe NumberAnalyzer::PluginNamespace do
     end
   end
 
-  describe '#namespace_mapping' do
+  describe '#namespace_mappings' do
     it 'returns empty hash initially' do
-      mappings = namespace_system.namespace_mapping
+      mappings = namespace_system.namespace_mappings
       expect(mappings).to be_a(Hash)
       expect(mappings).to be_empty
     end
@@ -207,7 +207,7 @@ RSpec.describe NumberAnalyzer::PluginNamespace do
       conflicting_plugins = [plugin_metadata_a, plugin_metadata_b]
       namespace_system.resolve_naming_conflict(conflicting_plugins)
 
-      mappings = namespace_system.namespace_mapping
+      mappings = namespace_system.namespace_mappings
       expect(mappings).to have_key(plugin_metadata_a[:name])
       expect(mappings).to have_key(plugin_metadata_b[:name])
     end
@@ -218,10 +218,10 @@ RSpec.describe NumberAnalyzer::PluginNamespace do
       conflicting_plugins = [plugin_metadata_a, plugin_metadata_b]
       namespace_system.resolve_naming_conflict(conflicting_plugins)
 
-      expect(namespace_system.namespace_mapping).not_to be_empty
+      expect(namespace_system.namespace_mappings).not_to be_empty
 
       namespace_system.clear_namespace_cache
-      expect(namespace_system.namespace_mapping).to be_empty
+      expect(namespace_system.namespace_mappings).to be_empty
     end
   end
 

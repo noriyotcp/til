@@ -137,7 +137,7 @@ class NumberAnalyzer
     # Current namespace mappings
     #
     # @return [Hash] Current namespace mappings
-    def namespace_mapping
+    def namespace_mappings
       @namespace_mappings.dup
     end
 
