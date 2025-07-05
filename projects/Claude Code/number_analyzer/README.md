@@ -142,7 +142,7 @@ number_analyzer 1 2 3 4 5
 
 #### Advanced Usage with Options (Phase 6.3)
 
-NumberAnalyzer supports advanced output formatting and control options for all 29 core subcommands (plus additional plugin commands):
+NumberAnalyzer supports advanced output formatting and control options for all 30 core subcommands (plus additional plugin commands):
 
 **JSON Output Format**
 ```bash
@@ -194,7 +194,7 @@ bundle exec number_analyzer histogram --help
 
 **Subcommands with Options**
 
-All 29 core subcommands (plus plugin commands) support the new options:
+All 30 core subcommands (plus plugin commands) support the new options:
 
 ```bash
 # Basic Statistics with Options
@@ -275,6 +275,60 @@ bundle exec number_analyzer histogram --quiet 1 2 2 3 3 3
 bundle exec number_analyzer mean --format=json --precision=2 --file data.csv
 bundle exec number_analyzer outliers --quiet --precision=1 1 2 3 4 5 100
 ```
+
+#### Plugin Management Commands (Phase 8.0 Step 5)
+
+NumberAnalyzer provides comprehensive plugin management commands for discovering, managing, and resolving conflicts between plugins:
+
+**List Plugins**
+```bash
+# List all loaded plugins
+bundle exec number_analyzer plugins list
+
+# List plugins with conflict detection
+bundle exec number_analyzer plugins list --show-conflicts
+```
+
+**Detect Conflicts**
+```bash
+# Show all plugin conflicts
+bundle exec number_analyzer plugins conflicts
+
+# Alternative syntax
+bundle exec number_analyzer plugins --conflicts
+```
+
+**Resolve Conflicts**
+```bash
+# Interactive conflict resolution (recommended)
+bundle exec number_analyzer plugins resolve my_plugin --strategy=interactive
+
+# Automatic namespace resolution
+bundle exec number_analyzer plugins resolve my_plugin --strategy=namespace
+
+# Priority-based resolution
+bundle exec number_analyzer plugins resolve my_plugin --strategy=priority
+
+# Disable conflicting plugin
+bundle exec number_analyzer plugins resolve my_plugin --strategy=disable
+
+# Force resolution without confirmation
+bundle exec number_analyzer plugins resolve my_plugin --strategy=interactive --force
+```
+
+**Plugin Help**
+```bash
+# Get help for plugin commands
+bundle exec number_analyzer plugins --help
+bundle exec number_analyzer plugins help
+```
+
+**Plugin System Features**:
+- **Automatic Conflict Detection**: Detects command and method overlaps between plugins
+- **5-Tier Priority System**: Development(100) > Core(90) > Official(70) > ThirdParty(50) > Local(30)
+- **Namespace Generation**: Automatic prefix generation (de_, co_, of_, th_, lo_) based on priority
+- **Interactive Resolution**: Step-by-step conflict resolution with user guidance
+- **Configuration Support**: Updates to plugins.yml for persistent resolution
 
 ### As a Ruby Library
 

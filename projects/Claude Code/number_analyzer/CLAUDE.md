@@ -105,7 +105,7 @@ NumberAnalyzer is a comprehensive statistical analysis tool built in Ruby. Origi
 
 **Development Tools**:
 - `bundle install` - Install dependencies
-- `rspec` - Run test suite (371+ examples: 326 existing + 73 plugin tests including dependency_resolver_spec.rb, plugin_error_handler_spec.rb, plugin_system_advanced_spec.rb)
+- `rspec` - Run test suite (comprehensive coverage including plugin system tests)
 - `bundle exec rubocop` - Code style checking (MANDATORY: zero violations)
 - `bundle exec rubocop -a` - Auto-fix style violations (run first)
 - `bundle exec rubocop [file]` - Check specific file
@@ -121,13 +121,16 @@ NumberAnalyzer is a comprehensive statistical analysis tool built in Ruby. Origi
 - `rspec spec/plugin_conflict_resolver_spec.rb` - Test conflict resolution (43 tests)
 - Plugin configuration: `plugins.yml` - YAML-based plugin management
 
-**Plugin Conflict Management (Phase 8.0 Step 5)**:
+**Plugin Conflict Management (Phase 8.0 Step 5)** ✅ 完了:
+- `bundle exec number_analyzer plugins list` - プラグイン一覧表示
 - `bundle exec number_analyzer plugins list --show-conflicts` - プラグイン一覧と重複表示
-- `bundle exec number_analyzer plugins --conflicts` - 重複検出と表示
+- `bundle exec number_analyzer plugins conflicts` または `bundle exec number_analyzer plugins --conflicts` - 重複検出と表示
 - `bundle exec number_analyzer plugins resolve <plugin> --strategy=interactive` - インタラクティブ重複解決
 - `bundle exec number_analyzer plugins resolve <plugin> --strategy=namespace` - 名前空間による解決
+- `bundle exec number_analyzer plugins resolve <plugin> --strategy=priority` - 優先度による解決
+- `bundle exec number_analyzer plugins resolve <plugin> --strategy=disable` - プラグイン無効化
 - `bundle exec number_analyzer --dev-mode <command>` - 開発モード（全上書き許可）
-- Plugin configuration: `config/number_analyzer.yml` - 重複管理設定
+- Plugin configuration: `plugins.yml` - プラグイン設定管理
 - Plugin priority system: Development(100) > Core(90) > Official(70) > ThirdParty(50) > Local(30)
 
 **Git Command Usage**:
@@ -467,11 +470,11 @@ git status                   # README.md, ROADMAP.md, CLAUDE.md が含まれて�
 
 ## Quick Reference
 
-**Current State**: ✅ Phase 8.0 Step 5 Week 2-3 基盤完了 - Conflict Resolution Infrastructure - 詳細は [ai-docs/ROADMAP.md](ai-docs/ROADMAP.md) を参照  
-**Architecture**: 8 modular components + comprehensive plugin infrastructure + conflict resolution system, 96.1% code reduction achieved  
-**Commands**: 29 core subcommands + 19 plugin commands + conflict resolution commands, 18 CLI options  
-**Quality**: Zero RuboCop violations, 979 tests (enterprise-level plugin system with automatic conflict resolution)  
-**Next Steps**: Phase 8.0 Step 5 Week 3 - CLI Integration (pluginsサブコマンド実装) - 重複管理CLI完成
+**Current State**: ✅ Phase 8.0 Step 5 完了 - Conflict Resolution System Complete - 詳細は [ai-docs/ROADMAP.md](ai-docs/ROADMAP.md) を参照  
+**Architecture**: 8 modular components + comprehensive plugin infrastructure + full conflict resolution system, 96.1% code reduction achieved  
+**Commands**: 30 core subcommands (including plugins) + 19 plugin commands, 18 CLI options  
+**Quality**: Zero RuboCop violations, comprehensive test suite (enterprise-level plugin system with complete conflict management)  
+**Next Steps**: Phase 8.0 完了 - Plugin System 全機能実装済み
 
 ## Documentation Structure
 
