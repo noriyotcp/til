@@ -2,7 +2,7 @@
 
 require 'json'
 
-# 統計結果の表示を担当するクラス
+# Main analyzer class
 class NumberAnalyzer
   # Handles the presentation and formatting of statistical results
   class StatisticsPresenter
