@@ -487,8 +487,6 @@ plugin_config:
   # Future plugin configurations
 ```
 
-**Note**: This is foundational infrastructure (Phase 8.0 Step 1). Full plugin system implementation including conflict resolution, advanced loading mechanisms, and third-party plugin support will be completed in subsequent steps. See [ai-docs/PHASE_8_PLUGIN_SYSTEM_PLAN.md](ai-docs/PHASE_8_PLUGIN_SYSTEM_PLAN.md) for the complete implementation roadmap.
-
 ## Example Output
 
 ```
@@ -671,18 +669,6 @@ security:
   trusted_authors:
     - "NumberAnalyzer Team"
 ```
-
-For detailed plugin development guides, see [FEATURES.md](ai-docs/FEATURES.md).
-
-## Documentation
-
-### Complete Documentation
-- **[FEATURES.md](ai-docs/FEATURES.md)** - Comprehensive feature documentation and technical specifications
-- **[ARCHITECTURE.md](ai-docs/ARCHITECTURE.md)** - Technical architecture, design patterns, and system structure  
-- **[ROADMAP.md](ai-docs/ROADMAP.md)** - Development phases, future plans, and completed Phase 7.2 time series analysis features
-
-### For Developers
-- **[CLAUDE.md](CLAUDE.md)** - Development guidance for Claude Code integration
 
 ## Project Structure
 
