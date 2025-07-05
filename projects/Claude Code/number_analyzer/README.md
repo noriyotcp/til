@@ -59,16 +59,47 @@ NumberAnalyzer provides the following statistical calculations:
 
 1. Clone the repository and navigate to the directory
 2. Install dependencies:
-   ```bash
-   bundle install
-   ```
+```bash
+bundle install
+```
 
 ### As a Local Gem
 
-Build and install the gem locally:
+**Modern approach (recommended for 2025):**
 ```bash
+# Build the gem using rake (creates gem in pkg/ directory)
+rake build
+gem install pkg/number_analyzer-*.gem
+
+# Verify installation location
+gem which number_analyzer
+```
+
+**Alternative build method:**
+```bash
+# Direct build (creates gem in current directory)
 gem build number_analyzer.gemspec
-gem install ./number_analyzer-1.0.0.gem
+gem install ./number_analyzer-*.gem
+```
+
+**For active development (most efficient):**
+```bash
+# Add to your project's Gemfile for immediate source changes reflection:
+# gem 'number_analyzer', path: '/path/to/number_analyzer'
+# Then run: bundle install
+
+# No rebuilding needed - changes are immediately reflected
+bundle exec number_analyzer
+```
+
+**Check installation:**
+```bash
+# Find where the gem is installed
+gem environment
+gem which number_analyzer
+
+# List installed versions
+gem list number_analyzer
 ```
 
 ## Usage
