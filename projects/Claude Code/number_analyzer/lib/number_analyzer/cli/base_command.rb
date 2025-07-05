@@ -65,16 +65,18 @@ class NumberAnalyzer
 
       # Show command-specific help
       def show_help
-        puts "#{@name} - #{@description}"
-        puts
-        puts "Usage: number_analyzer #{@name} [OPTIONS] [NUMBERS...]"
-        puts
-        puts 'Options:'
-        puts '  --help                Show this help message'
-        puts '  --file FILE           Read numbers from a file'
-        puts '  --format FORMAT       Output format (json)'
-        puts '  --precision N         Number of decimal places'
-        puts '  --quiet               Minimal output'
+        puts <<~HELP
+          #{@name} - #{@description}
+
+          Usage: number_analyzer #{@name} [OPTIONS] [NUMBERS...]
+
+          Options:
+            --help                Show this help message
+            --file FILE           Read numbers from a file
+            --format FORMAT       Output format (json)
+            --precision N         Number of decimal places
+            --quiet               Minimal output
+        HELP
       end
 
       def default_options
