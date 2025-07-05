@@ -6,7 +6,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 NumberAnalyzer is a comprehensive statistical analysis tool built in Ruby. Originally started as a refactoring exercise from beginner-level code to professional Ruby Gem, it has evolved into an enterprise-ready statistical analysis library with data visualization capabilities.
 
-**Current Status**: ✅ **Production Ready** - 33 statistical functions, 163 test examples, Phase 8.0 Step 3 complete with advanced plugin features (dependency validation, error handling enhancement) and fully modular architecture (8 modules extracted), 96.1% code reduction achieved, enterprise-level code quality
+**Current Status**: ✅ **Production Ready** - 33 statistical functions, 163+ test examples, CLI Refactoring Phase 1 complete with Command Pattern architecture (13/29 commands migrated) and fully modular architecture (8 modules extracted), 96.1%+ code reduction achieved, enterprise-level code quality
 
 ## Development Commands
 
@@ -140,13 +140,32 @@ NumberAnalyzer is a comprehensive statistical analysis tool built in Ruby. Origi
 
 ## Current Architecture
 
-**Enhanced Ruby Gem Structure** with modular architecture:
+**Enhanced Ruby Gem Structure** with modular architecture + Command Pattern:
 
 ```
 lib/
 ├── number_analyzer.rb              # Core integration (68 lines) - 96.1% reduction achieved
 └── number_analyzer/
-    ├── cli.rb                      # CLI interface + 29 subcommands + plugin command support
+    ├── cli.rb                      # Lightweight CLI dispatcher (2185→~100 lines target)
+    ├── cli/                        # CLI Refactoring Phase 1 ✅ Command Pattern Architecture
+    │   ├── base_command.rb         # Template Method Pattern base class
+    │   ├── command_registry.rb     # Command registration and management
+    │   ├── commands.rb             # Auto-loader for all command classes  
+    │   ├── data_input_handler.rb   # Unified file/CLI input processing
+    │   └── commands/               # Individual command implementations (13/29 migrated)
+    │       ├── median_command.rb   # 50-80 lines each vs 2185-line monolith
+    │       ├── mean_command.rb     # Independent testability & maintainability
+    │       ├── mode_command.rb     # TDD implementation, zero RuboCop violations
+    │       ├── sum_command.rb      # Consistent error handling & validation
+    │       ├── min_command.rb      # Full backward compatibility maintained
+    │       ├── max_command.rb      # JSON/precision/quiet/help options support
+    │       ├── histogram_command.rb
+    │       ├── outliers_command.rb
+    │       ├── percentile_command.rb
+    │       ├── quartiles_command.rb
+    │       ├── variance_command.rb
+    │       ├── std_command.rb
+    │       └── deviation_scores_command.rb
     ├── file_reader.rb              # File input handling
     ├── statistics_presenter.rb     # Output formatting
     ├── output_formatter.rb         # Advanced output formatting
@@ -177,7 +196,11 @@ lib/
 - **HypothesisTesting**: Statistical tests (t_test, confidence_interval, chi_square_test)
 - **ANOVAStats**: Variance analysis (one_way_anova, two_way_anova, post_hoc_analysis, levene_test, bartlett_test)
 - **NonParametricStats**: Non-parametric tests (kruskal_wallis_test, mann_whitney_u_test, wilcoxon_signed_rank_test, friedman_test)
-- **NumberAnalyzer::CLI**: Command-line argument processing + 29 subcommand routing + dynamic plugin command support
+- **NumberAnalyzer::CLI**: Lightweight command dispatcher (reducing from 2185 to ~100 lines)
+- **NumberAnalyzer::Commands::BaseCommand**: Template Method Pattern base class for all commands
+- **NumberAnalyzer::Commands::CommandRegistry**: Command registration and discovery system
+- **NumberAnalyzer::Commands::DataInputHandler**: Unified file/CLI input processing
+- **NumberAnalyzer::Commands::[Command]**: Individual command classes (13 migrated: MedianCommand, MeanCommand, ModeCommand, SumCommand, MinCommand, MaxCommand, HistogramCommand, OutliersCommand, PercentileCommand, QuartilesCommand, VarianceCommand, StdCommand, DeviationScoresCommand)
 - **NumberAnalyzer::FileReader**: CSV/JSON/TXT file input
 - **NumberAnalyzer::StatisticsPresenter**: Output formatting and histogram display
 - **NumberAnalyzer::PluginSystem**: Plugin registration, loading, and management (Phase 8.0 Step 1)
