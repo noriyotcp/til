@@ -297,22 +297,24 @@ class NumberAnalyzer
 
     # Show help information for a specific command
     private_class_method def self.show_help(command, description)
-      puts "Usage: bundle exec number_analyzer #{command} [options] numbers..."
-      puts ''
-      puts "Description: #{description}"
-      puts ''
-      puts 'Options:'
-      puts '  --format json     Output in JSON format'
-      puts '  --precision N     Round to N decimal places'
-      puts '  --quiet          Minimal output (no labels)'
-      puts '  --file FILE, -f  Read numbers from file'
-      puts '  --help           Show this help'
-      puts ''
-      puts 'Examples:'
-      puts "  bundle exec number_analyzer #{command} 1 2 3 4 5"
-      puts "  bundle exec number_analyzer #{command} --format=json 1 2 3"
-      puts "  bundle exec number_analyzer #{command} --precision=2 1.234 2.567"
-      puts "  bundle exec number_analyzer #{command} --file data.csv"
+      puts <<~HELP
+        Usage: bundle exec number_analyzer #{command} [options] numbers...
+
+        Description: #{description}
+
+        Options:
+          --format json     Output in JSON format
+          --precision N     Round to N decimal places
+          --quiet          Minimal output (no labels)
+          --file FILE, -f  Read numbers from file
+          --help           Show this help
+
+        Examples:
+          bundle exec number_analyzer #{command} 1 2 3 4 5
+          bundle exec number_analyzer #{command} --format=json 1 2 3
+          bundle exec number_analyzer #{command} --precision=2 1.234 2.567
+          bundle exec number_analyzer #{command} --file data.csv
+      HELP
     end
 
     # Show help information for chi-square command
@@ -1818,22 +1820,24 @@ class NumberAnalyzer
     end
 
     private_class_method def self.show_plugins_help
-      puts 'Usage: bundle exec number_analyzer plugins [subcommand] [options]'
-      puts ''
-      puts 'Subcommands:'
-      puts '  list [--show-conflicts]     プラグイン一覧と重複検出'
-      puts '  resolve <plugin> [options]  重複解決（対話形式または自動）'
-      puts '  conflicts, --conflicts      重複検出と表示'
-      puts ''
-      puts 'Options for resolve:'
-      puts '  --strategy=STRATEGY  解決戦略 (interactive, namespace, priority, disable)'
-      puts '  --force             確認なしで実行'
-      puts ''
-      puts 'Examples:'
-      puts '  bundle exec number_analyzer plugins list'
-      puts '  bundle exec number_analyzer plugins list --show-conflicts'
-      puts '  bundle exec number_analyzer plugins resolve my_plugin --strategy=namespace'
-      puts '  bundle exec number_analyzer plugins --conflicts'
+      puts <<~HELP
+        Usage: bundle exec number_analyzer plugins [subcommand] [options]
+
+        Subcommands:
+          list [--show-conflicts]     プラグイン一覧と重複検出
+          resolve <plugin> [options]  重複解決（対話形式または自動）
+          conflicts, --conflicts      重複検出と表示
+
+        Options for resolve:
+          --strategy=STRATEGY  解決戦略 (interactive, namespace, priority, disable)
+          --force             確認なしで実行
+
+        Examples:
+          bundle exec number_analyzer plugins list
+          bundle exec number_analyzer plugins list --show-conflicts
+          bundle exec number_analyzer plugins resolve my_plugin --strategy=namespace
+          bundle exec number_analyzer plugins --conflicts
+      HELP
     end
 
     private_class_method def self.run_plugins_list(args, _options = {})
@@ -2081,8 +2085,10 @@ class NumberAnalyzer
     end
 
     private_class_method def self.resolve_interactively(plugin_name, conflicts, plugins, force)
-      puts '対話的重複解決モード'
-      puts ''
+      puts <<~HEADER
+        対話的重複解決モード
+
+      HEADER
 
       unless force
         puts "プラグイン '#{plugin_name}' の重複を解決しますか? (y/n)"
@@ -2090,12 +2096,14 @@ class NumberAnalyzer
         return unless response == 'y'
       end
 
-      puts ''
-      puts '解決方法を選択してください:'
-      puts '  1. 名前空間を使用（推奨）'
-      puts '  2. 優先度に基づいて解決'
-      puts '  3. このプラグインを無効化'
-      puts '  4. キャンセル'
+      puts <<~MENU
+
+        解決方法を選択してください:
+          1. 名前空間を使用（推奨）
+          2. 優先度に基づいて解決
+          3. このプラグインを無効化
+          4. キャンセル
+      MENU
 
       choice = gets.chomp.to_i
 
