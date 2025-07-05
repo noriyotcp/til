@@ -2,21 +2,21 @@
 
 ## 概要
 
-`lib/number_analyzer/cli.rb` の2164行に及ぶ巨大なファイルを、保守性と拡張性の高い構造にリファクタリングする計画書。Command Patternを採用し、各コマンドを独立したクラスに分離することで、責任の明確化とテストの容易化を実現する。
+`lib/number_analyzer/cli.rb` の2185行に及ぶ巨大なファイルを、保守性と拡張性の高い構造にリファクタリングする計画書。Command Patternを採用し、各コマンドを独立したクラスに分離することで、責任の明確化とテストの容易化を実現する。
 
 ## 現状分析
 
 ### ファイル構造の問題点
 
 #### 1. **過大なファイルサイズ**
-- **2164行**という単一クラスファイル
-- 47個のコマンドハンドラーメソッドが1つのクラスに集中
+- **2185行**という単一クラスファイル（2024年7月現在）
+- 30個のコマンドハンドラーメソッドが1つのクラスに集中
 - 可読性の著しい低下により、新規開発者の学習コストが増大
 
 #### 2. **責務の混在**
 現在のCLIクラスが担っている責務：
 - コマンドライン引数の解析（OptionParser）
-- 各統計機能の実行ロジック（47個の run_* メソッド）
+- 各統計機能の実行ロジック（30個の run_* メソッド）
 - エラーハンドリングとメッセージ表示
 - ヘルプメッセージの生成と表示
 - プラグインシステムの管理
@@ -473,84 +473,116 @@ end
 
 ## 実装計画
 
-### Phase 1: 基盤構築（推定: 2-3日）
+### Phase 1: 基盤構築（完了済み）
 
-#### Step 1.1: ディレクトリ構造の作成
+#### Step 1.1: ディレクトリ構造の作成 ✅ 完了
 ```bash
 mkdir -p lib/number_analyzer/cli/commands/{basic,advanced,analysis,testing,plugin}
 ```
 
-#### Step 1.2: BaseCommand クラスの実装
+#### Step 1.2: BaseCommand クラスの実装 ✅ 完了
 - 共通インターフェースの定義
 - エラーハンドリングの標準化
 - ヘルプ表示の共通化
 
-#### Step 1.3: CommandRegistry の実装
+#### Step 1.3: CommandRegistry の実装 ✅ 完了
 - コマンドの登録機能
 - コマンドの検索と実行
 - プラグインシステムとの統合準備
 
-#### Step 1.4: 共通ユーティリティの実装
+#### Step 1.4: 共通ユーティリティの実装 ✅ 完了
 - ArgumentParser: 引数解析の共通処理
 - DataInputHandler: ファイル/CLI入力の統一処理
 - ErrorHandler: エラー処理の標準化
 
-### Phase 2: シンプルコマンドの移行（推定: 3-4日）
-
-#### Step 2.1: 基本統計コマンドの移行
-対象コマンド（6個）:
+#### Step 1.5: 基本統計コマンドの移行 ✅ 完了
+移行済みコマンド（13個）:
 - median, mean, mode, sum, min, max
+- histogram, outliers, percentile, quartiles
+- variance, std, deviation-scores
 
-各コマンドについて：
-1. 個別コマンドクラスの作成
-2. 既存ロジックの移植
-3. 単体テストの追加
-4. 統合テストでの動作確認
+**Phase 1 達成項目**:
+- ✅ **Command Pattern基盤構築**: BaseCommand, CommandRegistry, DataInputHandler実装
+- ✅ **13/29コマンド移行**: 基本統計コマンド全て移行完了
+- ✅ **TDD実装**: Red-Green-Refactor サイクル厳守
+- ✅ **テスト充実化**: 759行のテストコード追加（11新規ファイル）
+- ✅ **完全後方互換性**: 既存CLI インターフェース保持
 
-#### Step 2.2: ヒストグラムコマンドの移行
-- 特殊な出力形式への対応
-- JSON/quiet フォーマットのサポート
+### Phase 2: 複雑コマンドの移行（現在のフェーズ）
 
-### Phase 3: 複雑コマンドの移行（推定: 5-7日）
-
-#### Step 3.1: グループデータを扱うコマンド
-対象コマンド:
-- anova, chi-square, levene, bartlett, kruskal-wallis
-- mann-whitney, wilcoxon, friedman
+#### Phase 2.1: 相関・時系列分析コマンド移行（推定: 3-4日）
+対象コマンド（5個）:
+- `correlation` → `CorrelationCommand`
+- `trend` → `TrendCommand`
+- `moving-average` → `MovingAverageCommand`
+- `growth-rate` → `GrowthRateCommand`
+- `seasonal` → `SeasonalCommand`
 
 課題：
-- '--' 区切りによるグループデータの解析
-- 複数ファイル入力のサポート
-- 特殊なオプション処理
+- デュアルデータセット入力への対応（correlation）
+- カスタムパラメータ処理（window size, period指定）
+- 特殊な出力フォーマット対応
 
-#### Step 3.2: パラメータ付きコマンド
-対象コマンド:
-- percentile (パーセンタイル値の指定)
-- confidence-interval (信頼水準の指定)
-- moving-average (ウィンドウサイズの指定)
+#### Phase 2.2: 統計検定コマンド移行（推定: 4-5日）
+対象コマンド（3個）:
+- `t-test` → `TTestCommand`
+- `confidence-interval` → `ConfidenceIntervalCommand`
+- `chi-square` → `ChiSquareCommand`
 
-#### Step 3.3: 複雑なオプションを持つコマンド
-対象コマンド:
-- t-test (paired, one-sample, independent)
-- two-way-anova (factor-a, factor-b)
+課題：
+- 複雑なオプション処理（paired, one-sample, independent）
+- 信頼水準指定とパラメータ検証
+- '--' 区切りによる分割表データ解析
 
-### Phase 4: プラグイン管理コマンドの独立化（推定: 2日）
+#### Phase 2.3: 分散分析コマンド移行（推定: 4-5日）
+対象コマンド（4個）:
+- `anova` → `AnovaCommand`
+- `two-way-anova` → `TwoWayAnovaCommand`
+- `levene` → `LeveneCommand`
+- `bartlett` → `BartlettCommand`
 
-#### Step 4.1: PluginsCommand の実装
-- list, resolve, conflicts サブコマンドの実装
-- 対話的な処理のサポート
+課題：
+- '--' 区切りによるグループデータ解析
+- 複数因子指定（factor-a, factor-b）
+- 事後検定オプション処理（tukey, bonferroni）
 
-#### Step 4.2: プラグインシステムとの統合
-- 動的コマンド登録の改善
-- コマンド衝突の検出と解決
+#### Phase 2.4: ノンパラメトリック検定コマンド移行（推定: 3-4日）
+対象コマンド（4個）:
+- `kruskal-wallis` → `KruskalWallisCommand`
+- `mann-whitney` → `MannWhitneyCommand`
+- `wilcoxon` → `WilcoxonCommand`
+- `friedman` → `FriedmanCommand`
 
-### Phase 5: CLI.rb の軽量化（推定: 1-2日）
+課題：
+- ランク計算とタイ補正の実装
+- 対応データ・独立データの判別
+- 反復測定データ構造への対応
 
-#### Step 5.1: レガシーコードの削除
-- 移行済みコマンドの削除
-- 不要になった共通処理の削除
+#### Phase 2.5: プラグイン管理コマンド移行（推定: 2-3日）
+対象コマンド（1個）:
+- `plugins` → `PluginsCommand`
 
-#### Step 5.2: ディスパッチャーとしての最適化
+課題：
+- 対話的処理のサポート
+- サブコマンド構造（list, resolve, conflicts）
+- プラグインシステムとの緊密な統合
+
+#### Phase 2.6: CLI.rb軽量化（推定: 2-3日）
+- 移行済みコマンドのレガシーコード削除
+- ディスパッチャー機能への最適化
+- 2185行 → 100行目標達成
+
+### Phase 3: 最終最適化とクリーンアップ（将来計画）
+
+#### Step 3.1: パフォーマンス最適化
+- コマンド実行速度の測定と改善
+- メモリ使用量の最適化
+
+#### Step 3.2: ドキュメント整備
+- 各コマンドクラスのAPI ドキュメント
+- 新規コマンド追加ガイド
+
+**最終的なCLI.rb の姿（100行目標）**:
 ```ruby
 module NumberAnalyzer
   class CLI
@@ -661,13 +693,17 @@ end
 
 ## 成功指標
 
+### Phase 2 完了時の目標
+
 1. **コード品質**
-   - CLI.rb が100行以下に削減
+   - CLI.rb が2185行 → 100行（95%削減達成）
    - 各コマンドファイルが200行以下
-   - RuboCop違反ゼロ
+   - RuboCop違反ゼロ維持
+   - 29/29コマンド全てCommand Pattern移行完了
 
 2. **テスト品質**
    - 既存の統合テスト100%通過
+   - 17個の新規コマンドクラス全てに単体テスト実装
    - 各コマンドの単体テストカバレッジ90%以上
    - E2Eテストの追加
 
@@ -675,3 +711,11 @@ end
    - 新規コマンド追加時間の50%削減
    - コードレビュー時間の30%削減
    - バグ修正時間の40%削減
+   - Command Pattern により独立テスト可能性100%達成
+
+### 定量的メトリクス
+
+- **ファイルサイズ削減**: 2185行 → 100行（95%削減）
+- **コマンド移行率**: 29/29（100%完了）
+- **テストカバレッジ**: 既存テスト維持 + 17新規コマンドテスト追加
+- **アーキテクチャ改善**: 巨大monolithから50-80行の独立クラス群へ

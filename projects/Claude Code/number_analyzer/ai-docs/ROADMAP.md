@@ -560,23 +560,25 @@
 - ✅ **Production Ready**: エンタープライズレベルの安定性確保
 - ✅ **Plugin System Complete**: Phase 8.0 アーキテクチャ完全実装
 
-### CLI Refactoring Development Progress ✅ Phase 1 完了
+### CLI Refactoring Development Progress
 
-**Phase 1: CLI基盤構築 ✅ 完了**
+#### Phase 1: 基盤構築と基本コマンド移行 ✅ 完了
+
+**Phase 1.1: CLI基盤構築 ✅ 完了**
 - [x] Command Pattern 実装（BaseCommand, CommandRegistry, DataInputHandler）
 - [x] Template Method Pattern 導入（共通実行フロー）
 - [x] TDD アプローチによる6基本コマンド実装（median, mean, mode, sum, min, max）
 - [x] 統合テストスイート作成（commands_registration_spec.rb）
 - [x] RuboCop compliance 確保
 
-**Phase 2: コード品質改善 ✅ 完了**
+**Phase 1.2: コード品質改善 ✅ 完了**
 - [x] protected から private への変更（Matz ベストプラクティス適用）
 - [x] Here Document リファクタリング（10+箇所の文字列改善）
 - [x] RSpec TypeError 修正（NumberAnalyzer class/module 競合解決）
 - [x] StatisticsPresenter インライン定義への変更
 - [x] ファイル読み込み順序最適化
 
-**Phase 1: 基本コマンド移行完了 ✅ 完了**
+**Phase 1.3: 基本コマンド移行完了 ✅ 完了**
 - [x] 追加7コマンド実装（histogram, outliers, percentile, quartiles, variance, std, deviation-scores）
 - [x] 全13基本統計コマンドのCommand Pattern移行完了
 - [x] TDD実装（Red-Green-Refactor サイクル厳守）
@@ -587,7 +589,7 @@
 - [x] Template Method Pattern 最適化
 - [x] 統一エラーハンドリング・引数検証
 
-**達成メトリクス**:
+**Phase 1 達成メトリクス**:
 - ✅ **13/29 コマンド移行完了**: 基本統計コマンド全てをCommand Pattern適用
 - ✅ **Command Pattern実装**: BaseCommand継承による50-80行の独立クラス
 - ✅ **TDD品質保証**: Red-Green-Refactor サイクルによる実装
@@ -598,14 +600,65 @@
 - ✅ **RSpec エラー解決**: class/module 競合によるTypeError完全修正
 - ✅ **コード可読性改善**: protected→private変更、文字列整理
 
+#### Phase 2: 複雑コマンド移行 📋 準備完了
+
+**現状分析**:
+- ✅ **Phase 1完了**: 13個の基本統計コマンドが Command Pattern に移行済み
+- ❌ **CLI.rb サイズ**: 2185行のまま（未削減）
+- 📋 **Phase 2対象**: 残り17個の複雑コマンドの移行が必要
+
+**Phase 2.1: 相関・時系列分析コマンド移行 (5個)**
+- [ ] `correlation` → `CorrelationCommand`
+- [ ] `trend` → `TrendCommand`
+- [ ] `moving-average` → `MovingAverageCommand`
+- [ ] `growth-rate` → `GrowthRateCommand`
+- [ ] `seasonal` → `SeasonalCommand`
+
+**Phase 2.2: 統計検定コマンド移行 (3個)**
+- [ ] `t-test` → `TTestCommand`
+- [ ] `confidence-interval` → `ConfidenceIntervalCommand`
+- [ ] `chi-square` → `ChiSquareCommand`
+
+**Phase 2.3: 分散分析コマンド移行 (4個)**
+- [ ] `anova` → `AnovaCommand`
+- [ ] `two-way-anova` → `TwoWayAnovaCommand`
+- [ ] `levene` → `LeveneCommand`
+- [ ] `bartlett` → `BartlettCommand`
+
+**Phase 2.4: ノンパラメトリック検定コマンド移行 (4個)**
+- [ ] `kruskal-wallis` → `KruskalWallisCommand`
+- [ ] `mann-whitney` → `MannWhitneyCommand`
+- [ ] `wilcoxon` → `WilcoxonCommand`
+- [ ] `friedman` → `FriedmanCommand`
+
+**Phase 2.5: プラグイン管理コマンド移行 (1個)**
+- [ ] `plugins` → `PluginsCommand`
+
+**Phase 2.6: CLI.rb軽量化**
+- [ ] 移行済みコマンドのレガシーコード削除
+- [ ] ディスパッチャー機能への最適化
+- [ ] 2185行 → 100行目標達成
+
+**Phase 2 実装戦略**:
+- **TDD厳守**: Red-Green-Refactor サイクル
+- **段階的移行**: 5ステップに分けて実装
+- **完全後方互換性**: 既存CLI インターフェース保持
+- **RuboCop compliance**: ゼロ違反維持
+- **包括的テスト**: 各コマンドの独立テスト実装
+
+**Phase 2 期待効果**:
+- **CLI.rb軽量化**: 2185行 → 100行（95%削減）
+- **29/29コマンド移行完了**: 全コマンドのCommand Pattern適用
+- **保守性向上**: 複雑コマンドの独立テスト可能性
+- **拡張性向上**: 新規コマンド追加の簡易化
+
 ## Future Plans (今後の計画)
 
-### CLI Refactoring Project - Phase 2 Next Steps
-- **Phase 1 完了**: 13/29 基本コマンドのCommand Pattern移行完了 ✅
-- **Phase 2 計画**: 複雑コマンド移行（correlation, time-series, statistical tests, ANOVA）
-- **Phase 3 計画**: plugins コマンド移行 + CLI.rb軽量化（2185→100行目標）
-- **最終目標**: 全29コマンドの完全Command Pattern移行
-- **期待効果**: 保守性・テスト性・拡張性の大幅向上（Phase 1で実証済み）
+### CLI Refactoring Project - Phase 3 以降の計画
+- **Phase 2 実行中**: 17個の複雑コマンド移行（correlation, time-series, statistical tests, ANOVA, non-parametric, plugins）
+- **Phase 3 計画**: CLI.rb 最終軽量化とパフォーマンス最適化
+- **最終目標**: 全29コマンドの完全Command Pattern移行 + CLI.rb 100行達成
+- **期待効果**: 95%のコード削減、保守性・テスト性・拡張性の大幅向上
 - **詳細計画**: [CLI_REFACTORING_PLAN.md](CLI_REFACTORING_PLAN.md) 参照
 
 ### Potential Phase 9: Performance Optimization

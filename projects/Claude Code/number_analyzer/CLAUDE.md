@@ -428,7 +428,7 @@ git status                   # README.md, ROADMAP.md, CLAUDE.md が含まれて�
 
 ## Project Status
 
-**Current Development State**: Phase 8.0 Step 5 完了 + CLI Refactoring Phase 2 完了 - プラグインシステム + RSpec TypeError修正 - 詳細な開発履歴は [ai-docs/ROADMAP.md](ai-docs/ROADMAP.md) を参照
+**Current Development State**: Phase 8.0 Step 5 完了 + CLI Refactoring Phase 1 完了 - プラグインシステム + 基本コマンド13個移行 - 詳細な開発履歴は [ai-docs/ROADMAP.md](ai-docs/ROADMAP.md) を参照
 
 **Architecture Overview**: 完全モジュラー化達成（8モジュール構成、96.1%コード削減）+ 高度プラグインシステム（依存関係検証、エラーハンドリング強化、3プラグイン実装、自動CLI統合）
 
@@ -493,11 +493,11 @@ git status                   # README.md, ROADMAP.md, CLAUDE.md が含まれて�
 
 ## Quick Reference
 
-**Current State**: ✅ Phase 8.0 Step 5 完了 + CLI Refactoring Phase 2 完了 - RSpec TypeError修正完了 - 詳細は [ai-docs/ROADMAP.md](ai-docs/ROADMAP.md) を参照  
+**Current State**: ✅ Phase 8.0 Step 5 完了 + CLI Refactoring Phase 1 完了 - 基本コマンド13個移行済み - 詳細は [ai-docs/ROADMAP.md](ai-docs/ROADMAP.md) を参照  
 **Architecture**: 8 modular components + comprehensive plugin infrastructure + CLI Command Pattern architecture, 96.1% code reduction achieved  
 **Commands**: 30 core subcommands (including plugins) + 19 plugin commands, 18 CLI options  
 **Quality**: Zero RuboCop violations, comprehensive test suite (RSpec TypeError解決済み, Here Document改善10+箇所)  
-**Next Steps**: CLI Refactoring Phase 3 - 複雑コマンドの移行
+**Next Steps**: CLI Refactoring Phase 2 - 複雑コマンド17個の移行（correlation, time-series, statistical tests, ANOVA, non-parametric, plugins）
 
 ## Documentation Structure
 
