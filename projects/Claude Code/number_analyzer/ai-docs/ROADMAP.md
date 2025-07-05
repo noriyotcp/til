@@ -559,3 +559,21 @@
 - ✅ **開発者フレンドリー**: 直感的な重複解決とインタラクティブCLI
 - ✅ **Production Ready**: エンタープライズレベルの安定性確保
 - ✅ **Plugin System Complete**: Phase 8.0 アーキテクチャ完全実装
+
+## Future Plans (今後の計画)
+
+### CLI Refactoring Project
+- **目標**: 2164行の巨大な`cli.rb`を保守性の高い構造にリファクタリング
+- **アプローチ**: Command Patternによるコマンド分離
+- **期待効果**: 保守性・テスト性・拡張性の大幅向上
+- **詳細計画**: [CLI_REFACTORING_PLAN.md](CLI_REFACTORING_PLAN.md) 参照
+
+### Potential Phase 9: Performance Optimization
+- **Benchmarking Suite**: パフォーマンス測定基盤
+- **Algorithm Optimization**: 統計計算の最適化
+- **Memory Management**: 大規模データセット対応
+
+### Potential Phase 10: Visualization Enhancement
+- **Advanced Charts**: グラフ描画機能の拡張
+- **Export Formats**: PNG/SVG出力対応
+- **Interactive Mode**: 対話的データ探索
