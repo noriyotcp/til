@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-require_relative 'number_analyzer/statistics_presenter'
 require_relative 'number_analyzer/statistics/basic_stats'
 require_relative 'number_analyzer/statistics/math_utils'
 require_relative 'number_analyzer/statistics/advanced_stats'
@@ -63,3 +62,6 @@ class NumberAnalyzer
     end
   end
 end
+
+# Load StatisticsPresenter after NumberAnalyzer class is defined
+require_relative 'number_analyzer/statistics_presenter'

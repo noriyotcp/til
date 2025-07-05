@@ -319,24 +319,26 @@ class NumberAnalyzer
 
     # Show help information for chi-square command
     private_class_method def self.show_chi_square_help
-      puts 'Usage: bundle exec number_analyzer chi-square [options] numbers...'
-      puts ''
-      puts 'Description: Perform chi-square test for independence or goodness-of-fit'
-      puts ''
-      puts 'Options:'
-      puts '  --independence    Perform independence test'
-      puts '  --goodness-of-fit Perform goodness-of-fit test'
-      puts '  --uniform        Test against uniform distribution'
-      puts '  --format json     Output in JSON format'
-      puts '  --precision N     Round to N decimal places'
-      puts '  --quiet          Minimal output (no labels)'
-      puts '  --file FILE, -f  Read numbers from file'
-      puts '  --help           Show this help'
-      puts ''
-      puts 'Examples:'
-      puts '  bundle exec number_analyzer chi-square --independence 30 20 -- 15 35'
-      puts '  bundle exec number_analyzer chi-square --goodness-of-fit observed.csv expected.csv'
-      puts '  bundle exec number_analyzer chi-square --uniform 8 12 10 15 9 6'
+      puts <<~HELP
+        Usage: bundle exec number_analyzer chi-square [options] numbers...
+
+        Description: Perform chi-square test for independence or goodness-of-fit
+
+        Options:
+          --independence    Perform independence test
+          --goodness-of-fit Perform goodness-of-fit test
+          --uniform        Test against uniform distribution
+          --format json     Output in JSON format
+          --precision N     Round to N decimal places
+          --quiet          Minimal output (no labels)
+          --file FILE, -f  Read numbers from file
+          --help           Show this help
+
+        Examples:
+          bundle exec number_analyzer chi-square --independence 30 20 -- 15 35
+          bundle exec number_analyzer chi-square --goodness-of-fit observed.csv expected.csv
+          bundle exec number_analyzer chi-square --uniform 8 12 10 15 9 6
+      HELP
     end
 
     # Parse numbers from arguments and options, handling file input
@@ -830,9 +832,11 @@ class NumberAnalyzer
     private_class_method def self.validate_independent_t_test_args(args)
       return unless args.length < 2
 
-      puts 'エラー: 独立2標本t検定には2つのデータセットが必要です。'
-      puts '使用例: bundle exec number_analyzer t-test group1.csv group2.csv'
-      puts '       bundle exec number_analyzer t-test 1 2 3 -- 4 5 6'
+      puts <<~ERROR
+        エラー: 独立2標本t検定には2つのデータセットが必要です。
+        使用例: bundle exec number_analyzer t-test group1.csv group2.csv
+               bundle exec number_analyzer t-test 1 2 3 -- 4 5 6
+      ERROR
       exit 1
     end
 
@@ -858,8 +862,10 @@ class NumberAnalyzer
     private_class_method def self.parse_numeric_datasets(args)
       separator_index = args.index('--')
       if separator_index.nil?
-        puts 'エラー: 2つのデータセットを区切るために "--" を使用してください。'
-        puts '使用例: bundle exec number_analyzer t-test 1 2 3 -- 4 5 6'
+        puts <<~ERROR
+          エラー: 2つのデータセットを区切るために "--" を使用してください。
+          使用例: bundle exec number_analyzer t-test 1 2 3 -- 4 5 6
+        ERROR
         exit 1
       end
 
@@ -893,8 +899,10 @@ class NumberAnalyzer
     private_class_method def self.validate_paired_t_test_args(args)
       return unless args.length < 2
 
-      puts 'エラー: 対応ありt検定には2つのデータセットが必要です。'
-      puts '使用例: bundle exec number_analyzer t-test --paired before.csv after.csv'
+      puts <<~ERROR
+        エラー: 対応ありt検定には2つのデータセットが必要です。
+        使用例: bundle exec number_analyzer t-test --paired before.csv after.csv
+      ERROR
       exit 1
     end
 
@@ -909,8 +917,10 @@ class NumberAnalyzer
     private_class_method def self.parse_paired_numeric_datasets(args)
       separator_index = args.index('--')
       if separator_index.nil?
-        puts 'エラー: 2つのデータセットを区切るために "--" を使用してください。'
-        puts '使用例: bundle exec number_analyzer t-test --paired 1 2 3 -- 1.5 2.5 3.5'
+        puts <<~ERROR
+          エラー: 2つのデータセットを区切るために "--" を使用してください。
+          使用例: bundle exec number_analyzer t-test --paired 1 2 3 -- 1.5 2.5 3.5
+        ERROR
         exit 1
       end
 
@@ -1034,9 +1044,11 @@ class NumberAnalyzer
       when :goodness_of_fit
         run_chi_square_goodness_of_fit_test(args, options)
       else
-        puts 'エラー: カイ二乗検定のタイプを指定してください。'
-        puts '使用例: bundle exec number_analyzer chi-square --independence contingency.csv'
-        puts '       bundle exec number_analyzer chi-square --goodness-of-fit observed.csv expected.csv'
+        puts <<~ERROR
+          エラー: カイ二乗検定のタイプを指定してください。
+          使用例: bundle exec number_analyzer chi-square --independence contingency.csv
+                 bundle exec number_analyzer chi-square --goodness-of-fit observed.csv expected.csv
+        ERROR
         exit 1
       end
     end
@@ -1396,8 +1408,10 @@ class NumberAnalyzer
     def self.parse_two_way_anova_from_args(args, options)
       # Validate required factors
       unless options[:factor_a] && options[:factor_b]
-        puts 'エラー: --factor-a と --factor-b オプションが必要です。'
-        puts '使用例: bundle exec number_analyzer two-way-anova --factor-a A1,A1,A2,A2 --factor-b B1,B2,B1,B2 10,15,20,25'
+        puts <<~ERROR
+          エラー: --factor-a と --factor-b オプションが必要です。
+          使用例: bundle exec number_analyzer two-way-anova --factor-a A1,A1,A2,A2 --factor-b B1,B2,B1,B2 10,15,20,25
+        ERROR
         exit 1
       end
 
@@ -1535,9 +1549,11 @@ class NumberAnalyzer
                end
 
       if groups.nil? || groups.empty? || groups.length < 2
-        puts 'エラー: Levene検定には少なくとも2つのグループが必要です。'
-        puts '使用例: bundle exec number_analyzer levene 1 2 3 -- 4 5 6 -- 7 8 9'
-        puts '        bundle exec number_analyzer levene --file group1.csv group2.csv group3.csv'
+        puts <<~ERROR
+          エラー: Levene検定には少なくとも2つのグループが必要です。
+          使用例: bundle exec number_analyzer levene 1 2 3 -- 4 5 6 -- 7 8 9
+                  bundle exec number_analyzer levene --file group1.csv group2.csv group3.csv
+        ERROR
         exit 1
       end
 
@@ -1568,9 +1584,11 @@ class NumberAnalyzer
                end
 
       if groups.nil? || groups.empty? || groups.length < 2
-        puts 'エラー: Bartlett検定には少なくとも2つのグループが必要です。'
-        puts '使用例: bundle exec number_analyzer bartlett 1 2 3 -- 4 5 6 -- 7 8 9'
-        puts '        bundle exec number_analyzer bartlett --file group1.csv group2.csv group3.csv'
+        puts <<~ERROR
+          エラー: Bartlett検定には少なくとも2つのグループが必要です。
+          使用例: bundle exec number_analyzer bartlett 1 2 3 -- 4 5 6 -- 7 8 9
+                  bundle exec number_analyzer bartlett --file group1.csv group2.csv group3.csv
+        ERROR
         exit 1
       end
 
@@ -1601,9 +1619,11 @@ class NumberAnalyzer
                end
 
       if groups.nil? || groups.empty? || groups.length < 2
-        puts 'エラー: Kruskal-Wallis検定には少なくとも2つのグループが必要です。'
-        puts '使用例: bundle exec number_analyzer kruskal-wallis 1 2 3 -- 4 5 6 -- 7 8 9'
-        puts '        bundle exec number_analyzer kruskal-wallis --file group1.csv group2.csv group3.csv'
+        puts <<~ERROR
+          エラー: Kruskal-Wallis検定には少なくとも2つのグループが必要です。
+          使用例: bundle exec number_analyzer kruskal-wallis 1 2 3 -- 4 5 6 -- 7 8 9
+                  bundle exec number_analyzer kruskal-wallis --file group1.csv group2.csv group3.csv
+        ERROR
         exit 1
       end
 
@@ -1634,9 +1654,11 @@ class NumberAnalyzer
                end
 
       if groups.nil? || groups.empty? || groups.length != 2
-        puts 'エラー: Mann-Whitney検定には正確に2つのグループが必要です。'
-        puts '使用例: bundle exec number_analyzer mann-whitney 1 2 3 -- 4 5 6'
-        puts '        bundle exec number_analyzer mann-whitney group1.csv group2.csv'
+        puts <<~ERROR
+          エラー: Mann-Whitney検定には正確に2つのグループが必要です。
+          使用例: bundle exec number_analyzer mann-whitney 1 2 3 -- 4 5 6
+                  bundle exec number_analyzer mann-whitney group1.csv group2.csv
+        ERROR
         exit 1
       end
 

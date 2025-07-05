@@ -12,7 +12,8 @@ require_relative 'commands/min_command'
 require_relative 'commands/max_command'
 require_relative 'commands/mode_command'
 
-module NumberAnalyzer
+class NumberAnalyzer
+  # Command registration and management
   module Commands
     # Register all basic commands
     def self.register_all
