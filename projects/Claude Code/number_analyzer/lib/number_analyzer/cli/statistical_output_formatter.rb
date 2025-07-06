@@ -33,10 +33,10 @@ class NumberAnalyzer::CLI::StatisticalOutputFormatter
     end
 
     # Format basic test statistics (common pattern)
-    def format_basic_statistics(statistic_name, statistic_value, df, p_value, significant, precision = nil)
+    def format_basic_statistics(statistic_name, statistic_value, degrees_of_freedom, p_value, significant, precision = nil)
       result = []
       result << "#{statistic_name}: #{format_value(statistic_value, precision)}"
-      result << "自由度: #{df}" if df
+      result << "自由度: #{degrees_of_freedom}" if degrees_of_freedom
       result << "p値: #{format_value(p_value, precision || 6)}"
       result << "有意性 (α=0.05): #{format_significance(significant)}"
       result.join("\n")

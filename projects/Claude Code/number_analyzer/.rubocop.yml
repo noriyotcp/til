@@ -59,10 +59,12 @@ Metrics/ClassLength:
     - 'lib/number_analyzer/plugin_configuration/**/*'  # Plugin configuration modules
     - 'lib/number_analyzer/plugin_conflict_resolver.rb'  # Conflict resolution requires comprehensive strategy implementation
     - 'plugins/**/*'  # Plugin implementations with comprehensive visualization and analysis features
+    - 'spec/**/*'  # Test classes require comprehensive test coverage and naturally become longer
 
 Metrics/ModuleLength:
   Exclude:
     - 'lib/number_analyzer/statistics/**/*'  # Statistical modules contain comprehensive mathematical implementations
+    - 'spec/**/*'  # Test modules require comprehensive test coverage and naturally become longer
 
 Metrics/AbcSize:
   Max: 25  # Increased for plugin system complexity

@@ -2,6 +2,8 @@
 
 require_relative '../base_command'
 require_relative '../statistical_output_formatter'
+require_relative '../chi_square_input_handler'
+require_relative '../chi_square_validator'
 
 # Command for performing chi-square test for independence or goodness-of-fit
 class NumberAnalyzer::Commands::ChiSquareCommand < NumberAnalyzer::Commands::BaseCommand
@@ -10,190 +12,31 @@ class NumberAnalyzer::Commands::ChiSquareCommand < NumberAnalyzer::Commands::Bas
   private
 
   def validate_arguments(args)
-    return if @options[:help]
-
-    test_type = determine_test_type(args)
-
-    return unless test_type.nil?
-
-    raise ArgumentError, <<~ERROR
-      エラー: カイ二乗検定のタイプを指定してください。
-      使用例: number_analyzer chi-square --independence contingency.csv
-             number_analyzer chi-square --goodness-of-fit observed.csv expected.csv
-    ERROR
+    test_type = input_handler.determine_test_type(args)
+    validator.validate_arguments(args, test_type)
   end
 
   def parse_input(args)
-    test_type = determine_test_type(args)
+    data = input_handler.parse_input(args)
 
-    case test_type
-    when :independence
-      parse_independence_test_input(args)
-    when :goodness_of_fit
-      parse_goodness_of_fit_input(args)
-    end
-  end
-
-  def determine_test_type(_args)
-    return :independence if @options[:independence]
-    return :goodness_of_fit if @options[:goodness_of_fit] || @options[:uniform]
-
-    # Could auto-detect based on data structure, but for now require explicit flags
-    nil
-  end
-
-  def parse_independence_test_input(args)
-    # For independence test, we expect a 2D contingency table
-    if @options[:file]
-      parse_contingency_table_from_file(@options[:file])
-    else
-      # Parse contingency table from command line arguments with '--' separators
-      parse_contingency_table_from_args(args)
-    end
-  end
-
-  def parse_goodness_of_fit_input(args)
-    if @options[:uniform]
-      # Uniform distribution test with single dataset
-      require_relative '../data_input_handler'
-      observed = NumberAnalyzer::Commands::DataInputHandler.parse(args, @options)
-      [observed, nil] # nil means uniform distribution
-    else
-      # Two datasets: observed and expected
-      parse_observed_expected_datasets(args)
-    end
-  end
-
-  def parse_contingency_table_from_file(file_path)
-    raise ArgumentError, "エラー: ファイルが見つかりません: #{file_path}" unless File.exist?(file_path)
-
-    begin
-      lines = File.readlines(file_path)
-      contingency_table = lines.map do |line|
-        line.strip.split(',').map(&:to_f)
-      end
-
-      # Validate that all rows have same number of columns
-      col_count = contingency_table.first&.length
-      raise ArgumentError, 'エラー: 分割表の各行は同じ列数である必要があります。' if contingency_table.any? { |row| row.length != col_count }
-
-      contingency_table
-    rescue StandardError => e
-      raise ArgumentError, "エラー: ファイル読み込み中にエラーが発生しました: #{e.message}"
-    end
-  end
-
-  def parse_contingency_table_from_args(args)
-    rows = build_rows_from_args(args)
-    validate_contingency_table(rows)
-    rows
-  rescue ArgumentError => e
-    raise e
-  rescue StandardError
-    raise ArgumentError, <<~ERROR
-      エラー: 無効な数値が含まれています。
-      使用例: number_analyzer chi-square --independence 30 20 -- 15 35
-    ERROR
-  end
-
-  def build_rows_from_args(args)
-    rows = []
-    current_row = []
-
-    args.each do |arg|
-      if arg == '--'
-        rows << current_row.map(&:to_f) unless current_row.empty?
-        current_row = []
-      else
-        current_row << arg
-      end
+    # Apply validation for contingency tables
+    if input_handler.determine_test_type(args) == :independence && data.is_a?(Array) && data.first.is_a?(Array)
+      validator.validate_contingency_table(data)
     end
 
-    # Add the last row
-    rows << current_row.map(&:to_f) unless current_row.empty?
-    rows
+    data
   end
 
-  def validate_contingency_table(rows)
-    validate_non_empty_table(rows)
-    validate_minimum_table_size(rows)
-    validate_consistent_column_count(rows)
+  def input_handler
+    @input_handler ||= NumberAnalyzer::CLI::ChiSquareInputHandler.new(@options)
   end
 
-  def validate_non_empty_table(rows)
-    return unless rows.empty? || rows.any?(&:empty?)
-
-    raise ArgumentError, <<~ERROR
-      エラー: 有効な分割表を作成できませんでした。
-      使用例: number_analyzer chi-square --independence 30 20 -- 15 35
-    ERROR
-  end
-
-  def validate_minimum_table_size(rows)
-    return unless rows.length < 2
-
-    raise ArgumentError, <<~ERROR
-      エラー: 独立性検定には少なくとも2x2の分割表が必要です。
-      使用例: number_analyzer chi-square --independence 30 20 -- 15 35
-    ERROR
-  end
-
-  def validate_consistent_column_count(rows)
-    col_count = rows.first.length
-    return unless rows.any? { |row| row.length != col_count }
-
-    raise ArgumentError, 'エラー: 分割表の各行は同じ列数である必要があります。'
-  end
-
-  def parse_observed_expected_datasets(args)
-    observed, expected = if two_files_provided?(args)
-                           parse_from_two_files(args)
-                         elsif @options[:file]
-                           parse_from_single_file
-                         else
-                           parse_from_command_line(args)
-                         end
-    [observed, expected]
-  rescue StandardError => e
-    raise ArgumentError, "ファイル読み込みエラー: #{e.message}"
-  end
-
-  def two_files_provided?(args)
-    args.length == 2 && args.all? { |arg| arg.end_with?('.csv', '.json', '.txt') }
-  end
-
-  def parse_from_two_files(args)
-    observed = NumberAnalyzer::FileReader.read_from_file(args[0])
-    expected = NumberAnalyzer::FileReader.read_from_file(args[1])
-    [observed, expected]
-  end
-
-  def parse_from_single_file
-    require_relative '../data_input_handler'
-    combined_data = NumberAnalyzer::Commands::DataInputHandler.parse([], @options)
-    mid = combined_data.length / 2
-    observed = combined_data[0...mid]
-    expected = combined_data[mid..]
-    [observed, expected]
-  end
-
-  def parse_from_command_line(args)
-    mid = args.length / 2
-    observed = parse_numbers(args[0...mid])
-    expected = parse_numbers(args[mid..])
-    [observed, expected]
-  end
-
-  def parse_numbers(args)
-    args.map do |arg|
-      Float(arg)
-    rescue ArgumentError
-      raise ArgumentError, "無効な数値: #{arg}"
-    end
+  def validator
+    @validator ||= NumberAnalyzer::CLI::ChiSquareValidator.new(@options)
   end
 
   def perform_calculation(data)
-    test_type = determine_test_type([])
+    test_type = input_handler.determine_test_type([])
 
     case test_type
     when :independence

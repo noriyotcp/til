@@ -56,43 +56,41 @@ class NumberAnalyzer::Commands::GrowthRateCommand < NumberAnalyzer::Commands::Ba
   end
 
   def output_standard(result)
-    growth_rates = result[:growth_rates]
-    cagr = result[:compound_annual_growth_rate]
-    avg_growth = result[:average_growth_rate]
-
     puts '成長率分析:'
     puts ''
 
-    # Period-over-period growth rates
-    puts '期間別成長率:'
-    growth_rates.each_with_index do |rate, index|
-      formatted_rate = if @options[:precision]
-                         format("%.#{@options[:precision]}f", rate * 100)
-                       else
-                         format('%.2f', rate * 100)
-                       end
-      puts "  期間 #{index + 1}: #{formatted_rate}%"
-    end
-
-    puts ''
-
-    # CAGR
-    formatted_cagr = if @options[:precision]
-                       format("%.#{@options[:precision]}f", cagr * 100)
-                     else
-                       format('%.2f', cagr * 100)
-                     end
-    puts "年平均成長率 (CAGR): #{formatted_cagr}%"
-
-    # Average growth rate
-    formatted_avg = if @options[:precision]
-                      format("%.#{@options[:precision]}f", avg_growth * 100)
-                    else
-                      format('%.2f', avg_growth * 100)
-                    end
-    puts "平均成長率: #{formatted_avg}%"
+    format_period_growth_rates(result[:growth_rates])
+    format_aggregate_growth_rates(result)
 
     puts "データポイント数: #{result[:dataset_size]}"
+  end
+
+  def format_period_growth_rates(growth_rates)
+    puts '期間別成長率:'
+    growth_rates.each_with_index do |rate, index|
+      formatted_rate = format_percentage(rate)
+      puts "  期間 #{index + 1}: #{formatted_rate}%"
+    end
+    puts ''
+  end
+
+  def format_aggregate_growth_rates(result)
+    cagr = result[:compound_annual_growth_rate]
+    avg_growth = result[:average_growth_rate]
+
+    formatted_cagr = format_percentage(cagr)
+    puts "年平均成長率 (CAGR): #{formatted_cagr}%"
+
+    formatted_avg = format_percentage(avg_growth)
+    puts "平均成長率: #{formatted_avg}%"
+  end
+
+  def format_percentage(rate)
+    if @options[:precision]
+      format("%.#{@options[:precision]}f", rate * 100)
+    else
+      format('%.2f', rate * 100)
+    end
   end
 
   def show_help
