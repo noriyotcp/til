@@ -6,7 +6,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 NumberAnalyzer is a comprehensive statistical analysis tool built in Ruby. Originally started as a refactoring exercise from beginner-level code to professional Ruby Gem, it has evolved into an enterprise-ready statistical analysis library with data visualization capabilities.
 
-**Current Status**: ✅ **Production Ready** - 33 statistical functions, 163+ test examples, CLI Refactoring Phase 1 complete with Command Pattern architecture (15/29 commands migrated) and fully modular architecture (8 modules extracted), 96.1%+ code reduction achieved, enterprise-level code quality
+**Current Status**: ✅ **Production Ready** - 33 statistical functions, 140+ test examples, CLI Refactoring Phase 1-2 complete with Command Pattern architecture (15/29 commands migrated) and fully modular architecture (8 modules extracted), 96.1%+ code reduction achieved, **100% RuboCop compliance**, enterprise-level code quality with TDD methodology
 
 ## Development Commands
 
@@ -105,8 +105,8 @@ NumberAnalyzer is a comprehensive statistical analysis tool built in Ruby. Origi
 
 **Development Tools**:
 - `bundle install` - Install dependencies
-- `rspec` - Run test suite (comprehensive coverage including plugin system tests)
-- `bundle exec rubocop` - Code style checking (MANDATORY: zero violations)
+- `rspec` - Run test suite (140+ comprehensive tests including TDD-based command tests)
+- `bundle exec rubocop` - Code style checking (**✅ ZERO VIOLATIONS ACHIEVED**)
 - `bundle exec rubocop -a` - Auto-fix style violations (run first)
 - `bundle exec rubocop [file]` - Check specific file
 - `/project:commit-message` - Generate commit messages **ONLY** (no auto-commit)
@@ -140,19 +140,25 @@ NumberAnalyzer is a comprehensive statistical analysis tool built in Ruby. Origi
 
 ## Current Architecture
 
-**Enhanced Ruby Gem Structure** with modular architecture + Command Pattern:
+**Enhanced Ruby Gem Structure** with modular architecture + Command Pattern + TDD Refactoring:
 
 ```
 lib/
 ├── number_analyzer.rb              # Core integration (68 lines) - 96.1% reduction achieved
 └── number_analyzer/
     ├── cli.rb                      # Lightweight CLI dispatcher (2185→~100 lines target)
-    ├── cli/                        # CLI Refactoring Phase 1 ✅ Command Pattern Architecture
+    ├── cli/                        # CLI Refactoring Phase 1-2 ✅ Command Pattern + TDD Architecture
     │   ├── base_command.rb         # Template Method Pattern base class
     │   ├── command_registry.rb     # Command registration and management
     │   ├── commands.rb             # Auto-loader for all command classes  
     │   ├── data_input_handler.rb   # Unified file/CLI input processing
-    │   └── commands/               # Individual command implementations (13/29 migrated)
+    │   ├── t_test_input_handler.rb   # TDD-refactored t-test input processing
+    │   ├── t_test_output_formatter.rb # TDD-refactored output formatting
+    │   ├── t_test_help_constants.rb   # Externalized help text
+    │   ├── chi_square_input_handler.rb # Strategy Pattern input processing
+    │   ├── chi_square_validator.rb     # Extracted validation logic
+    │   ├── statistical_output_formatter.rb # Enhanced statistical formatting
+    │   └── commands/               # Individual command implementations (15/29 migrated)
     │       ├── median_command.rb   # 50-80 lines each vs 2185-line monolith
     │       ├── mean_command.rb     # Independent testability & maintainability
     │       ├── mode_command.rb     # TDD implementation, zero RuboCop violations
@@ -165,7 +171,9 @@ lib/
     │       ├── quartiles_command.rb
     │       ├── variance_command.rb
     │       ├── std_command.rb
-    │       └── deviation_scores_command.rb
+    │       ├── deviation_scores_command.rb
+    │       ├── t_test_command.rb   # 222→138 lines (38% reduction via TDD refactoring)
+    │       └── chi_square_command.rb # 275→204 lines (26% reduction via Strategy Pattern)
     ├── file_reader.rb              # File input handling
     ├── statistics_presenter.rb     # Output formatting
     ├── output_formatter.rb         # Advanced output formatting
@@ -245,7 +253,8 @@ lib/
 - **TDD Practice**: Red-Green-Refactor cycle for all new features
 
 **Code Quality Enforcement (ZERO TOLERANCE)**:
-- **RuboCop Gate**: No code changes allowed without zero RuboCop violations
+- **✅ RuboCop Compliance Achieved**: 100% zero violations across entire codebase (116 files)
+- **TDD Methodology**: Test-Driven Development with Red-Green-Refactor cycle mandatory
 - **Style Consistency**: All code must conform to project's .rubocop.yml configuration
 - **Auto-correction First**: Always apply `bundle exec rubocop -a` before manual fixes
 - **Configuration Changes**: RuboCop config modifications require documentation update
