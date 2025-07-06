@@ -25,16 +25,16 @@ RSpec.describe 'Chi-square CLI' do
         output = run_chi_square_command(['--independence', '30', '20', '--', '15', '35'])
 
         expect(output).to include('独立性検定')
-        expect(output).to include('χ² = 9.0909090909')
-        expect(output).to include('df = 1')
-        expect(output).to include('有意差あり')
+        expect(output).to include('カイ二乗統計量: 9.0909')
+        expect(output).to include('自由度: 1')
+        expect(output).to include('有意')
       end
 
       it 'handles equal distributions (no association)' do
         output = run_chi_square_command(['--independence', '25', '25', '--', '25', '25'])
 
-        expect(output).to include('χ² = 0.0')
-        expect(output).to include('有意差なし')
+        expect(output).to include('カイ二乗統計量: 0.0000')
+        expect(output).to include('有意でない')
       end
     end
 
@@ -43,8 +43,8 @@ RSpec.describe 'Chi-square CLI' do
         output = run_chi_square_command(['--independence', '10', '20', '30', '--', '15', '25', '35', '--', '20', '30', '40'])
 
         expect(output).to include('独立性検定')
-        expect(output).to include('df = 4')
-        expect(output).to match(/χ² = \d+\.\d+/)
+        expect(output).to include('自由度: 4')
+        expect(output).to match(/カイ二乗統計量: \d+\.\d+/)
       end
     end
 
@@ -53,7 +53,7 @@ RSpec.describe 'Chi-square CLI' do
         output = run_chi_square_command(['--independence', '10', '20', '30', '--', '15', '25', '35'])
 
         expect(output).to include('独立性検定')
-        expect(output).to include('df = 2')
+        expect(output).to include('自由度: 2')
       end
     end
 
@@ -74,7 +74,7 @@ RSpec.describe 'Chi-square CLI' do
 
         expect(output).to include('独立性検定')
         # NOTE: Current implementation assumes square tables from files
-        expect(output).to match(/χ² = \d+\.\d+/)
+        expect(output).to match(/カイ二乗統計量: \d+\.\d+/)
       end
     end
 
@@ -93,19 +93,18 @@ RSpec.describe 'Chi-square CLI' do
       it 'rounds output to specified precision' do
         output = run_chi_square_command(['--independence', '--precision', '2', '30', '20', '--', '15', '35'])
 
-        expect(output).to include('χ² = 9.09')
-        expect(output).to include('0.3') # Cramér's V with precision 2
+        expect(output).to include('カイ二乗統計量: 9.09')
+        expect(output).to include('0.30') # Cramér's V with precision 2
       end
     end
 
     context 'with quiet mode' do
-      it 'outputs only the chi-square value' do
+      it 'outputs only the p-value' do
         output = run_chi_square_command(['--independence', '--quiet', '30', '20', '--', '15', '35'])
 
-        # Quiet mode outputs: chi_square df p_value significant
-        values = output.strip.split
-        expect(values[0]).to match(/^\d+\.\d+$/) # chi-square value
-        expect(values.length).to eq(4) # chi_square, df, p_value, significant
+        # Quiet mode outputs only the p-value
+        expect(output.strip).to match(/^\d+\.\d+$/) # p-value
+        expect(output.strip).to eq('0.001000')
       end
     end
   end
@@ -116,7 +115,7 @@ RSpec.describe 'Chi-square CLI' do
         output = run_chi_square_command(['--goodness-of-fit', '8', '12', '10', '15', '10', '10', '10', '10'])
 
         expect(output).to include('適合度検定')
-        expect(output).to include('df = 3')
+        expect(output).to include('自由度: 3')
       end
     end
 
@@ -125,7 +124,7 @@ RSpec.describe 'Chi-square CLI' do
         output = run_chi_square_command(['--uniform', '8', '12', '10', '15', '9', '6'])
 
         expect(output).to include('適合度検定')
-        expect(output).to include('χ² = 5.0') # Expected chi-square for this data
+        expect(output).to include('カイ二乗統計量: 5.0000') # Expected chi-square for this data
       end
     end
   end

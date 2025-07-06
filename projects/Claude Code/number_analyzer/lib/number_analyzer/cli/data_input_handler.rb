@@ -30,7 +30,7 @@ class NumberAnalyzer::Commands::DataInputHandler
 
       begin
         # Use existing FileReader for consistency
-        FileReader.read_from_file(file_path)
+        NumberAnalyzer::FileReader.read_from_file(file_path)
       rescue StandardError => e
         raise ArgumentError, "無効なデータ: #{e.message}"
       end

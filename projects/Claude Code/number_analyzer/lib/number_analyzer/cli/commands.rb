@@ -26,6 +26,12 @@ require_relative 'commands/std_command'
 require_relative 'commands/deviation_scores_command'
 require_relative 'commands/correlation_command'
 require_relative 'commands/trend_command'
+require_relative 'commands/moving_average_command'
+require_relative 'commands/growth_rate_command'
+require_relative 'commands/seasonal_command'
+require_relative 'commands/t_test_command'
+require_relative 'commands/confidence_interval_command'
+require_relative 'commands/chi_square_command'
 
 # Extend the Commands module with registration functionality
 module NumberAnalyzer::Commands
@@ -46,6 +52,12 @@ module NumberAnalyzer::Commands
     CommandRegistry.register(DeviationScoresCommand)
     CommandRegistry.register(CorrelationCommand)
     CommandRegistry.register(TrendCommand)
+    CommandRegistry.register(MovingAverageCommand)
+    CommandRegistry.register(GrowthRateCommand)
+    CommandRegistry.register(SeasonalCommand)
+    CommandRegistry.register(TTestCommand)
+    CommandRegistry.register(ConfidenceIntervalCommand)
+    CommandRegistry.register(ChiSquareCommand)
   end
 end
 
