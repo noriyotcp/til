@@ -37,7 +37,7 @@ class NumberAnalyzer::Commands::BaseCommand
   # Parse input data from arguments or file
   def parse_input(args)
     require_relative 'data_input_handler'
-    DataInputHandler.parse(args, @options)
+    NumberAnalyzer::Commands::DataInputHandler.parse(args, @options)
   end
 
   # Must be implemented by subclasses

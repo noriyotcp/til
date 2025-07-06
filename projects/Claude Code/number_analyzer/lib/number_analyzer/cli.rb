@@ -15,7 +15,6 @@ require_relative 'cli/commands'
 class NumberAnalyzer::CLI
   # Core built-in commands
   CORE_COMMANDS = {
-    'trend' => :run_trend,
     'moving-average' => :run_moving_average,
     'growth-rate' => :run_growth_rate,
     'seasonal' => :run_seasonal,
@@ -591,20 +590,6 @@ class NumberAnalyzer::CLI
 
     options[:dataset_size] = numbers.size
     puts NumberAnalyzer::OutputFormatter.format_array(deviation_scores, options)
-  end
-
-  private_class_method def self.run_trend(args, options = {})
-    if options[:help]
-      show_help('trend', 'Calculate linear trend analysis (slope, intercept, R²)')
-      return
-    end
-
-    numbers = parse_numbers_with_options(args, options)
-    analyzer = NumberAnalyzer.new(numbers)
-    result = analyzer.linear_trend
-
-    options[:dataset_size] = numbers.size
-    puts NumberAnalyzer::OutputFormatter.format_trend(result, options)
   end
 
   private_class_method def self.run_moving_average(args, options = {})

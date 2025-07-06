@@ -6,7 +6,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 NumberAnalyzer is a comprehensive statistical analysis tool built in Ruby. Originally started as a refactoring exercise from beginner-level code to professional Ruby Gem, it has evolved into an enterprise-ready statistical analysis library with data visualization capabilities.
 
-**Current Status**: ✅ **Production Ready** - 33 statistical functions, 163+ test examples, CLI Refactoring Phase 1 complete with Command Pattern architecture (14/29 commands migrated) and fully modular architecture (8 modules extracted), 96.1%+ code reduction achieved, enterprise-level code quality
+**Current Status**: ✅ **Production Ready** - 33 statistical functions, 163+ test examples, CLI Refactoring Phase 1 complete with Command Pattern architecture (15/29 commands migrated) and fully modular architecture (8 modules extracted), 96.1%+ code reduction achieved, enterprise-level code quality
 
 ## Development Commands
 
@@ -529,11 +529,11 @@ git status                   # README.md, ROADMAP.md, CLAUDE.md が含まれて�
 
 ## Quick Reference
 
-**Current State**: ✅ Phase 8.0 Step 5 完了 + CLI Refactoring Phase 1 完了 - 基本コマンド14個移行済み - 詳細は [ai-docs/ROADMAP.md](ai-docs/ROADMAP.md) を参照  
+**Current State**: ✅ Phase 8.0 Step 5 完了 + CLI Refactoring Phase 1 完了 - 基本コマンド15個移行済み - 詳細は [ai-docs/ROADMAP.md](ai-docs/ROADMAP.md) を参照  
 **Architecture**: 8 modular components + comprehensive plugin infrastructure + CLI Command Pattern architecture, 96.1% code reduction achieved  
 **Commands**: 30 core subcommands (including plugins) + 19 plugin commands, 18 CLI options  
 **Quality**: Zero RuboCop violations, comprehensive test suite (RSpec TypeError解決済み, Here Document改善10+箇所)  
-**Next Steps**: CLI Refactoring Phase 2 - 複雑コマンド16個の移行（time-series, statistical tests, ANOVA, non-parametric, plugins）
+**Next Steps**: CLI Refactoring Phase 2 - 複雑コマンド15個の移行（remaining time-series, statistical tests, ANOVA, non-parametric, plugins）
 
 ## Documentation Structure
 

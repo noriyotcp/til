@@ -25,6 +25,7 @@ require_relative 'commands/variance_command'
 require_relative 'commands/std_command'
 require_relative 'commands/deviation_scores_command'
 require_relative 'commands/correlation_command'
+require_relative 'commands/trend_command'
 
 # Extend the Commands module with registration functionality
 module NumberAnalyzer::Commands
@@ -44,6 +45,7 @@ module NumberAnalyzer::Commands
     CommandRegistry.register(StdCommand)
     CommandRegistry.register(DeviationScoresCommand)
     CommandRegistry.register(CorrelationCommand)
+    CommandRegistry.register(TrendCommand)
   end
 end
 

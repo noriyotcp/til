@@ -1,0 +1,61 @@
+# frozen_string_literal: true
+
+require_relative '../base_command'
+
+# Command for calculating linear trend analysis (slope, intercept, R²)
+class NumberAnalyzer::Commands::TrendCommand < NumberAnalyzer::Commands::BaseCommand
+  command 'trend', 'Calculate linear trend analysis (slope, intercept, R²)'
+
+  private
+
+  def perform_calculation(data)
+    raise ArgumentError, 'エラー: トレンド分析には最低2つのデータポイントが必要です。' if data.length < 2
+
+    analyzer = NumberAnalyzer.new(data)
+    result = analyzer.linear_trend
+
+    raise ArgumentError, 'エラー: トレンド分析の計算に失敗しました。' if result.nil?
+
+    result
+  end
+
+  def output_result(result)
+    @options[:dataset_size] = @data&.size if @data
+    formatted = NumberAnalyzer::OutputFormatter.format_trend(result, @options)
+    puts formatted
+  end
+
+  def parse_input(args)
+    @data = super
+    @data
+  end
+
+  def show_help
+    puts <<~HELP
+      trend - #{self.class.description}
+
+      Usage: number_analyzer trend [OPTIONS] NUMBERS...
+             number_analyzer trend [OPTIONS] --file FILE
+
+      Options:
+        --help                Show this help message
+        --file FILE           Read numbers from a file
+        --format FORMAT       Output format (json)
+        --precision N         Number of decimal places
+        --quiet               Minimal output (slope intercept r_squared)
+
+      Examples:
+        # Ascending trend
+        number_analyzer trend 1 2 3 4 5
+
+        # File input
+        number_analyzer trend --file data.csv
+
+        # JSON output
+        number_analyzer trend --format=json 1 2 3 4 5
+
+        # Quiet mode with precision
+        number_analyzer trend --quiet --precision=2 1.1 2.3 3.2 4.8
+    HELP
+  end
+end
