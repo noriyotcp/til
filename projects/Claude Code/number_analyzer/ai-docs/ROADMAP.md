@@ -604,21 +604,30 @@
 
 **現状分析**:
 - ✅ **Phase 1完了**: 13個の基本統計コマンドが Command Pattern に移行済み
-- ✅ **Phase 2.1進行中**: correlation, trend コマンド移行完了（15/29 commands migrated）
+- ✅ **Phase 2.1-2.2完了**: 相関・時系列・統計検定コマンド移行完了（21/29 commands migrated）
+- ✅ **Code Quality**: StatisticalOutputFormatter実装、RuboCop violations 60%削減
 - ❌ **CLI.rb サイズ**: 2185行のまま（未削減）
-- 📋 **Phase 2対象**: 残り15個の複雑コマンドの移行が必要
+- 📋 **Phase 2対象**: 残り8個のANOVA・ノンパラメトリック・プラグインコマンドの移行が必要
 
-**Phase 2.1: 相関・時系列分析コマンド移行 (5個)**
+**Phase 2.1: 相関・時系列分析コマンド移行 (5個)** ✅ 完了
 - [x] `correlation` → `CorrelationCommand` ✅ 完了 (特別処理統合完了)
 - [x] `trend` → `TrendCommand` ✅ 完了 (線形トレンド分析移行完了)
-- [ ] `moving-average` → `MovingAverageCommand`
-- [ ] `growth-rate` → `GrowthRateCommand`
-- [ ] `seasonal` → `SeasonalCommand`
+- [x] `moving-average` → `MovingAverageCommand` ✅ 完了 (3期移動平均、カスタムウィンドウ対応)
+- [x] `growth-rate` → `GrowthRateCommand` ✅ 完了 (CAGR計算、成長率分析)
+- [x] `seasonal` → `SeasonalCommand` ✅ 完了 (季節性分析、周期検出)
 
-**Phase 2.2: 統計検定コマンド移行 (3個)**
-- [ ] `t-test` → `TTestCommand`
-- [ ] `confidence-interval` → `ConfidenceIntervalCommand`
-- [ ] `chi-square` → `ChiSquareCommand`
+**Phase 2.2: 統計検定コマンド移行 (3個)** ✅ 完了
+- [x] `t-test` → `TTestCommand` ✅ 完了 (独立/対応/一標本t検定、3つの検定タイプ対応)
+- [x] `confidence-interval` → `ConfidenceIntervalCommand` ✅ 完了 (信頼区間計算、t分布対応)
+- [x] `chi-square` → `ChiSquareCommand` ✅ 完了 (カイ二乗検定、独立性/適合度検定)
+
+**Phase 2 Code Quality Improvements** ✅ 完了
+- [x] **StatisticalOutputFormatter実装** - 統計コマンドの出力フォーマット統一
+- [x] **CLI重複定義修正** - NumberAnalyzer::CLI重複クラス定義問題解決
+- [x] **RuboCop violations削減** - 17違反→7違反（60%削減）
+- [x] **コード重複解消** - 複雑なoutput_standardメソッドのリファクタリング
+- [x] **統計表示の一元化** - format_value, format_significance, format_basic_statistics等の共通化
+- [x] **テスト保証** - 全140テスト通過、CLI機能正常動作確認済み
 
 **Phase 2.3: 分散分析コマンド移行 (4個)**
 - [ ] `anova` → `AnovaCommand`

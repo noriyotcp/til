@@ -183,7 +183,7 @@ number_analyzer 1 2 3 4 5
 
 #### Advanced Usage with Options (Phase 6.3)
 
-NumberAnalyzer supports advanced output formatting and control options for all 30 core subcommands (plus additional plugin commands):
+NumberAnalyzer supports advanced output formatting and control options for all 29 core subcommands (plus additional plugin commands):
 
 **JSON Output Format**
 ```bash
@@ -732,6 +732,7 @@ The project follows clean architecture principles with separation of concerns:
 ### Core Components
 - **NumberAnalyzer** - Pure statistical calculation library (8 modular components, 96.1% code reduction)
 - **NumberAnalyzer::CLI** - Command line interface and argument parsing with 29 core subcommands plus plugin commands
+- **NumberAnalyzer::CLI::StatisticalOutputFormatter** - Shared formatter for consistent statistical command output formatting
 - **NumberAnalyzer::FileReader** - File input handling (CSV/JSON/TXT support)
 - **NumberAnalyzer::StatisticsPresenter** - Display and formatting logic for full analysis
 - **NumberAnalyzer::OutputFormatter** - Advanced output formatting (JSON, precision, quiet mode)
