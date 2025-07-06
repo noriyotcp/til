@@ -101,7 +101,7 @@ RSpec.describe NumberAnalyzer::Commands::PercentileCommand do
       end
 
       after do
-        File.delete(test_file) if File.exist?(test_file)
+        FileUtils.rm_f(test_file)
       end
 
       it 'reads data from file' do
