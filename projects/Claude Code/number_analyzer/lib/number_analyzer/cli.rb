@@ -8,7 +8,6 @@ require_relative 'plugin_system'
 require_relative 'plugin_conflict_resolver'
 require_relative 'plugin_namespace'
 require_relative 'plugin_priority'
-require_relative 'cli/commands'
 
 # Command Line Interface for NumberAnalyzer
 # Handles command-line argument parsing and validation for NumberAnalyzer
@@ -2096,6 +2095,8 @@ class NumberAnalyzer::CLI
     puts '次回起動時から、このプラグインは読み込まれません。'
   end
 end
+
+require_relative 'cli/commands'
 
 # 実行部分（スクリプトとして実行された場合のみ）
 NumberAnalyzer::CLI.run(ARGV) if __FILE__ == $PROGRAM_NAME

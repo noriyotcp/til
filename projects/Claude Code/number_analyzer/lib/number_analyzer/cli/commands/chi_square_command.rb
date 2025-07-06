@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require_relative '../base_command'
+require_relative '../statistical_output_formatter'
 
 # Command for performing chi-square test for independence or goodness-of-fit
 class NumberAnalyzer::Commands::ChiSquareCommand < NumberAnalyzer::Commands::BaseCommand
@@ -83,9 +84,19 @@ class NumberAnalyzer::Commands::ChiSquareCommand < NumberAnalyzer::Commands::Bas
   end
 
   def parse_contingency_table_from_args(args)
-    # Parse contingency table where rows are separated by '--'
-    # Example: 30 20 -- 15 35 (creates [[30, 20], [15, 35]])
+    rows = build_rows_from_args(args)
+    validate_contingency_table(rows)
+    rows
+  rescue ArgumentError => e
+    raise e
+  rescue StandardError
+    raise ArgumentError, <<~ERROR
+      エラー: 無効な数値が含まれています。
+      使用例: number_analyzer chi-square --independence 30 20 -- 15 35
+    ERROR
+  end
 
+  def build_rows_from_args(args)
     rows = []
     current_row = []
 
@@ -100,58 +111,77 @@ class NumberAnalyzer::Commands::ChiSquareCommand < NumberAnalyzer::Commands::Bas
 
     # Add the last row
     rows << current_row.map(&:to_f) unless current_row.empty?
-
-    # Validate contingency table
-    if rows.empty? || rows.any?(&:empty?)
-      raise ArgumentError, <<~ERROR
-        エラー: 有効な分割表を作成できませんでした。
-        使用例: number_analyzer chi-square --independence 30 20 -- 15 35
-      ERROR
-    end
-
-    # Ensure we have at least 2x2 table
-    if rows.length < 2
-      raise ArgumentError, <<~ERROR
-        エラー: 独立性検定には少なくとも2x2の分割表が必要です。
-        使用例: number_analyzer chi-square --independence 30 20 -- 15 35
-      ERROR
-    end
-
-    # Ensure all rows have same number of columns
-    col_count = rows.first.length
-    raise ArgumentError, 'エラー: 分割表の各行は同じ列数である必要があります。' if rows.any? { |row| row.length != col_count }
-
     rows
-  rescue ArgumentError => e
-    raise e
-  rescue StandardError
+  end
+
+  def validate_contingency_table(rows)
+    validate_non_empty_table(rows)
+    validate_minimum_table_size(rows)
+    validate_consistent_column_count(rows)
+  end
+
+  def validate_non_empty_table(rows)
+    return unless rows.empty? || rows.any?(&:empty?)
+
     raise ArgumentError, <<~ERROR
-      エラー: 無効な数値が含まれています。
+      エラー: 有効な分割表を作成できませんでした。
       使用例: number_analyzer chi-square --independence 30 20 -- 15 35
     ERROR
   end
 
+  def validate_minimum_table_size(rows)
+    return unless rows.length < 2
+
+    raise ArgumentError, <<~ERROR
+      エラー: 独立性検定には少なくとも2x2の分割表が必要です。
+      使用例: number_analyzer chi-square --independence 30 20 -- 15 35
+    ERROR
+  end
+
+  def validate_consistent_column_count(rows)
+    col_count = rows.first.length
+    return unless rows.any? { |row| row.length != col_count }
+
+    raise ArgumentError, 'エラー: 分割表の各行は同じ列数である必要があります。'
+  end
+
   def parse_observed_expected_datasets(args)
-    if args.length == 2 && args.all? { |arg| arg.end_with?('.csv', '.json', '.txt') }
-      # Two files provided
-      observed = NumberAnalyzer::FileReader.read_from_file(args[0])
-      expected = NumberAnalyzer::FileReader.read_from_file(args[1])
-    elsif @options[:file]
-      # Single file with interleaved data
-      require_relative '../data_input_handler'
-      combined_data = NumberAnalyzer::Commands::DataInputHandler.parse([], @options)
-      mid = combined_data.length / 2
-      observed = combined_data[0...mid]
-      expected = combined_data[mid..]
-    else
-      # Command line arguments: first half observed, second half expected
-      mid = args.length / 2
-      observed = parse_numbers(args[0...mid])
-      expected = parse_numbers(args[mid..])
-    end
+    observed, expected = if two_files_provided?(args)
+                           parse_from_two_files(args)
+                         elsif @options[:file]
+                           parse_from_single_file
+                         else
+                           parse_from_command_line(args)
+                         end
     [observed, expected]
   rescue StandardError => e
     raise ArgumentError, "ファイル読み込みエラー: #{e.message}"
+  end
+
+  def two_files_provided?(args)
+    args.length == 2 && args.all? { |arg| arg.end_with?('.csv', '.json', '.txt') }
+  end
+
+  def parse_from_two_files(args)
+    observed = NumberAnalyzer::FileReader.read_from_file(args[0])
+    expected = NumberAnalyzer::FileReader.read_from_file(args[1])
+    [observed, expected]
+  end
+
+  def parse_from_single_file
+    require_relative '../data_input_handler'
+    combined_data = NumberAnalyzer::Commands::DataInputHandler.parse([], @options)
+    mid = combined_data.length / 2
+    observed = combined_data[0...mid]
+    expected = combined_data[mid..]
+    [observed, expected]
+  end
+
+  def parse_from_command_line(args)
+    mid = args.length / 2
+    observed = parse_numbers(args[0...mid])
+    expected = parse_numbers(args[mid..])
+    [observed, expected]
   end
 
   def parse_numbers(args)
@@ -224,58 +254,53 @@ class NumberAnalyzer::Commands::ChiSquareCommand < NumberAnalyzer::Commands::Bas
   end
 
   def output_standard(result)
+    formatter = NumberAnalyzer::CLI::StatisticalOutputFormatter
     test_type = result[:test_type]
-    chi_square = result[:chi_square_statistic]
-    p_value = result[:p_value]
-    degrees_freedom = result[:degrees_of_freedom]
-    significant = result[:significant]
 
-    puts "カイ二乗検定結果 (#{test_type_japanese(test_type)}):"
-    puts ''
+    # Header
+    puts formatter.format_test_header('カイ二乗検定', test_type_japanese(test_type))
+    puts
 
-    formatted_chi = if @options[:precision]
-                      format("%.#{@options[:precision]}f", chi_square)
-                    else
-                      format('%.4f', chi_square)
-                    end
+    # Basic statistics
+    puts formatter.format_basic_statistics(
+      'カイ二乗統計量',
+      result[:chi_square_statistic],
+      result[:degrees_of_freedom],
+      result[:p_value],
+      result[:significant],
+      @options[:precision]
+    )
 
-    formatted_p = if @options[:precision]
-                    format("%.#{@options[:precision]}f", p_value)
-                  else
-                    format('%.6f', p_value)
-                  end
+    # Test-specific additional information
+    additional_info = format_test_specific_info(result, formatter)
+    puts additional_info if additional_info
 
-    puts "カイ二乗統計量: #{formatted_chi}"
-    puts "自由度: #{degrees_freedom}"
-    puts "p値: #{formatted_p}"
-    puts "有意性 (α=0.05): #{significant ? '有意' : '有意でない'}"
+    # Dataset information
+    dataset_info = formatter.format_dataset_info(dataset_size: result[:dataset_size])
+    puts dataset_info if dataset_info
+  end
 
-    # Additional information based on test type
-    case test_type
+  def format_test_specific_info(result, formatter)
+    case result[:test_type]
     when :independence
-      if result[:cramers_v]
-        formatted_cramers = if @options[:precision]
-                              format("%.#{@options[:precision]}f", result[:cramers_v])
-                            else
-                              format('%.4f', result[:cramers_v])
-                            end
-        puts "Cramér's V (効果量): #{formatted_cramers}"
-      end
+      format_independence_info(result, formatter)
     when :goodness_of_fit
-      puts "観測度数: #{result[:observed_frequencies].join(', ')}"
-      if result[:expected_frequencies]
-        formatted_expected = result[:expected_frequencies].map do |freq|
-          if @options[:precision]
-            format("%.#{@options[:precision]}f", freq)
-          else
-            format('%.2f', freq)
-          end
-        end
-        puts "期待度数: #{formatted_expected.join(', ')}"
-      end
+      format_goodness_of_fit_info(result, formatter)
     end
+  end
 
-    puts "データサイズ: #{result[:dataset_size]}"
+  def format_independence_info(result, formatter)
+    return unless result[:cramers_v]
+
+    formatter.format_effect_size("Cramér's V (効果量)", result[:cramers_v], @options[:precision])
+  end
+
+  def format_goodness_of_fit_info(result, formatter)
+    formatter.format_frequencies(
+      result[:observed_frequencies],
+      result[:expected_frequencies],
+      @options[:precision]
+    )
   end
 
   def test_type_japanese(type)

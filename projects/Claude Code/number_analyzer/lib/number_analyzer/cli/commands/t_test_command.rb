@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require_relative '../base_command'
+require_relative '../statistical_output_formatter'
 
 # Command for performing statistical t-test analysis (independent, paired, one-sample)
 class NumberAnalyzer::Commands::TTestCommand < NumberAnalyzer::Commands::BaseCommand
@@ -211,42 +212,44 @@ class NumberAnalyzer::Commands::TTestCommand < NumberAnalyzer::Commands::BaseCom
   end
 
   def output_standard(result)
+    formatter = NumberAnalyzer::CLI::StatisticalOutputFormatter
     test_type = result[:test_type]
-    t_statistic = result[:t_statistic]
-    p_value = result[:p_value]
-    degrees_freedom = result[:degrees_of_freedom]
-    significant = result[:significant]
 
-    puts "t検定結果 (#{test_type_japanese(test_type)}):"
-    puts ''
+    # Header
+    puts formatter.format_test_header('t検定', test_type_japanese(test_type))
+    puts
 
-    formatted_t = if @options[:precision]
-                    format("%.#{@options[:precision]}f", t_statistic)
-                  else
-                    format('%.4f', t_statistic)
-                  end
+    # Basic statistics
+    puts formatter.format_basic_statistics(
+      't統計量',
+      result[:t_statistic],
+      result[:degrees_of_freedom],
+      result[:p_value],
+      result[:significant],
+      @options[:precision]
+    )
 
-    formatted_p = if @options[:precision]
-                    format("%.#{@options[:precision]}f", p_value)
-                  else
-                    format('%.6f', p_value)
-                  end
+    # Test-specific dataset information
+    dataset_info = build_dataset_info(result)
+    puts dataset_info if dataset_info
+  end
 
-    puts "t統計量: #{formatted_t}"
-    puts "自由度: #{degrees_freedom}"
-    puts "p値: #{formatted_p}"
-    puts "有意性 (α=0.05): #{significant ? '有意' : '有意でない'}"
+  def build_dataset_info(result)
+    formatter = NumberAnalyzer::CLI::StatisticalOutputFormatter
 
-    # Additional info based on test type
-    case test_type
+    case result[:test_type]
     when :one_sample
-      puts "母集団平均: #{result[:population_mean]}"
-      puts "標本サイズ: #{result[:dataset_size]}"
+      formatter.format_dataset_info(
+        population_mean: result[:population_mean],
+        dataset_size: result[:dataset_size]
+      )
     when :independent
-      puts "グループ1のサイズ: #{result[:dataset1_size]}"
-      puts "グループ2のサイズ: #{result[:dataset2_size]}"
+      formatter.format_dataset_info(
+        dataset1_size: result[:dataset1_size],
+        dataset2_size: result[:dataset2_size]
+      )
     when :paired
-      puts "ペア数: #{result[:dataset1_size]}"
+      "ペア数: #{result[:dataset1_size]}"
     end
   end
 

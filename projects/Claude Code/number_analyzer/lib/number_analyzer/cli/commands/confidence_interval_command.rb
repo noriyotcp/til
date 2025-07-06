@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require_relative '../base_command'
+require_relative '../statistical_output_formatter'
 
 # Command for calculating confidence interval for population mean
 class NumberAnalyzer::Commands::ConfidenceIntervalCommand < NumberAnalyzer::Commands::BaseCommand
@@ -107,44 +108,25 @@ class NumberAnalyzer::Commands::ConfidenceIntervalCommand < NumberAnalyzer::Comm
   end
 
   def output_standard(result)
+    formatter = NumberAnalyzer::CLI::StatisticalOutputFormatter
     confidence_level = result[:confidence_level]
-    lower_bound = result[:lower_bound]
-    upper_bound = result[:upper_bound]
-    margin_of_error = result[:margin_of_error]
-    sample_mean = result[:sample_mean]
 
     puts "#{confidence_level}% 信頼区間:"
-    puts ''
+    puts
 
-    formatted_lower = if @options[:precision]
-                        format("%.#{@options[:precision]}f", lower_bound)
-                      else
-                        format('%.4f', lower_bound)
-                      end
+    # Confidence interval display
+    interval = formatter.format_confidence_interval(
+      result[:lower_bound],
+      result[:upper_bound],
+      @options[:precision]
+    )
+    puts "区間: #{interval}"
 
-    formatted_upper = if @options[:precision]
-                        format("%.#{@options[:precision]}f", upper_bound)
-                      else
-                        format('%.4f', upper_bound)
-                      end
-
-    formatted_mean = if @options[:precision]
-                       format("%.#{@options[:precision]}f", sample_mean)
-                     else
-                       format('%.4f', sample_mean)
-                     end
-
-    formatted_margin = if @options[:precision]
-                         format("%.#{@options[:precision]}f", margin_of_error)
-                       else
-                         format('%.4f', margin_of_error)
-                       end
-
-    puts "区間: [#{formatted_lower}, #{formatted_upper}]"
-    puts "標本平均: #{formatted_mean}"
-    puts "誤差限界: ±#{formatted_margin}"
+    # Additional metrics
+    puts "標本平均: #{formatter.format_value(result[:sample_mean], @options[:precision])}"
+    puts "誤差限界: ±#{formatter.format_value(result[:margin_of_error], @options[:precision])}"
     puts "標本サイズ: #{result[:dataset_size]}"
-    puts ''
+    puts
     puts "解釈: #{confidence_level}%の確率で母集団平均がこの区間に含まれます。"
   end
 
