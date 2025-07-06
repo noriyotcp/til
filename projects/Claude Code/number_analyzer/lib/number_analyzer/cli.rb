@@ -8,6 +8,7 @@ require_relative 'plugin_system'
 require_relative 'plugin_conflict_resolver'
 require_relative 'plugin_namespace'
 require_relative 'plugin_priority'
+require_relative 'cli/commands'
 
 # Command Line Interface for NumberAnalyzer
 class NumberAnalyzer
@@ -28,7 +29,6 @@ class NumberAnalyzer
       'variance' => :run_variance,
       'std' => :run_standard_deviation,
       'deviation-scores' => :run_deviation_scores,
-      'correlation' => :run_correlation,
       'trend' => :run_trend,
       'moving-average' => :run_moving_average,
       'growth-rate' => :run_growth_rate,
@@ -48,9 +48,16 @@ class NumberAnalyzer
     }.freeze
 
     class << self
-      # Get all available commands (core + plugin)
+      # Get all available commands (core + plugin + command registry)
       def commands
-        CORE_COMMANDS.merge(plugin_commands)
+        all_commands = CORE_COMMANDS.merge(plugin_commands)
+
+        # Add commands from CommandRegistry
+        Commands::CommandRegistry.all.each do |cmd|
+          all_commands[cmd] ||= :run_from_registry
+        end
+
+        all_commands
       end
 
       # Register a new command from a plugin
@@ -187,8 +194,11 @@ class NumberAnalyzer
         # Standard option parsing for other commands
         options, remaining_args = parse_options(args)
       end
-      # Check if it's a core command or plugin command
-      if CORE_COMMANDS.key?(command)
+      # First check if command is registered with new Command Pattern
+      if Commands::CommandRegistry.exists?(command)
+        Commands::CommandRegistry.execute(command, remaining_args, options)
+      # Then check if it's a core command or plugin command
+      elsif CORE_COMMANDS.key?(command)
         method_name = CORE_COMMANDS[command]
         send(method_name, remaining_args, options)
       elsif plugin_commands.key?(command)

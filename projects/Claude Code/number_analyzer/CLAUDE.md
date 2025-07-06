@@ -350,6 +350,17 @@ git diff --name-only --cached | grep -E "(README|ROADMAP|CLAUDE)\.md" || echo "�
 
 **重要**: 実装とドキュメント更新は一体のプロセスです。コード動作確認だけでは「未完了」です。
 
+### CLI Refactoring Phase 2 実装時の注意
+
+**重要**: 新しいコマンドを Command Pattern で実装する際は、以下を確認してください：
+
+1. **CommandRegistry への登録** - `commands.rb` でコマンドクラスを登録
+2. **CORE_COMMANDS からの削除** - 重複を避けるため古い定義を削除
+3. **CLI統合テスト** - 実際のCLI経由での動作確認が必須
+4. **特殊な引数処理** - `--` 区切りや複数ファイル入力の場合は CLI.rb の修正も必要
+
+詳細なトラブルシューティングガイドは `ai-docs/CLI_REFACTORING_GUIDE.md` を参照してください。
+
 #### 実装開始時の必須TODO作成
 ```bash
 # 新機能実装時は必ずこの5つのTodoを作成:

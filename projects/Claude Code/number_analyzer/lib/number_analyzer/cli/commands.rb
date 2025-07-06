@@ -18,6 +18,7 @@ require_relative 'commands/quartiles_command'
 require_relative 'commands/variance_command'
 require_relative 'commands/std_command'
 require_relative 'commands/deviation_scores_command'
+require_relative 'commands/correlation_command'
 
 class NumberAnalyzer
   # Command registration and management
@@ -37,6 +38,7 @@ class NumberAnalyzer
       CommandRegistry.register(VarianceCommand)
       CommandRegistry.register(StdCommand)
       CommandRegistry.register(DeviationScoresCommand)
+      CommandRegistry.register(CorrelationCommand)
     end
   end
 end

@@ -21,6 +21,7 @@ $LOAD_PATH.unshift File.expand_path('../lib', __dir__)
 
 # Require the main files
 require 'number_analyzer'
+require 'stringio'
 require 'number_analyzer/cli'
 require 'number_analyzer/file_reader'
 require 'number_analyzer/statistics_presenter'
@@ -108,4 +109,14 @@ RSpec.configure do |config|
   #   # test failures related to randomization by passing the same `--seed` value
   #   # as the one that triggered the failure.
   #   Kernel.srand config.seed
+end
+
+# Helper method to capture stdout output
+def capture_stdout
+  original_stdout = $stdout
+  $stdout = StringIO.new
+  yield
+  $stdout.string
+ensure
+  $stdout = original_stdout
 end
