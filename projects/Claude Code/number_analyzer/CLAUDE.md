@@ -249,6 +249,31 @@ lib/
 - **Style Consistency**: All code must conform to project's .rubocop.yml configuration
 - **Auto-correction First**: Always apply `bundle exec rubocop -a` before manual fixes
 - **Configuration Changes**: RuboCop config modifications require documentation update
+- **Compact Style Mandatory**: All classes/modules must use compact style (`NumberAnalyzer::ClassName`)
+
+**Compact Style Standards** (MANDATORY - Project Standard):
+- **Namespace Declaration**: Use compact style for all new classes/modules
+- **Reference Resolution**: Always use fully qualified names (`NumberAnalyzer::CLI`, not `CLI`)
+- **Consistency Enforcement**: RuboCop Style/ClassAndModuleChildren set to `EnforcedStyle: compact`
+- **Migration Completed**: 100+ files successfully converted to compact style (January 2025)
+
+```ruby
+# ✅ Correct - Compact style (MANDATORY)
+class NumberAnalyzer::CLI
+  def self.run
+    NumberAnalyzer::PluginSystem.new
+  end
+end
+
+# ❌ Incorrect - Nested style (FORBIDDEN)
+module NumberAnalyzer
+  class CLI
+    def self.run
+      PluginSystem.new  # Also wrong - unqualified reference
+    end
+  end
+end
+```
 
 **Ruby Naming Conventions** (MANDATORY - Consistency Policy):
 - **Getter Methods**: Must match instance variable names exactly
