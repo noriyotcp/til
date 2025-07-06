@@ -12,7 +12,7 @@ class NumberAnalyzer::Commands::AnovaCommand < NumberAnalyzer::Commands::BaseCom
   def validate_arguments(args)
     return unless args.empty? && !@options[:file]
 
-    raise ArgumentError, 'グループデータが指定されていません。'
+    raise ArgumentError, 'No group data specified'
   end
 
   def parse_input(args)
@@ -23,7 +23,7 @@ class NumberAnalyzer::Commands::AnovaCommand < NumberAnalyzer::Commands::BaseCom
                 parse_anova_groups(args)
               end
 
-    raise ArgumentError, 'ANOVAには少なくとも2つのグループが必要です。' if @groups.length < 2
+    raise ArgumentError, 'ANOVA requires at least 2 groups' if @groups.length < 2
 
     @groups
   end
@@ -33,7 +33,7 @@ class NumberAnalyzer::Commands::AnovaCommand < NumberAnalyzer::Commands::BaseCom
     analyzer = NumberAnalyzer.new([])
     result = analyzer.one_way_anova(*data)
 
-    raise ArgumentError, 'ANOVAの計算ができませんでした。有効なデータを確認してください。' if result.nil?
+    raise ArgumentError, 'Could not calculate ANOVA. Check your data' if result.nil?
 
     result
   end
@@ -101,27 +101,27 @@ class NumberAnalyzer::Commands::AnovaCommand < NumberAnalyzer::Commands::BaseCom
     # Add the last group
     groups << current_group.map(&:to_f) unless current_group.empty?
 
-    raise ArgumentError, '有効なグループデータがありません' if groups.empty?
+    raise ArgumentError, 'No valid group data found' if groups.empty?
 
     groups
   rescue ArgumentError
-    raise ArgumentError, '無効な数値が含まれています'
+    raise ArgumentError, 'Invalid numbers found'
   end
 
   def parse_anova_files(filenames)
     groups = []
 
     filenames.each do |filename|
-      raise ArgumentError, "ファイルが見つかりません: #{filename}" unless File.exist?(filename)
+      raise ArgumentError, "File not found: #{filename}" unless File.exist?(filename)
 
       data = NumberAnalyzer::FileReader.read_file(filename)
-      raise ArgumentError, "空のファイル: #{filename}" if data.empty?
+      raise ArgumentError, "Empty file: #{filename}" if data.empty?
 
       groups << data
     end
 
     groups
   rescue StandardError => e
-    raise ArgumentError, "ファイル読み込みエラー: #{e.message}"
+    raise ArgumentError, "File read error: #{e.message}"
   end
 end

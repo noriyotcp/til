@@ -39,13 +39,13 @@ RSpec.describe NumberAnalyzer::CLI do
     context 'with invalid arguments' do
       it 'exits with error message for non-numeric input' do
         expect { NumberAnalyzer::CLI.parse_arguments(%w[1 abc 3]) }
-          .to output(/エラー: 無効な引数が見つかりました: abc/).to_stdout
+          .to output(/Error: Invalid arguments found: abc/).to_stdout
           .and raise_error(SystemExit)
       end
 
       it 'exits with error message for all invalid input' do
         expect { NumberAnalyzer::CLI.parse_arguments(%w[abc def]) }
-          .to output(/エラー: 無効な引数が見つかりました: abc, def/).to_stdout
+          .to output(/Error: Invalid arguments found: abc, def/).to_stdout
           .and raise_error(SystemExit)
       end
     end
@@ -79,45 +79,45 @@ RSpec.describe NumberAnalyzer::CLI do
     it 'exits with error when file path is missing after --file' do
       expect do
         NumberAnalyzer::CLI.parse_arguments(['--file'])
-      end.to output(/エラー: --fileオプションにはファイルパスを指定してください/).to_stdout
-                                                        .and raise_error(SystemExit)
+      end.to output(/Error: --file option requires a file path/).to_stdout
+                                                                .and raise_error(SystemExit)
     end
 
     it 'exits with error when file does not exist' do
       expect do
         NumberAnalyzer::CLI.parse_arguments(['--file', '/nonexistent/file.csv'])
-      end.to output(/ファイル読み込みエラー/).to_stdout
-                                  .and raise_error(SystemExit)
+      end.to output(/File read error/).to_stdout
+                                      .and raise_error(SystemExit)
     end
   end
 
   describe 'CLI integration' do
     it 'runs with default values when no arguments provided' do
       output = `ruby "#{script_path}"`
-      expect(output).to include('合計: 55')
-      expect(output).to include('平均: 5.5')
-      expect(output).to include('中央値: 5.5')
+      expect(output).to include('Total: 55')
+      expect(output).to include('Average: 5.5')
+      expect(output).to include('Median: 5.5')
       expect($CHILD_STATUS.success?).to be true
     end
 
     it 'runs with custom values when arguments provided' do
       output = `ruby "#{script_path}" 1 2 3 4 5`
-      expect(output).to include('合計: 15')
-      expect(output).to include('平均: 3')
-      expect(output).to include('中央値: 3')
+      expect(output).to include('Total: 15')
+      expect(output).to include('Average: 3')
+      expect(output).to include('Median: 3')
       expect($CHILD_STATUS.success?).to be true
     end
 
     it 'handles decimal input correctly' do
       output = `ruby "#{script_path}" 1.5 2.7 3.2`
-      expect(output).to include('合計: 7.4')
-      expect(output).to include('中央値: 2.7')
+      expect(output).to include('Total: 7.4')
+      expect(output).to include('Median: 2.7')
       expect($CHILD_STATUS.success?).to be true
     end
 
     it 'exits with error for invalid input' do
       output = `ruby "#{script_path}" 1 2 abc 4 2>&1`
-      expect(output).to include('エラー: 無効な引数が見つかりました: abc')
+      expect(output).to include('Error: Invalid arguments found: abc')
       expect($CHILD_STATUS.success?).to be false
     end
 
@@ -129,9 +129,9 @@ RSpec.describe NumberAnalyzer::CLI do
         file.rewind
 
         output = `ruby "#{script_path}" --file "#{file.path}"`
-        expect(output).to include('合計: 60')
-        expect(output).to include('平均: 20')
-        expect(output).to include('中央値: 20')
+        expect(output).to include('Total: 60')
+        expect(output).to include('Average: 20')
+        expect(output).to include('Median: 20')
         expect($CHILD_STATUS.success?).to be true
       end
     end
@@ -139,16 +139,16 @@ RSpec.describe NumberAnalyzer::CLI do
     it 'runs with fixture CSV file' do
       fixture_path = File.join(__dir__, '..', 'fixtures', 'sample_data.csv')
       output = `ruby "#{script_path}" --file "#{fixture_path}"`
-      expect(output).to include('合計: 205')
-      expect(output).to include('平均: 20.5')
+      expect(output).to include('Total: 205')
+      expect(output).to include('Average: 20.5')
       expect($CHILD_STATUS.success?).to be true
     end
 
     it 'runs with fixture JSON file' do
       fixture_path = File.join(__dir__, '..', 'fixtures', 'sample_data.json')
       output = `ruby "#{script_path}" -f "#{fixture_path}"`
-      expect(output).to include('合計: 550')
-      expect(output).to include('平均: 55')
+      expect(output).to include('Total: 550')
+      expect(output).to include('Average: 55')
       expect($CHILD_STATUS.success?).to be true
     end
   end
@@ -191,7 +191,7 @@ RSpec.describe NumberAnalyzer::CLI do
 
       it 'returns no mode message when no mode exists' do
         expect { NumberAnalyzer::CLI.run(%w[mode 1 2 3]) }
-          .to output("モードなし\n").to_stdout
+          .to output("No mode\n").to_stdout
       end
     end
 
@@ -234,7 +234,7 @@ RSpec.describe NumberAnalyzer::CLI do
     context 'histogram subcommand' do
       it 'displays histogram' do
         expected_output = <<~OUTPUT
-          度数分布ヒストグラム:
+          Frequency Distribution Histogram:
           1.0: ■ (1)
           2.0: ■■ (2)
           3.0: ■■■ (3)
@@ -262,19 +262,19 @@ RSpec.describe NumberAnalyzer::CLI do
     context 'subcommand error handling' do
       it 'exits with error for subcommand without arguments' do
         expect { NumberAnalyzer::CLI.run(['median']) }
-          .to output(/エラー: 数値または --file オプションを指定してください。/).to_stdout
+          .to output(/Error: Please specify numbers or --file option/).to_stdout
           .and raise_error(SystemExit)
       end
 
       it 'exits with error for invalid file path' do
         expect { NumberAnalyzer::CLI.run(['mean', '--file', 'nonexistent.csv']) }
-          .to output(/ファイル読み込みエラー/).to_stdout
+          .to output(/File read error/).to_stdout
           .and raise_error(SystemExit)
       end
 
       it 'exits with error for invalid numeric arguments' do
         expect { NumberAnalyzer::CLI.run(%w[sum 1 abc 3]) }
-          .to output(/エラー: 無効な引数が見つかりました: abc/).to_stdout
+          .to output(/Error: Invalid arguments found: abc/).to_stdout
           .and raise_error(SystemExit)
       end
     end
@@ -288,7 +288,7 @@ RSpec.describe NumberAnalyzer::CLI do
 
         it 'returns no outliers message when none exist' do
           expect { NumberAnalyzer::CLI.run(%w[outliers 1 2 3 4 5]) }
-            .to output("なし\n").to_stdout
+            .to output("None\n").to_stdout
         end
 
         it 'handles multiple outliers' do
@@ -315,19 +315,19 @@ RSpec.describe NumberAnalyzer::CLI do
 
         it 'exits with error for missing percentile value' do
           expect { NumberAnalyzer::CLI.run(%w[percentile]) }
-            .to output(/エラー: percentileコマンドには percentile値と数値が必要です。/).to_stdout
+            .to output(/Error: percentile command requires percentile value and numbers/).to_stdout
             .and raise_error(SystemExit)
         end
 
         it 'exits with error for invalid percentile range' do
           expect { NumberAnalyzer::CLI.run(%w[percentile 150 1 2 3]) }
-            .to output(/エラー: percentile値は0-100の範囲で指定してください。/).to_stdout
+            .to output(/Error: percentile value must be between 0-100/).to_stdout
             .and raise_error(SystemExit)
         end
 
         it 'exits with error for non-numeric percentile' do
           expect { NumberAnalyzer::CLI.run(%w[percentile abc 1 2 3]) }
-            .to output(/エラー: 無効なpercentile値です。/).to_stdout
+            .to output(/Error: Invalid percentile value/).to_stdout
             .and raise_error(SystemExit)
         end
 
@@ -417,12 +417,12 @@ RSpec.describe NumberAnalyzer::CLI do
     context 'backward compatibility' do
       it 'runs full analysis when no subcommand provided' do
         expect { NumberAnalyzer::CLI.run(%w[1 2 3]) }
-          .to output(/合計: 6/).to_stdout
+          .to output(/Total: 6/).to_stdout
       end
 
       it 'runs with default values when no arguments' do
         expect { NumberAnalyzer::CLI.run([]) }
-          .to output(/合計: 55/).to_stdout
+          .to output(/Total: 55/).to_stdout
       end
     end
 
@@ -567,22 +567,22 @@ RSpec.describe NumberAnalyzer::CLI do
     context 'trend subcommand' do
       it 'calculates trend for upward data' do
         expect { NumberAnalyzer::CLI.run(%w[trend 1 2 3 4 5]) }
-          .to output("トレンド分析結果:\n傾き: 1.0\n切片: 1.0\n決定係数(R²): 1.0\n方向性: 上昇\n").to_stdout
+          .to output("Trend Analysis Results:\nSlope: 1.0\nIntercept: 1.0\nR-squared: 1.0\nDirection: Upward\n").to_stdout
       end
 
       it 'calculates trend for downward data' do
         expect { NumberAnalyzer::CLI.run(%w[trend 5 4 3 2 1]) }
-          .to output("トレンド分析結果:\n傾き: -1.0\n切片: 5.0\n決定係数(R²): 1.0\n方向性: 下降\n").to_stdout
+          .to output("Trend Analysis Results:\nSlope: -1.0\nIntercept: 5.0\nR-squared: 1.0\nDirection: Downward\n").to_stdout
       end
 
       it 'calculates trend for flat data' do
         expect { NumberAnalyzer::CLI.run(%w[trend 5 5 5 5 5]) }
-          .to output("トレンド分析結果:\n傾き: 0.0\n切片: 5.0\n決定係数(R²): 1.0\n方向性: 横ばい\n").to_stdout
+          .to output("Trend Analysis Results:\nSlope: 0.0\nIntercept: 5.0\nR-squared: 1.0\nDirection: Stable\n").to_stdout
       end
 
       it 'outputs JSON format when requested' do
         expect { NumberAnalyzer::CLI.run(%w[trend --format=json 1 2 3]) }
-          .to output("{\"trend\":{\"slope\":1.0,\"intercept\":1.0,\"r_squared\":1.0,\"direction\":\"上昇\"},\"dataset_size\":3}\n").to_stdout
+          .to output("{\"trend\":{\"slope\":1.0,\"intercept\":1.0,\"r_squared\":1.0,\"direction\":\"Upward\"},\"dataset_size\":3}\n").to_stdout
       end
 
       it 'outputs quiet format when requested' do
@@ -592,12 +592,12 @@ RSpec.describe NumberAnalyzer::CLI do
 
       it 'applies precision formatting' do
         expect { NumberAnalyzer::CLI.run(%w[trend --precision=2 1 2.1 3.2]) }
-          .to output("トレンド分析結果:\n傾き: 1.1\n切片: 1.0\n決定係数(R²): 1.0\n方向性: 上昇\n").to_stdout
+          .to output("Trend Analysis Results:\nSlope: 1.1\nIntercept: 1.0\nR-squared: 1.0\nDirection: Upward\n").to_stdout
       end
 
       it 'handles insufficient data' do
         expect { NumberAnalyzer::CLI.run(%w[trend 42]) }
-          .to output("エラー: データが不十分です（2つ以上の値が必要）\n").to_stdout
+          .to output("Error: Insufficient data (requires 2 or more values)\n").to_stdout
       end
 
       it 'shows help when requested' do
@@ -609,12 +609,12 @@ RSpec.describe NumberAnalyzer::CLI do
     context 'moving-average subcommand' do
       it 'calculates moving average with default window size 3' do
         expect { NumberAnalyzer::CLI.run(%w[moving-average 1 2 3 4 5]) }
-          .to output("移動平均（ウィンドウサイズ: 3）:\n2.0, 3.0, 4.0\n").to_stdout
+          .to output("Moving Average (Window Size: 3):\n2.0, 3.0, 4.0\n").to_stdout
       end
 
       it 'calculates moving average with custom window size' do
         expect { NumberAnalyzer::CLI.run(%w[moving-average --window=5 1 2 3 4 5 6 7]) }
-          .to output("移動平均（ウィンドウサイズ: 5）:\n3.0, 4.0, 5.0\n").to_stdout
+          .to output("Moving Average (Window Size: 5):\n3.0, 4.0, 5.0\n").to_stdout
       end
 
       it 'outputs JSON format when requested' do
@@ -629,7 +629,7 @@ RSpec.describe NumberAnalyzer::CLI do
 
       it 'applies precision formatting' do
         expect { NumberAnalyzer::CLI.run(%w[moving-average --precision=1 --window=3 1.11 2.22 3.33 4.44]) }
-          .to output("移動平均（ウィンドウサイズ: 3）:\n2.2, 3.3\n").to_stdout
+          .to output("Moving Average (Window Size: 3):\n2.2, 3.3\n").to_stdout
       end
 
       it 'handles window size larger than dataset' do

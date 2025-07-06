@@ -48,8 +48,8 @@ class NumberAnalyzer::CLI::TTestInputHandler
     return if population_mean
 
     raise ArgumentError, <<~ERROR
-      エラー: 一標本t検定には母集団平均が必要です。
-      使用例: number_analyzer t-test --one-sample --population-mean=100 data.csv
+      Error: One-sample t-test requires population mean.
+      Example: number_analyzer t-test --one-sample --population-mean=100 data.csv
     ERROR
   end
 
@@ -59,9 +59,9 @@ class NumberAnalyzer::CLI::TTestInputHandler
     return if args.include?('--')
 
     raise ArgumentError, <<~ERROR
-      エラー: 2つのデータセットが必要です。
-      使用例: number_analyzer t-test 1 2 3 -- 4 5 6
-             number_analyzer t-test group1.csv group2.csv
+      Error: Two datasets required.
+      Examples: number_analyzer t-test 1 2 3 -- 4 5 6
+               number_analyzer t-test group1.csv group2.csv
     ERROR
   end
 
@@ -76,9 +76,9 @@ class NumberAnalyzer::CLI::TTestInputHandler
       parse_numeric_datasets(args)
     else
       raise ArgumentError, <<~ERROR
-        エラー: 2つのデータセットを区切るために "--" を使用するか、2つのファイルを指定してください。
-        使用例: number_analyzer t-test 1 2 3 -- 4 5 6
-               number_analyzer t-test group1.csv group2.csv
+        Error: Use "--" to separate two datasets or specify two files.
+        Examples: number_analyzer t-test 1 2 3 -- 4 5 6
+                 number_analyzer t-test group1.csv group2.csv
       ERROR
     end
   end
@@ -92,7 +92,7 @@ class NumberAnalyzer::CLI::TTestInputHandler
     dataset2 = NumberAnalyzer::FileReader.read_from_file(files[1])
     [dataset1, dataset2]
   rescue StandardError => e
-    raise ArgumentError, "ファイル読み込みエラー: #{e.message}"
+    raise ArgumentError, "File read error: #{e.message}"
   end
 
   def parse_numeric_datasets(args)
@@ -101,7 +101,7 @@ class NumberAnalyzer::CLI::TTestInputHandler
     dataset1_args = args[0...separator_index]
     dataset2_args = args[(separator_index + 1)..]
 
-    raise ArgumentError, 'エラー: 両方のデータセットに値が必要です。' if dataset1_args.empty? || dataset2_args.empty?
+    raise ArgumentError, 'Error: Both datasets need values' if dataset1_args.empty? || dataset2_args.empty?
 
     dataset1 = parse_numbers(dataset1_args)
     dataset2 = parse_numbers(dataset2_args)

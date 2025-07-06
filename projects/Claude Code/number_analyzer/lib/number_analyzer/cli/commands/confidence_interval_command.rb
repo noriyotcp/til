@@ -18,7 +18,7 @@ class NumberAnalyzer::Commands::ConfidenceIntervalCommand < NumberAnalyzer::Comm
     level = Float(args[0])
     validate_confidence_level(level)
   rescue ArgumentError
-    raise ArgumentError, "エラー: 無効な信頼度です: #{args[0]}"
+    raise ArgumentError, "Error: Invalid confidence level: #{args[0]}"
   end
 
   def parse_input(args)
@@ -56,24 +56,24 @@ class NumberAnalyzer::Commands::ConfidenceIntervalCommand < NumberAnalyzer::Comm
     validate_confidence_level(level)
     level
   rescue ArgumentError
-    raise ArgumentError, "エラー: 無効な信頼度です: #{args[0]}"
+    raise ArgumentError, "Error: Invalid confidence level: #{args[0]}"
   end
 
   def validate_confidence_level(level)
     return if level.between?(1, 99)
 
-    raise ArgumentError, "エラー: 信頼度は1-99の範囲で指定してください: #{level}"
+    raise ArgumentError, "Error: Confidence level must be between 1-99: #{level}"
   end
 
   def perform_calculation(data_and_level)
     data, confidence_level = data_and_level
 
-    raise ArgumentError, 'エラー: 信頼区間の計算には少なくとも2つのデータポイントが必要です。' if data.length < 2
+    raise ArgumentError, 'Error: Confidence interval calculation requires at least 2 data points' if data.length < 2
 
     analyzer = NumberAnalyzer.new(data)
     result = analyzer.confidence_interval(confidence_level)
 
-    raise ArgumentError, 'エラー: 信頼区間を計算できませんでした。データを確認してください。' if result.nil?
+    raise ArgumentError, 'Error: Could not calculate confidence interval. Check your data' if result.nil?
 
     result.merge({
                    confidence_level: confidence_level,

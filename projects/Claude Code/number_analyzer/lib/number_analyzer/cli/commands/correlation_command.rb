@@ -15,9 +15,9 @@ class NumberAnalyzer::Commands::CorrelationCommand < NumberAnalyzer::Commands::B
     return if @options[:file] || args.include?('--') || (args.length == 2 && args.all? { |arg| arg.end_with?('.csv', '.json', '.txt') })
 
     raise ArgumentError, <<~ERROR
-      エラー: correlationコマンドには2つのデータセットが必要です。
-      使用例: bundle exec number_analyzer correlation 1 2 3 -- 4 5 6
-             bundle exec number_analyzer correlation data1.csv data2.csv
+      Error: correlation command requires two datasets.
+      Examples: bundle exec number_analyzer correlation 1 2 3 -- 4 5 6
+               bundle exec number_analyzer correlation data1.csv data2.csv
     ERROR
   end
 
@@ -29,9 +29,9 @@ class NumberAnalyzer::Commands::CorrelationCommand < NumberAnalyzer::Commands::B
       parse_numeric_datasets(args)
     else
       raise ArgumentError, <<~ERROR
-        エラー: 2つのデータセットを区切るために "--" を使用するか、2つのファイルを指定してください。
-        使用例: bundle exec number_analyzer correlation 1 2 3 -- 4 5 6
-               bundle exec number_analyzer correlation data1.csv data2.csv
+        Error: Use "--" to separate two datasets or specify two files.
+        Examples: bundle exec number_analyzer correlation 1 2 3 -- 4 5 6
+                 bundle exec number_analyzer correlation data1.csv data2.csv
       ERROR
     end
   end
@@ -51,7 +51,7 @@ class NumberAnalyzer::Commands::CorrelationCommand < NumberAnalyzer::Commands::B
     dataset1_args = args[0...separator_index]
     dataset2_args = args[(separator_index + 1)..]
 
-    raise ArgumentError, 'エラー: 両方のデータセットに値が必要です。' if dataset1_args.empty? || dataset2_args.empty?
+    raise ArgumentError, 'Error: Both datasets need values' if dataset1_args.empty? || dataset2_args.empty?
 
     dataset1 = parse_numbers(dataset1_args)
     dataset2 = parse_numbers(dataset2_args)
@@ -63,16 +63,16 @@ class NumberAnalyzer::Commands::CorrelationCommand < NumberAnalyzer::Commands::B
     args.map do |arg|
       Float(arg)
     rescue ArgumentError
-      raise ArgumentError, "無効な数値: #{arg}"
+      raise ArgumentError, "Invalid number: #{arg}"
     end
   end
 
   def perform_calculation(data)
     dataset1, dataset2 = data
 
-    raise ArgumentError, "エラー: データセットの長さが異なります (#{dataset1.length} vs #{dataset2.length})" if dataset1.length != dataset2.length
+    raise ArgumentError, "Error: Dataset lengths differ (#{dataset1.length} vs #{dataset2.length})" if dataset1.length != dataset2.length
 
-    raise ArgumentError, 'エラー: 相関係数の計算には少なくとも2つのデータポイントが必要です。' if dataset1.length < 2
+    raise ArgumentError, 'Error: Correlation calculation requires at least 2 data points' if dataset1.length < 2
 
     analyzer = NumberAnalyzer.new(dataset1)
     correlation = analyzer.correlation(dataset2)

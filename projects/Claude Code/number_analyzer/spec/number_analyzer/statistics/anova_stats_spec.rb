@@ -187,7 +187,7 @@ RSpec.describe ANOVAStats do
         result = stats.levene_test(group1, group2)
 
         expect(result[:significant]).to be false
-        expect(result[:interpretation]).to include('等しいと考えられる')
+        expect(result[:interpretation]).to include('considered equal')
       end
     end
 
@@ -239,7 +239,7 @@ RSpec.describe ANOVAStats do
         result = stats.bartlett_test(group1, group2)
 
         expect(result[:significant]).to be false
-        expect(result[:interpretation]).to include('等しいと考えられる')
+        expect(result[:interpretation]).to include('considered equal')
       end
     end
 
@@ -562,9 +562,9 @@ RSpec.describe ANOVAStats do
         result = stats.two_way_anova(nil, factor_a, factor_b, values)
 
         expect(result[:interpretation]).to be_a(String)
-        expect(result[:interpretation]).to include('要因A')
-        expect(result[:interpretation]).to include('要因B')
-        expect(result[:interpretation]).to include('交互作用')
+        expect(result[:interpretation]).to include('Factor A')
+        expect(result[:interpretation]).to include('Factor B')
+        expect(result[:interpretation]).to include('interaction')
       end
     end
   end

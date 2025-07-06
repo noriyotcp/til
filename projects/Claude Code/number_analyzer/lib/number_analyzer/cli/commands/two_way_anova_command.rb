@@ -31,7 +31,7 @@ class NumberAnalyzer::Commands::TwoWayAnovaCommand < NumberAnalyzer::Commands::B
     analyzer = NumberAnalyzer.new([])
     result = analyzer.two_way_anova(nil, factor_a_levels, factor_b_levels, values)
 
-    raise ArgumentError, 'Two-way ANOVAの計算ができませんでした。有効なデータを確認してください。' if result.nil?
+    raise ArgumentError, 'Could not calculate Two-way ANOVA. Check your data' if result.nil?
 
     result
   end
@@ -78,7 +78,7 @@ class NumberAnalyzer::Commands::TwoWayAnovaCommand < NumberAnalyzer::Commands::B
 
     [@options[:factor_a], @options[:factor_b], values]
   rescue ArgumentError => e
-    raise ArgumentError, "無効な数値が含まれています: #{e.message}"
+    raise ArgumentError, "Invalid numbers found: #{e.message}"
   end
 
   def parse_two_way_anova_from_file(args)
@@ -119,7 +119,7 @@ class NumberAnalyzer::Commands::TwoWayAnovaCommand < NumberAnalyzer::Commands::B
     raise ArgumentError, 'CSVファイルが指定されていません。' if args.empty?
 
     filename = args[0]
-    raise ArgumentError, "ファイルが見つかりません: #{filename}" unless File.exist?(filename)
+    raise ArgumentError, "File not found: #{filename}" unless File.exist?(filename)
 
     filename
   end

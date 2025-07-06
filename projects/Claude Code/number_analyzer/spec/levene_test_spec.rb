@@ -60,7 +60,7 @@ RSpec.describe NumberAnalyzer do
         it 'provides appropriate interpretation' do
           result = analyzer.levene_test(group1, group2, group3)
 
-          expect(result[:interpretation]).to include('分散の等質性仮説は棄却')
+          expect(result[:interpretation]).to include('Homogeneity of variance hypothesis is rejected')
         end
       end
 

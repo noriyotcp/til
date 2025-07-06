@@ -3,7 +3,7 @@
 require 'spec_helper'
 require_relative '../../../lib/number_analyzer/statistics/correlation_stats'
 
-# テスト用の簡単なクラス
+# Simple test class
 class TestCorrelationClass
   include CorrelationStats
 
@@ -124,73 +124,73 @@ RSpec.describe CorrelationStats do
     context 'with strong correlations' do
       it 'interprets strong positive correlation' do
         result = test_instance.interpret_correlation(0.9)
-        expect(result).to eq('強い正の相関')
+        expect(result).to eq('Strong positive correlation')
       end
 
       it 'interprets strong negative correlation' do
         result = test_instance.interpret_correlation(-0.85)
-        expect(result).to eq('強い負の相関')
+        expect(result).to eq('Strong negative correlation')
       end
 
       it 'interprets perfect positive correlation' do
         result = test_instance.interpret_correlation(1.0)
-        expect(result).to eq('強い正の相関')
+        expect(result).to eq('Strong positive correlation')
       end
 
       it 'interprets perfect negative correlation' do
         result = test_instance.interpret_correlation(-1.0)
-        expect(result).to eq('強い負の相関')
+        expect(result).to eq('Strong negative correlation')
       end
     end
 
     context 'with moderate correlations' do
       it 'interprets moderate positive correlation' do
         result = test_instance.interpret_correlation(0.6)
-        expect(result).to eq('中程度の正の相関')
+        expect(result).to eq('Moderate positive correlation')
       end
 
       it 'interprets moderate negative correlation' do
         result = test_instance.interpret_correlation(-0.7)
-        expect(result).to eq('中程度の負の相関')
+        expect(result).to eq('Moderate negative correlation')
       end
 
       it 'interprets boundary values' do
         result = test_instance.interpret_correlation(0.5)
-        expect(result).to eq('中程度の正の相関')
+        expect(result).to eq('Moderate positive correlation')
       end
     end
 
     context 'with weak correlations' do
       it 'interprets weak positive correlation' do
         result = test_instance.interpret_correlation(0.4)
-        expect(result).to eq('弱い正の相関')
+        expect(result).to eq('Weak positive correlation')
       end
 
       it 'interprets weak negative correlation' do
         result = test_instance.interpret_correlation(-0.35)
-        expect(result).to eq('弱い負の相関')
+        expect(result).to eq('Weak negative correlation')
       end
 
       it 'interprets boundary values' do
         result = test_instance.interpret_correlation(0.3)
-        expect(result).to eq('弱い正の相関')
+        expect(result).to eq('Weak positive correlation')
       end
     end
 
     context 'with no correlation' do
       it 'interprets no correlation' do
         result = test_instance.interpret_correlation(0.0)
-        expect(result).to eq('ほぼ無相関')
+        expect(result).to eq('Very weak correlation')
       end
 
       it 'interprets very weak positive correlation' do
         result = test_instance.interpret_correlation(0.1)
-        expect(result).to eq('ほぼ無相関')
+        expect(result).to eq('Very weak correlation')
       end
 
       it 'interprets very weak negative correlation' do
         result = test_instance.interpret_correlation(-0.2)
-        expect(result).to eq('ほぼ無相関')
+        expect(result).to eq('Very weak correlation')
       end
     end
   end

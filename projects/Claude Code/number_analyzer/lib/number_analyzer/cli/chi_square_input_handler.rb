@@ -46,7 +46,7 @@ class NumberAnalyzer::CLI::ChiSquareInputHandler
   end
 
   def parse_contingency_table_from_file(file_path)
-    raise ArgumentError, "エラー: ファイルが見つかりません: #{file_path}" unless File.exist?(file_path)
+    raise ArgumentError, "Error: File not found: #{file_path}" unless File.exist?(file_path)
 
     begin
       lines = File.readlines(file_path)
@@ -55,11 +55,13 @@ class NumberAnalyzer::CLI::ChiSquareInputHandler
       end
 
       col_count = contingency_table.first&.length
-      raise ArgumentError, 'エラー: 分割表の各行は同じ列数である必要があります。' if contingency_table.any? { |row| row.length != col_count }
+      raise ArgumentError, 'Error: Each row in contingency table must have the same number of columns' if contingency_table.any? do |row|
+        row.length != col_count
+      end
 
       contingency_table
     rescue StandardError => e
-      raise ArgumentError, "エラー: ファイル読み込み中にエラーが発生しました: #{e.message}"
+      raise ArgumentError, "Error: File read error occurred: #{e.message}"
     end
   end
 
@@ -69,8 +71,8 @@ class NumberAnalyzer::CLI::ChiSquareInputHandler
     raise e
   rescue StandardError
     raise ArgumentError, <<~ERROR
-      エラー: 無効な数値が含まれています。
-      使用例: number_analyzer chi-square --independence 30 20 -- 15 35
+      Error: Invalid numbers found.
+      Example: number_analyzer chi-square --independence 30 20 -- 15 35
     ERROR
   end
 
@@ -101,7 +103,7 @@ class NumberAnalyzer::CLI::ChiSquareInputHandler
                          end
     [observed, expected]
   rescue StandardError => e
-    raise ArgumentError, "ファイル読み込みエラー: #{e.message}"
+    raise ArgumentError, "File read error: #{e.message}"
   end
 
   def two_files_provided?(args)
@@ -133,7 +135,7 @@ class NumberAnalyzer::CLI::ChiSquareInputHandler
     args.map do |arg|
       Float(arg)
     rescue ArgumentError
-      raise ArgumentError, "無効な数値: #{arg}"
+      raise ArgumentError, "Invalid number: #{arg}"
     end
   end
 end

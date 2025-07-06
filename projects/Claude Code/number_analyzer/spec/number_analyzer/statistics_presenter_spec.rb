@@ -24,19 +24,19 @@ RSpec.describe NumberAnalyzer::StatisticsPresenter do
 
     it 'displays all statistical results correctly' do
       expected_output = [
-        '合計: 15',
-        '平均: 3.0',
-        '最大値: 5',
-        '最小値: 1',
-        '中央値: 3.0',
-        '分散: 2.5',
-        '最頻値: 2, 3',
-        '標準偏差: 1.58',
-        '四分位範囲(IQR): 2.0',
-        '外れ値: 10',
-        '偏差値: 31.65, 43.29, 50.0, 56.71, 68.35',
+        'Total: 15',
+        'Average: 3.0',
+        'Maximum: 5',
+        'Minimum: 1',
+        'Median: 3.0',
+        'Variance: 2.5',
+        'Mode: 2, 3',
+        'Standard Deviation: 1.58',
+        'Interquartile Range (IQR): 2.0',
+        'Outliers: 10',
+        'Deviation Scores: 31.65, 43.29, 50.0, 56.71, 68.35',
         '',
-        '度数分布ヒストグラム:',
+        'Frequency Distribution Histogram:',
         '1: ■ (1)',
         '2: ■■ (2)',
         '3: ■ (1)',
@@ -48,10 +48,10 @@ RSpec.describe NumberAnalyzer::StatisticsPresenter do
     end
 
     context 'when IQR is nil' do
-      it 'displays "なし" for IQR' do
+      it 'displays "None" for IQR' do
         stats_with_nil_iqr = stats.merge(iqr: nil)
 
-        expect { described_class.display_results(stats_with_nil_iqr) }.to output(/四分位範囲\(IQR\): なし/).to_stdout
+        expect { described_class.display_results(stats_with_nil_iqr) }.to output(/Interquartile Range \(IQR\): None/).to_stdout
       end
     end
 
@@ -59,7 +59,7 @@ RSpec.describe NumberAnalyzer::StatisticsPresenter do
       it 'displays empty data message for histogram' do
         stats_with_nil_freq = stats.merge(frequency_distribution: nil)
 
-        expect { described_class.display_results(stats_with_nil_freq) }.to output(/\(データが空です\)/).to_stdout
+        expect { described_class.display_results(stats_with_nil_freq) }.to output(/\(No data available\)/).to_stdout
       end
     end
 
@@ -67,14 +67,14 @@ RSpec.describe NumberAnalyzer::StatisticsPresenter do
       it 'displays empty data message for histogram' do
         stats_with_empty_freq = stats.merge(frequency_distribution: {})
 
-        expect { described_class.display_results(stats_with_empty_freq) }.to output(/\(データが空です\)/).to_stdout
+        expect { described_class.display_results(stats_with_empty_freq) }.to output(/\(No data available\)/).to_stdout
       end
     end
   end
 
   describe '.format_mode' do
-    it 'returns "なし" for empty mode values' do
-      expect(described_class.send(:format_mode, [])).to eq('なし')
+    it 'returns "None" for empty mode values' do
+      expect(described_class.send(:format_mode, [])).to eq('None')
     end
 
     it 'formats single mode value' do
@@ -87,8 +87,8 @@ RSpec.describe NumberAnalyzer::StatisticsPresenter do
   end
 
   describe '.format_outliers' do
-    it 'returns "なし" for empty outlier values' do
-      expect(described_class.send(:format_outliers, [])).to eq('なし')
+    it 'returns "None" for empty outlier values' do
+      expect(described_class.send(:format_outliers, [])).to eq('None')
     end
 
     it 'formats single outlier value' do
@@ -101,8 +101,8 @@ RSpec.describe NumberAnalyzer::StatisticsPresenter do
   end
 
   describe '.format_deviation_scores' do
-    it 'returns "なし" for empty deviation scores' do
-      expect(described_class.send(:format_deviation_scores, [])).to eq('なし')
+    it 'returns "None" for empty deviation scores' do
+      expect(described_class.send(:format_deviation_scores, [])).to eq('None')
     end
 
     it 'formats single deviation score' do

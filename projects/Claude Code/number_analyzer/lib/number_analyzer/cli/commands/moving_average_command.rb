@@ -14,7 +14,7 @@ class NumberAnalyzer::Commands::MovingAverageCommand < NumberAnalyzer::Commands:
     # Window size validation
     return unless @options[:window] && @options[:window] <= 0
 
-    raise ArgumentError, 'エラー: ウィンドウサイズは正の整数である必要があります。'
+    raise ArgumentError, 'Error: Window size must be a positive integer'
   end
 
   def parse_input(args)
@@ -29,10 +29,10 @@ class NumberAnalyzer::Commands::MovingAverageCommand < NumberAnalyzer::Commands:
     begin
       window_size = Integer(window_size)
     rescue ArgumentError
-      raise ArgumentError, "エラー: 無効なウィンドウサイズです: #{@options[:window]}"
+      raise ArgumentError, "Error: Invalid window size: #{@options[:window]}"
     end
 
-    raise ArgumentError, 'エラー: ウィンドウサイズは正の整数である必要があります。' if window_size <= 0
+    raise ArgumentError, 'Error: Window size must be a positive integer' if window_size <= 0
 
     analyzer = NumberAnalyzer.new(data)
     result = analyzer.moving_average(window_size)

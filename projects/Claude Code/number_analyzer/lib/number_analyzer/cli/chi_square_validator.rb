@@ -12,8 +12,8 @@ class NumberAnalyzer::CLI::ChiSquareValidator
     return unless test_type.nil?
 
     raise ArgumentError, <<~ERROR
-      エラー: カイ二乗検定のタイプを指定してください。
-      使用例: number_analyzer chi-square --independence contingency.csv
+      Error: Please specify the type of chi-square test.
+      Example: number_analyzer chi-square --independence contingency.csv
              number_analyzer chi-square --goodness-of-fit observed.csv expected.csv
     ERROR
   end
@@ -30,8 +30,8 @@ class NumberAnalyzer::CLI::ChiSquareValidator
     return unless rows.empty? || rows.any?(&:empty?)
 
     raise ArgumentError, <<~ERROR
-      エラー: 有効な分割表を作成できませんでした。
-      使用例: number_analyzer chi-square --independence 30 20 -- 15 35
+      Error: Could not create valid contingency table.
+      Example: number_analyzer chi-square --independence 30 20 -- 15 35
     ERROR
   end
 
@@ -39,8 +39,8 @@ class NumberAnalyzer::CLI::ChiSquareValidator
     return unless rows.length < 2
 
     raise ArgumentError, <<~ERROR
-      エラー: 独立性検定には少なくとも2x2の分割表が必要です。
-      使用例: number_analyzer chi-square --independence 30 20 -- 15 35
+      Error: Independence test requires at least a 2x2 contingency table.
+      Example: number_analyzer chi-square --independence 30 20 -- 15 35
     ERROR
   end
 
@@ -48,6 +48,6 @@ class NumberAnalyzer::CLI::ChiSquareValidator
     col_count = rows.first.length
     return unless rows.any? { |row| row.length != col_count }
 
-    raise ArgumentError, 'エラー: 分割表の各行は同じ列数である必要があります。'
+    raise ArgumentError, 'Error: Each row in contingency table must have the same number of columns'
   end
 end

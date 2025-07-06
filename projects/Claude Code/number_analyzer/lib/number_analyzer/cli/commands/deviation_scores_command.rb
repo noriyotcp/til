@@ -11,11 +11,11 @@ class NumberAnalyzer::Commands::DeviationScoresCommand < NumberAnalyzer::Command
   def validate_arguments(args)
     return unless @options[:file].nil? && args.empty?
 
-    raise ArgumentError, '数値を指定してください'
+    raise ArgumentError, 'Please specify numbers'
   end
 
   def perform_calculation(data)
-    raise ArgumentError, '空の配列に対してdeviation-scoresは計算できません' if data.empty?
+    raise ArgumentError, 'Cannot calculate deviation-scores for empty array' if data.empty?
 
     analyzer = NumberAnalyzer.new(data)
     analyzer.deviation_scores
@@ -23,7 +23,7 @@ class NumberAnalyzer::Commands::DeviationScoresCommand < NumberAnalyzer::Command
 
   def output_result(result)
     @options[:dataset_size] = @data&.size if @data
-    puts OutputFormatter.format_deviation_scores(result, @options)
+    puts NumberAnalyzer::OutputFormatter.format_deviation_scores(result, @options)
   end
 
   def parse_input(args)
@@ -44,9 +44,9 @@ class NumberAnalyzer::Commands::DeviationScoresCommand < NumberAnalyzer::Command
       nil
     end.compact
 
-    raise ArgumentError, "無効な引数が見つかりました: #{invalid_args.join(', ')}" unless invalid_args.empty?
+    raise ArgumentError, "Invalid arguments found: #{invalid_args.join(', ')}" unless invalid_args.empty?
 
-    raise ArgumentError, '有効な数値が見つかりませんでした。' if numbers.empty?
+    raise ArgumentError, 'No valid numbers found' if numbers.empty?
 
     numbers
   end

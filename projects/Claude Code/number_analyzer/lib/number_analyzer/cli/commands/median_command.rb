@@ -9,7 +9,7 @@ class NumberAnalyzer::Commands::MedianCommand < NumberAnalyzer::Commands::BaseCo
   private
 
   def perform_calculation(data)
-    raise ArgumentError, '空の配列に対してmedianは計算できません' if data.empty?
+    raise ArgumentError, 'Cannot calculate median for empty array' if data.empty?
 
     analyzer = NumberAnalyzer.new(data)
     analyzer.median

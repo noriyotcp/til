@@ -50,7 +50,7 @@ class NumberAnalyzer::Commands::ChiSquareCommand < NumberAnalyzer::Commands::Bas
     analyzer = NumberAnalyzer.new(contingency_table.flatten)
     result = analyzer.chi_square_test(contingency_table, type: :independence)
 
-    raise ArgumentError, 'エラー: カイ二乗検定を実行できませんでした。データを確認してください。' if result.nil?
+    raise ArgumentError, 'Error: Could not perform chi-square test. Check your data' if result.nil?
 
     result.merge({
                    test_type: :independence,
@@ -64,7 +64,7 @@ class NumberAnalyzer::Commands::ChiSquareCommand < NumberAnalyzer::Commands::Bas
     analyzer = NumberAnalyzer.new(observed)
     result = analyzer.chi_square_test(expected, type: :goodness_of_fit)
 
-    raise ArgumentError, 'エラー: カイ二乗検定を実行できませんでした。データを確認してください。' if result.nil?
+    raise ArgumentError, 'Error: Could not perform chi-square test. Check your data' if result.nil?
 
     result.merge({
                    test_type: :goodness_of_fit,
@@ -101,12 +101,12 @@ class NumberAnalyzer::Commands::ChiSquareCommand < NumberAnalyzer::Commands::Bas
     test_type = result[:test_type]
 
     # Header
-    puts formatter.format_test_header('カイ二乗検定', test_type_japanese(test_type))
+    puts formatter.format_test_header('Chi-square Test', test_type_english(test_type))
     puts
 
     # Basic statistics
     puts formatter.format_basic_statistics(
-      'カイ二乗統計量',
+      'Chi-square Statistic',
       result[:chi_square_statistic],
       result[:degrees_of_freedom],
       result[:p_value],
@@ -135,7 +135,7 @@ class NumberAnalyzer::Commands::ChiSquareCommand < NumberAnalyzer::Commands::Bas
   def format_independence_info(result, formatter)
     return unless result[:cramers_v]
 
-    formatter.format_effect_size("Cramér's V (効果量)", result[:cramers_v], @options[:precision])
+    formatter.format_effect_size("Cramér's V (Effect Size)", result[:cramers_v], @options[:precision])
   end
 
   def format_goodness_of_fit_info(result, formatter)
@@ -146,12 +146,12 @@ class NumberAnalyzer::Commands::ChiSquareCommand < NumberAnalyzer::Commands::Bas
     )
   end
 
-  def test_type_japanese(type)
+  def test_type_english(type)
     case type
     when :independence
-      '独立性検定'
+      'Independence Test'
     when :goodness_of_fit
-      '適合度検定'
+      'Goodness-of-fit Test'
     else
       type.to_s
     end

@@ -150,7 +150,7 @@ module HypothesisTesting
 
     # Validate expected frequency conditions
     expected_frequencies_valid = validate_expected_frequencies?(expected.flatten)
-    warning = expected_frequencies_valid ? nil : '警告: 期待度数が5未満のセルがあります。結果の信頼性が低い可能性があります。'
+    warning = expected_frequencies_valid ? nil : 'Warning: Some cells have expected frequencies below 5. Results may be unreliable.'
 
     # Calculate chi-square statistic
     chi_square = calculate_chi_square_statistic(observed.flatten, expected.flatten)
@@ -193,7 +193,7 @@ module HypothesisTesting
 
     # Validate expected frequency conditions
     expected_frequencies_valid = validate_expected_frequencies?(expected_frequencies)
-    warning = expected_frequencies_valid ? nil : '警告: 期待度数が5未満のカテゴリがあります。結果の信頼性が低い可能性があります。'
+    warning = expected_frequencies_valid ? nil : 'Warning: Some categories have expected frequencies below 5. Results may be unreliable.'
 
     # Calculate chi-square statistic
     chi_square = calculate_chi_square_statistic(observed_frequencies, expected_frequencies)

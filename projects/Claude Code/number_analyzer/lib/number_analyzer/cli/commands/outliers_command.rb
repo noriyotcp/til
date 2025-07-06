@@ -11,11 +11,11 @@ class NumberAnalyzer::Commands::OutliersCommand < NumberAnalyzer::Commands::Base
   def validate_arguments(args)
     return unless @options[:file].nil? && args.empty?
 
-    raise ArgumentError, '数値を指定してください'
+    raise ArgumentError, 'Please specify numbers'
   end
 
   def perform_calculation(data)
-    raise ArgumentError, '空の配列に対してoutliersは計算できません' if data.empty?
+    raise ArgumentError, 'Cannot calculate outliers for empty array' if data.empty?
 
     analyzer = NumberAnalyzer.new(data)
     analyzer.outliers
@@ -24,7 +24,7 @@ class NumberAnalyzer::Commands::OutliersCommand < NumberAnalyzer::Commands::Base
   def output_result(result)
     # Use the OutputFormatter to maintain compatibility
     @options[:dataset_size] = @data&.size if @data
-    puts OutputFormatter.format_outliers(result, @options)
+    puts NumberAnalyzer::OutputFormatter.format_outliers(result, @options)
   end
 
   def parse_input(args)
@@ -45,9 +45,9 @@ class NumberAnalyzer::Commands::OutliersCommand < NumberAnalyzer::Commands::Base
       nil
     end.compact
 
-    raise ArgumentError, "無効な引数が見つかりました: #{invalid_args.join(', ')}" unless invalid_args.empty?
+    raise ArgumentError, "Invalid arguments found: #{invalid_args.join(', ')}" unless invalid_args.empty?
 
-    raise ArgumentError, '有効な数値が見つかりませんでした。' if numbers.empty?
+    raise ArgumentError, 'No valid numbers found' if numbers.empty?
 
     numbers
   end

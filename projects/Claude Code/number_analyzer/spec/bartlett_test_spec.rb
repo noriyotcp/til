@@ -77,7 +77,7 @@ RSpec.describe NumberAnalyzer do
         it 'provides correct interpretation for unequal variances' do
           result = analyzer.bartlett_test(group1, group2, group3)
 
-          expect(result[:interpretation]).to include('分散は等しくない')
+          expect(result[:interpretation]).to include('group variances are not equal')
         end
       end
 

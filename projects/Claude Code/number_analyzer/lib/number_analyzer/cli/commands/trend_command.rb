@@ -9,12 +9,12 @@ class NumberAnalyzer::Commands::TrendCommand < NumberAnalyzer::Commands::BaseCom
   private
 
   def perform_calculation(data)
-    raise ArgumentError, 'エラー: トレンド分析には最低2つのデータポイントが必要です。' if data.length < 2
+    raise ArgumentError, 'Error: Trend analysis requires at least 2 data points' if data.length < 2
 
     analyzer = NumberAnalyzer.new(data)
     result = analyzer.linear_trend
 
-    raise ArgumentError, 'エラー: トレンド分析の計算に失敗しました。' if result.nil?
+    raise ArgumentError, 'Error: Trend analysis calculation failed' if result.nil?
 
     result
   end

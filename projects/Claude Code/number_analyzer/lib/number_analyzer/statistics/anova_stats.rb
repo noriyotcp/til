@@ -205,9 +205,9 @@ module ANOVAStats
     # Determine significance and interpretation
     significant = p_value < 0.05
     interpretation = if significant
-                       '分散の等質性仮説は棄却される（各グループの分散は等しくない）'
+                       'Homogeneity of variance hypothesis is rejected (group variances are not equal)'
                      else
-                       '分散の等質性仮説は棄却されない（各グループの分散は等しいと考えられる）'
+                       'Homogeneity of variance hypothesis is not rejected (group variances are assumed equal)'
                      end
 
     {
@@ -435,9 +435,9 @@ module ANOVAStats
     # Determine significance and interpretation
     significant = p_value < 0.05
     interpretation = if significant
-                       '分散の等質性仮説は棄却される（各グループの分散は等しくない）'
+                       'Homogeneity of variance hypothesis is rejected (group variances are not equal)'
                      else
-                       '分散の等質性仮説は棄却されない（各グループの分散は等しいと考えられる）'
+                       'Homogeneity of variance hypothesis is not rejected (group variances are assumed equal)'
                      end
 
     {
@@ -476,20 +476,20 @@ module ANOVAStats
 
   # Interpret ANOVA results with effect size classification
   def interpret_anova_results(_f_statistic, p_value, eta_squared)
-    significance = p_value < 0.05 ? '有意' : '非有意'
+    significance = p_value < 0.05 ? 'Significant' : 'Non-significant'
 
     effect_size_interpretation = case eta_squared
                                  when 0.0...0.01
-                                   '効果サイズ: 極小'
+                                   'Effect size: Very small'
                                  when 0.01...0.06
-                                   '効果サイズ: 小'
+                                   'Effect size: Small'
                                  when 0.06...0.14
-                                   '効果サイズ: 中'
+                                   'Effect size: Medium'
                                  else
-                                   '効果サイズ: 大'
+                                   'Effect size: Large'
                                  end
 
-    "#{significance}差あり (p = #{p_value.round(3)}), #{effect_size_interpretation} (η² = #{eta_squared.round(3)})"
+    "#{significance} difference (p = #{p_value.round(3)}), #{effect_size_interpretation} (η² = #{eta_squared.round(3)})"
   end
 
   # Post-hoc analysis methods

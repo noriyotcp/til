@@ -12,11 +12,11 @@ class NumberAnalyzer::Commands::HistogramCommand < NumberAnalyzer::Commands::Bas
   def validate_arguments(args)
     return unless @options[:file].nil? && args.empty?
 
-    raise ArgumentError, '数値を指定してください'
+    raise ArgumentError, 'Please specify numbers'
   end
 
   def perform_calculation(data)
-    raise ArgumentError, '空の配列に対してhistogramは計算できません' if data.empty?
+    raise ArgumentError, 'Cannot calculate histogram for empty array' if data.empty?
 
     analyzer = NumberAnalyzer.new(data)
     display_histogram_output(analyzer, data.size)
@@ -56,9 +56,9 @@ class NumberAnalyzer::Commands::HistogramCommand < NumberAnalyzer::Commands::Bas
       nil
     end.compact
 
-    raise ArgumentError, "無効な引数が見つかりました: #{invalid_args.join(', ')}" unless invalid_args.empty?
+    raise ArgumentError, "Invalid arguments found: #{invalid_args.join(', ')}" unless invalid_args.empty?
 
-    raise ArgumentError, '有効な数値が見つかりませんでした。' if numbers.empty?
+    raise ArgumentError, 'No valid numbers found' if numbers.empty?
 
     numbers
   end

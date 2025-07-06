@@ -11,7 +11,7 @@ class NumberAnalyzer::Commands::MannWhitneyCommand < NumberAnalyzer::Commands::B
   def validate_arguments(args)
     return unless args.empty? && !@options[:file]
 
-    raise ArgumentError, 'グループデータが指定されていません。'
+    raise ArgumentError, 'No group data specified'
   end
 
   def parse_input(args)
@@ -38,7 +38,7 @@ class NumberAnalyzer::Commands::MannWhitneyCommand < NumberAnalyzer::Commands::B
     analyzer = NumberAnalyzer.new([])
     result = analyzer.mann_whitney_u_test(data[0], data[1])
 
-    raise ArgumentError, 'Mann-Whitney検定を実行できませんでした。データを確認してください。' if result.nil?
+    raise ArgumentError, 'Could not perform Mann-Whitney test. Check your data' if result.nil?
 
     result
   end
@@ -85,11 +85,11 @@ class NumberAnalyzer::Commands::MannWhitneyCommand < NumberAnalyzer::Commands::B
 
     groups = []
     file_args.each do |filename|
-      raise ArgumentError, "ファイルが見つかりません: #{filename}" unless File.exist?(filename)
+      raise ArgumentError, "File not found: #{filename}" unless File.exist?(filename)
 
       begin
         data = NumberAnalyzer::FileReader.read_file(filename)
-        raise ArgumentError, "空のファイル: #{filename}" if data.empty?
+        raise ArgumentError, "Empty file: #{filename}" if data.empty?
 
         groups << data
       rescue StandardError => e
@@ -115,7 +115,7 @@ class NumberAnalyzer::Commands::MannWhitneyCommand < NumberAnalyzer::Commands::B
         begin
           current_group << Float(arg)
         rescue ArgumentError
-          raise ArgumentError, "無効な数値: #{arg}"
+          raise ArgumentError, "Invalid number: #{arg}"
         end
       end
     end

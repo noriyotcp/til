@@ -24,17 +24,17 @@ RSpec.describe 'Chi-square CLI' do
       it 'correctly parses and calculates chi-square for 2x2 table' do
         output = run_chi_square_command(['--independence', '30', '20', '--', '15', '35'])
 
-        expect(output).to include('独立性検定')
-        expect(output).to include('カイ二乗統計量: 9.0909')
-        expect(output).to include('自由度: 1')
-        expect(output).to include('有意')
+        expect(output).to include('Independence Test')
+        expect(output).to include('Chi-square Statistic: 9.0909')
+        expect(output).to include('Degrees of Freedom: 1')
+        expect(output).to include('Significant')
       end
 
       it 'handles equal distributions (no association)' do
         output = run_chi_square_command(['--independence', '25', '25', '--', '25', '25'])
 
-        expect(output).to include('カイ二乗統計量: 0.0000')
-        expect(output).to include('有意でない')
+        expect(output).to include('Chi-square Statistic: 0.0000')
+        expect(output).to include('Not significant')
       end
     end
 
@@ -42,9 +42,9 @@ RSpec.describe 'Chi-square CLI' do
       it 'correctly parses and calculates chi-square for 3x3 table' do
         output = run_chi_square_command(['--independence', '10', '20', '30', '--', '15', '25', '35', '--', '20', '30', '40'])
 
-        expect(output).to include('独立性検定')
-        expect(output).to include('自由度: 4')
-        expect(output).to match(/カイ二乗統計量: \d+\.\d+/)
+        expect(output).to include('Independence Test')
+        expect(output).to include('Degrees of Freedom: 4')
+        expect(output).to match(/Chi-square Statistic: \d+\.\d+/)
       end
     end
 
@@ -52,8 +52,8 @@ RSpec.describe 'Chi-square CLI' do
       it 'correctly handles non-square contingency tables' do
         output = run_chi_square_command(['--independence', '10', '20', '30', '--', '15', '25', '35'])
 
-        expect(output).to include('独立性検定')
-        expect(output).to include('自由度: 2')
+        expect(output).to include('Independence Test')
+        expect(output).to include('Degrees of Freedom: 2')
       end
     end
 
@@ -72,9 +72,9 @@ RSpec.describe 'Chi-square CLI' do
       it 'reads contingency table from CSV file' do
         output = run_chi_square_command(['--independence', '--file', test_file])
 
-        expect(output).to include('独立性検定')
+        expect(output).to include('Independence Test')
         # NOTE: Current implementation assumes square tables from files
-        expect(output).to match(/カイ二乗統計量: \d+\.\d+/)
+        expect(output).to match(/Chi-square Statistic: \d+\.\d+/)
       end
     end
 
@@ -93,7 +93,7 @@ RSpec.describe 'Chi-square CLI' do
       it 'rounds output to specified precision' do
         output = run_chi_square_command(['--independence', '--precision', '2', '30', '20', '--', '15', '35'])
 
-        expect(output).to include('カイ二乗統計量: 9.09')
+        expect(output).to include('Chi-square Statistic: 9.09')
         expect(output).to include('0.30') # Cramér's V with precision 2
       end
     end
@@ -114,8 +114,8 @@ RSpec.describe 'Chi-square CLI' do
       it 'performs goodness-of-fit test with two datasets' do
         output = run_chi_square_command(['--goodness-of-fit', '8', '12', '10', '15', '10', '10', '10', '10'])
 
-        expect(output).to include('適合度検定')
-        expect(output).to include('自由度: 3')
+        expect(output).to include('Goodness-of-fit Test')
+        expect(output).to include('Degrees of Freedom: 3')
       end
     end
 
@@ -123,8 +123,8 @@ RSpec.describe 'Chi-square CLI' do
       it 'tests against uniform distribution' do
         output = run_chi_square_command(['--uniform', '8', '12', '10', '15', '9', '6'])
 
-        expect(output).to include('適合度検定')
-        expect(output).to include('カイ二乗統計量: 5.0000') # Expected chi-square for this data
+        expect(output).to include('Goodness-of-fit Test')
+        expect(output).to include('Chi-square Statistic: 5.0000') # Expected chi-square for this data
       end
     end
   end
@@ -133,21 +133,21 @@ RSpec.describe 'Chi-square CLI' do
     it 'shows error when no test type is specified' do
       output = run_chi_square_command(%w[10 20 30 40])
 
-      expect(output).to include('エラー')
-      expect(output).to include('カイ二乗検定のタイプを指定してください')
+      expect(output).to include('Error')
+      expect(output).to include('Please specify the type of chi-square test')
     end
 
     it 'shows error for invalid contingency table' do
       output = run_chi_square_command(['--independence', '30', '20', '--'])
 
-      expect(output).to include('エラー')
+      expect(output).to include('Error')
     end
 
     it 'handles empty row in contingency table' do
       output = run_chi_square_command(['--independence', '--', '30', '20'])
 
-      expect(output).to include('エラー')
-      expect(output).to include('少なくとも2x2の分割表が必要です')
+      expect(output).to include('Error')
+      expect(output).to include('requires at least a 2x2 contingency table')
     end
   end
 

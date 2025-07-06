@@ -1,10 +1,10 @@
 # frozen_string_literal: true
 
-# 相関分析に関する統計機能を提供するモジュール
+# Module providing statistical functions for correlation analysis
 module CorrelationStats
-  # ピアソン相関係数を計算する
-  # @param other_dataset [Array<Numeric>] 比較対象のデータセット
-  # @return [Float, nil] 相関係数（-1から1の範囲）、計算不可能な場合はnil
+  # Calculate Pearson correlation coefficient
+  # @param other_dataset [Array<Numeric>] Dataset to compare against
+  # @return [Float, nil] Correlation coefficient (range -1 to 1), nil if calculation not possible
   def correlation(other_dataset)
     return nil if @numbers.empty? || other_dataset.empty?
     return nil if @numbers.length != other_dataset.length
@@ -35,20 +35,20 @@ module CorrelationStats
     (numerator / denominator).round(10)
   end
 
-  # 相関係数の強度を解釈する
-  # @param correlation_value [Float] 相関係数
-  # @return [String] 相関の強度を示す日本語の説明
+  # Interpret correlation coefficient strength
+  # @param correlation_value [Float] Correlation coefficient
+  # @return [String] Description of correlation strength in English
   def interpret_correlation(correlation_value)
     abs_value = correlation_value.abs
     case abs_value
     when 0.8..1.0
-      correlation_value.positive? ? '強い正の相関' : '強い負の相関'
+      correlation_value.positive? ? 'Strong positive correlation' : 'Strong negative correlation'
     when 0.5..0.8
-      correlation_value.positive? ? '中程度の正の相関' : '中程度の負の相関'
+      correlation_value.positive? ? 'Moderate positive correlation' : 'Moderate negative correlation'
     when 0.3..0.5
-      correlation_value.positive? ? '弱い正の相関' : '弱い負の相関'
+      correlation_value.positive? ? 'Weak positive correlation' : 'Weak negative correlation'
     else
-      'ほぼ無相関'
+      'No correlation'
     end
   end
 end

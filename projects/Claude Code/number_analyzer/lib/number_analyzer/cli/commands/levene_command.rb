@@ -11,7 +11,7 @@ class NumberAnalyzer::Commands::LeveneCommand < NumberAnalyzer::Commands::BaseCo
   def validate_arguments(args)
     return unless args.empty? && !@options[:file]
 
-    raise ArgumentError, 'グループデータが指定されていません。'
+    raise ArgumentError, 'No group data specified'
   end
 
   def parse_input(args)
@@ -24,9 +24,9 @@ class NumberAnalyzer::Commands::LeveneCommand < NumberAnalyzer::Commands::BaseCo
 
     if @groups.nil? || @groups.empty? || @groups.length < 2
       raise ArgumentError, <<~ERROR
-        Levene検定には少なくとも2つのグループが必要です。
-        使用例: bundle exec number_analyzer levene 1 2 3 -- 4 5 6 -- 7 8 9
-                bundle exec number_analyzer levene --file group1.csv group2.csv group3.csv
+        Levene test requires at least 2 groups.
+        Examples: bundle exec number_analyzer levene 1 2 3 -- 4 5 6 -- 7 8 9
+                 bundle exec number_analyzer levene --file group1.csv group2.csv group3.csv
       ERROR
     end
 
@@ -38,7 +38,7 @@ class NumberAnalyzer::Commands::LeveneCommand < NumberAnalyzer::Commands::BaseCo
     analyzer = NumberAnalyzer.new([])
     result = analyzer.levene_test(*data)
 
-    raise ArgumentError, 'Levene検定を実行できませんでした。データを確認してください。' if result.nil?
+    raise ArgumentError, 'Could not perform Levene test. Check your data' if result.nil?
 
     result
   end

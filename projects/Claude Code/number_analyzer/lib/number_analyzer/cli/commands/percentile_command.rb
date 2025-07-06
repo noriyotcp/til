@@ -11,11 +11,11 @@ class NumberAnalyzer::Commands::PercentileCommand < NumberAnalyzer::Commands::Ba
   def validate_arguments(args)
     return unless args.empty? || (!@options[:file] && args.length < 2)
 
-    raise ArgumentError, 'percentileコマンドには percentile値と数値が必要です。'
+    raise ArgumentError, 'percentile command requires percentile value and numbers'
   end
 
   def perform_calculation(data)
-    raise ArgumentError, '空の配列に対してpercentileは計算できません' if data.empty?
+    raise ArgumentError, 'Cannot calculate percentile for empty array' if data.empty?
 
     percentile_value = parse_percentile_value(@percentile_value_str)
     analyzer = NumberAnalyzer.new(data)
@@ -40,20 +40,20 @@ class NumberAnalyzer::Commands::PercentileCommand < NumberAnalyzer::Commands::Ba
 
   def parse_percentile_value(percentile_value_str)
     percentile_value = Float(percentile_value_str)
-    raise ArgumentError, 'percentile値は0-100の範囲で指定してください。' if percentile_value.negative? || percentile_value > 100
+    raise ArgumentError, 'Percentile value must be between 0-100' if percentile_value.negative? || percentile_value > 100
 
     percentile_value
   rescue ArgumentError => e
-    raise e if e.message.include?('percentile値は0-100')
+    raise e if e.message.include?('Percentile value must be between 0-100')
 
-    raise ArgumentError, '無効なpercentile値です。数値を指定してください。'
+    raise ArgumentError, 'Invalid percentile value. Please specify a number'
   end
 
   def parse_percentile_file_input(file_path)
     require_relative '../../file_reader'
     FileReader.read_from_file(file_path)
   rescue StandardError => e
-    raise ArgumentError, "ファイル読み込みエラー: #{e.message}"
+    raise ArgumentError, "File read error: #{e.message}"
   end
 
   def parse_numeric_arguments(args)
@@ -65,9 +65,9 @@ class NumberAnalyzer::Commands::PercentileCommand < NumberAnalyzer::Commands::Ba
       nil
     end.compact
 
-    raise ArgumentError, "無効な引数が見つかりました: #{invalid_args.join(', ')}" unless invalid_args.empty?
+    raise ArgumentError, "Invalid arguments found: #{invalid_args.join(', ')}" unless invalid_args.empty?
 
-    raise ArgumentError, '有効な数値が見つかりませんでした。' if numbers.empty?
+    raise ArgumentError, 'No valid numbers found' if numbers.empty?
 
     numbers
   end

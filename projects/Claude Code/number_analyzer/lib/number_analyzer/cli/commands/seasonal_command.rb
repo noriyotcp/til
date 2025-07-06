@@ -16,9 +16,9 @@ class NumberAnalyzer::Commands::SeasonalCommand < NumberAnalyzer::Commands::Base
 
     begin
       period = Integer(@options[:period])
-      raise ArgumentError, 'エラー: 周期は2以上である必要があります。' if period < 2
+      raise ArgumentError, 'Error: Period must be 2 or greater' if period < 2
     rescue ArgumentError => e
-      raise ArgumentError, e.message.include?('周期は2以上') ? e.message : "エラー: 無効な周期です: #{@options[:period]}"
+      raise ArgumentError, e.message.include?('Period must be 2 or greater') ? e.message : "Error: Invalid period: #{@options[:period]}"
     end
   end
 
@@ -28,16 +28,16 @@ class NumberAnalyzer::Commands::SeasonalCommand < NumberAnalyzer::Commands::Base
   end
 
   def perform_calculation(data)
-    raise ArgumentError, 'エラー: 季節性分析には少なくとも4つのデータポイントが必要です。' if data.length < 4
+    raise ArgumentError, 'Error: Seasonal analysis requires at least 4 data points' if data.length < 4
 
     # Parse period from options if provided
     period = nil
     if @options[:period]
       begin
         period = Integer(@options[:period])
-        raise ArgumentError, 'エラー: 周期は2以上である必要があります。' if period < 2
+        raise ArgumentError, 'Error: Period must be 2 or greater' if period < 2
       rescue ArgumentError => e
-        raise ArgumentError, e.message.include?('周期は2以上') ? e.message : "エラー: 無効な周期です: #{@options[:period]}"
+        raise ArgumentError, e.message.include?('Period must be 2 or greater') ? e.message : "Error: Invalid period: #{@options[:period]}"
       end
     end
 

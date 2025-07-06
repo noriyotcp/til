@@ -12,27 +12,27 @@ require 'json'
 class NumberAnalyzer::StatisticsPresenter
   def self.display_results(stats)
     puts <<~RESULTS
-      合計: #{stats[:total]}
-      平均: #{stats[:average]}
-      最大値: #{stats[:maximum]}
-      最小値: #{stats[:minimum]}
-      中央値: #{stats[:median_value]}
-      分散: #{stats[:variance].round(2)}
-      最頻値: #{format_mode(stats[:mode_values])}
-      標準偏差: #{stats[:std_dev].round(2)}
-      四分位範囲(IQR): #{stats[:iqr]&.round(2) || 'なし'}
-      外れ値: #{format_outliers(stats[:outlier_values])}
-      偏差値: #{format_deviation_scores(stats[:deviation_scores])}
+      Total: #{stats[:total]}
+      Average: #{stats[:average]}
+      Maximum: #{stats[:maximum]}
+      Minimum: #{stats[:minimum]}
+      Median: #{stats[:median_value]}
+      Variance: #{stats[:variance].round(2)}
+      Mode: #{format_mode(stats[:mode_values])}
+      Standard Deviation: #{stats[:std_dev].round(2)}
+      Interquartile Range (IQR): #{stats[:iqr]&.round(2) || 'None'}
+      Outliers: #{format_outliers(stats[:outlier_values])}
+      Deviation Scores: #{format_deviation_scores(stats[:deviation_scores])}
 
     RESULTS
     display_histogram(stats[:frequency_distribution])
   end
 
   def self.display_histogram(frequency_distribution)
-    puts '度数分布ヒストグラム:'
+    puts 'Frequency Distribution Histogram:'
 
     if frequency_distribution.nil? || frequency_distribution.empty?
-      puts '(データが空です)'
+      puts '(No data available)'
       return
     end
 
@@ -43,19 +43,19 @@ class NumberAnalyzer::StatisticsPresenter
   end
 
   def self.format_mode(mode_values)
-    return 'なし' if mode_values.empty?
+    return 'None' if mode_values.empty?
 
     mode_values.join(', ')
   end
 
   def self.format_outliers(outlier_values)
-    return 'なし' if outlier_values.empty?
+    return 'None' if outlier_values.empty?
 
     outlier_values.join(', ')
   end
 
   def self.format_deviation_scores(deviation_scores)
-    return 'なし' if deviation_scores.empty?
+    return 'None' if deviation_scores.empty?
 
     deviation_scores.join(', ')
   end
@@ -74,28 +74,28 @@ class NumberAnalyzer::StatisticsPresenter
     precision = options[:precision] || 6
 
     output = []
-    output << '=== Levene検定結果 (Brown-Forsythe修正版) ==='
+    output << '=== Levene Test Results (Brown-Forsythe Modified) ==='
     output << ''
-    output << '検定統計量:'
-    output << "  F統計量: #{result[:f_statistic].round(precision)}"
-    output << "  p値: #{result[:p_value].round(precision)}"
-    output << "  自由度: #{result[:degrees_of_freedom][0]}, #{result[:degrees_of_freedom][1]}"
+    output << 'Test Statistics:'
+    output << "  F-statistic: #{result[:f_statistic].round(precision)}"
+    output << "  p-value: #{result[:p_value].round(precision)}"
+    output << "  Degrees of Freedom: #{result[:degrees_of_freedom][0]}, #{result[:degrees_of_freedom][1]}"
     output << ''
-    output << '統計的判定:'
+    output << 'Statistical Decision:'
     if result[:significant]
-      output << '  結果: **有意差あり** (p < 0.05)'
-      output << '  結論: 各グループの分散は等しくない'
+      output << '  Result: **Significant difference** (p < 0.05)'
+      output << '  Conclusion: Group variances are not equal'
     else
-      output << '  結果: 有意差なし (p ≥ 0.05)'
-      output << '  結論: 各グループの分散は等しいと考えられる'
+      output << '  Result: No significant difference (p ≥ 0.05)'
+      output << '  Conclusion: Group variances are considered equal'
     end
     output << ''
-    output << '解釈:'
+    output << 'Interpretation:'
     output << "  #{result[:interpretation]}"
     output << ''
-    output << '注意事項:'
-    output << '  - Brown-Forsythe修正版は外れ値に対して頑健です'
-    output << '  - この検定はANOVA分析の前提条件チェックに使用されます'
+    output << 'Notes:'
+    output << '  - Brown-Forsythe modification is robust against outliers'
+    output << '  - This test is used to check ANOVA assumptions'
 
     output.join("\n")
   end
@@ -145,42 +145,42 @@ class NumberAnalyzer::StatisticsPresenter
   end
 
   def self.build_bartlett_header
-    ['=== Bartlett検定結果 ===', '']
+    ['=== Bartlett Test Results ===', '']
   end
 
   def self.build_bartlett_statistics(result, precision)
     [
-      '検定統計量:',
-      "  カイ二乗統計量: #{result[:chi_square_statistic].round(precision)}",
-      "  p値: #{result[:p_value].round(precision)}",
-      "  自由度: #{result[:degrees_of_freedom]}",
-      "  補正係数: #{result[:correction_factor].round(precision)}",
-      "  合併分散: #{result[:pooled_variance].round(precision)}",
+      'Test Statistics:',
+      "  Chi-square statistic: #{result[:chi_square_statistic].round(precision)}",
+      "  p-value: #{result[:p_value].round(precision)}",
+      "  Degrees of Freedom: #{result[:degrees_of_freedom]}",
+      "  Correction Factor: #{result[:correction_factor].round(precision)}",
+      "  Pooled Variance: #{result[:pooled_variance].round(precision)}",
       ''
     ]
   end
 
   def self.build_bartlett_interpretation(result)
-    output = ['統計的判定:']
+    output = ['Statistical Decision:']
     if result[:significant]
-      output << '  結果: **有意差あり** (p < 0.05)'
-      output << '  結論: 各グループの分散は等しくない'
+      output << '  Result: **Significant difference** (p < 0.05)'
+      output << '  Conclusion: Group variances are not equal'
     else
-      output << '  結果: 有意差なし (p ≥ 0.05)'
-      output << '  結論: 各グループの分散は等しいと考えられる'
+      output << '  Result: No significant difference (p ≥ 0.05)'
+      output << '  Conclusion: Group variances are considered equal'
     end
     output << ''
-    output << '解釈:'
+    output << 'Interpretation:'
     output << "  #{result[:interpretation]}"
     output << ''
   end
 
   def self.build_bartlett_notes
     [
-      '注意事項:',
-      '  - Bartlett検定は正規分布を仮定します',
-      '  - 正規性が満たされる場合はLevene検定より高精度です',
-      '  - この検定はANOVA分析の前提条件チェックに使用されます'
+      'Notes:',
+      '  - Bartlett test assumes normal distribution',
+      '  - More precise than Levene test when normality is satisfied',
+      '  - This test is used to check ANOVA assumptions'
     ]
   end
 
@@ -256,34 +256,34 @@ class NumberAnalyzer::StatisticsPresenter
   end
 
   def self.build_kruskal_wallis_header
-    '=== Kruskal-Wallis H検定 ==='
+    '=== Kruskal-Wallis H Test ==='
   end
 
   def self.build_kruskal_wallis_statistics(result, precision)
     [
-      "H統計量: #{result[:h_statistic].round(precision)}",
-      "自由度: #{result[:degrees_of_freedom]}",
-      "p値: #{result[:p_value].round(precision)}",
-      "総サンプル数: #{result[:total_n]}",
-      "グループサイズ: #{result[:group_sizes].join(', ')}"
+      "H-statistic: #{result[:h_statistic].round(precision)}",
+      "Degrees of Freedom: #{result[:degrees_of_freedom]}",
+      "p-value: #{result[:p_value].round(precision)}",
+      "Total Sample Size: #{result[:total_n]}",
+      "Group Sizes: #{result[:group_sizes].join(', ')}"
     ].join("\n")
   end
 
   def self.build_kruskal_wallis_interpretation(result)
-    significance = result[:significant] ? '**有意**' : '非有意'
+    significance = result[:significant] ? '**Significant**' : 'Not significant'
     [
-      "結果: #{significance} (α = 0.05)",
-      "解釈: #{result[:interpretation]}"
+      "Result: #{significance} (α = 0.05)",
+      "Interpretation: #{result[:interpretation]}"
     ].join("\n")
   end
 
   def self.build_kruskal_wallis_notes
     [
       '',
-      '注意事項:',
-      '・ Kruskal-Wallis検定はノンパラメトリック検定です',
-      '・ 正規分布の仮定は不要ですが、同一の分布形状を仮定します',
-      '・ 有意差が見つかった場合は、事後検定（Dunn検定など）を検討してください'
+      'Notes:',
+      '• Kruskal-Wallis test is a non-parametric test',
+      '• Does not require normal distribution assumption but assumes same distribution shape',
+      '• If significant difference is found, consider post-hoc tests (e.g., Dunn test)'
     ].join("\n")
   end
 
@@ -339,37 +339,37 @@ class NumberAnalyzer::StatisticsPresenter
   end
 
   def self.build_mann_whitney_header
-    '=== Mann-Whitney U検定 ==='
+    '=== Mann-Whitney U Test ==='
   end
 
   def self.build_mann_whitney_statistics(result, precision)
     [
-      "U統計量: #{result[:u_statistic].round(precision)}",
+      "U-statistic: #{result[:u_statistic].round(precision)}",
       "U1: #{result[:u1].round(precision)}, U2: #{result[:u2].round(precision)}",
-      "z統計量: #{result[:z_statistic].round(precision)}",
-      "p値: #{result[:p_value].round(precision)}",
-      "効果サイズ (r): #{result[:effect_size].round(precision)}",
-      "グループサイズ: #{result[:group_sizes].join(', ')}",
-      "順位和: #{result[:rank_sums].join(', ')}"
+      "z-statistic: #{result[:z_statistic].round(precision)}",
+      "p-value: #{result[:p_value].round(precision)}",
+      "Effect Size (r): #{result[:effect_size].round(precision)}",
+      "Group Sizes: #{result[:group_sizes].join(', ')}",
+      "Rank Sums: #{result[:rank_sums].join(', ')}"
     ].join("\n")
   end
 
   def self.build_mann_whitney_interpretation(result)
-    significance = result[:significant] ? '**有意**' : '非有意'
+    significance = result[:significant] ? '**Significant**' : 'Not significant'
     effect_magnitude = case result[:effect_size]
                        when 0.0...0.1
-                         '効果サイズ: 極小'
+                         'Effect Size: Negligible'
                        when 0.1...0.3
-                         '効果サイズ: 小'
+                         'Effect Size: Small'
                        when 0.3...0.5
-                         '効果サイズ: 中'
+                         'Effect Size: Medium'
                        else
-                         '効果サイズ: 大'
+                         'Effect Size: Large'
                        end
 
     [
-      "結果: #{significance} (α = 0.05)",
-      "解釈: #{result[:interpretation]}",
+      "Result: #{significance} (α = 0.05)",
+      "Interpretation: #{result[:interpretation]}",
       effect_magnitude
     ].join("\n")
   end
@@ -377,11 +377,11 @@ class NumberAnalyzer::StatisticsPresenter
   def self.build_mann_whitney_notes
     [
       '',
-      '注意事項:',
-      '・ Mann-Whitney U検定は2群比較のノンパラメトリック検定です',
-      '・ t検定の代替として正規分布を仮定しない場合に使用します',
-      '・ 順位に基づく検定のため外れ値に頑健です',
-      '・ 同じ分布形状を仮定しますが、位置（中央値）の違いを検定します'
+      'Notes:',
+      '• Mann-Whitney U test is a non-parametric test for two-group comparison',
+      '• Used as alternative to t-test when normal distribution is not assumed',
+      '• Robust against outliers due to rank-based testing',
+      '• Assumes same distribution shape but tests for location (median) differences'
     ].join("\n")
   end
 
@@ -437,38 +437,38 @@ class NumberAnalyzer::StatisticsPresenter
   end
 
   def self.build_wilcoxon_header
-    '=== Wilcoxon符号順位検定 ==='
+    '=== Wilcoxon Signed-Rank Test ==='
   end
 
   def self.build_wilcoxon_statistics(result, precision)
     [
-      "W統計量: #{result[:w_statistic].round(precision)}",
-      "W+ (正の順位和): #{result[:w_plus].round(precision)}",
-      "W- (負の順位和): #{result[:w_minus].round(precision)}",
-      "z統計量: #{result[:z_statistic].round(precision)}",
-      "p値: #{result[:p_value].round(precision)}",
-      "効果サイズ (r): #{result[:effect_size].round(precision)}",
-      "ペア数: #{result[:n_pairs]}",
-      "有効ペア数: #{result[:n_effective]} (ゼロ差除外: #{result[:n_zeros]})"
+      "W-statistic: #{result[:w_statistic].round(precision)}",
+      "W+ (positive rank sum): #{result[:w_plus].round(precision)}",
+      "W- (negative rank sum): #{result[:w_minus].round(precision)}",
+      "z-statistic: #{result[:z_statistic].round(precision)}",
+      "p-value: #{result[:p_value].round(precision)}",
+      "Effect Size (r): #{result[:effect_size].round(precision)}",
+      "Number of Pairs: #{result[:n_pairs]}",
+      "Effective Pairs: #{result[:n_effective]} (Zero differences excluded: #{result[:n_zeros]})"
     ].join("\n")
   end
 
   def self.build_wilcoxon_interpretation(result)
-    significance = result[:significant] ? '**有意**' : '非有意'
+    significance = result[:significant] ? '**Significant**' : 'Not significant'
     effect_magnitude = case result[:effect_size]
                        when 0.0...0.1
-                         '効果サイズ: 極小'
+                         'Effect Size: Negligible'
                        when 0.1...0.3
-                         '効果サイズ: 小'
+                         'Effect Size: Small'
                        when 0.3...0.5
-                         '効果サイズ: 中'
+                         'Effect Size: Medium'
                        else
-                         '効果サイズ: 大'
+                         'Effect Size: Large'
                        end
 
     [
-      "結果: #{significance} (α = 0.05)",
-      "解釈: #{result[:interpretation]}",
+      "Result: #{significance} (α = 0.05)",
+      "Interpretation: #{result[:interpretation]}",
       effect_magnitude
     ].join("\n")
   end
@@ -476,11 +476,11 @@ class NumberAnalyzer::StatisticsPresenter
   def self.build_wilcoxon_notes
     [
       '',
-      '注意事項:',
-      '・ Wilcoxon符号順位検定は対応のあるデータのノンパラメトリック検定です',
-      '・ 対応のあるt検定の代替として正規分布を仮定しない場合に使用します',
-      '・ 差の対称分布を仮定しますが、正規性は不要です',
-      '・ ゼロ差は検定から除外されます'
+      'Notes:',
+      '• Wilcoxon signed-rank test is a non-parametric test for paired data',
+      '• Used as alternative to paired t-test when normal distribution is not assumed',
+      '• Assumes symmetric distribution of differences but normality is not required',
+      '• Zero differences are excluded from the test'
     ].join("\n")
   end
 
@@ -534,37 +534,37 @@ class NumberAnalyzer::StatisticsPresenter
   end
 
   def self.build_friedman_header
-    '=== Friedman検定 ==='
+    '=== Friedman Test ==='
   end
 
   def self.build_friedman_statistics(result, precision)
     [
-      "χ²統計量: #{result[:chi_square_statistic].round(precision)}",
-      "自由度: #{result[:degrees_of_freedom]}",
-      "p値: #{result[:p_value].round(precision)}",
-      "被験者数: #{result[:n_subjects]}",
-      "条件数: #{result[:k_conditions]}",
-      "総観測数: #{result[:total_observations]}",
-      "ランク合計: #{result[:rank_sums].join(', ')}"
+      "χ²-statistic: #{result[:chi_square_statistic].round(precision)}",
+      "Degrees of Freedom: #{result[:degrees_of_freedom]}",
+      "p-value: #{result[:p_value].round(precision)}",
+      "Number of Subjects: #{result[:n_subjects]}",
+      "Number of Conditions: #{result[:k_conditions]}",
+      "Total Observations: #{result[:total_observations]}",
+      "Rank Sums: #{result[:rank_sums].join(', ')}"
     ].join("\n")
   end
 
   def self.build_friedman_interpretation(result)
-    significance = result[:significant] ? '**有意**' : '非有意'
+    significance = result[:significant] ? '**Significant**' : 'Not significant'
     [
-      "結果: #{significance} (α = 0.05)",
-      "解釈: #{result[:interpretation]}"
+      "Result: #{significance} (α = 0.05)",
+      "Interpretation: #{result[:interpretation]}"
     ].join("\n")
   end
 
   def self.build_friedman_notes
     [
       '',
-      '注意事項:',
-      '・ Friedman検定は反復測定データのノンパラメトリック検定です',
-      '・ 反復測定ANOVAの代替として正規分布を仮定しない場合に使用します',
-      '・ 同一被験者が複数条件で測定されることを前提とします',
-      '・ 有意差が見つかった場合は、事後検定（Nemenyi検定など）を検討してください'
+      'Notes:',
+      '• Friedman test is a non-parametric test for repeated measures data',
+      '• Used as alternative to repeated measures ANOVA when normal distribution is not assumed',
+      '• Assumes same subjects are measured under multiple conditions',
+      '• If significant difference is found, consider post-hoc tests (e.g., Nemenyi test)'
     ].join("\n")
   end
 

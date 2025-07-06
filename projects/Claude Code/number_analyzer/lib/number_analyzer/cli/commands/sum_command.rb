@@ -9,7 +9,7 @@ class NumberAnalyzer::Commands::SumCommand < NumberAnalyzer::Commands::BaseComma
   private
 
   def perform_calculation(data)
-    raise ArgumentError, '空の配列に対してsumは計算できません' if data.empty?
+    raise ArgumentError, 'Cannot calculate sum for empty array' if data.empty?
 
     analyzer = NumberAnalyzer.new(data)
     analyzer.sum

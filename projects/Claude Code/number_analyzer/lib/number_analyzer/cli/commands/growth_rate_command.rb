@@ -14,7 +14,7 @@ class NumberAnalyzer::Commands::GrowthRateCommand < NumberAnalyzer::Commands::Ba
   end
 
   def perform_calculation(data)
-    raise ArgumentError, 'エラー: 成長率の計算には少なくとも2つのデータポイントが必要です。' if data.length < 2
+    raise ArgumentError, 'Error: Growth rate calculation requires at least 2 data points' if data.length < 2
 
     analyzer = NumberAnalyzer.new(data)
 

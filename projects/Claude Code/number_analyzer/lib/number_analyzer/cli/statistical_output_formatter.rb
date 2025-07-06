@@ -22,12 +22,12 @@ class NumberAnalyzer::CLI::StatisticalOutputFormatter
 
     # Format significance result
     def format_significance(significant, _alpha = 0.05)
-      significant ? '有意' : '有意でない'
+      significant ? 'Significant' : 'Not significant'
     end
 
     # Format test result header with test type
     def format_test_header(test_name, test_type = nil)
-      header = "#{test_name}結果"
+      header = "#{test_name} Results"
       header += " (#{test_type})" if test_type
       "#{header}:\n"
     end
@@ -36,9 +36,9 @@ class NumberAnalyzer::CLI::StatisticalOutputFormatter
     def format_basic_statistics(statistic_name, statistic_value, degrees_of_freedom, p_value, significant, precision = nil)
       result = []
       result << "#{statistic_name}: #{format_value(statistic_value, precision)}"
-      result << "自由度: #{degrees_of_freedom}" if degrees_of_freedom
-      result << "p値: #{format_value(p_value, precision || 6)}"
-      result << "有意性 (α=0.05): #{format_significance(significant)}"
+      result << "Degrees of Freedom: #{degrees_of_freedom}" if degrees_of_freedom
+      result << "p-value: #{format_value(p_value, precision || 6)}"
+      result << "Significance (α=0.05): #{format_significance(significant)}"
       result.join("\n")
     end
 
@@ -51,14 +51,14 @@ class NumberAnalyzer::CLI::StatisticalOutputFormatter
     def format_dataset_info(options = {})
       info = []
 
-      info << "データサイズ: #{options[:dataset_size]}" if options[:dataset_size]
+      info << "Dataset Size: #{options[:dataset_size]}" if options[:dataset_size]
 
       if options[:dataset1_size] && options[:dataset2_size]
-        info << "グループ1のサイズ: #{options[:dataset1_size]}"
-        info << "グループ2のサイズ: #{options[:dataset2_size]}"
+        info << "Group 1 Size: #{options[:dataset1_size]}"
+        info << "Group 2 Size: #{options[:dataset2_size]}"
       end
 
-      info << "母集団平均: #{options[:population_mean]}" if options[:population_mean]
+      info << "Population Mean: #{options[:population_mean]}" if options[:population_mean]
 
       info.join("\n") unless info.empty?
     end
@@ -69,12 +69,12 @@ class NumberAnalyzer::CLI::StatisticalOutputFormatter
 
       if observed
         formatted_observed = observed.map { |freq| format_value(freq, precision || 1) }
-        result << "観測度数: #{formatted_observed.join(', ')}"
+        result << "Observed Frequencies: #{formatted_observed.join(', ')}"
       end
 
       if expected
         formatted_expected = expected.map { |freq| format_value(freq, precision || 2) }
-        result << "期待度数: #{formatted_expected.join(', ')}"
+        result << "Expected Frequencies: #{formatted_expected.join(', ')}"
       end
 
       result.join("\n")
@@ -106,13 +106,13 @@ class NumberAnalyzer::CLI::StatisticalOutputFormatter
     def format_seasonal_strength_level(strength)
       case strength
       when 0...0.3
-        '弱い'
+        'Weak'
       when 0.3...0.6
-        '中程度'
+        'Moderate'
       when 0.6...0.8
-        '強い'
+        'Strong'
       else
-        '非常に強い'
+        'Very Strong'
       end
     end
 
@@ -120,11 +120,11 @@ class NumberAnalyzer::CLI::StatisticalOutputFormatter
     def format_trend_direction(direction)
       case direction.to_s.downcase
       when 'increasing', 'up', 'positive'
-        '上昇'
+        'Increasing'
       when 'decreasing', 'down', 'negative'
-        '下降'
+        'Decreasing'
       when 'stable', 'flat', 'none'
-        '安定'
+        'Stable'
       else
         direction.to_s
       end

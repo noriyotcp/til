@@ -48,7 +48,7 @@ class NumberAnalyzer::Commands::BaseCommand
   # Output the result using the configured formatter
   def output_result(result)
     formatted = if @options[:format] || @options[:precision]
-                  OutputFormatter.format(result, @options)
+                  NumberAnalyzer::OutputFormatter.format(result, @options)
                 else
                   result.to_s
                 end
@@ -57,7 +57,7 @@ class NumberAnalyzer::Commands::BaseCommand
 
   # Handle errors consistently
   def handle_error(error)
-    puts "エラー: #{error.message}"
+    puts "Error: #{error.message}"
     exit 1
   end
 

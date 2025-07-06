@@ -53,13 +53,13 @@ class NumberAnalyzer::Commands::TTestCommand < NumberAnalyzer::Commands::BaseCom
       dataset1, dataset2 = data
       if (dataset1.length - dataset2.length).abs > dataset1.length
         raise ArgumentError,
-              "エラー: データセットの長さが大きく異なります (#{dataset1.length} vs #{dataset2.length})"
+              "Error: Dataset lengths differ significantly (#{dataset1.length} vs #{dataset2.length})"
       end
     when :paired
       dataset1, dataset2 = data
       if dataset1.length != dataset2.length
         raise ArgumentError,
-              "エラー: 対応のあるデータのため、両グループは同じ長さである必要があります (#{dataset1.length} vs #{dataset2.length})"
+              "Error: For paired data, both groups must have the same length (#{dataset1.length} vs #{dataset2.length})"
       end
     end
   end
@@ -76,9 +76,9 @@ class NumberAnalyzer::Commands::TTestCommand < NumberAnalyzer::Commands::BaseCom
     return unless result.nil?
 
     error_messages = {
-      one_sample: 'エラー: 一標本t検定を実行できませんでした。データを確認してください。',
-      independent: 'エラー: t検定を実行できませんでした。データを確認してください。',
-      paired: 'エラー: 対応ありt検定を実行できませんでした。データを確認してください。'
+      one_sample: 'Error: Could not perform one-sample t-test. Check your data',
+      independent: 'Error: Could not perform t-test. Check your data',
+      paired: 'Error: Could not perform paired t-test. Check your data'
     }
     raise ArgumentError, error_messages[test_type]
   end
@@ -102,7 +102,7 @@ class NumberAnalyzer::Commands::TTestCommand < NumberAnalyzer::Commands::BaseCom
   def build_error_message(test_type, original_error)
     case test_type
     when :one_sample
-      "エラー: 無効な母集団平均です: #{@options[:population_mean] || @options[:mu]}"
+      "Error: Invalid population mean: #{@options[:population_mean] || @options[:mu]}"
     else
       original_error.message
     end

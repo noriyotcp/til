@@ -11,7 +11,7 @@ class NumberAnalyzer::Commands::WilcoxonCommand < NumberAnalyzer::Commands::Base
   def validate_arguments(args)
     return unless args.empty? && !@options[:file]
 
-    raise ArgumentError, 'グループデータが指定されていません。'
+    raise ArgumentError, 'No group data specified'
   end
 
   def parse_input(args)
@@ -46,7 +46,7 @@ class NumberAnalyzer::Commands::WilcoxonCommand < NumberAnalyzer::Commands::Base
     analyzer = NumberAnalyzer.new([])
     result = analyzer.wilcoxon_signed_rank_test(data[0], data[1])
 
-    raise ArgumentError, 'Wilcoxon符号順位検定を実行できませんでした。データを確認してください。' if result.nil?
+    raise ArgumentError, 'Could not perform Wilcoxon signed-rank test. Check your data' if result.nil?
 
     result
   end
@@ -93,11 +93,11 @@ class NumberAnalyzer::Commands::WilcoxonCommand < NumberAnalyzer::Commands::Base
 
     groups = []
     file_args.each do |filename|
-      raise ArgumentError, "ファイルが見つかりません: #{filename}" unless File.exist?(filename)
+      raise ArgumentError, "File not found: #{filename}" unless File.exist?(filename)
 
       begin
         data = NumberAnalyzer::FileReader.read_file(filename)
-        raise ArgumentError, "空のファイル: #{filename}" if data.empty?
+        raise ArgumentError, "Empty file: #{filename}" if data.empty?
 
         groups << data
       rescue StandardError => e
@@ -123,7 +123,7 @@ class NumberAnalyzer::Commands::WilcoxonCommand < NumberAnalyzer::Commands::Base
         begin
           current_group << Float(arg)
         rescue ArgumentError
-          raise ArgumentError, "無効な数値: #{arg}"
+          raise ArgumentError, "Invalid number: #{arg}"
         end
       end
     end
