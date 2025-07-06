@@ -319,7 +319,7 @@ class NumberAnalyzer::PluginSystem
     return unless plugin_class.respond_to?(:plugin_commands)
 
     plugin_class.plugin_commands.each do |command_name, method_name|
-      CLI.register_command(command_name, plugin_class, method_name)
+      NumberAnalyzer::CLI.register_command(command_name, plugin_class, method_name)
     end
   end
 
@@ -328,22 +328,22 @@ class NumberAnalyzer::PluginSystem
     return unless plugin_class.respond_to?(:plugin_commands)
 
     plugin_class.plugin_commands.each do |command_name, method_name|
-      CLI.register_command(command_name, plugin_class, method_name)
+      NumberAnalyzer::CLI.register_command(command_name, plugin_class, method_name)
     end
   end
 
   def load_file_format(plugin_name, plugin_class)
     # Register file format handlers
-    FileReader.register_format(plugin_name, plugin_class) if defined?(FileReader)
+    NumberAnalyzer::FileReader.register_format(plugin_name, plugin_class) if defined?(NumberAnalyzer::FileReader)
   end
 
   def load_output_format(plugin_name, plugin_class)
     # Register output format handlers
-    OutputFormatter.register_format(plugin_name, plugin_class) if defined?(OutputFormatter)
+    NumberAnalyzer::OutputFormatter.register_format(plugin_name, plugin_class) if defined?(NumberAnalyzer::OutputFormatter)
   end
 
   def load_validator(plugin_name, plugin_class)
     # Register data validators
-    DataValidator.register_validator(plugin_name, plugin_class) if defined?(DataValidator)
+    NumberAnalyzer::DataValidator.register_validator(plugin_name, plugin_class) if defined?(NumberAnalyzer::DataValidator)
   end
 end

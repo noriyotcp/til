@@ -52,7 +52,7 @@ class NumberAnalyzer::CLI
       all_commands = CORE_COMMANDS.merge(plugin_commands)
 
       # Add commands from CommandRegistry
-      Commands::CommandRegistry.all.each do |cmd|
+      NumberAnalyzer::Commands::CommandRegistry.all.each do |cmd|
         all_commands[cmd] ||= :run_from_registry
       end
 
@@ -69,7 +69,7 @@ class NumberAnalyzer::CLI
 
     # Initialize plugin system
     def plugin_system
-      @plugin_system ||= PluginSystem.new
+      @plugin_system ||= NumberAnalyzer::PluginSystem.new
     end
 
     # Load plugins on CLI initialization
@@ -117,7 +117,7 @@ class NumberAnalyzer::CLI
 
     if options[:file]
       begin
-        FileReader.read_from_file(options[:file])
+        NumberAnalyzer::FileReader.read_from_file(options[:file])
       rescue StandardError => e
         puts "ファイル読み込みエラー: #{e.message}"
         exit 1
@@ -194,8 +194,8 @@ class NumberAnalyzer::CLI
       options, remaining_args = parse_options(args)
     end
     # First check if command is registered with new Command Pattern
-    if Commands::CommandRegistry.exists?(command)
-      Commands::CommandRegistry.execute_command(command, remaining_args, options)
+    if NumberAnalyzer::Commands::CommandRegistry.exists?(command)
+      NumberAnalyzer::Commands::CommandRegistry.execute_command(command, remaining_args, options)
     # Then check if it's a core command or plugin command
     elsif CORE_COMMANDS.key?(command)
       method_name = CORE_COMMANDS[command]
@@ -354,7 +354,7 @@ class NumberAnalyzer::CLI
   private_class_method def self.parse_numbers_with_options(args, options)
     if options[:file]
       begin
-        FileReader.read_from_file(options[:file])
+        NumberAnalyzer::FileReader.read_from_file(options[:file])
       rescue StandardError => e
         puts "ファイル読み込みエラー: #{e.message}"
         exit 1
@@ -379,7 +379,7 @@ class NumberAnalyzer::CLI
     result = analyzer.median
 
     options[:dataset_size] = numbers.size
-    puts OutputFormatter.format_value(result, options)
+    puts NumberAnalyzer::OutputFormatter.format_value(result, options)
   end
 
   private_class_method def self.run_mean(args, options = {})
@@ -393,7 +393,7 @@ class NumberAnalyzer::CLI
     result = analyzer.send(:average_value)
 
     options[:dataset_size] = numbers.size
-    puts OutputFormatter.format_value(result, options)
+    puts NumberAnalyzer::OutputFormatter.format_value(result, options)
   end
 
   private_class_method def self.run_mode(args, options = {})
@@ -407,7 +407,7 @@ class NumberAnalyzer::CLI
     mode_values = analyzer.mode
 
     options[:dataset_size] = numbers.size
-    puts OutputFormatter.format_mode(mode_values, options)
+    puts NumberAnalyzer::OutputFormatter.format_mode(mode_values, options)
   end
 
   private_class_method def self.run_sum(args, options = {})
@@ -420,7 +420,7 @@ class NumberAnalyzer::CLI
     result = numbers.sum
 
     options[:dataset_size] = numbers.size
-    puts OutputFormatter.format_value(result, options)
+    puts NumberAnalyzer::OutputFormatter.format_value(result, options)
   end
 
   private_class_method def self.run_min(args, options = {})
@@ -433,7 +433,7 @@ class NumberAnalyzer::CLI
     result = numbers.min
 
     options[:dataset_size] = numbers.size
-    puts OutputFormatter.format_value(result, options)
+    puts NumberAnalyzer::OutputFormatter.format_value(result, options)
   end
 
   private_class_method def self.run_max(args, options = {})
@@ -446,7 +446,7 @@ class NumberAnalyzer::CLI
     result = numbers.max
 
     options[:dataset_size] = numbers.size
-    puts OutputFormatter.format_value(result, options)
+    puts NumberAnalyzer::OutputFormatter.format_value(result, options)
   end
 
   private_class_method def self.run_histogram(args, options = {})
@@ -493,7 +493,7 @@ class NumberAnalyzer::CLI
     outlier_values = analyzer.outliers
 
     options[:dataset_size] = numbers.size
-    puts OutputFormatter.format_outliers(outlier_values, options)
+    puts NumberAnalyzer::OutputFormatter.format_outliers(outlier_values, options)
   end
 
   private_class_method def self.run_percentile(args, options = {})
@@ -512,7 +512,7 @@ class NumberAnalyzer::CLI
     result = analyzer.percentile(percentile_value)
 
     options[:dataset_size] = numbers.size
-    puts OutputFormatter.format_value(result, options)
+    puts NumberAnalyzer::OutputFormatter.format_value(result, options)
   end
 
   private_class_method def self.validate_percentile_args(args, options = {})
@@ -532,7 +532,7 @@ class NumberAnalyzer::CLI
   end
 
   private_class_method def self.parse_percentile_file_input(file_path)
-    FileReader.read_from_file(file_path)
+    NumberAnalyzer::FileReader.read_from_file(file_path)
   rescue StandardError => e
     puts "ファイル読み込みエラー: #{e.message}"
     exit 1
@@ -561,7 +561,7 @@ class NumberAnalyzer::CLI
     quartiles = analyzer.quartiles
 
     options[:dataset_size] = numbers.size
-    puts OutputFormatter.format_quartiles(quartiles, options)
+    puts NumberAnalyzer::OutputFormatter.format_quartiles(quartiles, options)
   end
 
   private_class_method def self.run_variance(args, options = {})
@@ -575,7 +575,7 @@ class NumberAnalyzer::CLI
     result = analyzer.variance
 
     options[:dataset_size] = numbers.size
-    puts OutputFormatter.format_value(result, options)
+    puts NumberAnalyzer::OutputFormatter.format_value(result, options)
   end
 
   private_class_method def self.run_standard_deviation(args, options = {})
@@ -589,7 +589,7 @@ class NumberAnalyzer::CLI
     result = analyzer.standard_deviation
 
     options[:dataset_size] = numbers.size
-    puts OutputFormatter.format_value(result, options)
+    puts NumberAnalyzer::OutputFormatter.format_value(result, options)
   end
 
   private_class_method def self.run_deviation_scores(args, options = {})
@@ -603,7 +603,7 @@ class NumberAnalyzer::CLI
     deviation_scores = analyzer.deviation_scores
 
     options[:dataset_size] = numbers.size
-    puts OutputFormatter.format_array(deviation_scores, options)
+    puts NumberAnalyzer::OutputFormatter.format_array(deviation_scores, options)
   end
 
   private_class_method def self.run_correlation(args, options = {})
@@ -619,7 +619,7 @@ class NumberAnalyzer::CLI
     result = analyzer.correlation(dataset2)
 
     options[:dataset_size] = dataset1.size
-    puts OutputFormatter.format_correlation(result, options)
+    puts NumberAnalyzer::OutputFormatter.format_correlation(result, options)
   end
 
   private_class_method def self.validate_correlation_args(args, options = {})
@@ -648,11 +648,11 @@ class NumberAnalyzer::CLI
   private_class_method def self.parse_correlation_file_datasets(args, options)
     if args.length == 2
       # Two separate files
-      dataset1 = FileReader.read_from_file(args[0])
-      dataset2 = FileReader.read_from_file(args[1])
+      dataset1 = NumberAnalyzer::FileReader.read_from_file(args[0])
+      dataset2 = NumberAnalyzer::FileReader.read_from_file(args[1])
     else
       # Single file mode - split in half
-      combined_data = FileReader.read_from_file(options[:file])
+      combined_data = NumberAnalyzer::FileReader.read_from_file(options[:file])
       mid = combined_data.length / 2
       dataset1 = combined_data[0...mid]
       dataset2 = combined_data[mid..]
@@ -681,7 +681,7 @@ class NumberAnalyzer::CLI
     result = analyzer.linear_trend
 
     options[:dataset_size] = numbers.size
-    puts OutputFormatter.format_trend(result, options)
+    puts NumberAnalyzer::OutputFormatter.format_trend(result, options)
   end
 
   private_class_method def self.run_moving_average(args, options = {})
@@ -711,7 +711,7 @@ class NumberAnalyzer::CLI
 
     options[:dataset_size] = numbers.size
     options[:window_size] = window_size
-    puts OutputFormatter.format_moving_average(result, options)
+    puts NumberAnalyzer::OutputFormatter.format_moving_average(result, options)
   end
 
   private_class_method def self.run_growth_rate(args, options = {})
@@ -735,7 +735,7 @@ class NumberAnalyzer::CLI
     }
 
     options[:dataset_size] = numbers.size
-    puts OutputFormatter.format_growth_rate(result, options)
+    puts NumberAnalyzer::OutputFormatter.format_growth_rate(result, options)
   end
 
   private_class_method def self.run_seasonal(args, options = {})
@@ -766,7 +766,7 @@ class NumberAnalyzer::CLI
     result = analyzer.seasonal_decomposition(period)
 
     options[:dataset_size] = numbers.size
-    puts OutputFormatter.format_seasonal(result, options)
+    puts NumberAnalyzer::OutputFormatter.format_seasonal(result, options)
   end
 
   private_class_method def self.run_t_test(args, options = {})
@@ -835,7 +835,7 @@ class NumberAnalyzer::CLI
     end
 
     options[:dataset_size] = numbers.size
-    puts OutputFormatter.format_t_test(result, options)
+    puts NumberAnalyzer::OutputFormatter.format_t_test(result, options)
   end
 
   private_class_method def self.validate_independent_t_test_args(args)
@@ -863,8 +863,8 @@ class NumberAnalyzer::CLI
       exit 1
     end
 
-    dataset1 = FileReader.read_from_file(args[0])
-    dataset2 = FileReader.read_from_file(args[1])
+    dataset1 = NumberAnalyzer::FileReader.read_from_file(args[0])
+    dataset2 = NumberAnalyzer::FileReader.read_from_file(args[1])
     [dataset1, dataset2]
   end
 
@@ -902,7 +902,7 @@ class NumberAnalyzer::CLI
 
     options[:dataset1_size] = dataset1.size
     options[:dataset2_size] = dataset2.size
-    puts OutputFormatter.format_t_test(result, options)
+    puts NumberAnalyzer::OutputFormatter.format_t_test(result, options)
   end
 
   private_class_method def self.validate_paired_t_test_args(args)
@@ -952,7 +952,7 @@ class NumberAnalyzer::CLI
 
     options[:dataset1_size] = dataset1.size
     options[:dataset2_size] = dataset2.size
-    puts OutputFormatter.format_t_test(result, options)
+    puts NumberAnalyzer::OutputFormatter.format_t_test(result, options)
   end
 
   private_class_method def self.run_confidence_interval(args, options = {})
@@ -975,7 +975,7 @@ class NumberAnalyzer::CLI
     end
 
     options[:dataset_size] = numbers.size
-    puts OutputFormatter.format_confidence_interval(result, options)
+    puts NumberAnalyzer::OutputFormatter.format_confidence_interval(result, options)
   end
 
   private_class_method def self.parse_confidence_level_from_args(args, options)
@@ -1112,7 +1112,7 @@ class NumberAnalyzer::CLI
     end
 
     options[:dataset_size] = contingency_table.flatten.size
-    puts OutputFormatter.format_chi_square(result, options)
+    puts NumberAnalyzer::OutputFormatter.format_chi_square(result, options)
   end
 
   private_class_method def self.run_chi_square_goodness_of_fit_test(args, options)
@@ -1125,8 +1125,8 @@ class NumberAnalyzer::CLI
       # Two datasets: observed and expected
       if args.length == 2 && args.all? { |arg| arg.end_with?('.csv', '.json', '.txt') }
         # Two files provided
-        observed = FileReader.read_from_file(args[0])
-        expected = FileReader.read_from_file(args[1])
+        observed = NumberAnalyzer::FileReader.read_from_file(args[0])
+        expected = NumberAnalyzer::FileReader.read_from_file(args[1])
       elsif options[:file]
         # Single file with interleaved data
         combined_data = parse_numbers_with_options([], options)
@@ -1150,7 +1150,7 @@ class NumberAnalyzer::CLI
     end
 
     options[:dataset_size] = result[:observed_frequencies].size
-    puts OutputFormatter.format_chi_square(result, options)
+    puts NumberAnalyzer::OutputFormatter.format_chi_square(result, options)
   end
 
   private_class_method def self.parse_contingency_table_from_args(args)
@@ -1305,7 +1305,7 @@ class NumberAnalyzer::CLI
         precision: anova_options[:precision],
         quiet: anova_options[:quiet]
       }
-      formatted_result = OutputFormatter.format_anova(result, format_options)
+      formatted_result = NumberAnalyzer::OutputFormatter.format_anova(result, format_options)
       puts formatted_result
 
       # Perform post-hoc analysis if requested
@@ -1314,7 +1314,7 @@ class NumberAnalyzer::CLI
 
         if post_hoc_result
           puts "\n" unless anova_options[:format] == 'json'
-          formatted_post_hoc = OutputFormatter.format_post_hoc(post_hoc_result, format_options)
+          formatted_post_hoc = NumberAnalyzer::OutputFormatter.format_post_hoc(post_hoc_result, format_options)
           puts formatted_post_hoc
         end
       end
@@ -1500,7 +1500,7 @@ class NumberAnalyzer::CLI
       quiet: options[:quiet]
     }
 
-    formatted_result = OutputFormatter.format_two_way_anova(result, format_options)
+    formatted_result = NumberAnalyzer::OutputFormatter.format_two_way_anova(result, format_options)
     puts formatted_result
   end
 
@@ -1533,7 +1533,7 @@ class NumberAnalyzer::CLI
     filenames.each do |filename|
       raise ArgumentError, "ファイルが見つかりません: #{filename}" unless File.exist?(filename)
 
-      data = FileReader.read_file(filename)
+      data = NumberAnalyzer::FileReader.read_file(filename)
       raise ArgumentError, "空のファイル: #{filename}" if data.empty?
 
       groups << data
@@ -1788,7 +1788,7 @@ class NumberAnalyzer::CLI
       end
 
       begin
-        data = FileReader.read_file(filename)
+        data = NumberAnalyzer::FileReader.read_file(filename)
         if data.empty?
           puts "エラー: 空のファイル: #{filename}"
           exit 1
