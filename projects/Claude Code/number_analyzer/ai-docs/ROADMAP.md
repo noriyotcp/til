@@ -604,11 +604,12 @@
 
 **現状分析**:
 - ✅ **Phase 1完了**: 13個の基本統計コマンドが Command Pattern に移行済み
+- ✅ **Phase 2.1進行中**: correlation コマンド移行完了（14/29 commands migrated）
 - ❌ **CLI.rb サイズ**: 2185行のまま（未削減）
-- 📋 **Phase 2対象**: 残り17個の複雑コマンドの移行が必要
+- 📋 **Phase 2対象**: 残り16個の複雑コマンドの移行が必要
 
 **Phase 2.1: 相関・時系列分析コマンド移行 (5個)**
-- [ ] `correlation` → `CorrelationCommand`
+- [x] `correlation` → `CorrelationCommand` ✅ 完了 (特別処理統合完了)
 - [ ] `trend` → `TrendCommand`
 - [ ] `moving-average` → `MovingAverageCommand`
 - [ ] `growth-rate` → `GrowthRateCommand`

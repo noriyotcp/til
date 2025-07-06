@@ -11,7 +11,8 @@ class NumberAnalyzer::Commands::CorrelationCommand < NumberAnalyzer::Commands::B
   def validate_arguments(args)
     return if @options[:help]
 
-    return unless args.empty? || (!@options[:file] && !args.include?('--'))
+    # Valid cases: file mode or args with '--' separator
+    return if @options[:file] || args.include?('--') || (args.length == 2 && args.all? { |arg| arg.end_with?('.csv', '.json', '.txt') })
 
     raise ArgumentError, <<~ERROR
       エラー: correlationコマンドには2つのデータセットが必要です。
