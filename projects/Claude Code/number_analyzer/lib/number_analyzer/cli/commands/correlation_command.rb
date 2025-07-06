@@ -2,154 +2,150 @@
 
 require_relative '../base_command'
 
-class NumberAnalyzer
-  module Commands
-    # Command for calculating Pearson correlation coefficient between two datasets
-    class CorrelationCommand < BaseCommand
-      command 'correlation', 'Calculate Pearson correlation coefficient between two datasets'
+# Command for calculating Pearson correlation coefficient between two datasets
+class NumberAnalyzer::Commands::CorrelationCommand < NumberAnalyzer::Commands::BaseCommand
+  command 'correlation', 'Calculate Pearson correlation coefficient between two datasets'
 
-      private
+  private
 
-      def validate_arguments(args)
-        return if @options[:help]
+  def validate_arguments(args)
+    return if @options[:help]
 
-        return unless args.empty? || (!@options[:file] && !args.include?('--'))
+    return unless args.empty? || (!@options[:file] && !args.include?('--'))
 
-        raise ArgumentError, <<~ERROR
-          エラー: correlationコマンドには2つのデータセットが必要です。
-          使用例: bundle exec number_analyzer correlation 1 2 3 -- 4 5 6
-                 bundle exec number_analyzer correlation data1.csv data2.csv
-        ERROR
-      end
+    raise ArgumentError, <<~ERROR
+      エラー: correlationコマンドには2つのデータセットが必要です。
+      使用例: bundle exec number_analyzer correlation 1 2 3 -- 4 5 6
+             bundle exec number_analyzer correlation data1.csv data2.csv
+    ERROR
+  end
 
-      def parse_input(args)
-        # Check if inputs are files
-        if args.length == 2 && args.all? { |arg| arg.end_with?('.csv', '.json', '.txt') }
-          parse_file_datasets(args)
-        elsif args.include?('--')
-          parse_numeric_datasets(args)
-        else
-          raise ArgumentError, <<~ERROR
-            エラー: 2つのデータセットを区切るために "--" を使用するか、2つのファイルを指定してください。
-            使用例: bundle exec number_analyzer correlation 1 2 3 -- 4 5 6
-                   bundle exec number_analyzer correlation data1.csv data2.csv
-          ERROR
-        end
-      end
-
-      def parse_file_datasets(files)
-        require_relative '../../file_reader'
-
-        dataset1 = FileReader.read_from_file(files[0])
-        dataset2 = FileReader.read_from_file(files[1])
-
-        [dataset1, dataset2]
-      end
-
-      def parse_numeric_datasets(args)
-        separator_index = args.index('--')
-
-        dataset1_args = args[0...separator_index]
-        dataset2_args = args[(separator_index + 1)..]
-
-        raise ArgumentError, 'エラー: 両方のデータセットに値が必要です。' if dataset1_args.empty? || dataset2_args.empty?
-
-        dataset1 = parse_numbers(dataset1_args)
-        dataset2 = parse_numbers(dataset2_args)
-
-        [dataset1, dataset2]
-      end
-
-      def parse_numbers(args)
-        args.map do |arg|
-          Float(arg)
-        rescue ArgumentError
-          raise ArgumentError, "無効な数値: #{arg}"
-        end
-      end
-
-      def perform_calculation(data)
-        dataset1, dataset2 = data
-
-        raise ArgumentError, "エラー: データセットの長さが異なります (#{dataset1.length} vs #{dataset2.length})" if dataset1.length != dataset2.length
-
-        raise ArgumentError, 'エラー: 相関係数の計算には少なくとも2つのデータポイントが必要です。' if dataset1.length < 2
-
-        analyzer = NumberAnalyzer.new(dataset1)
-        correlation = analyzer.correlation(dataset2)
-        interpretation = analyzer.interpret_correlation(correlation)
-
-        {
-          correlation: correlation,
-          interpretation: interpretation,
-          dataset1_size: dataset1.length,
-          dataset2_size: dataset2.length
-        }
-      end
-
-      def output_result(result)
-        if @options[:format] == 'json'
-          output_json(result)
-        elsif @options[:quiet]
-          output_quiet(result)
-        else
-          output_standard(result)
-        end
-      end
-
-      def output_json(result)
-        require 'json'
-        puts JSON.generate(result)
-      end
-
-      def output_quiet(result)
-        value = result[:correlation]
-        if @options[:precision]
-          puts format("%.#{@options[:precision]}f", value)
-        else
-          puts value.round(1)
-        end
-      end
-
-      def output_standard(result)
-        correlation = result[:correlation]
-
-        formatted_correlation = if @options[:precision]
-                                  format("%.#{@options[:precision]}f", correlation)
-                                else
-                                  format('%.4f', correlation)
-                                end
-
-        puts "相関係数: #{formatted_correlation}"
-        puts "解釈: #{result[:interpretation]}"
-        puts "データセット1のサイズ: #{result[:dataset1_size]}"
-        puts "データセット2のサイズ: #{result[:dataset2_size]}"
-      end
-
-      def show_help
-        puts <<~HELP
-          correlation - #{self.class.description}
-
-          Usage: number_analyzer correlation [OPTIONS] DATA1 -- DATA2
-                 number_analyzer correlation [OPTIONS] FILE1 FILE2
-
-          Options:
-            --help                Show this help message
-            --format FORMAT       Output format (json)
-            --precision N         Number of decimal places
-            --quiet               Minimal output (correlation value only)
-
-          Examples:
-            # Numeric input with separator
-            number_analyzer correlation 1 2 3 -- 2 4 6
-
-            # File input
-            number_analyzer correlation data1.csv data2.csv
-
-            # JSON output
-            number_analyzer correlation --format=json 1 2 3 -- 2 4 6
-        HELP
-      end
+  def parse_input(args)
+    # Check if inputs are files
+    if args.length == 2 && args.all? { |arg| arg.end_with?('.csv', '.json', '.txt') }
+      parse_file_datasets(args)
+    elsif args.include?('--')
+      parse_numeric_datasets(args)
+    else
+      raise ArgumentError, <<~ERROR
+        エラー: 2つのデータセットを区切るために "--" を使用するか、2つのファイルを指定してください。
+        使用例: bundle exec number_analyzer correlation 1 2 3 -- 4 5 6
+               bundle exec number_analyzer correlation data1.csv data2.csv
+      ERROR
     end
+  end
+
+  def parse_file_datasets(files)
+    require_relative '../../file_reader'
+
+    dataset1 = FileReader.read_from_file(files[0])
+    dataset2 = FileReader.read_from_file(files[1])
+
+    [dataset1, dataset2]
+  end
+
+  def parse_numeric_datasets(args)
+    separator_index = args.index('--')
+
+    dataset1_args = args[0...separator_index]
+    dataset2_args = args[(separator_index + 1)..]
+
+    raise ArgumentError, 'エラー: 両方のデータセットに値が必要です。' if dataset1_args.empty? || dataset2_args.empty?
+
+    dataset1 = parse_numbers(dataset1_args)
+    dataset2 = parse_numbers(dataset2_args)
+
+    [dataset1, dataset2]
+  end
+
+  def parse_numbers(args)
+    args.map do |arg|
+      Float(arg)
+    rescue ArgumentError
+      raise ArgumentError, "無効な数値: #{arg}"
+    end
+  end
+
+  def perform_calculation(data)
+    dataset1, dataset2 = data
+
+    raise ArgumentError, "エラー: データセットの長さが異なります (#{dataset1.length} vs #{dataset2.length})" if dataset1.length != dataset2.length
+
+    raise ArgumentError, 'エラー: 相関係数の計算には少なくとも2つのデータポイントが必要です。' if dataset1.length < 2
+
+    analyzer = NumberAnalyzer.new(dataset1)
+    correlation = analyzer.correlation(dataset2)
+    interpretation = analyzer.interpret_correlation(correlation)
+
+    {
+      correlation: correlation,
+      interpretation: interpretation,
+      dataset1_size: dataset1.length,
+      dataset2_size: dataset2.length
+    }
+  end
+
+  def output_result(result)
+    if @options[:format] == 'json'
+      output_json(result)
+    elsif @options[:quiet]
+      output_quiet(result)
+    else
+      output_standard(result)
+    end
+  end
+
+  def output_json(result)
+    require 'json'
+    puts JSON.generate(result)
+  end
+
+  def output_quiet(result)
+    value = result[:correlation]
+    if @options[:precision]
+      puts format("%.#{@options[:precision]}f", value)
+    else
+      puts value.round(1)
+    end
+  end
+
+  def output_standard(result)
+    correlation = result[:correlation]
+
+    formatted_correlation = if @options[:precision]
+                              format("%.#{@options[:precision]}f", correlation)
+                            else
+                              format('%.4f', correlation)
+                            end
+
+    puts "相関係数: #{formatted_correlation}"
+    puts "解釈: #{result[:interpretation]}"
+    puts "データセット1のサイズ: #{result[:dataset1_size]}"
+    puts "データセット2のサイズ: #{result[:dataset2_size]}"
+  end
+
+  def show_help
+    puts <<~HELP
+      correlation - #{self.class.description}
+
+      Usage: number_analyzer correlation [OPTIONS] DATA1 -- DATA2
+             number_analyzer correlation [OPTIONS] FILE1 FILE2
+
+      Options:
+        --help                Show this help message
+        --format FORMAT       Output format (json)
+        --precision N         Number of decimal places
+        --quiet               Minimal output (correlation value only)
+
+      Examples:
+        # Numeric input with separator
+        number_analyzer correlation 1 2 3 -- 2 4 6
+
+        # File input
+        number_analyzer correlation data1.csv data2.csv
+
+        # JSON output
+        number_analyzer correlation --format=json 1 2 3 -- 2 4 6
+    HELP
   end
 end

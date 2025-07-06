@@ -2,57 +2,53 @@
 
 require_relative '../base_command'
 
-class NumberAnalyzer
-  module Commands
-    # Command for detecting outliers using IQR * 1.5 rule
-    class OutliersCommand < BaseCommand
-      command 'outliers', 'Detect outliers using IQR * 1.5 rule'
+# Command for detecting outliers using IQR * 1.5 rule
+class NumberAnalyzer::Commands::OutliersCommand < NumberAnalyzer::Commands::BaseCommand
+  command 'outliers', 'Detect outliers using IQR * 1.5 rule'
 
-      private
+  private
 
-      def validate_arguments(args)
-        return unless @options[:file].nil? && args.empty?
+  def validate_arguments(args)
+    return unless @options[:file].nil? && args.empty?
 
-        raise ArgumentError, '数値を指定してください'
-      end
+    raise ArgumentError, '数値を指定してください'
+  end
 
-      def perform_calculation(data)
-        raise ArgumentError, '空の配列に対してoutliersは計算できません' if data.empty?
+  def perform_calculation(data)
+    raise ArgumentError, '空の配列に対してoutliersは計算できません' if data.empty?
 
-        analyzer = NumberAnalyzer.new(data)
-        analyzer.outliers
-      end
+    analyzer = NumberAnalyzer.new(data)
+    analyzer.outliers
+  end
 
-      def output_result(result)
-        # Use the OutputFormatter to maintain compatibility
-        @options[:dataset_size] = @data&.size if @data
-        puts OutputFormatter.format_outliers(result, @options)
-      end
+  def output_result(result)
+    # Use the OutputFormatter to maintain compatibility
+    @options[:dataset_size] = @data&.size if @data
+    puts OutputFormatter.format_outliers(result, @options)
+  end
 
-      def parse_input(args)
-        @data = if @options[:file]
-                  super
-                else
-                  parse_numeric_arguments(args)
-                end
-        @data
-      end
+  def parse_input(args)
+    @data = if @options[:file]
+              super
+            else
+              parse_numeric_arguments(args)
+            end
+    @data
+  end
 
-      def parse_numeric_arguments(args)
-        invalid_args = []
-        numbers = args.map do |arg|
-          Float(arg)
-        rescue ArgumentError
-          invalid_args << arg
-          nil
-        end.compact
+  def parse_numeric_arguments(args)
+    invalid_args = []
+    numbers = args.map do |arg|
+      Float(arg)
+    rescue ArgumentError
+      invalid_args << arg
+      nil
+    end.compact
 
-        raise ArgumentError, "無効な引数が見つかりました: #{invalid_args.join(', ')}" unless invalid_args.empty?
+    raise ArgumentError, "無効な引数が見つかりました: #{invalid_args.join(', ')}" unless invalid_args.empty?
 
-        raise ArgumentError, '有効な数値が見つかりませんでした。' if numbers.empty?
+    raise ArgumentError, '有効な数値が見つかりませんでした。' if numbers.empty?
 
-        numbers
-      end
-    end
+    numbers
   end
 end

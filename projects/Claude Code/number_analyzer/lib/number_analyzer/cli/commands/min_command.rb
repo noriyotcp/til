@@ -2,20 +2,16 @@
 
 require_relative '../base_command'
 
-class NumberAnalyzer
-  module Commands
-    # Command for finding minimum value
-    class MinCommand < BaseCommand
-      command 'min', 'Find the minimum value in the dataset'
+# Command for finding minimum value
+class NumberAnalyzer::Commands::MinCommand < NumberAnalyzer::Commands::BaseCommand
+  command 'min', 'Find the minimum value in the dataset'
 
-      private
+  private
 
-      def perform_calculation(data)
-        raise ArgumentError, '空の配列に対してminは計算できません' if data.empty?
+  def perform_calculation(data)
+    raise ArgumentError, '空の配列に対してminは計算できません' if data.empty?
 
-        analyzer = NumberAnalyzer.new(data)
-        analyzer.min
-      end
-    end
+    analyzer = NumberAnalyzer.new(data)
+    analyzer.min
   end
 end

@@ -102,3 +102,7 @@ Naming/MethodParameterName:
 Naming/PredicateMethod:
   Exclude:
     - 'lib/number_analyzer/plugin_configuration/**/*'  # Plugin configuration validation methods use validate_ prefix for clarity
+    - 'lib/number_analyzer/cli/command_registry.rb'  # execute_command method returns boolean for success/failure, not a predicate query
+
+Style/ClassAndModuleChildren:
+  EnforcedStyle: compact
