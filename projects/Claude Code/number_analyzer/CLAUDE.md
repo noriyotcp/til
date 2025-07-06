@@ -32,7 +32,7 @@ NumberAnalyzer is a comprehensive statistical analysis tool built in Ruby. Origi
 - `bundle exec number_analyzer mean --precision=2 1.234 2.567` (precision control)
 - `bundle exec number_analyzer outliers --quiet 1 2 3 100` (script-friendly output)
 - `bundle exec number_analyzer variance --help` (command help)
-- All 19 subcommands support: `--format`, `--precision`, `--quiet`, `--help`, `--file`
+- All 29 subcommands support: `--format`, `--precision`, `--quiet`, `--help`, `--file`
 
 **Correlation Analysis** (Phase 7.1):
 - `bundle exec number_analyzer correlation 1 2 3 2 4 6` (Pearson correlation)
