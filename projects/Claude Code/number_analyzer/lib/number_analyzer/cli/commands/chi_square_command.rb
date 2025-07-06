@@ -136,7 +136,6 @@ class NumberAnalyzer::Commands::ChiSquareCommand < NumberAnalyzer::Commands::Bas
       # Two files provided
       observed = NumberAnalyzer::FileReader.read_from_file(args[0])
       expected = NumberAnalyzer::FileReader.read_from_file(args[1])
-      [observed, expected]
     elsif @options[:file]
       # Single file with interleaved data
       require_relative '../data_input_handler'
@@ -144,14 +143,13 @@ class NumberAnalyzer::Commands::ChiSquareCommand < NumberAnalyzer::Commands::Bas
       mid = combined_data.length / 2
       observed = combined_data[0...mid]
       expected = combined_data[mid..]
-      [observed, expected]
     else
       # Command line arguments: first half observed, second half expected
       mid = args.length / 2
       observed = parse_numbers(args[0...mid])
       expected = parse_numbers(args[mid..])
-      [observed, expected]
     end
+    [observed, expected]
   rescue StandardError => e
     raise ArgumentError, "ファイル読み込みエラー: #{e.message}"
   end
