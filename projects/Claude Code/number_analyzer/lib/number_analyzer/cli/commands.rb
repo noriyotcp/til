@@ -32,6 +32,15 @@ require_relative 'commands/seasonal_command'
 require_relative 'commands/t_test_command'
 require_relative 'commands/confidence_interval_command'
 require_relative 'commands/chi_square_command'
+require_relative 'commands/anova_command'
+require_relative 'commands/two_way_anova_command'
+require_relative 'commands/levene_command'
+require_relative 'commands/bartlett_command'
+require_relative 'commands/kruskal_wallis_command'
+require_relative 'commands/mann_whitney_command'
+require_relative 'commands/wilcoxon_command'
+require_relative 'commands/friedman_command'
+require_relative 'commands/plugins_command'
 
 # Extend the Commands module with registration functionality
 module NumberAnalyzer::Commands
@@ -58,6 +67,15 @@ module NumberAnalyzer::Commands
     CommandRegistry.register(TTestCommand)
     CommandRegistry.register(ConfidenceIntervalCommand)
     CommandRegistry.register(ChiSquareCommand)
+    CommandRegistry.register(AnovaCommand)
+    CommandRegistry.register(TwoWayAnovaCommand)
+    CommandRegistry.register(LeveneCommand)
+    CommandRegistry.register(BartlettCommand)
+    CommandRegistry.register(KruskalWallisCommand)
+    CommandRegistry.register(MannWhitneyCommand)
+    CommandRegistry.register(WilcoxonCommand)
+    CommandRegistry.register(FriedmanCommand)
+    CommandRegistry.register(PluginsCommand)
   end
 end
 

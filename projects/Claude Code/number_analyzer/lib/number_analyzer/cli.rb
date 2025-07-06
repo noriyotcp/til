@@ -19,16 +19,7 @@ class NumberAnalyzer::CLI
     'seasonal' => :run_seasonal,
     't-test' => :run_t_test,
     'confidence-interval' => :run_confidence_interval,
-    'chi-square' => :run_chi_square,
-    'anova' => :run_anova,
-    'two-way-anova' => :run_two_way_anova,
-    'levene' => :run_levene,
-    'bartlett' => :run_bartlett,
-    'kruskal-wallis' => :run_kruskal_wallis,
-    'mann-whitney' => :run_mann_whitney,
-    'wilcoxon' => :run_wilcoxon,
-    'friedman' => :run_friedman,
-    'plugins' => :run_plugins
+    'chi-square' => :run_chi_square
   }.freeze
 
   class << self
