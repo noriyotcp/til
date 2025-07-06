@@ -46,170 +46,42 @@ class NumberAnalyzer::Commands::PluginsCommand < NumberAnalyzer::Commands::BaseC
 
   def run_plugins_list(args)
     show_conflicts = args.include?('--show-conflicts')
+    plugins = loaded_plugins
 
-    # Get plugin system instance
-    plugin_system = NumberAnalyzer::CLI.plugin_system
+    return display_no_plugins_message if plugins.empty?
 
-    # Get all loaded plugins
-    plugins = plugin_system.instance_variable_get(:@plugins) || {}
+    display_plugins_header(plugins.size)
+    plugins.each { |name, info| display_plugin_info(name, info, show_conflicts) }
 
-    if plugins.empty?
-      puts 'プラグインがロードされていません。'
-      return
-    end
-
-    puts "ロード済みプラグイン (#{plugins.size}個):"
-    puts ''
-
-    plugins.each do |name, plugin_info|
-      plugin_class = plugin_info[:class]
-      priority = plugin_info[:priority] || 'unknown'
-
-      # Get plugin commands if it's a CLI plugin
-      commands = if plugin_class.respond_to?(:commands)
-                   plugin_class.commands.keys.join(', ')
-                 else
-                   'N/A'
-                 end
-
-      puts "  #{name}:"
-      puts "    優先度: #{priority}"
-      puts "    クラス: #{plugin_class}"
-      puts "    コマンド: #{commands}"
-
-      if show_conflicts
-        # Check for conflicts with this plugin
-        conflicts = detect_plugin_conflicts(name, plugin_class, plugins)
-        puts "    ⚠️  重複: #{conflicts.join(', ')}" unless conflicts.empty?
-      end
-
-      puts ''
-    end
-
-    return unless show_conflicts
-
-    # Show overall conflict summary
-    all_conflicts = detect_all_conflicts(plugins)
-    if all_conflicts.any?
-      puts '重複サマリー:'
-      all_conflicts.each do |conflict_type, details|
-        puts "  #{conflict_type}: #{details}"
-      end
-    else
-      puts '✅ 重複は検出されませんでした。'
-    end
+    display_conflicts_summary(plugins) if show_conflicts
   end
 
   def run_plugins_conflicts(_args)
-    # This is essentially the same as list --show-conflicts but focused on conflicts
-    plugin_system = NumberAnalyzer::CLI.plugin_system
-    plugins = plugin_system.instance_variable_get(:@plugins) || {}
+    plugins = loaded_plugins
 
-    if plugins.empty?
-      puts 'プラグインがロードされていません。'
-      return
-    end
+    return display_no_plugins_message if plugins.empty?
 
-    puts 'プラグイン重複検出結果:'
-    puts ''
-
+    display_conflicts_detection_header
     all_conflicts = detect_all_conflicts(plugins)
 
     if all_conflicts.empty?
-      puts '✅ 重複は検出されませんでした。'
-      puts ''
-      puts "ロード済みプラグイン数: #{plugins.size}"
-      return
+      display_no_conflicts_found(plugins.size)
+    else
+      display_detailed_conflicts(all_conflicts, plugins)
+      puts "重複解決には 'plugins resolve' コマンドを使用してください。"
     end
-
-    # Display conflicts by type
-    all_conflicts.each do |conflict_type, conflicts|
-      puts "#{conflict_type}の重複:"
-      conflicts.each do |item, conflicting_plugins|
-        puts "  '#{item}' は以下のプラグインで重複しています:"
-        conflicting_plugins.each do |plugin_name|
-          plugin_info = plugins[plugin_name]
-          priority = plugin_info[:priority] || 'unknown'
-          puts "    - #{plugin_name} (優先度: #{priority})"
-        end
-      end
-      puts ''
-    end
-
-    puts "重複解決には 'plugins resolve' コマンドを使用してください。"
   end
 
   def run_plugins_resolve(args)
-    if args.empty?
-      puts 'エラー: 解決するプラグイン名を指定してください。'
-      puts '使用例: bundle exec number_analyzer plugins resolve my_plugin --strategy=namespace'
-      exit 1
-    end
+    plugin_name, strategy, force = parse_resolve_arguments(args)
+    plugins = loaded_plugins
+    validate_plugin_exists(plugin_name, plugins)
 
-    plugin_name = args.first
-    strategy = nil
-    force = false
+    conflicts = find_plugin_conflicts(plugin_name, plugins)
+    display_plugin_conflicts_result(plugin_name, conflicts)
+    return if conflicts.empty?
 
-    # Parse options
-    args[1..].each do |arg|
-      case arg
-      when /^--strategy=(.+)$/
-        strategy = Regexp.last_match(1).to_sym
-      when '--force'
-        force = true
-      end
-    end
-
-    # Default strategy
-    strategy ||= :interactive
-
-    # Validate strategy
-    valid_strategies = %i[interactive namespace priority disable]
-    unless valid_strategies.include?(strategy)
-      puts "エラー: 無効な戦略: #{strategy}"
-      puts "有効な戦略: #{valid_strategies.join(', ')}"
-      exit 1
-    end
-
-    plugin_system = NumberAnalyzer::CLI.plugin_system
-    plugins = plugin_system.instance_variable_get(:@plugins) || {}
-
-    unless plugins.key?(plugin_name)
-      puts "エラー: プラグイン '#{plugin_name}' が見つかりません。"
-      puts "利用可能なプラグイン: #{plugins.keys.join(', ')}"
-      exit 1
-    end
-
-    # Find conflicts for this plugin
-    plugin_info = plugins[plugin_name]
-    plugin_class = plugin_info[:class]
-    conflicts = detect_plugin_conflicts(plugin_name, plugin_class, plugins)
-
-    if conflicts.empty?
-      puts "プラグイン '#{plugin_name}' に重複はありません。"
-      return
-    end
-
-    puts "プラグイン '#{plugin_name}' の重複:"
-    conflicts.each do |conflict|
-      puts "  - #{conflict}"
-    end
-    puts ''
-
-    # Apply resolution strategy (simplified implementation)
-    case strategy
-    when :interactive
-      puts '対話的解決は簡略化されました。--strategy=namespace を使用してください。'
-    when :namespace
-      puts '名前空間による解決を適用しています...'
-      puts '（この機能は現在簡略化されています）'
-    when :priority
-      puts '優先度による解決を適用しています...'
-      puts '（この機能は現在簡略化されています）'
-    when :disable
-      puts 'プラグイン無効化を適用しています...'
-      puts '（この機能は現在簡略化されています）'
-    end
+    execute_resolution_strategy(strategy, plugin_name, conflicts, force)
   end
 
   def detect_plugin_conflicts(_name, _plugin_class, _plugins)
@@ -241,5 +113,154 @@ class NumberAnalyzer::Commands::PluginsCommand < NumberAnalyzer::Commands::BaseC
         bundle exec number_analyzer plugins resolve my_plugin --strategy=namespace
         bundle exec number_analyzer plugins --conflicts
     HELP
+  end
+
+  def loaded_plugins
+    NumberAnalyzer::CLI.plugin_system.instance_variable_get(:@plugins) || {}
+  end
+
+  def display_no_plugins_message
+    puts 'プラグインがロードされていません。'
+  end
+
+  def display_plugins_header(count)
+    puts "ロード済みプラグイン (#{count}個):"
+    puts ''
+  end
+
+  def display_plugin_info(name, plugin_info, show_conflicts)
+    plugin_class = plugin_info[:class]
+    priority = plugin_info[:priority] || 'unknown'
+    commands = extract_plugin_commands(plugin_class)
+
+    puts "  #{name}:"
+    puts "    優先度: #{priority}"
+    puts "    クラス: #{plugin_class}"
+    puts "    コマンド: #{commands}"
+
+    display_conflicts_if_requested(name, plugin_class, show_conflicts) if show_conflicts
+    puts ''
+  end
+
+  def extract_plugin_commands(plugin_class)
+    if plugin_class.respond_to?(:commands)
+      plugin_class.commands.keys.join(', ')
+    else
+      'N/A'
+    end
+  end
+
+  def display_conflicts_if_requested(name, plugin_class, show_conflicts)
+    return unless show_conflicts
+
+    conflicts = detect_plugin_conflicts(name, plugin_class, loaded_plugins)
+    puts "    ⚠️  重複: #{conflicts.join(', ')}" unless conflicts.empty?
+  end
+
+  def display_conflicts_summary(plugins)
+    all_conflicts = detect_all_conflicts(plugins)
+    if all_conflicts.any?
+      puts '重複サマリー:'
+      all_conflicts.each do |conflict_type, details|
+        puts "  #{conflict_type}: #{details}"
+      end
+    else
+      puts '✅ 重複は検出されませんでした。'
+    end
+  end
+
+  def display_conflicts_detection_header
+    puts 'プラグイン重複検出結果:'
+    puts ''
+  end
+
+  def display_no_conflicts_found(plugin_count)
+    puts '✅ 重複は検出されませんでした。'
+    puts "ロード済みプラグイン数: #{plugin_count}"
+  end
+
+  def display_detailed_conflicts(all_conflicts, plugins)
+    all_conflicts.each do |conflict_type, conflicts|
+      puts "#{conflict_type}の重複:"
+      conflicts.each do |item, conflicting_plugins|
+        puts "  '#{item}' は以下のプラグインで重複しています:"
+        conflicting_plugins.each do |plugin_name|
+          plugin_info = plugins[plugin_name]
+          priority = plugin_info[:priority] || 'unknown'
+          puts "    - #{plugin_name} (優先度: #{priority})"
+        end
+      end
+      puts ''
+    end
+  end
+
+  def parse_resolve_arguments(args)
+    if args.empty?
+      puts 'エラー: 解決するプラグイン名を指定してください。'
+      puts '使用例: bundle exec number_analyzer plugins resolve my_plugin --strategy=namespace'
+      exit 1
+    end
+
+    plugin_name = args.first
+    strategy = extract_strategy_from_args(args)
+    force = args.include?('--force')
+
+    [plugin_name, strategy, force]
+  end
+
+  def extract_strategy_from_args(args)
+    strategy = nil
+    args[1..].each { |arg| strategy = Regexp.last_match(1).to_sym if arg =~ /^--strategy=(.+)$/ }
+
+    strategy ||= :interactive
+    valid_strategies = %i[interactive namespace priority disable]
+
+    unless valid_strategies.include?(strategy)
+      puts "エラー: 無効な戦略: #{strategy}"
+      puts "有効な戦略: #{valid_strategies.join(', ')}"
+      exit 1
+    end
+
+    strategy
+  end
+
+  def validate_plugin_exists(plugin_name, plugins)
+    return if plugins.key?(plugin_name)
+
+    puts "エラー: プラグイン '#{plugin_name}' が見つかりません。"
+    puts "利用可能なプラグイン: #{plugins.keys.join(', ')}"
+    exit 1
+  end
+
+  def find_plugin_conflicts(plugin_name, plugins)
+    plugin_info = plugins[plugin_name]
+    plugin_class = plugin_info[:class]
+    detect_plugin_conflicts(plugin_name, plugin_class, plugins)
+  end
+
+  def display_plugin_conflicts_result(plugin_name, conflicts)
+    if conflicts.empty?
+      puts "プラグイン '#{plugin_name}' に重複はありません。"
+    else
+      puts "プラグイン '#{plugin_name}' の重複:"
+      conflicts.each { |conflict| puts "  - #{conflict}" }
+      puts ''
+    end
+  end
+
+  def execute_resolution_strategy(strategy, _plugin_name, _conflicts, _force)
+    case strategy
+    when :interactive
+      puts '対話的解決は簡略化されました。--strategy=namespace を使用してください。'
+    when :namespace
+      puts '名前空間による解決を適用しています...'
+      puts '（この機能は現在簡略化されています）'
+    when :priority
+      puts '優先度による解決を適用しています...'
+      puts '（この機能は現在簡略化されています）'
+    when :disable
+      puts 'プラグイン無効化を適用しています...'
+      puts '（この機能は現在簡略化されています）'
+    end
   end
 end

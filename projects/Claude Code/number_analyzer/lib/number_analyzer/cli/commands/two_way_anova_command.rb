@@ -72,62 +72,79 @@ class NumberAnalyzer::Commands::TwoWayAnovaCommand < NumberAnalyzer::Commands::B
   end
 
   def parse_two_way_anova_from_args(args)
-    # Validate required factors
-    unless @options[:factor_a] && @options[:factor_b]
-      raise ArgumentError, <<~ERROR
-        エラー: --factor-a と --factor-b オプションが必要です。
-        使用例: bundle exec number_analyzer two-way-anova --factor-a A1,A1,A2,A2 --factor-b B1,B2,B1,B2 10,15,20,25
-      ERROR
-    end
+    validate_required_factors
+    values = parse_values_from_args(args)
+    validate_data_consistency(@options[:factor_a], @options[:factor_b], values)
 
-    raise ArgumentError, '数値データが指定されていません。' if args.empty?
-
-    # Parse values
-    values = if args.length == 1 && args[0].include?(',')
-               # Comma-separated values in single argument
-               args[0].split(',').map { |v| Float(v) }
-             else
-               # Space-separated values
-               args.map { |v| Float(v) }
-             end
-
-    factor_a_levels = @options[:factor_a]
-    factor_b_levels = @options[:factor_b]
-
-    # Validate data consistency
-    if factor_a_levels.length != factor_b_levels.length || factor_b_levels.length != values.length
-      raise ArgumentError, <<~ERROR
-        エラー: 要因A、要因B、数値データの数が一致しません。
-        要因A: #{factor_a_levels.length}, 要因B: #{factor_b_levels.length}, 数値: #{values.length}
-      ERROR
-    end
-
-    [factor_a_levels, factor_b_levels, values]
+    [@options[:factor_a], @options[:factor_b], values]
   rescue ArgumentError => e
     raise ArgumentError, "無効な数値が含まれています: #{e.message}"
   end
 
   def parse_two_way_anova_from_file(args)
+    filename = validate_file_argument(args)
+    data = read_csv_data(filename)
+    extract_factors_and_values(data)
+  end
+
+  def validate_required_factors
+    return if @options[:factor_a] && @options[:factor_b]
+
+    raise ArgumentError, <<~ERROR
+      エラー: --factor-a と --factor-b オプションが必要です。
+      使用例: bundle exec number_analyzer two-way-anova --factor-a A1,A1,A2,A2 --factor-b B1,B2,B1,B2 10,15,20,25
+    ERROR
+  end
+
+  def parse_values_from_args(args)
+    raise ArgumentError, '数値データが指定されていません。' if args.empty?
+
+    if args.length == 1 && args[0].include?(',')
+      args[0].split(',').map { |v| Float(v) }
+    else
+      args.map { |v| Float(v) }
+    end
+  end
+
+  def validate_data_consistency(factor_a_levels, factor_b_levels, values)
+    return if factor_a_levels.length == factor_b_levels.length && factor_b_levels.length == values.length
+
+    raise ArgumentError, <<~ERROR
+      エラー: 要因A、要因B、数値データの数が一致しません。
+      要因A: #{factor_a_levels.length}, 要因B: #{factor_b_levels.length}, 数値: #{values.length}
+    ERROR
+  end
+
+  def validate_file_argument(args)
     raise ArgumentError, 'CSVファイルが指定されていません。' if args.empty?
 
     filename = args[0]
     raise ArgumentError, "ファイルが見つかりません: #{filename}" unless File.exist?(filename)
 
-    # For file input, assume CSV format with columns: factor_a, factor_b, value
-    require 'csv'
-    data = CSV.read(filename, headers: true)
+    filename
+  end
 
+  def read_csv_data(filename)
+    require 'csv'
+    CSV.read(filename, headers: true)
+  end
+
+  def extract_factors_and_values(data)
     factor_a_levels = data['factor_a'] || data['FactorA'] || data['A']
     factor_b_levels = data['factor_b'] || data['FactorB'] || data['B']
     values = (data['value'] || data['Value'] || data['Y']).map(&:to_f)
 
-    unless factor_a_levels && factor_b_levels && values
-      raise ArgumentError, <<~ERROR
-        CSVファイルに factor_a, factor_b, value 列が見つかりません。
-        必要な列名: factor_a (or FactorA, A), factor_b (or FactorB, B), value (or Value, Y)
-      ERROR
-    end
+    validate_csv_columns(factor_a_levels, factor_b_levels, values)
 
     [factor_a_levels, factor_b_levels, values]
+  end
+
+  def validate_csv_columns(factor_a_levels, factor_b_levels, values)
+    return if factor_a_levels && factor_b_levels && values
+
+    raise ArgumentError, <<~ERROR
+      CSVファイルに factor_a, factor_b, value 列が見つかりません。
+      必要な列名: factor_a (or FactorA, A), factor_b (or FactorB, B), value (or Value, Y)
+    ERROR
   end
 end

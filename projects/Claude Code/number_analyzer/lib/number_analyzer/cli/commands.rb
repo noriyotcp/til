@@ -44,8 +44,16 @@ require_relative 'commands/plugins_command'
 
 # Extend the Commands module with registration functionality
 module NumberAnalyzer::Commands
-  # Register all basic commands
+  # Register all commands by category
   def self.register_all
+    register_basic_commands
+    register_advanced_commands
+    register_analysis_commands
+    register_specialized_commands
+  end
+
+  # Register basic statistical commands
+  def self.register_basic_commands
     CommandRegistry.register(MedianCommand)
     CommandRegistry.register(MeanCommand)
     CommandRegistry.register(SumCommand)
@@ -53,12 +61,20 @@ module NumberAnalyzer::Commands
     CommandRegistry.register(MaxCommand)
     CommandRegistry.register(ModeCommand)
     CommandRegistry.register(HistogramCommand)
+  end
+
+  # Register advanced statistical commands
+  def self.register_advanced_commands
     CommandRegistry.register(OutliersCommand)
     CommandRegistry.register(PercentileCommand)
     CommandRegistry.register(QuartilesCommand)
     CommandRegistry.register(VarianceCommand)
     CommandRegistry.register(StdCommand)
     CommandRegistry.register(DeviationScoresCommand)
+  end
+
+  # Register correlation and time series analysis commands
+  def self.register_analysis_commands
     CommandRegistry.register(CorrelationCommand)
     CommandRegistry.register(TrendCommand)
     CommandRegistry.register(MovingAverageCommand)
@@ -67,6 +83,10 @@ module NumberAnalyzer::Commands
     CommandRegistry.register(TTestCommand)
     CommandRegistry.register(ConfidenceIntervalCommand)
     CommandRegistry.register(ChiSquareCommand)
+  end
+
+  # Register specialized statistical commands (ANOVA, non-parametric, plugins)
+  def self.register_specialized_commands
     CommandRegistry.register(AnovaCommand)
     CommandRegistry.register(TwoWayAnovaCommand)
     CommandRegistry.register(LeveneCommand)
