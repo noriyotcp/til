@@ -48,9 +48,9 @@ class NumberAnalyzer::Commands::PluginsCommand < NumberAnalyzer::Commands::BaseC
     show_conflicts = args.include?('--show-conflicts')
     plugins = loaded_plugins
 
-    return display_no_plugins_message if plugins.empty?
+    return display_interface_message(:no_plugins) if plugins.empty?
 
-    display_plugins_header(plugins.size)
+    display_interface_message(:plugins_header, plugins.size)
     plugins.each { |name, info| display_plugin_info(name, info, show_conflicts) }
 
     display_conflicts_summary(plugins) if show_conflicts
@@ -59,13 +59,13 @@ class NumberAnalyzer::Commands::PluginsCommand < NumberAnalyzer::Commands::BaseC
   def run_plugins_conflicts(_args)
     plugins = loaded_plugins
 
-    return display_no_plugins_message if plugins.empty?
+    return display_interface_message(:no_plugins) if plugins.empty?
 
-    display_conflicts_detection_header
+    display_interface_message(:conflicts_header)
     all_conflicts = detect_all_conflicts(plugins)
 
     if all_conflicts.empty?
-      display_no_conflicts_found(plugins.size)
+      display_interface_message(:no_conflicts_found, plugins.size)
     else
       display_detailed_conflicts(all_conflicts, plugins)
       puts "重複解決には 'plugins resolve' コマンドを使用してください。"
@@ -119,13 +119,20 @@ class NumberAnalyzer::Commands::PluginsCommand < NumberAnalyzer::Commands::BaseC
     NumberAnalyzer::CLI.plugin_system.instance_variable_get(:@plugins) || {}
   end
 
-  def display_no_plugins_message
-    puts 'プラグインがロードされていません。'
-  end
-
-  def display_plugins_header(count)
-    puts "ロード済みプラグイン (#{count}個):"
-    puts ''
+  def display_interface_message(type, data = nil)
+    case type
+    when :no_plugins
+      puts 'プラグインがロードされていません。'
+    when :plugins_header
+      puts "ロード済みプラグイン (#{data}個):"
+      puts ''
+    when :conflicts_header
+      puts 'プラグイン重複検出結果:'
+      puts ''
+    when :no_conflicts_found
+      puts '✅ 重複は検出されませんでした。'
+      puts "ロード済みプラグイン数: #{data}" if data
+    end
   end
 
   def display_plugin_info(name, plugin_info, show_conflicts)
@@ -143,11 +150,7 @@ class NumberAnalyzer::Commands::PluginsCommand < NumberAnalyzer::Commands::BaseC
   end
 
   def extract_plugin_commands(plugin_class)
-    if plugin_class.respond_to?(:commands)
-      plugin_class.commands.keys.join(', ')
-    else
-      'N/A'
-    end
+    plugin_class.respond_to?(:commands) ? plugin_class.commands.keys.join(', ') : 'N/A'
   end
 
   def display_conflicts_if_requested(name, plugin_class, show_conflicts)
@@ -167,16 +170,6 @@ class NumberAnalyzer::Commands::PluginsCommand < NumberAnalyzer::Commands::BaseC
     else
       puts '✅ 重複は検出されませんでした。'
     end
-  end
-
-  def display_conflicts_detection_header
-    puts 'プラグイン重複検出結果:'
-    puts ''
-  end
-
-  def display_no_conflicts_found(plugin_count)
-    puts '✅ 重複は検出されませんでした。'
-    puts "ロード済みプラグイン数: #{plugin_count}"
   end
 
   def display_detailed_conflicts(all_conflicts, plugins)
