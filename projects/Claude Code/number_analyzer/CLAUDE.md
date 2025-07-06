@@ -146,7 +146,7 @@ NumberAnalyzer is a comprehensive statistical analysis tool built in Ruby. Origi
 lib/
 ├── number_analyzer.rb              # Core integration (68 lines) - 96.1% reduction achieved
 └── number_analyzer/
-    ├── cli.rb                      # Lightweight CLI dispatcher (2185→~100 lines target)
+    ├── cli.rb                      # Lightweight CLI dispatcher (2094→385 lines, 81% reduction achieved)
     ├── cli/                        # CLI Refactoring Phase 1-2 ✅ Command Pattern + TDD Architecture
     │   ├── base_command.rb         # Template Method Pattern base class
     │   ├── command_registry.rb     # Command registration and management
@@ -158,7 +158,7 @@ lib/
     │   ├── chi_square_input_handler.rb # Strategy Pattern input processing
     │   ├── chi_square_validator.rb     # Extracted validation logic
     │   ├── statistical_output_formatter.rb # Enhanced statistical formatting
-    │   └── commands/               # Individual command implementations (15/29 migrated)
+    │   └── commands/               # Individual command implementations (29/29 migrated)
     │       ├── median_command.rb   # 50-80 lines each vs 2185-line monolith
     │       ├── mean_command.rb     # Independent testability & maintainability
     │       ├── mode_command.rb     # TDD implementation, zero RuboCop violations
@@ -204,11 +204,11 @@ lib/
 - **HypothesisTesting**: Statistical tests (t_test, confidence_interval, chi_square_test)
 - **ANOVAStats**: Variance analysis (one_way_anova, two_way_anova, post_hoc_analysis, levene_test, bartlett_test)
 - **NonParametricStats**: Non-parametric tests (kruskal_wallis_test, mann_whitney_u_test, wilcoxon_signed_rank_test, friedman_test)
-- **NumberAnalyzer::CLI**: Lightweight command dispatcher (reducing from 2185 to ~100 lines)
+- **NumberAnalyzer::CLI**: Lightweight command dispatcher (reduced from 2094 to 385 lines, 81% reduction)
 - **NumberAnalyzer::Commands::BaseCommand**: Template Method Pattern base class for all commands
 - **NumberAnalyzer::Commands::CommandRegistry**: Command registration and discovery system
 - **NumberAnalyzer::Commands::DataInputHandler**: Unified file/CLI input processing
-- **NumberAnalyzer::Commands::[Command]**: Individual command classes (13 migrated: MedianCommand, MeanCommand, ModeCommand, SumCommand, MinCommand, MaxCommand, HistogramCommand, OutliersCommand, PercentileCommand, QuartilesCommand, VarianceCommand, StdCommand, DeviationScoresCommand)
+- **NumberAnalyzer::Commands::[Command]**: Individual command classes (29 fully migrated: all statistical commands, time series, ANOVA, non-parametric tests, plugin management)
 - **NumberAnalyzer::FileReader**: CSV/JSON/TXT file input
 - **NumberAnalyzer::StatisticsPresenter**: Output formatting and histogram display
 - **NumberAnalyzer::PluginSystem**: Plugin registration, loading, and management (Phase 8.0 Step 1)
@@ -473,9 +473,9 @@ git status                   # README.md, ROADMAP.md, CLAUDE.md が含まれて�
 
 ## Project Status
 
-**Current Development State**: Phase 8.0 Step 5 完了 + CLI Refactoring Phase 1 完了 - プラグインシステム + 基本コマンド13個移行 - 詳細な開発履歴は [ai-docs/ROADMAP.md](ai-docs/ROADMAP.md) を参照
+**Current Development State**: Phase 8.0 Step 5 完了 + CLI Refactoring Phase 2 完了 - プラグインシステム + 全29コマンド移行完了 - 詳細な開発履歴は [ai-docs/ROADMAP.md](ai-docs/ROADMAP.md) を参照
 
-**Architecture Overview**: 完全モジュラー化達成（8モジュール構成、96.1%コード削減）+ 高度プラグインシステム（依存関係検証、エラーハンドリング強化、3プラグイン実装、自動CLI統合）
+**Architecture Overview**: 完全モジュラー化達成（8モジュール構成、96.1%コード削減）+ CLI軽量化達成（2094→385行、81%削減）+ 高度プラグインシステム（依存関係検証、エラーハンドリング強化、自動CLI統合）+ Command Pattern完全移行
 
 ## Phase 8.0 Development Status
 
@@ -538,11 +538,11 @@ git status                   # README.md, ROADMAP.md, CLAUDE.md が含まれて�
 
 ## Quick Reference
 
-**Current State**: ✅ Phase 8.0 Step 5 完了 + CLI Refactoring Phase 1 完了 - 基本コマンド15個移行済み - 詳細は [ai-docs/ROADMAP.md](ai-docs/ROADMAP.md) を参照  
-**Architecture**: 8 modular components + comprehensive plugin infrastructure + CLI Command Pattern architecture, 96.1% code reduction achieved  
-**Commands**: 30 core subcommands (including plugins) + 19 plugin commands, 18 CLI options  
+**Current State**: ✅ Phase 8.0 Step 5 完了 + CLI Refactoring Phase 2 完了 - 全29コマンド移行済み - 詳細は [ai-docs/ROADMAP.md](ai-docs/ROADMAP.md) を参照  
+**Architecture**: 8 modular components + comprehensive plugin infrastructure + CLI Command Pattern architecture, 96.1% code reduction achieved + CLI 81% reduction (2094→385 lines)  
+**Commands**: 29 core subcommands + 19 plugin commands, unified CommandRegistry architecture  
 **Quality**: Zero RuboCop violations, comprehensive test suite (RSpec TypeError解決済み, Here Document改善10+箇所)  
-**Achievement**: CLI Refactoring Phase 1-2 **COMPLETE** - 全29コマンドのCommand Pattern移行完了（基本統計、時系列、統計検定、ANOVA、ノンパラメトリック、プラグイン管理）
+**Achievement**: CLI Refactoring Phase 2 **COMPLETE** - 全29コマンドのCommand Pattern移行完了 + CLI軽量化達成（基本統計、時系列、統計検定、ANOVA、ノンパラメトリック、プラグイン管理）
 
 ## Documentation Structure
 

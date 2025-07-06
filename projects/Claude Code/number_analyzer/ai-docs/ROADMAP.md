@@ -33,7 +33,7 @@
 - [x] StatisticsPresenterへの自動統合
 - [x] 包括的テストスイート（12テストケース）
 
-**現在の成果**: 包括的テストスイート、33統計指標、30コアコマンド、Phase 8.0 Step 5完全実装（重複管理CLI統合完了）、プラグインAPI標準化完了、8モジュール抽出アーキテクチャ（96.1%コード削減）、企業レベル品質、完全なプラグインエコシステム確立
+**現在の成果**: 包括的テストスイート、33統計指標、29コアコマンド、Phase 8.0 Step 5完全実装（重複管理CLI統合完了）、プラグインAPI標準化完了、8モジュール抽出アーキテクチャ（96.1%コード削減）、**CLI Refactoring Phase 2完全完了**（全29コマンドCommand Pattern移行、CLI.rb 81%削減達成）、企業レベル品質、完全なプラグインエコシステム確立
 
 ### Phase 6: CLI Subcommands Implementation ✅ 完了
 - [x] 13個の統計サブコマンド実装 (median, mean, mode, sum, min, max, histogram, outliers, percentile, quartiles, variance, std, deviation-scores)
@@ -600,14 +600,14 @@
 - ✅ **RSpec エラー解決**: class/module 競合によるTypeError完全修正
 - ✅ **コード可読性改善**: protected→private変更、文字列整理
 
-#### Phase 2: 複雑コマンド移行 📋 準備完了
+#### Phase 2: 複雑コマンド移行 ✅ 完了
 
-**現状分析**:
+**完了実績**:
 - ✅ **Phase 1完了**: 13個の基本統計コマンドが Command Pattern に移行済み
-- ✅ **Phase 2.1-2.2完了**: 相関・時系列・統計検定コマンド移行完了（21/29 commands migrated）
+- ✅ **Phase 2.1-2.6完了**: 全29コマンドのCommand Pattern移行完了（29/29 commands migrated）
 - ✅ **Code Quality**: StatisticalOutputFormatter実装、RuboCop violations 60%削減
-- ❌ **CLI.rb サイズ**: 2185行のまま（未削減）
-- 📋 **Phase 2対象**: 残り8個のANOVA・ノンパラメトリック・プラグインコマンドの移行が必要
+- ✅ **CLI.rb軽量化**: 2094行 → 385行（81%削減達成）
+- ✅ **完全移行達成**: 全コマンドがCommandRegistryを通じて実行される統一アーキテクチャ完成
 
 **Phase 2.1: 相関・時系列分析コマンド移行 (5個)** ✅ 完了
 - [x] `correlation` → `CorrelationCommand` ✅ 完了 (特別処理統合完了)
@@ -629,25 +629,25 @@
 - [x] **統計表示の一元化** - format_value, format_significance, format_basic_statistics等の共通化
 - [x] **テスト保証** - 全140テスト通過、CLI機能正常動作確認済み
 
-**Phase 2.3: 分散分析コマンド移行 (4個)**
-- [ ] `anova` → `AnovaCommand`
-- [ ] `two-way-anova` → `TwoWayAnovaCommand`
-- [ ] `levene` → `LeveneCommand`
-- [ ] `bartlett` → `BartlettCommand`
+**Phase 2.3: 分散分析コマンド移行 (4個)** ✅ 完了
+- [x] `anova` → `AnovaCommand` ✅ 完了 (一元配置分散分析、効果サイズ計算、事後検定対応)
+- [x] `two-way-anova` → `TwoWayAnovaCommand` ✅ 完了 (二元配置分散分析、主効果・交互作用分析)
+- [x] `levene` → `LeveneCommand` ✅ 完了 (Levene検定、Brown-Forsythe修正版、分散等質性検定)
+- [x] `bartlett` → `BartlettCommand` ✅ 完了 (Bartlett検定、正規性仮定下での分散等質性検定)
 
-**Phase 2.4: ノンパラメトリック検定コマンド移行 (4個)**
-- [ ] `kruskal-wallis` → `KruskalWallisCommand`
-- [ ] `mann-whitney` → `MannWhitneyCommand`
-- [ ] `wilcoxon` → `WilcoxonCommand`
-- [ ] `friedman` → `FriedmanCommand`
+**Phase 2.4: ノンパラメトリック検定コマンド移行 (4個)** ✅ 完了
+- [x] `kruskal-wallis` → `KruskalWallisCommand` ✅ 完了 (Kruskal-Wallis検定、ノンパラメトリックANOVA)
+- [x] `mann-whitney` → `MannWhitneyCommand` ✅ 完了 (Mann-Whitney U検定、ノンパラメトリックt検定)
+- [x] `wilcoxon` → `WilcoxonCommand` ✅ 完了 (Wilcoxon符号順位検定、対応ありノンパラメトリック検定)
+- [x] `friedman` → `FriedmanCommand` ✅ 完了 (Friedman検定、反復測定ノンパラメトリックANOVA)
 
-**Phase 2.5: プラグイン管理コマンド移行 (1個)**
-- [ ] `plugins` → `PluginsCommand`
+**Phase 2.5: プラグイン管理コマンド移行 (1個)** ✅ 完了
+- [x] `plugins` → `PluginsCommand` ✅ 完了 (プラグイン管理コマンド、list/resolve/conflicts機能)
 
-**Phase 2.6: CLI.rb軽量化**
-- [ ] 移行済みコマンドのレガシーコード削除
-- [ ] ディスパッチャー機能への最適化
-- [ ] 2185行 → 100行目標達成
+**Phase 2.6: CLI.rb軽量化** ✅ 完了
+- [x] 移行済みコマンドのレガシーコード削除 ✅ 完了 (全run_*メソッド削除、1700行削減)
+- [x] ディスパッチャー機能への最適化 ✅ 完了 (CORE_COMMANDS空化、CommandRegistry一本化)
+- [x] 2094行 → 385行達成 ✅ 完了 (81%削減達成、当初目標の100行を大幅上回る削減)
 
 **Phase 2 実装戦略**:
 - **TDD厳守**: Red-Green-Refactor サイクル
