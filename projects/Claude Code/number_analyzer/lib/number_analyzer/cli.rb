@@ -94,14 +94,14 @@ class NumberAnalyzer::CLI
       begin
         NumberAnalyzer::FileReader.read_from_file(options[:file])
       rescue StandardError => e
-        puts "ファイル読み込みエラー: #{e.message}"
+        puts "File read error: #{e.message}"
         exit 1
       end
     elsif remaining_args.empty?
-      # デフォルト配列を使用
-      [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+      puts 'Error: Please specify numbers or --file option.'
+      exit 1
     else
-      # コマンドライン引数から数値を取得
+      # Get numbers from command line arguments
       parse_numeric_arguments(remaining_args)
     end
   end
@@ -261,20 +261,20 @@ class NumberAnalyzer::CLI
   private_class_method def self.parse_args_with_parser(parser, args)
     parser.parse(args)
   rescue OptionParser::InvalidOption => e
-    puts "エラー: #{e.message}"
+    puts "Error: #{e.message}"
     exit 1
   rescue OptionParser::MissingArgument => e
     if e.message.include?('--file')
-      puts 'エラー: --fileオプションにはファイルパスを指定してください。'
+      puts 'Error: --file option requires a file path.'
     else
-      puts "エラー: #{e.message}"
+      puts "Error: #{e.message}"
     end
     exit 1
   rescue OptionParser::InvalidArgument => e
     if e.message.include?('--precision')
       warn 'invalid value for Integer'
     else
-      puts "エラー: #{e.message}"
+      puts "Error: #{e.message}"
     end
     exit 1
   end
@@ -373,11 +373,11 @@ class NumberAnalyzer::CLI
       begin
         NumberAnalyzer::FileReader.read_from_file(options[:file])
       rescue StandardError => e
-        puts "ファイル読み込みエラー: #{e.message}"
+        puts "File read error: #{e.message}"
         exit 1
       end
     elsif args.empty?
-      puts 'エラー: 数値または --file オプションを指定してください。'
+      puts 'Error: Please specify numbers or --file option.'
       exit 1
     else
       parse_numeric_arguments(args)
@@ -402,13 +402,13 @@ class NumberAnalyzer::CLI
     end.compact
 
     unless invalid_args.empty?
-      puts "エラー: 無効な引数が見つかりました: #{invalid_args.join(', ')}"
-      puts '数値のみを入力してください。'
+      puts "Error: Invalid arguments found: #{invalid_args.join(', ')}"
+      puts 'Please enter numeric values only.'
       exit 1
     end
 
     if numbers.empty?
-      puts 'エラー: 有効な数値が見つかりませんでした。'
+      puts 'Error: No valid numbers found.'
       exit 1
     end
 

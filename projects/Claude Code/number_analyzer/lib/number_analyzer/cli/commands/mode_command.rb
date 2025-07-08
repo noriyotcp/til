@@ -12,6 +12,14 @@ class NumberAnalyzer::Commands::ModeCommand < NumberAnalyzer::Commands::BaseComm
     raise ArgumentError, 'Cannot calculate mode for empty array' if data.empty?
 
     analyzer = NumberAnalyzer.new(data)
-    analyzer.mode
+    modes = analyzer.mode
+
+    if modes.empty?
+      'No mode'
+    elsif modes.length == 1
+      modes.first.to_s
+    else
+      modes.join(', ')
+    end
   end
 end

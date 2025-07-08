@@ -9,7 +9,7 @@ class NumberAnalyzer::Commands::DataInputHandler
       if options[:file]
         parse_file(options[:file])
       elsif args.empty?
-        raise ArgumentError, '数値またはファイルを指定してください'
+        raise ArgumentError, 'Please specify numbers or a file'
       else
         parse_arguments(args)
       end
@@ -21,18 +21,18 @@ class NumberAnalyzer::Commands::DataInputHandler
       args.map do |arg|
         Float(arg)
       rescue ArgumentError
-        raise ArgumentError, "無効な数値: #{arg}"
+        raise ArgumentError, "Invalid number: #{arg}"
       end
     end
 
     def parse_file(file_path)
-      raise ArgumentError, "ファイルが見つかりません: #{file_path}" unless File.exist?(file_path)
+      raise ArgumentError, "File not found: #{file_path}" unless File.exist?(file_path)
 
       begin
         # Use existing FileReader for consistency
         NumberAnalyzer::FileReader.read_from_file(file_path)
       rescue StandardError => e
-        raise ArgumentError, "無効なデータ: #{e.message}"
+        raise ArgumentError, "Invalid data: #{e.message}"
       end
     end
   end

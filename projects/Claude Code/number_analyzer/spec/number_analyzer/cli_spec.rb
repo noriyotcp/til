@@ -8,10 +8,11 @@ RSpec.describe NumberAnalyzer::CLI do
   let(:script_path) { File.join(__dir__, '..', '..', 'lib', 'number_analyzer', 'cli.rb') }
 
   describe 'CLI.parse_arguments' do
-    context 'with no arguments' do
-      it 'returns default array' do
-        result = NumberAnalyzer::CLI.parse_arguments([])
-        expect(result).to eq([1, 2, 3, 4, 5, 6, 7, 8, 9, 10])
+    context 'with no arguments and no file option' do
+      it 'exits with error message' do
+        expect { NumberAnalyzer::CLI.parse_arguments([]) }
+          .to output(/Error: Please specify numbers or --file option./).to_stdout
+          .and raise_error(SystemExit)
       end
     end
 
@@ -79,8 +80,8 @@ RSpec.describe NumberAnalyzer::CLI do
     it 'exits with error when file path is missing after --file' do
       expect do
         NumberAnalyzer::CLI.parse_arguments(['--file'])
-      end.to output(/Error: --file option requires a file path/).to_stdout
-                                                                .and raise_error(SystemExit)
+      end.to output(/Error: --file option requires a file path./).to_stdout
+                                                                 .and raise_error(SystemExit)
     end
 
     it 'exits with error when file does not exist' do
@@ -92,11 +93,10 @@ RSpec.describe NumberAnalyzer::CLI do
   end
 
   describe 'CLI integration' do
-    it 'runs with default values when no arguments provided' do
+    it 'shows help when no arguments provided' do
       output = `ruby "#{script_path}"`
-      expect(output).to include('Total: 55')
-      expect(output).to include('Average: 5.5')
-      expect(output).to include('Median: 5.5')
+      expect(output).to include('NumberAnalyzer - Statistical Analysis Tool')
+      expect(output).to include('Available Commands:')
       expect($CHILD_STATUS.success?).to be true
     end
 
@@ -268,7 +268,7 @@ RSpec.describe NumberAnalyzer::CLI do
 
       it 'exits with error for invalid file path' do
         expect { NumberAnalyzer::CLI.run(['mean', '--file', 'nonexistent.csv']) }
-          .to output(/File read error/).to_stdout
+          .to output(/Error: File not found/).to_stdout
           .and raise_error(SystemExit)
       end
 
