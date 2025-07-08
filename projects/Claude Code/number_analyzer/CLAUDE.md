@@ -452,6 +452,54 @@ git status                   # README.md, ROADMAP.md, CLAUDE.md が含まれて�
 - **Edge cases**: Empty arrays, single values, extreme inputs
 - **TDD cycle**: Red (failing test) → Green (minimal implementation) → Refactor
 
+### CLI.rb Optimization Guidelines
+
+**目標**: CLI.rb を385行から100行以下に削減しつつ、機能性と保守性を向上させる
+
+#### モジュール分離の原則
+1. **単一責任の原則**: 各モジュールは1つの明確な責任を持つ
+2. **依存関係の明確化**: モジュール間の依存は最小限に
+3. **テスタビリティ**: 各モジュールは独立してテスト可能
+
+#### 推奨モジュール構造
+```ruby
+lib/number_analyzer/
+├── cli.rb                    # < 100行のオーケストレーター
+├── cli/
+│   ├── options.rb           # オプション解析専用
+│   ├── help_generator.rb    # ヘルプ生成
+│   ├── input_processor.rb   # 入力処理統合
+│   ├── error_handler.rb     # 高度なエラー処理
+│   ├── command_cache.rb     # コマンドキャッシング
+│   ├── plugin_priority.rb   # プラグイン優先度管理
+│   ├── debug.rb            # デバッグ機能
+│   ├── completion.rb       # シェル補完
+│   ├── hooks.rb            # プラグインフック
+│   └── configuration.rb    # 設定ファイル管理
+```
+
+#### 実装時の注意事項
+1. **後方互換性の維持**: 既存のCLIインターフェースを保持
+2. **段階的移行**: 一度に全てを変更せず、段階的に移行
+3. **パフォーマンス考慮**: 遅延ロードとキャッシングを活用
+4. **エラーメッセージの質**: ユーザーフレンドリーなメッセージと回復提案
+
+#### プラグイン優先度管理
+- **Core Commands**: 優先度 100（最高）
+- **Official Plugins**: 優先度 80
+- **Community Plugins**: 優先度 60
+- **Local Plugins**: 優先度 40
+
+競合時は優先度の高いコマンドが実行される。同一優先度の場合は名前空間プレフィックスで区別。
+
+#### エラーハンドリングベストプラクティス
+1. **コンテキスト情報の提供**: エラー発生時の状況を明確に
+2. **回復可能性の提示**: 可能な場合は修正方法を提案
+3. **対話的回復**: TTY環境では対話的に問題解決を支援
+4. **ログ出力**: デバッグモードでは詳細なログを出力
+
+**詳細な実装提案**: [ai-docs/CLI_IMPROVEMENT_PROPOSALS.md](ai-docs/CLI_IMPROVEMENT_PROPOSALS.md) 参照
+
 ## Important Reminders
 
 - **RuboCop compliance**: MANDATORY `bundle exec rubocop` with zero violations before any commit

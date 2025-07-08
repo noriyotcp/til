@@ -698,12 +698,48 @@
 - **期待効果**: 95%のコード削減、保守性・テスト性・拡張性の大幅向上
 - **詳細計画**: [CLI_REFACTORING_PLAN.md](CLI_REFACTORING_PLAN.md) 参照
 
-### Potential Phase 9: Performance Optimization
+### Phase 9: CLI Ultimate Optimization 🚀 計画策定済み
+**CLI.rb の最終最適化 - 385行から100行以下への削減**
+
+#### 目標メトリクス
+- **現在**: 385行（元の2094行から81%削減済み）
+- **目標**: 100行以下（総削減率95%以上）
+- **アプローチ**: モジュール分離による責任の分散
+
+#### 実装計画（3フェーズ、5週間）
+**Phase 1: モジュール化（2週間）**
+- [ ] CLIOptions モジュール抽出（オプション解析の外部化、~80行削減）
+- [ ] HelpGenerator モジュール作成（ヘルプシステムの分離、~40行削減）
+- [ ] InputProcessor モジュール統合（入力処理の一元化、~60行削減）
+- [ ] 既存テストの更新と新規モジュールテスト作成
+
+**Phase 2: 機能強化（2週間）**
+- [ ] プラグインコマンド優先度システム実装（競合解決機能）
+- [ ] 高度なエラーハンドリング（コンテキスト付きエラー、対話的回復）
+- [ ] コマンドキャッシング機構（パフォーマンス最適化）
+- [ ] デバッグモード対応（開発者体験向上）
+
+**Phase 3: 開発者体験（1週間）**
+- [ ] シェル補完機能サポート（bash/zsh自動補完）
+- [ ] プラグインフックシステム（before/after hooks）
+- [ ] 設定ファイル対応（~/.number_analyzer/config.yml）
+- [ ] 移行ガイド作成
+
+#### 期待される成果
+- **保守性**: 各モジュールが単一責任を持つ
+- **拡張性**: 新機能追加が容易
+- **パフォーマンス**: 遅延ロードとキャッシング
+- **開発者体験**: デバッグ、補完、フック機能
+- **ユーザー体験**: より良いエラーメッセージ、対話的回復
+
+**詳細提案書**: [CLI_IMPROVEMENT_PROPOSALS.md](CLI_IMPROVEMENT_PROPOSALS.md) 参照
+
+### Potential Phase 10: Performance Optimization
 - **Benchmarking Suite**: パフォーマンス測定基盤
 - **Algorithm Optimization**: 統計計算の最適化
 - **Memory Management**: 大規模データセット対応
 
-### Potential Phase 10: Visualization Enhancement
+### Potential Phase 11: Visualization Enhancement
 - **Advanced Charts**: グラフ描画機能の拡張
 - **Export Formats**: PNG/SVG出力対応
 - **Interactive Mode**: 対話的データ探索
