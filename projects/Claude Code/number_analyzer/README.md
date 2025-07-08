@@ -64,6 +64,7 @@ NumberAnalyzer provides the following statistical calculations:
   - **Comprehensive Test Coverage**: Extensive test suite with 100% passing rate maintained throughout development
   - **Compact Style Consistency**: All files follow Ruby compact style (`NumberAnalyzer::ClassName`) for namespace clarity
   - **Automated Quality Gates**: RuboCop hooks integration for continuous code quality assurance
+  - **English Error Messages**: Consistent English error messages for international accessibility
 
 ## Installation
 
@@ -127,7 +128,7 @@ bundle exec number_analyzer
 bundle exec number_analyzer --help
 bundle exec number_analyzer help
 
-# With custom numbers (requires explicit data input)
+# With custom numbers (explicit data input required)
 bundle exec number_analyzer mean 1 2 3 4 5
 bundle exec number_analyzer median 10.5 20.3 15.7 8.2
 

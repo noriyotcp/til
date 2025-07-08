@@ -33,7 +33,7 @@
 - [x] StatisticsPresenterへの自動統合
 - [x] 包括的テストスイート（12テストケース）
 
-**現在の成果**: 包括的テストスイート、33統計指標、29コアコマンド、Phase 8.0 Step 5完全実装（重複管理CLI統合完了）、プラグインAPI標準化完了、8モジュール抽出アーキテクチャ（96.1%コード削減）、**CLI Refactoring Phase 2完全完了**（全29コマンドCommand Pattern移行、CLI.rb 81%削減達成）、企業レベル品質、完全なプラグインエコシステム確立
+**現在の成果**: 包括的テストスイート、33統計指標、29コアコマンド、Phase 8.0 Step 5完全実装（重複管理CLI統合完了）、プラグインAPI標準化完了、8モジュール抽出アーキテクチャ（96.1%コード削減）、**CLI Refactoring Phase 2完全完了**（全29コマンドCommand Pattern移行、CLI.rb 81%削減達成）、企業レベル品質、完全なプラグインエコシステム確立、CLI UX改善（英語エラーメッセージ、適切な入力要求）
 
 ### Phase 6: CLI Subcommands Implementation ✅ 完了
 - [x] 13個の統計サブコマンド実装 (median, mean, mode, sum, min, max, histogram, outliers, percentile, quartiles, variance, std, deviation-scores)
@@ -663,6 +663,19 @@
 - **拡張性向上**: 新規コマンド追加の簡易化
 
 ### Code Quality & Architecture Improvements ✅ 完了
+
+#### CLI User Experience Enhancement ✅ 完了 (January 2025)
+
+**CLI Default Array Removal and Error Message Standardization**
+- [x] **Default Array Cleanup**: Removed unnecessary default `[1,2,3,4,5,6,7,8,9,10]` array
+- [x] **Explicit Input Requirement**: Users must now provide explicit data or use `--file` option
+- [x] **English Error Messages**: All Japanese error messages converted to English for international accessibility  
+- [x] **Mode Command Fix**: Improved output formatting (single: "2.0", multiple: "1.0, 2.0", none: "No mode")
+- [x] **DataInputHandler Cleanup**: Consistent English error messages across all input handlers
+- [x] **Test Suite Updates**: All CLI tests updated to expect English error messages
+- [x] **Zero RuboCop Violations**: Maintained throughout all changes
+
+**Impact**: Enhanced user experience with clearer expectations and international accessibility
 
 #### Compact Style Conversion Project ✅ 完了 (January 2025)
 
