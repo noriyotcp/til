@@ -384,14 +384,6 @@ class NumberAnalyzer::CLI
     end
   end
 
-  # Legacy methods removed - all commands now handled by CommandRegistry
-
-  # Time series analysis methods removed - now handled by CommandRegistry
-
-  # T-test methods removed - now handled by TTestCommand
-
-  # Confidence interval methods removed - now handled by ConfidenceIntervalCommand
-
   private_class_method def self.parse_numeric_arguments(argv)
     invalid_args = []
     numbers = argv.map do |arg|
@@ -414,10 +406,6 @@ class NumberAnalyzer::CLI
 
     numbers
   end
-
-  # Chi-square methods removed - now handled by ChiSquareCommand
-
-  # ANOVA and statistical test methods removed - now handled by Command Pattern
 end
 
 require_relative 'cli/commands'
