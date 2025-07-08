@@ -65,10 +65,15 @@ class NumberAnalyzer::CLI
     # Initialize plugins before processing commands
     initialize_plugins
 
-    return run_full_analysis(argv) if argv.empty?
+    # Show help if no arguments provided
+    return show_general_help if argv.empty?
 
     # Check if first argument is a subcommand
     command = argv.first
+
+    # Handle top-level help options
+    return show_general_help if ['--help', '-h'].include?(command)
+
     if commands.key?(command)
       run_subcommand(command, argv[1..])
     elsif command.start_with?('-') || command.match?(/^\d+(\.\d+)?$/)
@@ -77,6 +82,7 @@ class NumberAnalyzer::CLI
     else
       # Unknown command
       puts "Unknown command: #{command}"
+      puts "Use 'bundle exec number_analyzer help' for available commands."
       exit 1
     end
   end
@@ -316,6 +322,48 @@ class NumberAnalyzer::CLI
         bundle exec number_analyzer chi-square --independence 30 20 -- 15 35
         bundle exec number_analyzer chi-square --goodness-of-fit observed.csv expected.csv
         bundle exec number_analyzer chi-square --uniform 8 12 10 15 9 6
+    HELP
+  end
+
+  # Show general help information
+  private_class_method def self.show_general_help
+    puts <<~HELP
+      NumberAnalyzer - Statistical Analysis Tool
+
+      Usage:
+        bundle exec number_analyzer <command> [options] [numbers...]
+        bundle exec number_analyzer --file data.csv
+
+      Available Commands:
+        Basic Statistics:
+          mean, median, mode, sum, min, max
+
+        Advanced Analysis:
+          variance, std, quartiles, percentile, outliers
+
+        Time Series Analysis:
+          trend, moving-average, growth-rate, seasonal
+
+        Statistical Tests:
+          t-test, chi-square, anova, correlation
+
+        Analysis of Variance:
+          anova, levene, bartlett
+
+        Non-parametric Tests:
+          kruskal-wallis, mann-whitney, wilcoxon, friedman
+
+        Plugin Management:
+          plugins
+
+      Detailed Help:
+        bundle exec number_analyzer help <command>
+        bundle exec number_analyzer <command> --help
+
+      Examples:
+        bundle exec number_analyzer mean 1 2 3 4 5
+        bundle exec number_analyzer median --file data.csv
+        bundle exec number_analyzer histogram --format=json 1 2 3 4 5
     HELP
   end
 

@@ -122,17 +122,19 @@ gem list number_analyzer
 
 **Using bundle exec (recommended for development)**
 ```bash
-# With default numbers (1-10)
+# Show help
 bundle exec number_analyzer
+bundle exec number_analyzer --help
+bundle exec number_analyzer help
 
-# With custom numbers
-bundle exec number_analyzer 1 2 3 4 5
-bundle exec number_analyzer 10.5 20.3 15.7 8.2
+# With custom numbers (requires explicit data input)
+bundle exec number_analyzer mean 1 2 3 4 5
+bundle exec number_analyzer median 10.5 20.3 15.7 8.2
 
 # From files (CSV, JSON, TXT formats supported)
-bundle exec number_analyzer --file data.csv
-bundle exec number_analyzer -f numbers.json
-bundle exec number_analyzer --file values.txt
+bundle exec number_analyzer mean --file data.csv
+bundle exec number_analyzer median -f numbers.json
+bundle exec number_analyzer sum --file values.txt
 
 # Correlation analysis with files
 bundle exec number_analyzer correlation file1.csv file2.csv
@@ -229,7 +231,17 @@ bundle exec number_analyzer outliers --quiet 1 2 3 100
 
 **Help System**
 ```bash
-# Get help for any subcommand
+# General help (shows all available commands)
+bundle exec number_analyzer
+bundle exec number_analyzer --help
+bundle exec number_analyzer help
+
+# Get help for specific commands
+bundle exec number_analyzer help median
+bundle exec number_analyzer help percentile
+bundle exec number_analyzer help histogram
+
+# Alternative help syntax for specific commands
 bundle exec number_analyzer median --help
 bundle exec number_analyzer percentile --help
 bundle exec number_analyzer histogram --help

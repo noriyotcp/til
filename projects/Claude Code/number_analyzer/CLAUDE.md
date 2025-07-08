@@ -11,9 +11,12 @@ NumberAnalyzer is a comprehensive statistical analysis tool built in Ruby. Origi
 ## Development Commands
 
 **Ruby Execution**:
-- `bundle exec number_analyzer` (default dataset - full analysis)
-- `bundle exec number_analyzer 1 2 3 4 5` (custom numbers - full analysis)
-- `bundle exec number_analyzer --file data.csv` (file input - full analysis)
+- `bundle exec number_analyzer` (help display - modern CLI behavior)
+- `bundle exec number_analyzer --help` (general help)
+- `bundle exec number_analyzer help` (help command)
+- `bundle exec number_analyzer help <command>` (specific command help)
+- `bundle exec number_analyzer mean 1 2 3 4 5` (specific analysis with data)
+- `bundle exec number_analyzer median --file data.csv` (file input analysis)
 
 **Basic Subcommands** (Phase 6.1):
 - `bundle exec number_analyzer median 1 2 3 4 5` (central tendency)

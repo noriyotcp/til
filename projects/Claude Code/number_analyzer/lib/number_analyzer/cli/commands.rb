@@ -41,6 +41,7 @@ require_relative 'commands/mann_whitney_command'
 require_relative 'commands/wilcoxon_command'
 require_relative 'commands/friedman_command'
 require_relative 'commands/plugins_command'
+require_relative 'commands/help_command'
 
 # Extend the Commands module with registration functionality
 module NumberAnalyzer::Commands
@@ -61,6 +62,7 @@ module NumberAnalyzer::Commands
     CommandRegistry.register(MaxCommand)
     CommandRegistry.register(ModeCommand)
     CommandRegistry.register(HistogramCommand)
+    CommandRegistry.register(HelpCommand)
   end
 
   # Register advanced statistical commands

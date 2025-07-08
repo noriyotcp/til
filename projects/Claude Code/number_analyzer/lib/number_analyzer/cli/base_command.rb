@@ -27,6 +27,22 @@ class NumberAnalyzer::Commands::BaseCommand
     handle_error(e)
   end
 
+  # Show command-specific help
+  def show_help
+    puts <<~HELP
+      #{@name} - #{@description}
+
+      Usage: number_analyzer #{@name} [OPTIONS] [NUMBERS...]
+
+      Options:
+        --help                Show this help message
+        --file FILE           Read numbers from a file
+        --format FORMAT       Output format (json)
+        --precision N         Number of decimal places
+        --quiet               Minimal output
+    HELP
+  end
+
   private
 
   # Override in subclasses for custom validation
@@ -59,22 +75,6 @@ class NumberAnalyzer::Commands::BaseCommand
   def handle_error(error)
     puts "Error: #{error.message}"
     exit 1
-  end
-
-  # Show command-specific help
-  def show_help
-    puts <<~HELP
-      #{@name} - #{@description}
-
-      Usage: number_analyzer #{@name} [OPTIONS] [NUMBERS...]
-
-      Options:
-        --help                Show this help message
-        --file FILE           Read numbers from a file
-        --format FORMAT       Output format (json)
-        --precision N         Number of decimal places
-        --quiet               Minimal output
-    HELP
   end
 
   def default_options
