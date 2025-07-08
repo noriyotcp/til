@@ -6,7 +6,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 NumberAnalyzer is a comprehensive statistical analysis tool built in Ruby. Originally started as a refactoring exercise from beginner-level code to professional Ruby Gem, it has evolved into an enterprise-ready statistical analysis library with data visualization capabilities.
 
-**Current Status**: ✅ **Production Ready** - 33 statistical functions, 140+ test examples, CLI Refactoring Phase 1-2 **COMPLETE** with Command Pattern architecture (29/29 commands migrated) and fully modular architecture (8 modules extracted), 96.1%+ code reduction achieved, **100% RuboCop compliance**, enterprise-level code quality with TDD methodology, English error messages for international accessibility
+**Current Status**: ✅ **Production Ready** - 33 statistical functions, 140+ test examples, CLI Modularization Phase 1 **COMPLETE** + CLI Refactoring Phase 1-2 **COMPLETE** with Command Pattern architecture (29/29 commands migrated) and fully modular architecture (8 modules extracted + 3 CLI modules), 96.1%+ code reduction achieved + CLI 93% reduction (2094→138 lines), **100% RuboCop compliance**, enterprise-level code quality with TDD methodology, English error messages for international accessibility
 
 ## Development Commands
 
@@ -149,8 +149,11 @@ NumberAnalyzer is a comprehensive statistical analysis tool built in Ruby. Origi
 lib/
 ├── number_analyzer.rb              # Core integration (68 lines) - 96.1% reduction achieved
 └── number_analyzer/
-    ├── cli.rb                      # Lightweight CLI dispatcher (2094→385 lines, 81% reduction achieved)
-    ├── cli/                        # CLI Refactoring Phase 1-2 ✅ Command Pattern + TDD Architecture
+    ├── cli.rb                      # Lightweight CLI orchestrator (2094→138 lines, 93% reduction achieved)
+    ├── cli/                        # CLI Modular Architecture ✅ Phase 1 Complete + Command Pattern + TDD
+    │   ├── options.rb              # Option parsing system (243 lines)
+    │   ├── help_generator.rb       # Dynamic help generation (155 lines)
+    │   ├── input_processor.rb      # Unified input processing (160 lines)
     │   ├── base_command.rb         # Template Method Pattern base class
     │   ├── command_registry.rb     # Command registration and management
     │   ├── commands.rb             # Auto-loader for all command classes  
@@ -207,7 +210,10 @@ lib/
 - **HypothesisTesting**: Statistical tests (t_test, confidence_interval, chi_square_test)
 - **ANOVAStats**: Variance analysis (one_way_anova, two_way_anova, post_hoc_analysis, levene_test, bartlett_test)
 - **NonParametricStats**: Non-parametric tests (kruskal_wallis_test, mann_whitney_u_test, wilcoxon_signed_rank_test, friedman_test)
-- **NumberAnalyzer::CLI**: Lightweight command dispatcher (reduced from 2094 to 385 lines, 81% reduction)
+- **NumberAnalyzer::CLI**: Lightweight command orchestrator (reduced from 2094 to 138 lines, 93% reduction)
+- **NumberAnalyzer::CLI::Options**: Option parsing system (243 lines) - comprehensive CLI argument handling
+- **NumberAnalyzer::CLI::HelpGenerator**: Dynamic help generation (155 lines) - command descriptions and usage
+- **NumberAnalyzer::CLI::InputProcessor**: Input processing (160 lines) - unified file/CLI input handling
 - **NumberAnalyzer::Commands::BaseCommand**: Template Method Pattern base class for all commands
 - **NumberAnalyzer::Commands::CommandRegistry**: Command registration and discovery system
 - **NumberAnalyzer::Commands::DataInputHandler**: Unified file/CLI input processing
@@ -457,7 +463,7 @@ git status                   # README.md, ROADMAP.md, CLAUDE.md が含まれて�
 
 ### CLI.rb Optimization Guidelines
 
-**目標**: CLI.rb を385行から100行以下に削減しつつ、機能性と保守性を向上させる
+**目標**: CLI.rb を138行から100行以下に削減しつつ、機能性と保守性を向上させる（Phase 1として385行→138行を達成済み）
 
 #### モジュール分離の原則
 1. **単一責任の原則**: 各モジュールは1つの明確な責任を持つ
@@ -524,9 +530,9 @@ lib/number_analyzer/
 
 ## Project Status
 
-**Current Development State**: Phase 8.0 Step 5 完了 + CLI Refactoring Phase 2 完了 - プラグインシステム + 全29コマンド移行完了 - 詳細な開発履歴は [ai-docs/ROADMAP.md](ai-docs/ROADMAP.md) を参照
+**Current Development State**: Phase 8.0 Step 5 完了 + CLI Modularization Phase 1 完了 + CLI Refactoring Phase 2 完了 - プラグインシステム + 全29コマンド移行完了 + CLI完全モジュール化 - 詳細な開発履歴は [ai-docs/ROADMAP.md](ai-docs/ROADMAP.md) を参照
 
-**Architecture Overview**: 完全モジュラー化達成（8モジュール構成、96.1%コード削減）+ CLI軽量化達成（2094→385行、81%削減）+ 高度プラグインシステム（依存関係検証、エラーハンドリング強化、自動CLI統合）+ Command Pattern完全移行
+**Architecture Overview**: 完全モジュラー化達成（8統計モジュール構成、96.1%コード削減）+ CLI完全モジュール化達成（2094→138行、93%削減 + 3専門モジュール558行）+ 高度プラグインシステム（依存関係検証、エラーハンドリング強化、自動CLI統合）+ Command Pattern完全移行
 
 ## Phase 8.0 Development Status
 
@@ -589,11 +595,11 @@ lib/number_analyzer/
 
 ## Quick Reference
 
-**Current State**: ✅ Phase 8.0 Step 5 完了 + CLI Refactoring Phase 2 完了 - 全29コマンド移行済み - 詳細は [ai-docs/ROADMAP.md](ai-docs/ROADMAP.md) を参照  
-**Architecture**: 8 modular components + comprehensive plugin infrastructure + CLI Command Pattern architecture, 96.1% code reduction achieved + CLI 81% reduction (2094→385 lines)  
+**Current State**: ✅ Phase 8.0 Step 5 完了 + CLI Modularization Phase 1 完了 + CLI Refactoring Phase 2 完了 - 全29コマンド移行済み + CLI完全モジュール化 - 詳細は [ai-docs/ROADMAP.md](ai-docs/ROADMAP.md) を参照  
+**Architecture**: 8 statistical modules + 3 CLI modules + comprehensive plugin infrastructure + CLI Command Pattern architecture, 96.1% code reduction achieved + CLI 93% reduction (2094→138 lines + 558 module lines)  
 **Commands**: 29 core subcommands + 19 plugin commands, unified CommandRegistry architecture  
 **Quality**: Zero RuboCop violations, comprehensive test suite (RSpec TypeError解決済み, Here Document改善10+箇所)  
-**Achievement**: CLI Refactoring Phase 2 **COMPLETE** - 全29コマンドのCommand Pattern移行完了 + CLI軽量化達成（基本統計、時系列、統計検定、ANOVA、ノンパラメトリック、プラグイン管理）
+**Achievement**: CLI Modularization Phase 1 + CLI Refactoring Phase 2 **COMPLETE** - 全29コマンドのCommand Pattern移行完了 + CLI完全モジュール化達成（単一責任原則による3専門モジュール分離）
 
 ## Documentation Structure
 
