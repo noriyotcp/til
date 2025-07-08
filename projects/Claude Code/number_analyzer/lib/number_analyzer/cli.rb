@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-require 'optparse'
 require_relative '../number_analyzer'
 require_relative 'file_reader'
 require_relative 'output_formatter'
@@ -66,13 +65,13 @@ class NumberAnalyzer::CLI
     initialize_plugins
 
     # Show help if no arguments provided
-    return show_general_help if argv.empty?
+    return NumberAnalyzer::CLI::HelpGenerator.show_general_help if argv.empty?
 
     # Check if first argument is a subcommand
     command = argv.first
 
     # Handle top-level help options
-    return show_general_help if ['--help', '-h'].include?(command)
+    return NumberAnalyzer::CLI::HelpGenerator.show_general_help if ['--help', '-h'].include?(command)
 
     if commands.key?(command)
       run_subcommand(command, argv[1..])
@@ -88,22 +87,7 @@ class NumberAnalyzer::CLI
   end
 
   def self.parse_arguments(argv = ARGV)
-    options, remaining_args = parse_options(argv)
-
-    if options[:file]
-      begin
-        NumberAnalyzer::FileReader.read_from_file(options[:file])
-      rescue StandardError => e
-        puts "File read error: #{e.message}"
-        exit 1
-      end
-    elsif remaining_args.empty?
-      puts 'Error: Please specify numbers or --file option.'
-      exit 1
-    else
-      # Get numbers from command line arguments
-      parse_numeric_arguments(remaining_args)
-    end
+    NumberAnalyzer::CLI::InputProcessor.process_arguments(argv)
   end
 
   private_class_method def self.run_full_analysis(argv)
@@ -113,61 +97,9 @@ class NumberAnalyzer::CLI
   end
 
   private_class_method def self.run_subcommand(command, args)
-    # Special handling for commands that use '--' separators
-    if %w[correlation chi-square anova levene bartlett kruskal-wallis mann-whitney
-          wilcoxon friedman].include?(command) && args.include?('--')
-      # Find where options end and data begins
-      options = default_options
-      data_start_index = 0
+    # Parse options using the new Options module
+    options, remaining_args = NumberAnalyzer::CLI::Options.parse_special_command_options(args, command)
 
-      # Process only option flags, not data
-      args.each_with_index do |arg, index|
-        case arg
-        when '--independence'
-          options[:independence] = true
-        when '--goodness-of-fit'
-          options[:goodness_of_fit] = true
-        when '--uniform'
-          options[:uniform] = true
-        when '--post-hoc'
-          options[:post_hoc] = args[index + 1] if index + 1 < args.length
-        when /^--post-hoc=(.+)$/
-          options[:post_hoc] = Regexp.last_match(1)
-        when '--alpha'
-          options[:alpha] = args[index + 1].to_f if index + 1 < args.length
-        when /^--alpha=(.+)$/
-          options[:alpha] = Regexp.last_match(1).to_f
-        when '--format'
-          options[:format] = args[index + 1] if index + 1 < args.length
-        when /^--format=(.+)$/
-          options[:format] = Regexp.last_match(1)
-        when '--precision'
-          options[:precision] = args[index + 1].to_i if index + 1 < args.length
-        when /^--precision=(\d+)$/
-          options[:precision] = Regexp.last_match(1).to_i
-        when '--quiet'
-          options[:quiet] = true
-          options[:format] = 'quiet' unless options[:format]
-        when '--help'
-          options[:help] = true
-        when '--file', '-f'
-          options[:file] = args[index + 1] if index + 1 < args.length
-        else
-          # Found first non-option argument
-          is_option_flag = arg.start_with?('--')
-          is_option_value = index.positive? && args[index - 1] =~ /^--(format|precision|file|post-hoc|alpha)$/
-          unless is_option_flag || is_option_value
-            data_start_index = index
-            break
-          end
-        end
-      end
-
-      remaining_args = args[data_start_index..]
-    else
-      # Standard option parsing for other commands
-      options, remaining_args = parse_options(args)
-    end
     # First check if command is registered with new Command Pattern
     if NumberAnalyzer::Commands::CommandRegistry.exists?(command)
       NumberAnalyzer::Commands::CommandRegistry.execute_command(command, remaining_args, options)
@@ -195,219 +127,11 @@ class NumberAnalyzer::CLI
       exit 1
     end
   end
-
-  # Parse command-line options using OptionParser
-  private_class_method def self.parse_options(args)
-    options = default_options
-    parser = create_option_parser(options)
-
-    remaining_args = parse_args_with_parser(parser, args)
-    [options, remaining_args]
-  end
-
-  private_class_method def self.default_options
-    {
-      format: nil,
-      precision: nil,
-      quiet: false,
-      help: false,
-      file: nil,
-      window: nil,
-      period: nil,
-      paired: false,
-      one_sample: false,
-      population_mean: nil,
-      mu: nil,
-      confidence_level: 95,
-      independence: false,
-      goodness_of_fit: false,
-      uniform: false,
-      factor_a: nil,
-      factor_b: nil
-    }
-  end
-
-  private_class_method def self.create_option_parser(options)
-    OptionParser.new do |opts|
-      opts.on('--format FORMAT', 'Output format (json)') { |format| options[:format] = format }
-      opts.on('--precision N', Integer, 'Number of decimal places') { |precision| options[:precision] = precision }
-      opts.on('--quiet', 'Quiet mode (minimal output)') do
-        options[:quiet] = true
-        options[:format] = 'quiet' unless options[:format]
-      end
-      opts.on('--help', 'Show help') { options[:help] = true }
-      opts.on('--file FILE', '-f FILE', 'Read numbers from file') { |file| options[:file] = file }
-      opts.on('--window N', Integer, 'Window size for moving average') { |window| options[:window] = window }
-      opts.on('--period N', Integer, 'Period for seasonal analysis') { |period| options[:period] = period }
-      opts.on('--paired', 'Perform paired samples t-test') { options[:paired] = true }
-      opts.on('--one-sample', 'Perform one-sample t-test') { options[:one_sample] = true }
-      opts.on('--population-mean MEAN', Float, 'Population mean for one-sample t-test') do |mean|
-        options[:population_mean] = mean
-      end
-      opts.on('--mu MEAN', Float, 'Population mean for one-sample t-test (alias)') { |mean| options[:mu] = mean }
-      opts.on('--level LEVEL', Float, 'Confidence level (default: 95)') { |level| options[:confidence_level] = level }
-      opts.on('--independence', 'Perform independence test for chi-square') { options[:independence] = true }
-      opts.on('--goodness-of-fit', 'Perform goodness-of-fit test for chi-square') { options[:goodness_of_fit] = true }
-      opts.on('--uniform', 'Use uniform distribution for goodness-of-fit test') { options[:uniform] = true }
-      opts.on('--factor-a LEVELS', 'Factor A levels (comma-separated)') do |levels|
-        options[:factor_a] = levels.split(',')
-      end
-      opts.on('--factor-b LEVELS', 'Factor B levels (comma-separated)') do |levels|
-        options[:factor_b] = levels.split(',')
-      end
-    end
-  end
-
-  private_class_method def self.parse_args_with_parser(parser, args)
-    parser.parse(args)
-  rescue OptionParser::InvalidOption => e
-    puts "Error: #{e.message}"
-    exit 1
-  rescue OptionParser::MissingArgument => e
-    if e.message.include?('--file')
-      puts 'Error: --file option requires a file path.'
-    else
-      puts "Error: #{e.message}"
-    end
-    exit 1
-  rescue OptionParser::InvalidArgument => e
-    if e.message.include?('--precision')
-      warn 'invalid value for Integer'
-    else
-      puts "Error: #{e.message}"
-    end
-    exit 1
-  end
-
-  # Show help information for a specific command
-  private_class_method def self.show_help(command, description)
-    puts <<~HELP
-      Usage: bundle exec number_analyzer #{command} [options] numbers...
-
-      Description: #{description}
-
-      Options:
-        --format json     Output in JSON format
-        --precision N     Round to N decimal places
-        --quiet          Minimal output (no labels)
-        --file FILE, -f  Read numbers from file
-        --help           Show this help
-
-      Examples:
-        bundle exec number_analyzer #{command} 1 2 3 4 5
-        bundle exec number_analyzer #{command} --format=json 1 2 3
-        bundle exec number_analyzer #{command} --precision=2 1.234 2.567
-        bundle exec number_analyzer #{command} --file data.csv
-    HELP
-  end
-
-  # Show help information for chi-square command
-  private_class_method def self.show_chi_square_help
-    puts <<~HELP
-      Usage: bundle exec number_analyzer chi-square [options] numbers...
-
-      Description: Perform chi-square test for independence or goodness-of-fit
-
-      Options:
-        --independence    Perform independence test
-        --goodness-of-fit Perform goodness-of-fit test
-        --uniform        Test against uniform distribution
-        --format json     Output in JSON format
-        --precision N     Round to N decimal places
-        --quiet          Minimal output (no labels)
-        --file FILE, -f  Read numbers from file
-        --help           Show this help
-
-      Examples:
-        bundle exec number_analyzer chi-square --independence 30 20 -- 15 35
-        bundle exec number_analyzer chi-square --goodness-of-fit observed.csv expected.csv
-        bundle exec number_analyzer chi-square --uniform 8 12 10 15 9 6
-    HELP
-  end
-
-  # Show general help information
-  private_class_method def self.show_general_help
-    puts <<~HELP
-      NumberAnalyzer - Statistical Analysis Tool
-
-      Usage:
-        bundle exec number_analyzer <command> [options] [numbers...]
-        bundle exec number_analyzer --file data.csv
-
-      Available Commands:
-        Basic Statistics:
-          mean, median, mode, sum, min, max
-
-        Advanced Analysis:
-          variance, std, quartiles, percentile, outliers
-
-        Time Series Analysis:
-          trend, moving-average, growth-rate, seasonal
-
-        Statistical Tests:
-          t-test, chi-square, anova, correlation
-
-        Analysis of Variance:
-          anova, levene, bartlett
-
-        Non-parametric Tests:
-          kruskal-wallis, mann-whitney, wilcoxon, friedman
-
-        Plugin Management:
-          plugins
-
-      Detailed Help:
-        bundle exec number_analyzer help <command>
-        bundle exec number_analyzer <command> --help
-
-      Examples:
-        bundle exec number_analyzer mean 1 2 3 4 5
-        bundle exec number_analyzer median --file data.csv
-        bundle exec number_analyzer histogram --format=json 1 2 3 4 5
-    HELP
-  end
-
-  # Parse numbers from arguments and options, handling file input
-  private_class_method def self.parse_numbers_with_options(args, options)
-    if options[:file]
-      begin
-        NumberAnalyzer::FileReader.read_from_file(options[:file])
-      rescue StandardError => e
-        puts "File read error: #{e.message}"
-        exit 1
-      end
-    elsif args.empty?
-      puts 'Error: Please specify numbers or --file option.'
-      exit 1
-    else
-      parse_numeric_arguments(args)
-    end
-  end
-
-  private_class_method def self.parse_numeric_arguments(argv)
-    invalid_args = []
-    numbers = argv.map do |arg|
-      Float(arg)
-    rescue ArgumentError
-      invalid_args << arg
-      nil
-    end.compact
-
-    unless invalid_args.empty?
-      puts "Error: Invalid arguments found: #{invalid_args.join(', ')}"
-      puts 'Please enter numeric values only.'
-      exit 1
-    end
-
-    if numbers.empty?
-      puts 'Error: No valid numbers found.'
-      exit 1
-    end
-
-    numbers
-  end
 end
 
+require_relative 'cli/options'
+require_relative 'cli/help_generator'
+require_relative 'cli/input_processor'
 require_relative 'cli/commands'
 
 # 実行部分（スクリプトとして実行された場合のみ）
