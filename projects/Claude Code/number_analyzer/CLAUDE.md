@@ -106,6 +106,28 @@ NumberAnalyzer is a comprehensive statistical analysis tool built in Ruby. Origi
 - `bundle exec number_analyzer two-way-anova --file factorial_data.csv` (two-way ANOVA with CSV file input)
 - `bundle exec number_analyzer two-way-anova --format=json --precision=3 --factor-a Drug,Drug,Placebo,Placebo --factor-b Male,Female,Male,Female 5.2,7.1,3.8,4.5` (JSON output with precision)
 
+## CLI Entry Points
+
+**Production Entry Point** (`bin/number_analyzer`):
+- **Purpose**: Main CLI command for production and distribution use
+- **Usage**: `bundle exec number_analyzer [command] [args]`
+- **Characteristics**: 
+  - Contains shebang (`#!/usr/bin/env ruby`) for direct execution
+  - Always executes CLI when invoked
+  - Official entry point for gem users
+  - Used by bundler when running `bundle exec number_analyzer`
+
+**Development Entry Point** (`lib/number_analyzer/cli.rb`):
+- **Purpose**: Development and testing convenience
+- **Usage**: `ruby lib/number_analyzer/cli.rb [command] [args]`
+- **Characteristics**:
+  - Conditional execution with `if __FILE__ == $PROGRAM_NAME`
+  - Only executes when run directly, not when required as library
+  - Useful for development debugging and testing
+  - Maintains library functionality when required by other code
+
+**Key Distinction**: The production entry point is designed for end-users and gem distribution, while the development entry point provides convenience for developers working on the codebase directly.
+
 **Development Tools**:
 - `bundle install` - Install dependencies
 - `rspec` - Run test suite (140+ comprehensive tests including TDD-based command tests)

@@ -98,5 +98,5 @@ require_relative 'cli/command_cache'
 require_relative 'cli/plugin_router'
 require_relative 'cli/commands'
 
-# 実行部分（スクリプトとして実行された場合のみ）
+# Execution section (only when run as a Ruby script)
 NumberAnalyzer::CLI.run(ARGV) if __FILE__ == $PROGRAM_NAME

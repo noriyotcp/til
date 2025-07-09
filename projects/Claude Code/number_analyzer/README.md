@@ -602,6 +602,59 @@ or
 - Multi-line support
 - Non-numeric values are ignored
 
+## CLI Entry Points
+
+NumberAnalyzer provides two entry points for different usage scenarios:
+
+### Production Entry Point (`bin/number_analyzer`)
+**Primary CLI executable for end users and production environments**
+
+```bash
+bundle exec number_analyzer [command] [args]
+```
+
+**Characteristics:**
+- Contains shebang (`#!/usr/bin/env ruby`) for direct execution
+- Always executes CLI when invoked
+- Official entry point for gem users
+- Used by bundler when running `bundle exec number_analyzer`
+- Recommended for production deployments and regular usage
+
+### Development Entry Point (`lib/number_analyzer/cli.rb`)
+**Direct execution for development and debugging**
+
+```bash
+ruby lib/number_analyzer/cli.rb [command] [args]
+```
+
+**Characteristics:**
+- Conditional execution with `if __FILE__ == $PROGRAM_NAME`
+- Only executes when run directly, not when required as library
+- Useful for development debugging and testing
+- Maintains library functionality when required by other code
+- Preferred for contributors working on the codebase
+
+### Usage Examples
+
+**Production Usage:**
+```bash
+# Standard gem execution
+bundle exec number_analyzer mean 1 2 3 4 5
+bundle exec number_analyzer --help
+
+# After gem installation
+number_analyzer mean 1 2 3 4 5
+```
+
+**Development Usage:**
+```bash
+# Direct execution from source
+ruby lib/number_analyzer/cli.rb mean 1 2 3 4 5
+ruby lib/number_analyzer/cli.rb --help
+```
+
+**Architecture Note**: This dual entry point design follows Ruby gem best practices, providing both a production-ready executable and development convenience while maintaining clean separation between library and CLI functionality.
+
 ## Development
 
 ### Running Tests
