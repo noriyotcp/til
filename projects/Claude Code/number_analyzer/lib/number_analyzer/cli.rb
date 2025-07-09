@@ -17,22 +17,14 @@ class NumberAnalyzer::CLI
   class << self
     # Get all available commands (core + plugin + command registry)
     def commands
-      all_commands = CORE_COMMANDS.merge(plugin_commands)
-
-      # Add commands from CommandRegistry
-      NumberAnalyzer::Commands::CommandRegistry.all.each do |cmd|
-        all_commands[cmd] ||= :run_from_registry
-      end
-
-      all_commands
+      NumberAnalyzer::CLI::CommandCache.get_commands
     end
 
     # Register a new command from a plugin
     def register_command(command_name, plugin_class, method_name)
-      plugin_commands[command_name] = {
-        plugin_class: plugin_class,
-        method: method_name
-      }
+      plugin_commands[command_name] = { plugin_class: plugin_class, method: method_name }
+      # Invalidate cache when new command is registered
+      NumberAnalyzer::CLI::CommandCache.invalidate!
     end
 
     # Initialize plugin system
@@ -61,28 +53,18 @@ class NumberAnalyzer::CLI
 
   # Main entry point for CLI
   def self.run(argv = ARGV)
-    # Initialize plugins before processing commands
     initialize_plugins
-
-    # Show help if no arguments provided
     return NumberAnalyzer::CLI::HelpGenerator.show_general_help if argv.empty?
 
-    # Check if first argument is a subcommand
     command = argv.first
-
-    # Handle top-level help options
     return NumberAnalyzer::CLI::HelpGenerator.show_general_help if ['--help', '-h'].include?(command)
 
     if commands.key?(command)
       run_subcommand(command, argv[1..])
     elsif command.start_with?('-') || command.match?(/^\d+(\.\d+)?$/)
-      # Option or numeric argument, treat as full analysis
       run_full_analysis(argv)
     else
-      # Unknown command
-      puts "Unknown command: #{command}"
-      puts "Use 'bundle exec number_analyzer help' for available commands."
-      exit 1
+      handle_unknown_command(command)
     end
   end
 
@@ -97,41 +79,23 @@ class NumberAnalyzer::CLI
   end
 
   private_class_method def self.run_subcommand(command, args)
-    # Parse options using the new Options module
     options, remaining_args = NumberAnalyzer::CLI::Options.parse_special_command_options(args, command)
+    NumberAnalyzer::CLI::PluginRouter.route_command(command, remaining_args, options)
+  end
 
-    # First check if command is registered with new Command Pattern
-    if NumberAnalyzer::Commands::CommandRegistry.exists?(command)
-      NumberAnalyzer::Commands::CommandRegistry.execute_command(command, remaining_args, options)
-    # Then check if it's a core command or plugin command
-    elsif CORE_COMMANDS.key?(command)
-      method_name = CORE_COMMANDS[command]
-      send(method_name, remaining_args, options)
-    elsif plugin_commands.key?(command)
-      # Execute plugin command
-      plugin_info = plugin_commands[command]
-      plugin_class = plugin_info[:plugin_class]
-      method_name = plugin_info[:method]
-
-      # Create instance if needed and call the method
-      result = if plugin_class.respond_to?(method_name)
-                 plugin_class.send(method_name, remaining_args, options)
-               else
-                 instance = plugin_class.new
-                 instance.send(method_name, remaining_args, options)
-               end
-
-      puts result if result
-    else
-      puts "Unknown command: #{command}"
-      exit 1
-    end
+  private_class_method def self.handle_unknown_command(command)
+    NumberAnalyzer::CLI::ErrorHandler.handle_unknown_command(command, commands.keys)
+  rescue NumberAnalyzer::CLI::ErrorHandler::CLIError => e
+    NumberAnalyzer::CLI::ErrorHandler.print_error_and_exit(e)
   end
 end
 
 require_relative 'cli/options'
 require_relative 'cli/help_generator'
 require_relative 'cli/input_processor'
+require_relative 'cli/error_handler'
+require_relative 'cli/command_cache'
+require_relative 'cli/plugin_router'
 require_relative 'cli/commands'
 
 # 実行部分（スクリプトとして実行された場合のみ）
