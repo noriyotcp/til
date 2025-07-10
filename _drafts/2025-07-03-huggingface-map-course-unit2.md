@@ -211,3 +211,34 @@ Windowsの場合：
 *   使い慣れた構成ファイル形式を使用する
 
 構成が完了すると、Cursorに感情分析ツールを使用して、コードコメント、ユーザーフィードバック、プルリクエストの説明などのタスクを分析させることができます。
+
+## Using MCP with Local and Open Source Models
+1.  **Continueとローカルモデルの統合**: Continueは、ローカルのオープンソースモデル（Ollamaなど）と連携して、AIコーディングアシスタントを構築するためのツールです。VS CodeやJetBrainsの拡張機能としてインストールできます。Ollama、Llama.cpp、LM Studioなど、複数のローカルモデル実行オプションがあり、Hugging Face Hubからモデルにアクセスできます。重要なのは、Codestral QwenやLlama 3.1xのように、ツール呼び出しが組み込み機能としてサポートされているモデルを使用することです。
+
+### Setup Continue
+#### VS Code extension
+#### Local Models
+**ローカルモデルの設定**: ワークスペースのトップレベルに`.continue/models`フォルダを作成し、モデルプロバイダー（Ollama、Llama.cpp、LM Studioなど）を設定するためのYAMLファイル（例：`local-models.yaml`）を追加します。各モデルには最大コンテキスト長があり、MCPリクエストを複数実行し、より多くのトークンを処理できるように、より大きなコンテキストウィンドウを使用します。例として、llama.cppを使用する場合は、`model`フィールドが使用するモデルと一致するように設定します。
+
+### How it works
+#### The tool handshake
+**ツールの連携**: ツールは、モデルが外部と連携するための強力な方法を提供します。ツールはJSONオブジェクトとしてモデルに提供され、名前と引数のスキーマが含まれます。たとえば、`filepath`引数を持つ`read_file`ツールは、モデルに特定のファイルの内容を要求する機能を提供します。エージェントモードでは、利用可能なツールがユーザーのチャットリクエストと共に送信され、モデルはレスポンスにツール呼び出しを含めることができます。ユーザーの許可（ツールポリシーが自動に設定されている場合はスキップ）の後、Continueはツールを呼び出し、結果をモデルに返します。
+
+```mermaid
+graph LR
+    A(Human) <-.-> B[LLM Call]
+    B -- Action --> C(Environment)
+    C -- Feedback --> B
+    B -.-> D[Stop]
+
+    style A fill:#fdecea,stroke:#d6806a,stroke-width:2px
+    style B fill:#e8f5e9,stroke:#7cb342,stroke-width:2px
+    style C fill:#fdecea,stroke:#d6806a,stroke-width:2px
+    style D fill:#e8eaf6,stroke:#5c6bc0,stroke-width:2px
+```
+
+#### Local Model Integration with MCP
+**MCP (Model Communication Protocol)サーバーの統合**: Continueは複数のローカルモデルプロバイダーをサポートしており、タスクごとに異なるモデルを使用したり、必要に応じてモデルを切り替えたりできます。既存のMCPサーバーを追加するには、ワークスペースのトップレベルに`.continue/mcpServers`フォルダを作成し、MCPサーバーの設定ファイル（例：`playwright-mcp.yaml`）を追加します。MCPサーバーをテストするには、Playwrightを使用してウェブサイトにアクセスし、データを抽出してファイルに保存するなどのタスクを実行するよう指示します。
+
+### Conclusion
+**結論**: Continueとローカルモデル、そしてMCPサーバーを組み合わせることで、コードとデータのプライバシーを保護しながら、最先端のAI機能を活用できる強力な開発ワークフローを実現できます。この設定により、ウェブ自動化からファイル管理まで、完全にローカルマシンで実行される特別なツールを使用してAIアシスタントをカスタマイズできます。Continue Hub MCPエクスプローラーページからさまざまなMCPサーバーを試して、ローカルAIがコーディング体験をどのように変えることができるかを発見しましょう。
