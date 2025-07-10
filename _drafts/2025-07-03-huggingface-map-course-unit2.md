@@ -99,3 +99,115 @@ graph LR
 
 ### Next Steps
 **今後のステップ:** MCPサーバーが稼働したため、次はサーバーと対話するクライアントを作成します。HuggingFace.jsベースのクライアントと、SmolAgentsベースのPythonクライアントを実装し、デプロイしたサーバーでテストします。
+
+## Building MCP Clients
+**MCPクライアントの構築における概要:** このドキュメントでは、異なるプログラミング言語を使用してMCPサーバーと連携するクライアントの構築方法について解説します。具体的には、HuggingFace.jsを使用したJavaScriptクライアントと、smolagentsを使用したPythonクライアントの実装を取り上げます。MCPサーバーとクライアントの効率的なデプロイには適切な設定が必要であり、MCP仕様は進化しているため、設定方法も変更される可能性があります。ここでは、現在のベストプラクティスに焦点を当てます。
+
+### Configuring MCP Clients
+#### MCP Configuration Files
+**MCP構成ファイルとその構造:** MCPホストは、構成ファイルを使用してサーバー接続を管理します。これらのファイルは、利用可能なサーバーと、それらに接続する方法を定義します。構成ファイルはシンプルで理解しやすく、主要なMCPホスト間で一貫性があります。標準的なMCP構成ファイルは`mcp.json`という名前で、基本的な構造は以下の通りです。
+
+##### mcp.json Structure
+
+```json
+{
+  "servers": [
+    {
+        "name": "MCP Server",
+        "transport": {
+        "type": "sse",
+        "url": "http://localhost:7860/gradio_api/mcp/sse"
+        }
+    }
+  ]
+}
+```
+
+この例では、SSEトランスポートを使用するように設定された単一のサーバーがあり、ポート7860で実行されているローカルのGradioサーバーに接続します。リモートサーバーのGradioアプリに接続する場合はSSEトランスポートを使用しますが、ローカルスクリプトに接続する場合は、SSEではなくstdioトランスポートを使用することをお勧めします。
+
+##### Configuration for HTTP+SSE Transport
+**HTTP+SSEトランスポートの設定:** HTTP+SSEトランスポートを使用するリモートサーバーの場合、構成にはサーバーURLが含まれます。例えば、
+
+```json
+{
+  "servers": [
+    {
+      "name": "Remote MCP Server",
+      "transport": {
+        "type": "sse",
+        "url": "https://example.com/gradio_api/mcp/sse"
+      }
+    }
+  ]
+}
+```
+
+この設定により、UIクライアントはMCPプロトコルを使用してGradio MCPサーバーと通信でき、フロントエンドとMCPサービス間のシームレスな統合が可能になります。
+
+### Configuring a UI MCP Client
+#### Basic Configuration
+4.  **UI MCPクライアントの設定:** Gradio MCPサーバーを使用する場合、UIクライアントを構成してMCPプロトコルを使用してサーバーに接続できます。新しいファイル`config.json`を作成し、以下の設定を追加します。
+
+```json
+{
+  "mcpServers": {
+    "mcp": {
+      "url": "http://localhost:7860/gradio_api/mcp/sse"
+    }
+  }
+}
+```
+
+これにより、UIクライアントはMCPプロトコルを使用してGradio MCPサーバーと通信できるようになります。
+
+### Configuring an MCP Client within Cursor IDE
+#### Configuration
+#### Why We Use mcp-remote
+
+5. **Cursor IDE内でのMCPクライアントの設定:** CursorはMCPを組み込みでサポートしており、デプロイされたMCPサーバーを開発環境に直接接続できます。Cursorの設定（Ctrl + Shift + J / Cmd + Shift + J）→ MCPタブ → 新しいグローバルMCPサーバーの追加で設定します。macOSの場合：
+
+```json
+{
+  "mcpServers": {
+    "sentiment-analysis": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "mcp-remote",
+        "https://YOURUSENAME-mcp-sentiment.hf.space/gradio_api/mcp/sse",
+        "--transport",
+        "sse-only"
+      ]
+    }
+  }
+}
+```
+
+Windowsの場合：
+
+```json
+{
+  "mcpServers": {
+    "sentiment-analysis": {
+      "command": "cmd",
+      "args": [
+        "/c",
+        "npx",
+        "-y",
+        "mcp-remote",
+        "https://YOURUSENAME-mcp-sentiment.hf.space/gradio_api/mcp/sse",
+        "--transport",
+        "sse-only"
+      ]
+    }
+  }
+}
+```
+
+6.  **mcp-remoteを使用する理由:** Cursorを含むほとんどのMCPクライアントは現在、stdioトランスポート経由のローカルサーバーのみをサポートしており、OAuth認証によるリモートサーバーはまだサポートしていません。 `mcp-remote`ツールは、以下の機能を提供するブリッジソリューションとして機能します。
+
+*   ローカルマシン上でローカルに実行される
+*   CursorからリモートMCPサーバーにリクエストを転送する
+*   使い慣れた構成ファイル形式を使用する
+
+構成が完了すると、Cursorに感情分析ツールを使用して、コードコメント、ユーザーフィードバック、プルリクエストの説明などのタスクを分析させることができます。
