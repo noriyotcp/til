@@ -65,3 +65,4 @@ end
 
 # Load StatisticsPresenter after NumberAnalyzer class is defined
 require_relative 'number_analyzer/statistics_presenter'
+require_relative 'number_analyzer/presenters/base_statistical_presenter'
