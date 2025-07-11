@@ -789,3 +789,26 @@
 - **Advanced Charts**: グラフ描画機能の拡張
 - **Export Formats**: PNG/SVG出力対応
 - **Interactive Mode**: 対話的データ探索
+
+### Phase 12: Technical Debt Reduction 📋 計画済み
+**StatisticsPresenter リファクタリング - 593行のモノリスを分割**
+
+#### 背景
+- **現状**: StatisticsPresenter.rb が593行に肥大化（6つの統計検定フォーマット）
+- **問題**: 単一責任原則違反、保守性低下、テスタビリティ低下
+- **解決策**: Template Method パターンによるプレゼンター階層の構築
+
+#### 実装計画
+- [ ] **BaseStatisticalPresenter** 基底クラス作成
+- [ ] **個別プレゼンター抽出** (6クラス、各100行以下)
+  - [ ] LeveneTestPresenter
+  - [ ] BartlettTestPresenter  
+  - [ ] KruskalWallisTestPresenter
+  - [ ] MannWhitneyTestPresenter
+  - [ ] WilcoxonTestPresenter
+  - [ ] FriedmanTestPresenter
+- [ ] **StatisticsPresenter軽量化** (593行 → 100行)
+- [ ] **後方互換性維持** (委譲メソッドによる移行期間)
+
+**期待効果**: コード可読性向上、保守性改善、単体テスト容易化
+**詳細計画**: [STATISTICS_PRESENTER_REFACTORING_PLAN.md](STATISTICS_PRESENTER_REFACTORING_PLAN.md)
