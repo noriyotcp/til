@@ -19,17 +19,34 @@ RSpec.describe NumberAnalyzer::Presenters::BaseStatisticalPresenter do
 
   describe '#initialize' do
     it 'sets result and options' do
-      expect(presenter.instance_variable_get(:@result)).to eq(test_result)
-      expect(presenter.instance_variable_get(:@options)).to eq(options)
+      expect(presenter.result).to eq(test_result)
+      expect(presenter.options).to eq(options)
+      expect(presenter.precision).to eq(3)
     end
 
     it 'sets default precision when not specified' do
       presenter_no_precision = described_class.new(test_result, {})
-      expect(presenter_no_precision.instance_variable_get(:@precision)).to eq(6)
+      expect(presenter_no_precision.precision).to eq(6)
     end
 
     it 'uses custom precision when specified' do
-      expect(presenter.instance_variable_get(:@precision)).to eq(3)
+      expect(presenter.precision).to eq(3)
+    end
+  end
+
+  describe 'attr_reader methods' do
+    it 'provides read access to result' do
+      expect(presenter.result).to eq(test_result)
+      expect(presenter.result[:test_type]).to eq('Test')
+    end
+
+    it 'provides read access to options' do
+      expect(presenter.options).to eq(options)
+      expect(presenter.options[:precision]).to eq(3)
+    end
+
+    it 'provides read access to precision' do
+      expect(presenter.precision).to eq(3)
     end
   end
 
@@ -62,6 +79,17 @@ RSpec.describe NumberAnalyzer::Presenters::BaseStatisticalPresenter do
         result = presenter.format
         expect(presenter).to have_received(:format_verbose)
         expect(result).to eq('Detailed output')
+      end
+    end
+
+    context 'when quiet option is true (backward compatibility)' do
+      let(:options) { { quiet: true } }
+
+      it 'calls format_quiet' do
+        allow(presenter).to receive(:format_quiet).and_return('2.5 0.03')
+        result = presenter.format
+        expect(presenter).to have_received(:format_quiet)
+        expect(result).to eq('2.5 0.03')
       end
     end
   end

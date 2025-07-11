@@ -61,65 +61,7 @@ class NumberAnalyzer::StatisticsPresenter
   end
 
   def self.format_levene_test(result, options = {})
-    if options[:format] == 'json'
-      format_levene_test_json(result, options)
-    elsif options[:quiet]
-      format_levene_test_quiet(result, options)
-    else
-      format_levene_test_verbose(result, options)
-    end
-  end
-
-  def self.format_levene_test_verbose(result, options = {})
-    precision = options[:precision] || 6
-
-    output = []
-    output << '=== Levene Test Results (Brown-Forsythe Modified) ==='
-    output << ''
-    output << 'Test Statistics:'
-    output << "  F-statistic: #{result[:f_statistic].round(precision)}"
-    output << "  p-value: #{result[:p_value].round(precision)}"
-    output << "  Degrees of Freedom: #{result[:degrees_of_freedom][0]}, #{result[:degrees_of_freedom][1]}"
-    output << ''
-    output << 'Statistical Decision:'
-    if result[:significant]
-      output << '  Result: **Significant difference** (p < 0.05)'
-      output << '  Conclusion: Group variances are not equal'
-    else
-      output << '  Result: No significant difference (p ≥ 0.05)'
-      output << '  Conclusion: Group variances are considered equal'
-    end
-    output << ''
-    output << 'Interpretation:'
-    output << "  #{result[:interpretation]}"
-    output << ''
-    output << 'Notes:'
-    output << '  - Brown-Forsythe modification is robust against outliers'
-    output << '  - This test is used to check ANOVA assumptions'
-
-    output.join("\n")
-  end
-
-  def self.format_levene_test_json(result, options = {})
-    precision = options[:precision] || 6
-
-    formatted_result = {
-      test_type: result[:test_type],
-      f_statistic: result[:f_statistic].round(precision),
-      p_value: result[:p_value].round(precision),
-      degrees_of_freedom: result[:degrees_of_freedom],
-      significant: result[:significant],
-      interpretation: result[:interpretation]
-    }
-
-    JSON.generate(formatted_result)
-  end
-
-  def self.format_levene_test_quiet(result, options = {})
-    precision = options[:precision] || 6
-    f_stat = result[:f_statistic].round(precision)
-    p_value = result[:p_value].round(precision)
-    "#{f_stat} #{p_value}"
+    NumberAnalyzer::Presenters::LeveneTestPresenter.new(result, options).format
   end
 
   def self.format_bartlett_test(result, options = {})
@@ -569,7 +511,6 @@ class NumberAnalyzer::StatisticsPresenter
   end
 
   private_class_method :format_mode, :format_outliers, :format_deviation_scores, :display_histogram,
-                       :format_levene_test_verbose, :format_levene_test_json, :format_levene_test_quiet,
                        :format_bartlett_test_verbose, :format_bartlett_test_json, :format_bartlett_test_quiet,
                        :build_bartlett_header, :build_bartlett_statistics,
                        :build_bartlett_interpretation, :build_bartlett_notes,

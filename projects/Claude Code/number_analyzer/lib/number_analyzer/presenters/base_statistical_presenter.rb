@@ -11,6 +11,8 @@ require_relative '../presenters'
 #
 # @abstract Subclasses must implement #json_fields, #format_quiet, and #format_verbose
 class NumberAnalyzer::Presenters::BaseStatisticalPresenter
+  attr_reader :result, :options, :precision
+
   def initialize(result, options = {})
     @result = result
     @options = options
@@ -24,7 +26,8 @@ class NumberAnalyzer::Presenters::BaseStatisticalPresenter
     when 'quiet'
       format_quiet
     else
-      format_verbose
+      # Handle backward compatibility with options[:quiet]
+      @options[:quiet] ? format_quiet : format_verbose
     end
   end
 
