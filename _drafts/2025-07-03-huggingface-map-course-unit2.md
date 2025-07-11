@@ -242,3 +242,163 @@ graph LR
 
 ### Conclusion
 **結論**: Continueとローカルモデル、そしてMCPサーバーを組み合わせることで、コードとデータのプライバシーを保護しながら、最先端のAI機能を活用できる強力な開発ワークフローを実現できます。この設定により、ウェブ自動化からファイル管理まで、完全にローカルマシンで実行される特別なツールを使用してAIアシスタントをカスタマイズできます。Continue Hub MCPエクスプローラーページからさまざまなMCPサーバーを試して、ローカルAIがコーディング体験をどのように変えることができるかを発見しましょう。
+
+## Gradio as an MCP Client
+Gradio as an MCP Client (GradioをMCPクライアントとして)
+
+このセクションでは、GradioをModel Context Protocol (MCP)のクライアントとして使用する方法を紹介します。
+
+
+1.  **GradioによるMCPクライアントの構築と既存MCPサーバーへの接続:** この記事では、GradioをMCPクライアントとして使用し、既存のMCPサーバーに接続する方法を解説しています。GradioはUIクライアントやMCPサーバーの作成に最適ですが、MCPクライアントとしても機能させ、その機能をUIとして公開することが可能です。例として、Hugging Faceで実行されている既存のMCPサーバーに接続し、そのツールを利用して質問に答えるアプリケーションを作成します。
+
+### MCP Client in Gradio
+MCP Client in Gradio (GradioにおけるMCPクライアント)
+
+
+Gradioアプリケーション内でMCPクライアントをセットアップし、利用する基本的な手順を説明します。
+
+* Connect to an example MCP Server (MCPサーバーのサンプルへの接続)
+  * MCPClient を使用してリモートのMCPサーバーに接続し、利用可能なツール（機能）の一覧を取得する方法をコードで示します。これにより、サーバー側で定義された「素因数分解」や「チーターの画像生成」といった機能をクライアント側から呼び出す準備が整います。
+
+
+* Connect to the MCP Server from Gradio (GradioからMCPサーバーへ接続)
+  * MCPサーバーから取得したツールを、実際にGradioアプリケーションに組み込む手順を解説します。smolagents ライブラリの CodeAgentを使い、MCPのツールを利用してユーザーの質問に回答するエージェントを作成し、それを gr.ChatInterfaceに接続してチャットUIを構築します。
+
+2.  **必要なライブラリのインストールとMCPクライアントの初期化:** GradioでMCPクライアントを使用するためには、`smolagents[mcp]`、`gradio[mcp]`、`mcp`といったライブラリをインストールする必要があります。その後、`MCPClient`クラスを用いてMCPサーバーに接続し、利用可能なツールを取得します。例では、Hugging Face上の公開MCPサーバーに接続し、`prime_factors`、`generate_cheetah_image`、`image_orientation`、`sepia`などのツールが利用可能であることが示されています。
+
+#### Connect to an example MCP Server
+#### Connect to the MCP Server from Gradio
+3.  **Gradioインターフェースの構築とエージェントの統合:** MCPクライアントで取得したツールを使用して、質問応答を行うエージェントを作成します。`InferenceClientModel`などのモデルを使用し、`CodeAgent`でツールを組み込むことで、質問に基づいて適切なツールを選択し、実行するエージェントを構築します。作成したエージェントは、Gradioの`ChatInterface`を用いてUIとして公開され、ユーザーは質問を入力することで、エージェントがMCPサーバーのツールを活用して回答を得ることができます。Hugging FaceのAPIトークン (`HF_TOKEN`) を環境変数に設定する必要がある点に注意が必要です。
+
+### Complete Example
+Complete Example (完全なコード例)
+
+
+GradioでMCPクライアントを実装するための、完全なPythonコードを提供します。このコードには、MCPサーバーへの接続、エージェントの初期化、Gradioインターフェースの起動、そしてプログラム終了時に接続を安全に切断するための `try...finally` ブロックまで、全ての要素が含まれています。
+
+4.  **完全なサンプルコードと`finally`ブロックにおけるMCPクライアントの切断:** 記事では、GradioでMCPクライアントを使用する完全なサンプルコードが提供されています。このコードでは、MCPサーバーへの接続、ツールの取得、エージェントの作成、Gradioインターフェースの構築、そしてユーザーとの対話処理が実装されています。特に重要な点として、`finally`ブロック内で`mcp_client.disconnect()`を呼び出してMCPクライアントを明示的に切断する必要があることが強調されています。これは、MCPクライアントが長寿命のオブジェクトであり、プログラム終了時に適切にクローズする必要があるためです。
+
+### Deploying to Hugging Face Spaces
+Deploying to Hugging Face Spaces (Hugging Face Spacesへのデプロイ)
+
+
+作成したGradioのMCPクライアントアプリケーションを、他者が利用できるようにHugging Face Spacesへデプロイする具体的な手順を解説します。新しいSpaceの作成、requirements.txt ファイルの準備、Gitコマンドを使ったコードのアップロード方法などが含まれます。
+
+5.  **Hugging Face Spacesへのデプロイ:** 作成したGradio MCPクライアントアプリケーションをHugging Face Spacesにデプロイする方法が説明されています。これには、Hugging Face Spacesで新しいSpaceを作成し、SDKとしてGradioを選択すること、コード内のMCPサーバーURLを更新すること、必要なライブラリを`requirements.txt`ファイルに記述すること、そしてコードをSpaceにプッシュすることが含まれます。デプロイすることで、作成したアプリケーションを他のユーザーが利用できるようになります。
+
+### Conclusion
+Conclusion (結論)
+
+この章のまとめです。GradioをMCPクライアントとして使用し、リモートのMCPサーバーに接続する方法と、そのクライアントアプリケーションをHugging Face Spacesにデプロイする方法について学んだことを振り返ります。
+
+## Building Tiny Agents with MCP and the Hugging Face Hub
+Building Tiny Agents with MCP and the Hugging Face Hub (MCPとHugging Face HubでTiny Agentを構築する)
+
+この章では、Model Context Protocol (MCP) と Hugging Face Hub のリソースを活用して、軽量で特化したAIエージェント「Tiny Agent」を構築する方法を学びます。
+
+1.  **MCPとTiny Agentsの概要:** この記事では、Model Context Protocol (MCP) を利用して、感情分析ツールなどの特定の機能を提供するGradioサーバーと連携できるTiny Agentの構築について解説しています。Tiny Agentsは、MCPクライアントを簡単にデプロイする方法を提供し、Gradioベースの感情分析サーバーと通信できるTypeScriptとPythonのMCPクライアントの実装方法を示しています。これにより、Gradio MCPサーバーの構築から、このツールを他の機能と並行して使用できる柔軟なエージェントの作成までの、エンドツーエンドのMCPアプリケーションフローが完成します。
+
+### Installation
+Installation (インストール)
+
+Tiny Agent の開発に必要なツールをインストールする手順を説明します。これには、Node.js環境用の npx や mcp-remote、そしてJavaScript/TypeScriptまたはPythonでTiny Agentを扱うための tiny-agents パッケージのインストールが含まれます。
+
+
+2.  **Tiny Agentsのインストールと設定:** Tiny Agentsを構築するために必要なパッケージのインストールについて説明しています。Node.js、npm (Node Package Manager)、`mcp-remote`パッケージをインストールする必要があります。  
+JavaScript環境では、`@huggingface/tiny-agents`パッケージもインストールが必要です。これらのツールは、コマンドライン環境でMCPサーバーを実行するために使用され、PythonとJavaScriptの両方で必要です。
+
+### Tiny Agents MCP Client in the Command Line
+Tiny Agents MCP Client in the Command Line (コマンドラインでのTiny Agent MCPクライアント)
+
+
+コマンドラインからTiny Agentを実行する基本的な方法を解説します。agent.json という設定ファイルを作成し、使用するモデル、プロバイ
+ダー、接続するMCPサーバー（前の章で作成したGradioサーバーなど）の情報を記述します。この設定ファイルを使って、`npx @huggingface/tiny-agents run`` コマンドでエージェントを起動できます。
+
+3.  **コマンドラインでのTiny Agents MCPクライアントの作成:** コマンドラインからJSON構成ファイルに基づいてMCPクライアントを作成する方法について説明しています。`agent.json`ファイルには、使用するモデル (`model`)、推論プロバイダー (`provider`)、およびサーバー構成 (`servers`)が含まれます。`mcp-remote`を使用してGradio MCPサーバーに接続する例が示されており、ローカルで実行されているオープンソースモデルに接続する設定例も提示されています。
+
+### Custom Tiny Agents MCP Client
+Custom Tiny Agents MCP Client (カスタムTiny Agent MCPクライアント)
+
+
+Tiny Agentと、これまでに作成したGradioベースのMCPサーバーを連携させる方法を説明します。MCPの標準化されたインターフェースにより、どのようなMCP互換サーバーともエージェントが対話できることを示します。
+
+4.  **カスタムTiny Agents MCPクライアントの構築:** Tiny AgentsとGradio MCPサーバーがどのように連携するかを解説しています。MCPの利点は、エージェントが任意のMCP互換サーバー（以前に構築したGradioベースの感情分析サーバーなど）と標準化された方法で対話できることです。エージェント構成にGradioサーバーを追加することで、Tiny Agentが感情分析ツールを他のツールと組み合わせて使用できるようになります。例えば、ファイルシステムサーバーからテキストを読み込み、Gradioサーバーでその感情を分析し、結果をファイルに書き戻すことができます。
+
+#### Using the Gradio Server with Tiny Agents
+* Using the Gradio Server with Tiny Agents (GradioサーバーをTiny Agentで利用する)
+エージェントの設定ファイル (agent.json) に、自作したGradio MCPサーバーのURLを追加する方法を具体的に示します。これにより、エージェントはファイルシステム操作などの標準ツールに加えて、Gradioサーバーが提供するカスタムツール（例：感情分析）も利用できるようになります。
+
+#### Deployment Considerations
+* Deployment Considerations (デプロイに関する考慮事項)
+
+Gradio MCPサーバーをHugging Face Spacesにデプロイした場合、エージェントの設定ファイルに記述するサーバーURLを、ローカルホストのアドレスからデプロイ先の公開URLに変更する必要がある点を説明します。  
+これにより、エージェントはどこからでも公開されたツールを利用できます。
+
+5.  **デプロイメントに関する考慮事項:** Gradio MCPサーバーをHugging Face Spacesにデプロイする際に、エージェント構成のサーバーURLをデプロイされたスペースを指すように更新する必要があることを説明しています。これにより、エージェントはローカルだけでなく、どこからでも感情分析ツールを使用できます。
+
+### Conclusion: Our Complete End-to-End MCP Application
+Conclusion: Our Complete End-to-End MCP Application (結論：完全なエンドツーエンドMCPアプリケーション)
+
+
+このユニットで学んだ内容を総括します。Gradioで感情分析ツールを持つMCPサーバーを作成し、MCPクライアントから接続する方法を学び、最終的にそのツールを利用するTiny Agentを構築しました。  
+これにより、MCPがいかにして専門的なツールを標準化されたインターフェースで提供し、再利用可能で強力なAIアプリケーションの構築を可能にするかを示しました。
+
+6.  **エンドツーエンドMCPアプリケーションの完成と今後のステップ:** この記事では、MCPの基本の理解から、エンドツーエンドのアプリケーションの構築までの流れを説明しています。具体的には、感情分析ツールを公開するGradio MCPサーバーの作成、MCPクライアントを使用したサーバーへの接続、そしてTypeScriptとPythonでのTiny Agentの構築が含まれます。MCPのモジュール式アプローチにより、複数のツールプロバイダーへの接続、利用可能なツールの動的な検出、カスタム感情分析ツールの使用、ファイルシステムアクセスやウェブブラウジングなどの他の機能との組み合わせが可能になります。今後のステップとして、Tiny Agentsのブログ記事やドキュメントの確認、そしてTiny Agentsを使用した独自の構築を推奨しています。
+
+### Next Steps
+今後の学習への展望を示します。ローカル環境で、特にAMDのNPUやiGPUアクセラレーションを活用してTiny Agentを実行する方法について、次のセクションで探求することを示唆しています。
+
+## 
+
+1.  **AMD NPUとiGPUによるTiny Agentsアプリケーションの高速化:** このテキストでは、AMDのNeural Processing Unit (NPU) と統合GPU (iGPU) を使用して、Tiny Agentsアプリケーションを高速化する方法を紹介します。Lemonade Serverというツールを使用することで、モデルをローカルで実行し、NPUとiGPUのアクセラレーションを活用できます。 Lemonade ServerはWindowsとLinuxで利用可能で、Windows x86/x64ではCPU推論をサポートし、AMD Ryzen™ AI 7000/8000/300シリーズとAMD Radeon™ 7000/9000シリーズではVulkan経由でGPUアクセラレーションが可能です。NPUアクセラレーションは、AMD Ryzen™ AI 300シリーズデバイスでONNX Runtime GenAI (OGA)エンジンによって実現されます。
+
+2.  **Lemonade ServerのセットアップとTiny Agentsの実行:** Lemonade Serverをインストールし、Tiny Agentsアプリケーションを既にインストールしていることを前提としています。Tiny AgentsアプリケーションをAMD NPUとiGPUで実行するには、アプリケーションの設定でLemonade ServerのMCPサーバーを指定します。例として、Qwen3-8B-GGUFモデルは、Vulkanアクセラレーションを通じてAMD GPU上で効率的に動作します。サポートされているモデルのリストは、Lemonade Serverのモデル管理ページで確認できます。
+
+3.  **機密情報をローカルで処理するアシスタントの作成:** ローカルファイルへのアクセスを可能にし、機密情報を完全にオンデバイスで処理するアシスタントを作成する方法を説明します。具体的には、採用プロセスにおいて候補者の履歴書を評価し、データプライバシーを確保しながら意思決定を支援するアシスタントを構築します。これには、Desktop Commander MCPサーバーを使用します。
+
+4.  **Desktop Commander MCPサーバーの設定とagent.jsonファイルの作成:** Desktop Commander MCPサーバーを使用してローカルマシン上でコマンドを実行し、ファイルシステムへのアクセス、ターミナルの制御、コード編集機能を活用します。`file-assistant`というプロジェクトディレクトリを作成し、`agent.json`ファイルを設定して、Jan Nanoモデルを使用するように構成します。 Jan Nanoモデルは、Lemonade Serverのモデル管理ページからダウンロードできます。
+
+5.  **アシスタントのテストと実行:** ジョブ記述ファイル (`job_description.md`) と候補者の履歴書ファイル (`candidates/john_resume.md`) を作成し、アシスタントにこれらのファイルを読み込ませます。Tiny Agentsアプリケーションを実行し、アシスタントにジョブ記述ファイルを読み込ませ、履歴書を評価させ、面接への招待状を作成させます。
+
+6.  **モデルの探索と高速化オプション:** Jan-NanoモデルはVulkanアクセラレーションを利用していましたが、他のモデルや高速化オプションも試すことができます。特に、Windowsアプリケーションで簡潔なコンテキストが必要で、NPU + iGPUアクセラレーションの恩恵を受ける場合は、AMD Ryzen AI 300シリーズPC向けに最適化されたHybridモデル（例：Llama-xLAM-2-8b-fc-r-Hybrid）を試すことができます。これらのモデルは、tool-callingのために特にファインチューニングされており、高速で応答性の高いパフォーマンスを提供します。
+
+7.  **結論:** このユニットでは、AMD NPUとiGPUを使用してTiny Agentsアプリケーションを高速化し、機密情報をローカルで処理するアシスタントを作成する方法を学びました。Lemonade Serverを活用することで、ローカルモデルの高速化とプライバシー保護されたアプリケーション開発が可能です。詳細な情報や追加の例は、Lemonade GitHubリポジトリを参照してください。
+
+## Local Tiny Agents with AMD NPU and iGPU Acceleration
+(AMD NPUとiGPUアクセラレーションによるローカルTiny Agent)
+
+
+この章では、AMDのNPU（Neural Processing Unit）とiGPU（内蔵GPU）を活用して、ローカル環境でTiny Agentを高速に実行する方法について解説します。特に、プライバシーが重要となる機密情報の扱いに焦点を当てます。
+
+### Setup (セットアップ)
+
+ローカルでエージェントを実行するための環境設定手順です。
+
+
+#### Setup Lemonade Server (Lemonadeサーバーのセットアップ)
+ローカルでのモデル推論を可能にする Lemonade Server のインストール方法を説明します。Windows、Linux、macOSそれぞれの環境向けのインストールコマンドが記載されています。
+
+#### Tiny Agents and NPX Setup (Tiny AgentとNPXのセットアップ)
+Tiny Agentを実行するために必要なNode.jsとnpx（Node Package Execute）のセットアップ手順を説明します。
+
+
+### Running your Tiny Agents application with AMD NPU and iGPU (AMD NPUとiGPUでTiny Agentアプリケーションを実行する)
+
+セットアップしたLemonade ServerとTiny Agentを連携させる方法を解説します。agent.json ファイルを更新し、モデルのエンドポイントURLをローカルのLemonade Server (http://localhost:8000/api/) に向けます。これにより、ローカルマシン上で、AMD GPUのVulkanアクセラレーションを活用して効率的にモデルを動かすことができます。
+
+
+### Creating an assistant to handle sensitive information locally (機密情報をローカルで扱うアシスタントの作成)
+
+ローカルファイルへのアクセスを可能にし、機密情報を安全に扱うアシスタントを作成する具体的なユースケースを示します。
+
+
+#### Taking it for a spin (試してみる)
+採用活動を想定し、ローカルにある職務経歴書（job_description.md）と候補者の履歴書（candidates/john_resume.md）をTiny Agentに読み込ませ、内容を分析・要約させ、最終的に面接の招待状（invitation.md）を作成させるまでの一連の流れをデモンストレーションします。これにより、全ての処理がローカルで完結し、機密情報が外部に送信されないことを示します。
+
+
+#### Exploring other models and acceleration options (他のモデルとアクセラレーションオプションの探求)
+Lemonade Serverでは、Jan-Nano モデル以外にも様々なモデルやアクセラレーションオプションが利用可能であることを紹介します。特に、AMD Ryzen AI 300シリーズPCに最適化されたハイブリッドモデルを使えば、NPUとiGPUを両方活用してさらに効率的な処理が可能になることに言及しています。
+
+### Conclusion (結論)
+この章のまとめです。Lemonade ServerとTiny Agentsを組み合わせることで、AMDのハードウェアアクセラレーションを活かし、機密データを安全に扱いながらローカル環境でAIアシスタントを構築・実行する方法を学びました。これにより、プライバシーを保護しつつ、強力なAI機能を活用できることが示されました。
+
