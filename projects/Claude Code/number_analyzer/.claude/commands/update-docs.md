@@ -109,14 +109,14 @@ Check synchronization between actual project status and documentation:
 # CLI/Command implementation status check (language-agnostic)
 !`find . -name "*cli*" -o -name "*command*" | grep -v ".md" | head -5 || echo "CLI implementation files not found"`
 
-# Test directory discovery (for reference, count removed due to inconsistency)
+# Test infrastructure discovery (qualitative assessment)
 !`find . -name "*spec*" -o -name "*test*" -type d | head -3 || echo "No test directories found"`
 
-# Source code line count estimation (add/remove extensions as needed)
-!`find . -name "*.rb" -o -name "*.js" -o -name "*.py" -o -name "*.ts" -o -name "*.go" -o -name "*.java" | grep -v node_modules | grep -v vendor | xargs wc -l 2>/dev/null | tail -1 || echo "Line count unknown"`
+# Source code discovery (architecture assessment, not counting)
+!`find . -name "*.rb" -o -name "*.js" -o -name "*.py" -o -name "*.ts" -o -name "*.go" -o -name "*.java" | grep -v node_modules | grep -v vendor | head -5 || echo "Source files discovery"`
 
-# Git repository status
-!`git status --porcelain 2>/dev/null | wc -l || echo "Not a Git repository"`
+# Git repository status (qualitative assessment)
+!`git status --porcelain 2>/dev/null | head -3 || echo "No uncommitted changes"`
 !`git log --oneline -5 2>/dev/null || echo "No Git history"`
 ```
 
@@ -141,8 +141,8 @@ Check synchronization between actual project status and documentation:
 
 3. **Quality Metrics**
    - Test infrastructure discovery
-   - Code line count and reduction rate validation
-   - Quality indicator updates
+   - Architecture assessment and quality verification
+   - Quality indicator status updates
 
 ### Phase 4: Automatic Analysis & Updates
 Analyze findings and automatically apply fixes where appropriate:
