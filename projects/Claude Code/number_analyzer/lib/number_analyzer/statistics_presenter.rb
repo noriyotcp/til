@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require 'json'
+require_relative 'presenters'
 
 # Handles the presentation and formatting of statistical results
 # Formats and displays statistical analysis results in various output formats
@@ -65,13 +66,7 @@ class NumberAnalyzer::StatisticsPresenter
   end
 
   def self.format_bartlett_test(result, options = {})
-    if options[:format] == 'json'
-      format_bartlett_test_json(result, options)
-    elsif options[:quiet]
-      format_bartlett_test_quiet(result, options)
-    else
-      format_bartlett_test_verbose(result, options)
-    end
+    NumberAnalyzer::Presenters::BartlettTestPresenter.new(result, options).format
   end
 
   def self.format_bartlett_test_verbose(result, options = {})
@@ -151,14 +146,7 @@ class NumberAnalyzer::StatisticsPresenter
   end
 
   def self.format_kruskal_wallis_test(result, options = {})
-    case options[:format]
-    when 'json'
-      format_kruskal_wallis_test_json(result, options)
-    when 'quiet'
-      format_kruskal_wallis_test_quiet(result, options)
-    else
-      format_kruskal_wallis_test_verbose(result, options)
-    end
+    NumberAnalyzer::Presenters::KruskalWallisTestPresenter.new(result, options).format
   end
 
   def self.format_kruskal_wallis_test_verbose(result, options = {})
@@ -230,14 +218,7 @@ class NumberAnalyzer::StatisticsPresenter
   end
 
   def self.format_mann_whitney_test(result, options = {})
-    case options[:format]
-    when 'json'
-      format_mann_whitney_test_json(result, options)
-    when 'quiet'
-      format_mann_whitney_test_quiet(result, options)
-    else
-      format_mann_whitney_test_verbose(result, options)
-    end
+    NumberAnalyzer::Presenters::MannWhitneyTestPresenter.new(result, options).format
   end
 
   def self.format_mann_whitney_test_verbose(result, options = {})
@@ -328,14 +309,7 @@ class NumberAnalyzer::StatisticsPresenter
   end
 
   def self.format_wilcoxon_test(result, options = {})
-    case options[:format]
-    when 'json'
-      format_wilcoxon_test_json(result, options)
-    when 'quiet'
-      format_wilcoxon_test_quiet(result, options)
-    else
-      format_wilcoxon_test_verbose(result, options)
-    end
+    NumberAnalyzer::Presenters::WilcoxonTestPresenter.new(result, options).format
   end
 
   def self.format_wilcoxon_test_verbose(result, options = {})
@@ -427,14 +401,7 @@ class NumberAnalyzer::StatisticsPresenter
   end
 
   def self.format_friedman_test(result, options = {})
-    case options[:format]
-    when 'json'
-      format_friedman_test_json(result, options)
-    when 'quiet'
-      format_friedman_test_quiet(result, options)
-    else
-      format_friedman_test_verbose(result, options)
-    end
+    NumberAnalyzer::Presenters::FriedmanTestPresenter.new(result, options).format
   end
 
   def self.format_friedman_test_verbose(result, options = {})
