@@ -157,3 +157,84 @@ MCPサーバーはデフォルトで自身のインストールディレクト�
 #### The story continues...
 ### Additional Resources
 
+## Module 2: GitHub Actions Integration
+
+### The Silent Failures Strike
+### What You’ll Build
+本モジュールでは、Module 1で作成したPR Agentを拡張し、GitHub ActionsのWebhookイベントを受信するためのWebhookサーバー、CI/CDのステータスを監視するツール、MCPプロンプトを追加する。これにより、静的なファイル分析（Module 1）と動的なチーム通知（Module 3）をつなぐリアルタイムな開発監視システムを構築する。
+
+#### Screencast: Real-Time CI/CD Monitoring in Action! 🎯
+CodeCraft Studiosは、Module 1で構築したPR Agentが開発者のプルリクエストを改善するのに役立ち喜んでいたが、CIのテスト失敗が見過ごされ、本番環境で重大なバグが発生した。チームは、GitHub Actionsを手動で確認するのは非効率的であることに気づき、問題を監視し、すぐに警告する自動化の必要性を痛感した。
+
+### Learning Objectives
+### Prerequisites
+### Key Concepts
+#### MCP Prompts
+MCPプロンプトは、複雑なワークフローをガイドするための再利用可能なテンプレートであり、ユーザーが開始し、構造化されたガイダンスを提供する。ツール（Claudeが自動的に呼び出す）とは異なり、CI/CDの結果分析、標準化されたデプロイメントサマリの作成、体系的な障害のトラブルシューティングなどのユースケースに使用できる。
+
+#### Webhook Integration
+MCPサーバーは、Claudeとの通信を行うMCPサーバーと、GitHubイベントを受信するポート8080のWebhookサーバーの2つのサービスを実行する。WebhookサーバーはHTTPの複雑さを処理し、MCPサーバーはデータ分析とClaudeの統合に集中することで、関心の分離を実現している。
+
+### Project Structure
+### Implementation Steps
+#### Step 1: Set Up and Run Webhook Server
+
+##### How webhook event storage works:
+Module 2の完了により、開発者はリアルタイム機能をMCPサーバーに追加し、コード変更の分析、CI/CDイベントのリアルタイム監視、MCPプロンプトによる一貫性のあるワークフローガイダンス、ファイルベースアーキテクチャによるWebhookイベントの処理が可能になった。
+
+#### Step 2: Connect to Event Storage
+
+#### Step 3: Add GitHub Actions Tools
+開発者は、Module 1で作成したMCPサーバーとWebhookデータを接続し、GitHub Actionsの分析ツールを作成する。`get_recent_actions_events`ツールは、最近のイベントを読み取り、`get_workflow_status`ツールは、ワークフロー実行イベントをフィルタリングして、最新のステータスを表示する。
+
+#### Step 4: Create MCP Prompts
+4つのMCPプロンプト（`analyze_ci_results`, `create_deployment_summary`, `generate_pr_status_report`, `troubleshoot_workflow_failure`）を実装することで、開発者はClaudeとのインタラクションを標準化し、複雑なワークフローをガイドできる。プロンプトは、Claudeに従うべき明確な指示を含む文字列を返す。
+
+#### Step 5: Test with Cloudflare Tunnel
+Cloudflare Tunnelを使用してMCPサーバーをテストする際、MCPサーバー、Cloudflare Tunnel、GitHub Webhookを連携させることで、実際の開発環境をシミュレートできる。これにより、GitHubからのリアルタイムイベントに基づいて、Claudeがコード変更の分析とCI/CDイベントの監視を同時に行えることを確認する。
+
+### Exercises
+開発者は、カスタムワークフロープロンプトの作成、イベントフィルタリングの強化、通知システムの追加など、いくつかのエクササイズに取り組むことができる。一般的な問題としては、Webhookイベントの受信失敗、プロンプトの動作不良、Webhookサーバーの問題などが挙げられる。
+
+#### Exercise 1: Custom Workflow Prompt
+#### Exercise 2: Event Filtering
+#### Exercise 3: Notification System
+### Common Issues
+#### Webhook Not Receiving Events
+#### Prompt Not Working
+#### Webhook Server Issues
+### Next Steps
+次のステップとして、ソリューションのレビュー、プロンプトの実験、Module 1のファイル分析ツールとModule 2のイベント監視を組み合わせた統合テストを行う。そして、Module 3に進み、Slack統合によるチーム通知機能を追加し、自動化パイプラインを完成させる。
+
+#### Key achievements in Module 2:
+#### What to do next:
+#### The story continues…
+### Additional Resources
+
+## Module 3: Slack Notification
+### The Communication Gap Crisis
+### What You’ll Build
+#### Screencast: The Complete Automation System! 🎉
+### Learning Objectives
+### Prerequisites
+### Key Concepts
+#### MCP Integration Pattern
+#### Slack Markdown Formatting
+### Project Structure
+### Implementation Steps
+#### Step 1: Set Up Slack Integration (10 min)
+#### Step 2: Add Slack Tool (15 min)
+#### Step 3: Create Formatting Prompts (15 min)
+#### Step 4: Test Complete Workflow (10 min)
+#### Step 5: Verify Integration (5 min)
+### Example Workflow in Claude Code
+### Expected Slack Message Output
+### Common Issues
+#### Webhook URL Issues
+#### Message Formatting
+#### Network Errors
+### Key Takeaways
+### Next Steps
+#### What to do next:
+#### The transformation is complete!
+### Additional Resources
