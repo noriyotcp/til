@@ -18,7 +18,6 @@ Metrics/MethodLength:
   Exclude:
     - 'lib/number_analyzer.rb'  # Chi-square and other statistical methods require comprehensive calculations
     - 'lib/number_analyzer/cli.rb'  # CLI methods for chi-square parsing and subcommand handling
-    - 'lib/number_analyzer/output_formatter.rb'  # Output formatting methods
     - 'lib/number_analyzer/statistics/**/*'  # Statistical modules contain complex mathematical algorithms
     - 'lib/number_analyzer/plugin_configuration.rb'  # Plugin configuration methods require complex setup
     - 'lib/number_analyzer/plugin_configuration/**/*'  # Plugin configuration modules
@@ -53,7 +52,6 @@ Metrics/ClassLength:
     - 'lib/number_analyzer/file_reader.rb'  # Multi-format file reader (CSV/JSON/TXT) requires comprehensive methods
     - 'lib/number_analyzer/cli.rb'          # CLI class requires all 24 subcommand implementations
     - 'lib/number_analyzer/cli/commands/plugins_command.rb'  # Complex plugin management CLI with comprehensive subcommands
-    - 'lib/number_analyzer/output_formatter.rb'  # Output formatting for all statistical functions and CLI options
     - 'lib/number_analyzer/statistics_presenter.rb'  # Statistical test formatting (Levene, Bartlett, etc.) requires multiple display methods
     - 'lib/number_analyzer/dependency_resolver.rb'  # Dependency resolution requires comprehensive graph algorithms (258 lines)
     - 'lib/number_analyzer/plugin_configuration.rb'  # Plugin configuration management requires extensive validation
@@ -73,7 +71,6 @@ Metrics/AbcSize:
     - 'lib/number_analyzer.rb'  # Statistical calculation methods have inherent complexity
     - 'lib/number_analyzer/statistics_presenter.rb'  # Display methods need to format 11+ statistical values
     - 'lib/number_analyzer/cli.rb'  # CLI argument parsing has inherent complexity
-    - 'lib/number_analyzer/output_formatter.rb'  # Complex output formatting for chi-square and other statistical tests
     - 'lib/number_analyzer/statistics/**/*'  # Statistical modules have high assignment/branch/condition complexity
     - 'lib/number_analyzer/plugin_configuration/**/*'  # Plugin configuration validation has high ABC complexity
     - 'lib/number_analyzer/dependency_resolver.rb'  # Dependency resolution has high assignment/branch complexity
