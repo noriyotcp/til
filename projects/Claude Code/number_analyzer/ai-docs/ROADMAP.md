@@ -836,3 +836,51 @@
 
 **実装効果**: 単一責任原則準拠、保守性大幅改善、テスタビリティ向上、プレゼンター追加の簡易化、Rubyイディオマティック設計確立
 **詳細計画**: [STATISTICS_PRESENTER_REFACTORING_PLAN.md](STATISTICS_PRESENTER_REFACTORING_PLAN.md)
+
+### Phase 13: OutputFormatter Refactoring ✅ 部分完了
+**OutputFormatter神クラスの分解とPresenter Pattern統一移行**
+
+#### Phase 1: High-Priority Presenters ✅ 完了
+**高頻度・高影響コマンドの分離** (2024年12月-2025年1月)
+- [x] **TTestPresenter** (138行) - 最も複雑な統計検定プレゼンター実装
+- [x] **AnovaPresenter** (151行) - ANOVA表の複雑な表示ロジック分離
+- [x] **CorrelationPresenter** (42行) - 基本統計で使用頻度高いプレゼンター
+- [x] **QuartilesPresenter** (34 lines) - Q1/Q2/Q3 基本統計コマンド分離
+
+#### Phase 2: Complex Statistical Presenters ✅ 完了  
+**複雑・専門コマンドの分離** (2025年1月)
+- [x] **TwoWayAnovaPresenter** (234行) - 最も複雑な表示ロジック（factorial ANOVA）
+- [x] **ChiSquarePresenter** (91行) - 分割表の複雑な表示（独立性・適合度検定）
+- [x] **ConfidenceIntervalPresenter** (63行) - 統計検定の基本（信頼区間フォーマット）
+- [x] **PostHocPresenter** (127行) - ANOVA後の多重比較（Tukey HSD, Bonferroni）
+
+#### Phase 3: Time Series & Basic Statistics 🔄 部分完了
+**時系列・その他基本統計の分離** (2025年1月実施中)
+
+**✅ 完了した基本統計 Presenters:**
+- [x] **ModePresenter** (32行) - モード値フォーマット、日本語ローカライゼーション対応
+- [x] **OutliersPresenter** (34行) - IQR基準外れ値検出、CLI統合完了
+
+**⏳ 残りの時系列 Presenters:**
+- [ ] **TrendPresenter** (60行) - 線形トレンド分析
+- [ ] **MovingAveragePresenter** (50行) - 移動平均分析  
+- [ ] **GrowthRatePresenter** (70行) - 成長率計算の複雑ロジック
+- [ ] **SeasonalPresenter** (60行) - 季節性分析
+
+#### 達成メトリクス (現在)
+- ✅ **Presenters実装**: 8/12完了 (67%達成)
+- ✅ **OutputFormatter削減**: ~650行抽出済み
+- ✅ **CLI統合**: 4コマンド更新済み (quartiles, outliers, t-test, anova, chi-square, confidence-interval)
+- ✅ **テストカバレッジ**: 200+ 包括的テストケース
+- ✅ **品質保証**: ゼロRuboCop違反、Template Method Pattern統一実装
+- ✅ **Phase分類修正**: Correlation, Quartiles を正しくPhase 1に分類完了
+
+#### 次のステップ
+**Phase 3完成 → Phase 4準備**
+1. 時系列Presenter群実装 (~240行削減見込み)
+2. CLI統合 (trend, moving-average, growth-rate, seasonal コマンド)
+3. FormattingUtils作成準備
+4. OutputFormatter完全削除に向けた最終準備
+
+**実装効果**: OutputFormatter神クラス解消、統一Presenter Pattern確立、保守性・テスタビリティ大幅改善
+**詳細計画**: [OUTPUT_FORMATTER_REFACTOR_PLAN.md](OUTPUT_FORMATTER_REFACTOR_PLAN.md)
