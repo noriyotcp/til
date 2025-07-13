@@ -338,8 +338,10 @@ class NumberAnalyzer::PluginSystem
   end
 
   def load_output_format(plugin_name, plugin_class)
-    # Register output format handlers
-    NumberAnalyzer::OutputFormatter.register_format(plugin_name, plugin_class) if defined?(NumberAnalyzer::OutputFormatter)
+    # OutputFormatter was removed in Phase 4 refactoring (migrated to FormattingUtils + Presenter Pattern)
+    # The register_format method was never implemented - this was a latent bug from initial plugin system design
+    # Future plugin-based output formatting should be designed with FormattingUtils-based architecture
+    # For now, output format plugins are not supported
   end
 
   def load_validator(plugin_name, plugin_class)
