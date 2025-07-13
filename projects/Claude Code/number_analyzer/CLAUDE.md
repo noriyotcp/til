@@ -67,6 +67,21 @@ bundle exec number_analyzer plugins list       # List all plugins
 bundle exec number_analyzer plugins conflicts  # Show conflicts
 ```
 
+**Security Testing** (Phase 14.2):
+```bash
+# セキュリティテスト実行
+bundle exec rspec spec/security/                   # セキュリティ専用テストスイート
+bundle exec rspec spec/security/plugin_sandbox_spec.rb  # サンドボックステスト
+
+# セキュリティ監査
+bundle exec rake security:audit                    # 総合セキュリティ監査
+bundle exec rake security:scan_plugins             # プラグインセキュリティスキャン
+
+# サンドボックス動作確認
+NUMBER_ANALYZER_SANDBOX=strict bundle exec rspec   # 厳格サンドボックスモード
+NUMBER_ANALYZER_DEBUG=true bundle exec number_analyzer  # デバッグモード
+```
+
 **Git Command Usage**:
 - `/commit-message` = Message generation only (no commit execution)
 - Explicit user request like "commit", "コミット", "コミットして" = Actual commit
