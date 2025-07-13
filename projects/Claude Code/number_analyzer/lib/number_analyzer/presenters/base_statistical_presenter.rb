@@ -36,11 +36,40 @@ class NumberAnalyzer::Presenters::BaseStatisticalPresenter
   end
 
   def round_value(value)
+    return value unless value.is_a?(Numeric)
+
     value.round(@precision)
   end
 
   def format_significance(significant)
     significant ? '**Significant**' : 'Not significant'
+  end
+
+  # Apply precision to numeric values - compatible with OutputFormatter
+  def apply_precision(value, precision = nil)
+    return value unless precision && value.is_a?(Numeric)
+
+    value.round(precision)
+  end
+
+  # Format numeric values for different output modes
+  def format_value(value, mode = :default)
+    formatted_value = apply_precision(value, @precision)
+    case mode
+    when :json
+      formatted_value
+    else
+      formatted_value.to_s
+    end
+  end
+
+  # Build dataset metadata for JSON output
+  def dataset_metadata
+    metadata = {}
+    metadata[:dataset_size] = @options[:dataset_size] if @options[:dataset_size]
+    metadata[:dataset1_size] = @options[:dataset1_size] if @options[:dataset1_size]
+    metadata[:dataset2_size] = @options[:dataset2_size] if @options[:dataset2_size]
+    metadata
   end
 
   def json_fields

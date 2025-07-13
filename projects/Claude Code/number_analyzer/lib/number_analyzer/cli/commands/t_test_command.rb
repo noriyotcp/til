@@ -4,7 +4,7 @@ require_relative '../base_command'
 require_relative '../statistical_output_formatter'
 require_relative '../t_test_input_handler'
 require_relative '../t_test_help_constants'
-require_relative '../t_test_output_formatter'
+require_relative '../../presenters/t_test_presenter'
 
 # Command for performing statistical t-test analysis (independent, paired, one-sample)
 class NumberAnalyzer::Commands::TTestCommand < NumberAnalyzer::Commands::BaseCommand
@@ -109,18 +109,8 @@ class NumberAnalyzer::Commands::TTestCommand < NumberAnalyzer::Commands::BaseCom
   end
 
   def output_result(result)
-    output_formatter.send("format_#{output_format}_output", result)
-  end
-
-  def output_formatter
-    @output_formatter ||= NumberAnalyzer::CLI::TTestOutputFormatter.new(@options)
-  end
-
-  def output_format
-    return 'json' if @options[:format] == 'json'
-    return 'quiet' if @options[:quiet]
-
-    'standard'
+    presenter = NumberAnalyzer::Presenters::TTestPresenter.new(result, @options)
+    puts presenter.format
   end
 
   def show_help

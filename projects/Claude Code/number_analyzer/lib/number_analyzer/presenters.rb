@@ -6,6 +6,7 @@ end
 
 # Load all presenter classes
 require_relative 'presenters/base_statistical_presenter'
+require_relative 'presenters/t_test_presenter'
 require_relative 'presenters/levene_test_presenter'
 require_relative 'presenters/bartlett_test_presenter'
 require_relative 'presenters/kruskal_wallis_test_presenter'
