@@ -9,7 +9,7 @@ RSpec.describe NumberAnalyzer::CLI::CommandCache do
     described_class.invalidate!
   end
 
-  describe '.get_commands' do
+  describe '.commands' do
     let(:mock_commands) { { 'mean' => :run_mean, 'median' => :run_median } }
 
     before do
@@ -18,33 +18,33 @@ RSpec.describe NumberAnalyzer::CLI::CommandCache do
 
     it 'builds command list on first call' do
       expect(described_class).to receive(:build_command_list).once
-      described_class.get_commands
+      described_class.commands
     end
 
     it 'returns cached commands on subsequent calls' do
-      described_class.get_commands # First call
+      described_class.commands # First call
       expect(described_class).not_to receive(:build_command_list)
       result = described_class.get_commands # Second call
       expect(result).to eq(mock_commands)
     end
 
     it 'rebuilds cache after TTL expires' do
-      described_class.get_commands # First call
+      described_class.commands # First call
       allow(Time).to receive(:now).and_return(Time.now + described_class::CACHE_TTL + 1)
       expect(described_class).to receive(:build_command_list).once
-      described_class.get_commands
+      described_class.commands
     end
   end
 
   describe '.invalidate!' do
     it 'clears the cache' do
       allow(described_class).to receive(:build_command_list).and_return({ 'test' => :run_test })
-      described_class.get_commands # Build cache
+      described_class.commands # Build cache
       described_class.invalidate!
 
       # Should rebuild on next call
       expect(described_class).to receive(:build_command_list).once
-      described_class.get_commands
+      described_class.commands
     end
   end
 

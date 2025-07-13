@@ -17,7 +17,7 @@ class NumberAnalyzer::CLI
   class << self
     # Get all available commands (core + plugin + command registry)
     def commands
-      NumberAnalyzer::CLI::CommandCache.get_commands
+      NumberAnalyzer::CLI::CommandCache.commands
     end
 
     # Register a new command from a plugin

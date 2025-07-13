@@ -2,6 +2,7 @@
 
 require_relative '../base_command'
 require_relative '../statistical_output_formatter'
+require_relative '../../presenters/confidence_interval_presenter'
 
 # Command for calculating confidence interval for population mean
 class NumberAnalyzer::Commands::ConfidenceIntervalCommand < NumberAnalyzer::Commands::BaseCommand
@@ -82,52 +83,11 @@ class NumberAnalyzer::Commands::ConfidenceIntervalCommand < NumberAnalyzer::Comm
   end
 
   def output_result(result)
-    if @options[:format] == 'json'
-      output_json(result)
-    elsif @options[:quiet]
-      output_quiet(result)
-    else
-      output_standard(result)
-    end
-  end
+    # Add sample_mean to result if missing (for compatibility)
+    result[:sample_mean] ||= result[:point_estimate]
 
-  def output_json(result)
-    require 'json'
-    puts JSON.generate(result)
-  end
-
-  def output_quiet(result)
-    lower_bound = result[:lower_bound]
-    upper_bound = result[:upper_bound]
-
-    if @options[:precision]
-      puts "#{format("%.#{@options[:precision]}f", lower_bound)} #{format("%.#{@options[:precision]}f", upper_bound)}"
-    else
-      puts "#{format('%.4f', lower_bound)} #{format('%.4f', upper_bound)}"
-    end
-  end
-
-  def output_standard(result)
-    formatter = NumberAnalyzer::CLI::StatisticalOutputFormatter
-    confidence_level = result[:confidence_level]
-
-    puts "#{confidence_level}% 信頼区間:"
-    puts
-
-    # Confidence interval display
-    interval = formatter.format_confidence_interval(
-      result[:lower_bound],
-      result[:upper_bound],
-      @options[:precision]
-    )
-    puts "区間: #{interval}"
-
-    # Additional metrics
-    puts "標本平均: #{formatter.format_value(result[:sample_mean], @options[:precision])}"
-    puts "誤差限界: ±#{formatter.format_value(result[:margin_of_error], @options[:precision])}"
-    puts "標本サイズ: #{result[:dataset_size]}"
-    puts
-    puts "解釈: #{confidence_level}%の確率で母集団平均がこの区間に含まれます。"
+    presenter = NumberAnalyzer::Presenters::ConfidenceIntervalPresenter.new(result, @options)
+    puts presenter.format
   end
 
   def show_help

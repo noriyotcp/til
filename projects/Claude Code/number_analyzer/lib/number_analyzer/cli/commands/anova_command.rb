@@ -3,6 +3,7 @@
 require_relative '../base_command'
 require_relative '../statistical_output_formatter'
 require_relative '../../presenters/anova_presenter'
+require_relative '../../presenters/post_hoc_presenter'
 
 # Command for performing one-way ANOVA (Analysis of Variance)
 class NumberAnalyzer::Commands::AnovaCommand < NumberAnalyzer::Commands::BaseCommand
@@ -53,8 +54,8 @@ class NumberAnalyzer::Commands::AnovaCommand < NumberAnalyzer::Commands::BaseCom
     return unless post_hoc_result
 
     puts "\n" unless @options[:format] == 'json'
-    formatted_post_hoc = NumberAnalyzer::OutputFormatter.format_post_hoc(post_hoc_result, @options)
-    puts formatted_post_hoc
+    presenter = NumberAnalyzer::Presenters::PostHocPresenter.new(post_hoc_result, @options)
+    puts presenter.format
   end
 
   def show_help

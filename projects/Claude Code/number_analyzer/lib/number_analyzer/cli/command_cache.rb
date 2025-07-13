@@ -9,14 +9,12 @@ module NumberAnalyzer::CLI::CommandCache
   CACHE_TTL = 60
 
   # Get cached commands or build new cache
-  def get_commands
-    if cache_valid?
-      @commands_cache
-    else
+  def commands
+    unless cache_valid?
       @commands_cache = build_command_list
       @cache_time = Time.now
-      @commands_cache
     end
+    @commands_cache
   end
 
   # Invalidate the cache
