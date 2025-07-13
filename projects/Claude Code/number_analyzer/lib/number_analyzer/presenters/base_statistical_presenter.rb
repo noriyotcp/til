@@ -2,6 +2,7 @@
 
 require 'json'
 require_relative '../presenters'
+require_relative '../formatting_utils'
 
 # Base class for statistical test result presentation
 #
@@ -11,6 +12,8 @@ require_relative '../presenters'
 #
 # @abstract Subclasses must implement #json_fields, #format_quiet, and #format_verbose
 class NumberAnalyzer::Presenters::BaseStatisticalPresenter
+  include NumberAnalyzer::FormattingUtils
+
   attr_reader :result, :options, :precision
 
   def initialize(result, options = {})
@@ -45,14 +48,8 @@ class NumberAnalyzer::Presenters::BaseStatisticalPresenter
     significant ? '**Significant**' : 'Not significant'
   end
 
-  # Apply precision to numeric values - compatible with OutputFormatter
-  def apply_precision(value, precision = nil)
-    return value unless precision && value.is_a?(Numeric)
-
-    value.round(precision)
-  end
-
   # Format numeric values for different output modes
+  # Uses FormattingUtils for consistent precision handling
   def format_value(value, mode = :default)
     formatted_value = apply_precision(value, @precision)
     case mode
@@ -63,12 +60,11 @@ class NumberAnalyzer::Presenters::BaseStatisticalPresenter
     end
   end
 
-  # Build dataset metadata for JSON output
-  def dataset_metadata
-    metadata = {}
-    metadata[:dataset_size] = @options[:dataset_size] if @options[:dataset_size]
-    metadata[:dataset1_size] = @options[:dataset1_size] if @options[:dataset1_size]
-    metadata[:dataset2_size] = @options[:dataset2_size] if @options[:dataset2_size]
+  # Build dataset metadata for JSON output - extends FormattingUtils version
+  def dataset_metadata(options = @options)
+    metadata = super # Call FormattingUtils#dataset_metadata
+    metadata[:dataset1_size] = options[:dataset1_size] if options[:dataset1_size]
+    metadata[:dataset2_size] = options[:dataset2_size] if options[:dataset2_size]
     metadata
   end
 

@@ -1,10 +1,11 @@
 # frozen_string_literal: true
 
-require_relative '../output_formatter'
+require_relative '../formatting_utils'
 
 # Base class for all CLI commands
 # Provides common functionality for command execution, error handling, and output formatting
 class NumberAnalyzer::Commands::BaseCommand
+  include NumberAnalyzer::FormattingUtils
   attr_reader :name, :description, :options
 
   def initialize
@@ -64,7 +65,7 @@ class NumberAnalyzer::Commands::BaseCommand
   # Output the result using the configured formatter
   def output_result(result)
     formatted = if @options[:format] || @options[:precision]
-                  NumberAnalyzer::OutputFormatter.format(result, @options)
+                  format_value(result, @options)
                 else
                   result.to_s
                 end

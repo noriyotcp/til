@@ -1,9 +1,11 @@
 # frozen_string_literal: true
 
 require_relative '../base_command'
+require_relative '../../formatting_utils'
 
 # Command for calculating percentile values (0-100)
 class NumberAnalyzer::Commands::PercentileCommand < NumberAnalyzer::Commands::BaseCommand
+  include NumberAnalyzer::FormattingUtils
   command 'percentile', 'Calculate percentile value (0-100)'
 
   private
@@ -24,7 +26,7 @@ class NumberAnalyzer::Commands::PercentileCommand < NumberAnalyzer::Commands::Ba
 
   def output_result(result)
     @options[:dataset_size] = @data&.size if @data
-    puts OutputFormatter.format_value(result, @options)
+    puts format_value(result, @options)
   end
 
   def parse_input(args)

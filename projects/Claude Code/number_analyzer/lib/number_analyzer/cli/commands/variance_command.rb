@@ -1,9 +1,11 @@
 # frozen_string_literal: true
 
 require_relative '../base_command'
+require_relative '../../formatting_utils'
 
 # Command for calculating variance
 class NumberAnalyzer::Commands::VarianceCommand < NumberAnalyzer::Commands::BaseCommand
+  include NumberAnalyzer::FormattingUtils
   command 'variance', 'Calculate variance (measure of data spread)'
 
   private
@@ -23,7 +25,7 @@ class NumberAnalyzer::Commands::VarianceCommand < NumberAnalyzer::Commands::Base
 
   def output_result(result)
     @options[:dataset_size] = @data&.size if @data
-    puts NumberAnalyzer::OutputFormatter.format_value(result, @options)
+    puts format_value(result, @options)
   end
 
   def parse_input(args)

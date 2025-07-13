@@ -37,8 +37,9 @@ class NumberAnalyzer::Commands::TwoWayAnovaCommand < NumberAnalyzer::Commands::B
   end
 
   def output_result(result)
-    formatted_result = NumberAnalyzer::OutputFormatter.format_two_way_anova(result, @options)
-    puts formatted_result
+    require_relative '../../presenters/two_way_anova_presenter'
+    presenter = NumberAnalyzer::Presenters::TwoWayAnovaPresenter.new(result, @options)
+    puts presenter.format
   end
 
   def show_help

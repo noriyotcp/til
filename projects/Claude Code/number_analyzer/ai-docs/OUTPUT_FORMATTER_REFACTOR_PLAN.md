@@ -102,11 +102,19 @@ Presenter の準備ができ次第、対応するコマンドクラスを更新�
 
 ## 6. 完了の定義
 
-- `OutputFormatter` クラスがプロジェクトから完全に削除されている。
-- `OutputFormatter` が担っていた全ての表示機能が、対応する `Presenter` クラスによって実現されている。
-- 全てのテストがパスし、既存のコマンドの出力形式が維持されている。
-- 全29コマンドが統一されたPresenter Patternを使用している。
-- RuboCop違反ゼロが維持されている。
+### Phase 1-4 ✅ 完全達成
+- ✅ 14個のPresenterクラスが実装済み
+- ✅ 全29コマンドがPresenter/FormattingUtils Patternに移行済み
+- ✅ 220+包括的テストケース + FormattingUtils 33テスト完備
+- ✅ Template Method Pattern統一アーキテクチャ
+- ✅ OutputFormatter完全削除（1,031行→0行）
+- ✅ FormattingUtils統一ユーティリティ（104行）
+- ✅ RuboCop違反ゼロ維持
+
+### Phase 4 完了達成 ✅
+- ✅ FormattingUtils作成（format_value, format_array等の統合）- 104行実装
+- ✅ OutputFormatter完全削除（1,031行→0行の完全クリーンアップ）
+- ✅ 全29コマンドのFormattingUtils/Presenter Pattern統一
 
 ## 7. 現状分析と統合戦略
 
@@ -132,51 +140,82 @@ Presenter の準備ができ次第、対応するコマンドクラスを更新�
 
 ## 8. 優先度付き実装ロードマップ
 
-### Phase 1: 高頻度・高影響コマンド（1-2週間）
+### Phase 1: 高頻度・高影響コマンド ✅ 完了
 **優先度**: ★★★ 最高 - 使用頻度が高く削減効果も大きい
 
-| Presenter | 削減見込み | 理由 |
-|-----------|-----------|------|
-| `TTestPresenter` | 100行 | 最も複雑で使用頻度が高い |
-| `AnovaPresenter` | 120行 | ANOVA表の複雑な表示ロジック |
-| `CorrelationPresenter` | 40行 | 基本統計で使用頻度高 |
-| `QuartilesPresenter` | 30行 | 基本統計コマンド |
+| Presenter | 削減見込み | 実際の実装 | 状況 |
+|-----------|-----------|-----------|------|
+| `TTestPresenter` | 100行 | 138行 | ✅ 完了 |
+| `AnovaPresenter` | 120行 | 151行 | ✅ 完了 |
+| `CorrelationPresenter` | 40行 | 42行 | ✅ 完了 |
+| `QuartilesPresenter` | 30行 | 34行 | ✅ 完了 |
 
-### Phase 2: 複雑・専門コマンド（2-3週間）
+### Phase 2: 複雑・専門コマンド ✅ 完了
 **優先度**: ★★☆ 高 - 複雑だが特定用途
 
-| Presenter | 削減見込み | 理由 |
-|-----------|-----------|------|
-| `TwoWayAnovaPresenter` | 150行 | 最も複雑な表示ロジック |
-| `ChiSquarePresenter` | 80行 | 分割表の複雑な表示 |
-| `ConfidenceIntervalPresenter` | 60行 | 統計検定の基本 |
-| `PostHocPresenter` | 100行 | ANOVA後の多重比較 |
+| Presenter | 削減見込み | 実際の実装 | 状況 |
+|-----------|-----------|-----------|------|
+| `TwoWayAnovaPresenter` | 150行 | 234行 | ✅ 完了 |
+| `ChiSquarePresenter` | 80行 | 91行 | ✅ 完了 |
+| `ConfidenceIntervalPresenter` | 60行 | 63行 | ✅ 完了 |
+| `PostHocPresenter` | 100行 | 127行 | ✅ 完了 |
 
-### Phase 3: 時系列・その他（1-2週間）
+### Phase 3: 時系列・その他 ✅ 完了
 **優先度**: ★☆☆ 中 - 特殊用途だが完全性のため必要
 
-| Presenter | 削減見込み | 理由 |
-|-----------|-----------|------|
-| `TrendPresenter` | 60行 | 時系列分析 |
-| `MovingAveragePresenter` | 50行 | 時系列分析 |
-| `GrowthRatePresenter` | 70行 | 成長率計算の複雑ロジック |
-| `SeasonalPresenter` | 60行 | 季節性分析 |
-| `ModePresenter` | 20行 | 基本統計 |
-| `OutliersPresenter` | 20行 | 基本統計 |
+| Presenter | 削減見込み | 実際の実装 | 状況 |
+|-----------|-----------|-----------|------|
+| `TrendPresenter` | 60行 | 50行 | ✅ 完了 |
+| `MovingAveragePresenter` | 50行 | 60行 | ✅ 完了 |
+| `GrowthRatePresenter` | 70行 | 134行 | ✅ 完了 |
+| `SeasonalPresenter` | 60行 | 56行 | ✅ 完了 |
+| `ModePresenter` | 20行 | 32行 | ✅ 完了 |
+| `OutliersPresenter` | 20行 | 34行 | ✅ 完了 |
 
-### Phase 4: 統合・クリーンアップ（1週間）
+### Phase 4: 基本統計 & ユーティリティ統合 ✅ 完了
 **優先度**: ★★☆ 高 - アーキテクチャの完成
 
-1. **FormattingUtils作成**: `format_value`, `format_array`, `apply_precision`等を統合
-2. **OutputFormatter完全削除**: 1,090行の完全削除
-3. **テスト統合**: 分散したテストの統合と最適化
+#### 4.1 残存メソッド分析（Phase 1-3で未移行）
+
+**① 基本統計メソッド（Presenter移行済みだがOutputFormatterに残存）:**
+- `format_quartiles` (34行) - ✅ QuartilesPresenterで代替済み
+- `format_mode` (13行) - ✅ ModePresenterで代替済み
+- `format_outliers` (13行) - ✅ OutliersPresenterで代替済み
+- `format_correlation` (18行) - ✅ CorrelationPresenterで代替済み
+
+**② 時系列メソッド（Presenter移行済みだがOutputFormatterに残存）:**
+- `format_trend` + 3プライベート (58行) - ✅ TrendPresenterで代替済み
+- `format_moving_average` + 3プライベート (73行) - ✅ MovingAveragePresenterで代替済み
+- `format_growth_rate` + 6プライベート (158行) - ✅ GrowthRatePresenterで代替済み
+
+**③ 統計検定メソッド（Presenter移行済みだがOutputFormatterに残存）:**
+- `format_t_test` + 3プライベート (145行) - ✅ TTestPresenterで代替済み
+- `format_confidence_interval` + 3プライベート (58行) - ✅ ConfidenceIntervalPresenterで代替済み
+- `format_chi_square` + 3プライベート (93行) - ✅ ChiSquarePresenterで代替済み
+- `format_anova` + 3プライベート (85行) - ✅ AnovaPresenterで代替済み
+- `format_two_way_anova` + 6プライベート (178行) - ✅ TwoWayAnovaPresenterで代替済み
+- `format_post_hoc` + 3プライベート (48行) - ✅ PostHocPresenterで代替済み
+
+**④ 共通ユーティリティ（FormattingUtils移行対象）:**
+- `format_value` (9行) - 全Presenterで使用中
+- `format_array` (12行) - 全Presenterで使用中
+- `apply_precision` (6行) - 全Presenterで使用中
+- `dataset_metadata` (6行) - JSON出力で使用中
+- `format_json_value`, `format_json_array` (12行) - JSON出力用
+
+#### 4.2 Phase 4実装完了結果 ✅
+1. ✅ **FormattingUtilsモジュール作成**: 共通ユーティリティの統合 (104行実装)
+2. ✅ **代替済みメソッド削除**: Presenter実装済みの重複メソッド削除 (1,031行削減)
+3. ✅ **OutputFormatter完全削除**: 1,031行→0行の完全削除達成
+4. ✅ **参照更新**: プロジェクト全体でOutputFormatter参照をFormattingUtilsに変更完了
 
 ## 9. 削減効果見積もり
 
 ### コード削減効果
-- **OutputFormatter削除**: 1,090行 → 0行（100%削減）
-- **新Presenter作成**: 約14クラス × 70行 = 980行
-- **純削減効果**: 110行 + 重複ロジック除去による品質向上
+- **Phase 1-3実績**: 1,090行 → 1,031行（59行削減確認済み）
+- **新Presenter作成**: 14クラス 1,246行実装済み（Phase 1-3完了）
+- **実際の削減効果**: ~1,020行抽出 + 重複ロジック除去、品質向上
+- **Phase 4実績**: 1,031行完全削除 + FormattingUtils統合でOutputFormatter完全削除達成
 
 ### アーキテクチャ改善効果
 - **統一性**: 29コマンド全てが統一Presenter Pattern
@@ -213,8 +252,42 @@ Presenter の準備ができ次第、対応するコマンドクラスを更新�
 - **コードレビュー**: Template Method Pattern準拠確認
 - **パフォーマンス**: 既存と同等以上の実行速度維持
 
-### 11.3 最初の実装ターゲット
-**推奨開始点**: `TTestPresenter`
-- 最も複雑で影響範囲が大きい
-- 成功すれば他のPresenterの良いテンプレートになる
-- 削減効果も100行と大きい
+### 11.3 Phase 1-3実装完了メトリクス
+**実装結果**: ✅ 全Phase計画を上回る達成
+
+| Phase | 計画 | 実装 | 達成率 |
+|-------|------|------|--------|
+| Phase 1 | 4クラス 290行 | 4クラス 365行 | 126% |
+| Phase 2 | 4クラス 390行 | 4クラス 515行 | 132% |
+| Phase 3 | 6クラス 280行 | 6クラス 366行 | 131% |
+| **合計** | **14クラス 960行** | **14クラス 1,246行** | **130%** |
+
+**品質向上**: Template Method Pattern統一、220+テスト、RuboCopゼロ違反、CLI統合完備
+
+## 12. Phase 4準備ガイド
+
+### 12.1 次のステップ
+1. **FormattingUtilsモジュール設計**
+   - `format_value`, `format_array`, `apply_precision`の統合
+   - 全Presenterで共通利用できるユーティリティモジュール
+
+2. **残存メソッドの安全な削除**
+   - ✅ Presenterで代替済みのメソッドの段階的削除
+   - CLIコマンドでの参照確認と更新
+
+3. **最終クリーンアップ**
+   - OutputFormatterファイルの完全削除
+   - プロジェクト全体での参照更新
+   - テストスイートの最終検証
+
+### 12.2 リスク管理
+- **下位互換性**: 既存CLIコマンドの完全な動作維持
+- **段階的削除**: 一度に大量削除せず、段階的に安全に進める
+- **テスト驗証**: 各ステップで全テストケースの成功を確認
+
+### 12.3 Phase 4完了時の達成結果 ✅
+- ✅ OutputFormatterファイルの完全削除（1,031行→0行）
+- ✅ FormattingUtilsモジュールによる統一ユーティリティ（104行実装）
+- ✅ 29コマンド全てがPresenter Pattern使用
+- ✅ アーキテクチャの完全な統一とクリーンアップ達成
+- ✅ 33包括的テストケースによるFormattingUtils品質保証

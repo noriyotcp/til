@@ -1,9 +1,12 @@
 # frozen_string_literal: true
 
 require_relative '../base_command'
+require_relative '../../formatting_utils'
 
 # Command for calculating standard deviation
 class NumberAnalyzer::Commands::StdCommand < NumberAnalyzer::Commands::BaseCommand
+  include NumberAnalyzer::FormattingUtils
+
   command 'std', 'Calculate standard deviation (square root of variance)'
 
   private
@@ -23,7 +26,7 @@ class NumberAnalyzer::Commands::StdCommand < NumberAnalyzer::Commands::BaseComma
 
   def output_result(result)
     @options[:dataset_size] = @data&.size if @data
-    puts NumberAnalyzer::OutputFormatter.format_value(result, @options)
+    puts format_value(result, @options)
   end
 
   def parse_input(args)

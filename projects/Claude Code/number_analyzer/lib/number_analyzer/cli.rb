@@ -2,7 +2,6 @@
 
 require_relative '../number_analyzer'
 require_relative 'file_reader'
-require_relative 'output_formatter'
 require_relative 'plugin_system'
 require_relative 'plugin_conflict_resolver'
 require_relative 'plugin_namespace'

@@ -1,9 +1,11 @@
 # frozen_string_literal: true
 
 require_relative '../base_command'
+require_relative '../../formatting_utils'
 
 # Command for calculating deviation scores (Z-scores)
 class NumberAnalyzer::Commands::DeviationScoresCommand < NumberAnalyzer::Commands::BaseCommand
+  include NumberAnalyzer::FormattingUtils
   command 'deviation-scores', 'Calculate deviation scores (Z-scores) for each value'
 
   private
@@ -23,7 +25,7 @@ class NumberAnalyzer::Commands::DeviationScoresCommand < NumberAnalyzer::Command
 
   def output_result(result)
     @options[:dataset_size] = @data&.size if @data
-    puts NumberAnalyzer::OutputFormatter.format_deviation_scores(result, @options)
+    puts format_array(result, @options)
   end
 
   def parse_input(args)

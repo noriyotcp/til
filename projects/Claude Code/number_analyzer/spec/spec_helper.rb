@@ -25,7 +25,6 @@ require 'stringio'
 require 'number_analyzer/cli'
 require 'number_analyzer/file_reader'
 require 'number_analyzer/statistics_presenter'
-require 'number_analyzer/output_formatter'
 require 'number_analyzer/plugin_system'
 require 'number_analyzer/plugin_interface'
 
