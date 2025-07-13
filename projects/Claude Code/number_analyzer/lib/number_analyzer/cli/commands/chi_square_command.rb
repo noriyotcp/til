@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 require_relative '../base_command'
-require_relative '../statistical_output_formatter'
 require_relative '../chi_square_input_handler'
 require_relative '../chi_square_validator'
 
@@ -73,88 +72,8 @@ class NumberAnalyzer::Commands::ChiSquareCommand < NumberAnalyzer::Commands::Bas
   end
 
   def output_result(result)
-    if @options[:format] == 'json'
-      output_json(result)
-    elsif @options[:quiet]
-      output_quiet(result)
-    else
-      output_standard(result)
-    end
-  end
-
-  def output_json(result)
-    require 'json'
-    puts JSON.generate(result)
-  end
-
-  def output_quiet(result)
-    p_value = result[:p_value]
-    if @options[:precision]
-      puts format("%.#{@options[:precision]}f", p_value)
-    else
-      puts format('%.6f', p_value)
-    end
-  end
-
-  def output_standard(result)
-    formatter = NumberAnalyzer::CLI::StatisticalOutputFormatter
-    test_type = result[:test_type]
-
-    # Header
-    puts formatter.format_test_header('Chi-square Test', test_type_english(test_type))
-    puts
-
-    # Basic statistics
-    puts formatter.format_basic_statistics(
-      'Chi-square Statistic',
-      result[:chi_square_statistic],
-      result[:degrees_of_freedom],
-      result[:p_value],
-      result[:significant],
-      @options[:precision]
-    )
-
-    # Test-specific additional information
-    additional_info = format_test_specific_info(result, formatter)
-    puts additional_info if additional_info
-
-    # Dataset information
-    dataset_info = formatter.format_dataset_info(dataset_size: result[:dataset_size])
-    puts dataset_info if dataset_info
-  end
-
-  def format_test_specific_info(result, formatter)
-    case result[:test_type]
-    when :independence
-      format_independence_info(result, formatter)
-    when :goodness_of_fit
-      format_goodness_of_fit_info(result, formatter)
-    end
-  end
-
-  def format_independence_info(result, formatter)
-    return unless result[:cramers_v]
-
-    formatter.format_effect_size("Cramér's V (Effect Size)", result[:cramers_v], @options[:precision])
-  end
-
-  def format_goodness_of_fit_info(result, formatter)
-    formatter.format_frequencies(
-      result[:observed_frequencies],
-      result[:expected_frequencies],
-      @options[:precision]
-    )
-  end
-
-  def test_type_english(type)
-    case type
-    when :independence
-      'Independence Test'
-    when :goodness_of_fit
-      'Goodness-of-fit Test'
-    else
-      type.to_s
-    end
+    presenter = NumberAnalyzer::Presenters::ChiSquarePresenter.new(result, @options)
+    puts presenter.format
   end
 
   def show_help

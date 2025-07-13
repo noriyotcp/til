@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 require_relative '../base_command'
-require_relative '../statistical_output_formatter'
 
 # Command for performing two-way ANOVA (Analysis of Variance)
 class NumberAnalyzer::Commands::TwoWayAnovaCommand < NumberAnalyzer::Commands::BaseCommand

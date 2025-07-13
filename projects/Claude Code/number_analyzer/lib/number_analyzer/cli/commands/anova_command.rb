@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 require_relative '../base_command'
-require_relative '../statistical_output_formatter'
 require_relative '../../presenters/anova_presenter'
 require_relative '../../presenters/post_hoc_presenter'
 

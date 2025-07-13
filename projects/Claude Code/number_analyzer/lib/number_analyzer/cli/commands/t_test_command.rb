@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 require_relative '../base_command'
-require_relative '../statistical_output_formatter'
 require_relative '../t_test_input_handler'
 require_relative '../t_test_help_constants'
 require_relative '../../presenters/t_test_presenter'
