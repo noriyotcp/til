@@ -23,74 +23,20 @@ class NumberAnalyzer::Commands::GrowthRateCommand < NumberAnalyzer::Commands::Ba
     cagr = analyzer.compound_annual_growth_rate
     avg_growth = analyzer.average_growth_rate
 
+    # Convert percentage format to decimal format for presenter consistency
+    # NumberAnalyzer returns percentages (10.0 = 10%), but presenter expects decimals (0.1 = 10%)
     {
-      growth_rates: growth_rates,
-      compound_annual_growth_rate: cagr,
-      average_growth_rate: avg_growth,
+      growth_rates: growth_rates.map { |rate| rate.infinite? ? rate : rate / 100.0 },
+      compound_annual_growth_rate: cagr ? cagr / 100.0 : nil,
+      average_growth_rate: avg_growth ? avg_growth / 100.0 : nil,
       dataset_size: data.size
     }
   end
 
   def output_result(result)
-    if @options[:format] == 'json'
-      output_json(result)
-    elsif @options[:quiet]
-      output_quiet(result)
-    else
-      output_standard(result)
-    end
-  end
-
-  def output_json(result)
-    require 'json'
-    puts JSON.generate(result)
-  end
-
-  def output_quiet(result)
-    cagr = result[:compound_annual_growth_rate]
-    if @options[:precision]
-      puts format("%.#{@options[:precision]}f", cagr)
-    else
-      puts format('%.2f', cagr)
-    end
-  end
-
-  def output_standard(result)
-    puts '成長率分析:'
-    puts ''
-
-    format_period_growth_rates(result[:growth_rates])
-    format_aggregate_growth_rates(result)
-
-    puts "データポイント数: #{result[:dataset_size]}"
-  end
-
-  def format_period_growth_rates(growth_rates)
-    puts '期間別成長率:'
-    growth_rates.each_with_index do |rate, index|
-      formatted_rate = format_percentage(rate)
-      puts "  期間 #{index + 1}: #{formatted_rate}%"
-    end
-    puts ''
-  end
-
-  def format_aggregate_growth_rates(result)
-    cagr = result[:compound_annual_growth_rate]
-    avg_growth = result[:average_growth_rate]
-
-    formatted_cagr = format_percentage(cagr)
-    puts "年平均成長率 (CAGR): #{formatted_cagr}%"
-
-    formatted_avg = format_percentage(avg_growth)
-    puts "平均成長率: #{formatted_avg}%"
-  end
-
-  def format_percentage(rate)
-    if @options[:precision]
-      format("%.#{@options[:precision]}f", rate * 100)
-    else
-      format('%.2f', rate * 100)
-    end
+    require_relative '../../presenters/growth_rate_presenter'
+    presenter = NumberAnalyzer::Presenters::GrowthRatePresenter.new(result, @options)
+    puts presenter.format
   end
 
   def show_help
