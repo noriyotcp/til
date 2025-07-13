@@ -45,45 +45,8 @@ class NumberAnalyzer::Commands::MovingAverageCommand < NumberAnalyzer::Commands:
   end
 
   def output_result(result)
-    if @options[:format] == 'json'
-      output_json(result)
-    elsif @options[:quiet]
-      output_quiet(result)
-    else
-      output_standard(result)
-    end
-  end
-
-  def output_json(result)
-    require 'json'
-    puts JSON.generate(result)
-  end
-
-  def output_quiet(result)
-    values = result[:moving_average]
-    formatted_values = if @options[:precision]
-                         values.map { |v| format("%.#{@options[:precision]}f", v) }
-                       else
-                         values.map { |v| format('%.2f', v) }
-                       end
-    puts formatted_values.join(' ')
-  end
-
-  def output_standard(result)
-    moving_average = result[:moving_average]
-    window_size = result[:window_size]
-    dataset_size = result[:dataset_size]
-
-    puts "移動平均 (ウィンドウサイズ: #{window_size}):"
-
-    formatted_values = if @options[:precision]
-                         moving_average.map { |v| format("%.#{@options[:precision]}f", v) }
-                       else
-                         moving_average.map { |v| format('%.2f', v) }
-                       end
-
-    puts formatted_values.join(', ')
-    puts "元データサイズ: #{dataset_size}, 移動平均数: #{moving_average.length}"
+    presenter = NumberAnalyzer::Presenters::MovingAveragePresenter.new(result, @options)
+    puts presenter.format
   end
 
   def show_help
