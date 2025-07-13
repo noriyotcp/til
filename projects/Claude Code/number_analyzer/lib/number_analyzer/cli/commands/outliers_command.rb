@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require_relative '../base_command'
+require_relative '../../presenters/outliers_presenter'
 
 # Command for detecting outliers using IQR * 1.5 rule
 class NumberAnalyzer::Commands::OutliersCommand < NumberAnalyzer::Commands::BaseCommand
@@ -22,9 +23,9 @@ class NumberAnalyzer::Commands::OutliersCommand < NumberAnalyzer::Commands::Base
   end
 
   def output_result(result)
-    # Use the OutputFormatter to maintain compatibility
     @options[:dataset_size] = @data&.size if @data
-    puts NumberAnalyzer::OutputFormatter.format_outliers(result, @options)
+    presenter = NumberAnalyzer::Presenters::OutliersPresenter.new(result, @options)
+    puts presenter.format
   end
 
   def parse_input(args)

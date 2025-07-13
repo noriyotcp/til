@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require_relative '../base_command'
+require_relative '../../presenters/quartiles_presenter'
 
 # Command for calculating Q1, Q2 (median), and Q3 values
 class NumberAnalyzer::Commands::QuartilesCommand < NumberAnalyzer::Commands::BaseCommand
@@ -23,7 +24,8 @@ class NumberAnalyzer::Commands::QuartilesCommand < NumberAnalyzer::Commands::Bas
 
   def output_result(result)
     @options[:dataset_size] = @data&.size if @data
-    puts NumberAnalyzer::OutputFormatter.format_quartiles(result, @options)
+    presenter = NumberAnalyzer::Presenters::QuartilesPresenter.new(result, @options)
+    puts presenter.format
   end
 
   def parse_input(args)
