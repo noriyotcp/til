@@ -58,6 +58,8 @@ Metrics/ClassLength:
     - 'lib/number_analyzer/plugin_configuration.rb'  # Plugin configuration management requires extensive validation
     - 'lib/number_analyzer/plugin_configuration/**/*'  # Plugin configuration modules
     - 'lib/number_analyzer/plugin_conflict_resolver.rb'  # Conflict resolution requires comprehensive strategy implementation
+    - 'lib/number_analyzer/plugin_sandbox/capability_manager.rb'  # Security capability management requires comprehensive permission matrix
+    - 'lib/number_analyzer/plugin_sandbox/method_interceptor.rb'  # Security method interception requires comprehensive whitelist/blacklist definitions
     - 'plugins/**/*'  # Plugin implementations with comprehensive visualization and analysis features
     - 'spec/**/*'  # Test classes require comprehensive test coverage and naturally become longer
 
@@ -105,6 +107,7 @@ Naming/PredicateMethod:
   Exclude:
     - 'lib/number_analyzer/plugin_configuration/**/*'  # Plugin configuration validation methods use validate_ prefix for clarity
     - 'lib/number_analyzer/cli/command_registry.rb'  # execute_command method returns boolean for success/failure, not a predicate query
+    - 'lib/number_analyzer/plugin_sandbox/capability_manager.rb'  # Security validation methods use validate_/verify_ prefix for clarity and consistency
 
 Style/ClassAndModuleChildren:
   EnforcedStyle: compact

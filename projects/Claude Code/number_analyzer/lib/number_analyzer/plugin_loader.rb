@@ -280,24 +280,113 @@ class NumberAnalyzer::PluginLoader
     end
   end
 
-  # Load plugin with security restrictions
-  def self.load_with_restrictions(plugin_file, _validation_result, _options = {})
-    # Create a more restricted loading environment
-    original_verbose = $VERBOSE
-    $VERBOSE = nil
+  # Load plugin with comprehensive security restrictions
+  def self.load_with_restrictions(plugin_file, _validation_result, options = {})
+    require_relative 'plugin_sandbox'
 
-    # TODO: Implement actual sandboxing/restrictions
-    # For now, use basic loading with monitoring
+    sandbox = setup_plugin_sandbox(options)
+    plugin_name = File.basename(plugin_file, '.rb')
+
+    execute_plugin_with_error_handling(sandbox, plugin_file, plugin_name, options)
+  end
+
+  # Set up plugin sandbox with security configuration
+  def self.setup_plugin_sandbox(options)
+    security_level = options[:security_level] || ENV['NUMBER_ANALYZER_SECURITY'] || :production
+    trusted_plugins = options[:trusted_plugins] || []
+
+    NumberAnalyzer::PluginSandbox.new(
+      security_level: security_level.to_sym,
+      trusted_plugins: trusted_plugins
+    )
+  end
+
+  # Execute plugin with comprehensive error handling
+  def self.execute_plugin_with_error_handling(sandbox, plugin_file, plugin_name, options)
+    capabilities = options[:capabilities] || %i[read_data write_output]
+    security_level = options[:security_level] || :production
+
     begin
-      require plugin_file
-      true
-    rescue SecurityError => e
-      raise SecurityError, "Security violation in plugin #{plugin_file}: #{e.message}"
+      result = sandbox.load_plugin_file(plugin_file, plugin_name: plugin_name, capabilities: capabilities)
+      log_plugin_loading_success(plugin_name, security_level, capabilities)
+      result
+    rescue NumberAnalyzer::PluginSecurityError, NumberAnalyzer::PluginTimeoutError,
+           NumberAnalyzer::PluginResourceError, NumberAnalyzer::PluginCapabilityError => e
+      handle_plugin_security_error(e, plugin_file, plugin_name)
+    rescue NumberAnalyzer::PluginExecutionError => e
+      log_execution_error(plugin_name, e.message)
+      raise ValidationError, "Failed to execute plugin #{plugin_file}: #{e.message}"
     rescue StandardError => e
-      raise ValidationError, "Failed to load plugin #{plugin_file}: #{e.message}"
-    ensure
-      $VERBOSE = original_verbose
+      log_unexpected_error(plugin_name, e.class.name, e.message)
+      raise ValidationError, "Unexpected error loading plugin #{plugin_file}: #{e.message}"
     end
+  end
+
+  # Handle plugin security-related errors
+  def self.handle_plugin_security_error(error, plugin_file, plugin_name)
+    case error
+    when NumberAnalyzer::PluginSecurityError
+      log_security_violation(plugin_name, error.message)
+      raise SecurityError, "Security violation in plugin #{plugin_file}: #{error.message}"
+    when NumberAnalyzer::PluginTimeoutError
+      log_timeout_violation(plugin_name, error.message)
+      raise SecurityError, "Timeout violation in plugin #{plugin_file}: #{error.message}"
+    when NumberAnalyzer::PluginResourceError
+      log_resource_violation(plugin_name, error.message)
+      raise SecurityError, "Resource violation in plugin #{plugin_file}: #{error.message}"
+    when NumberAnalyzer::PluginCapabilityError
+      log_capability_violation(plugin_name, error.message)
+      raise SecurityError, "Capability violation in plugin #{plugin_file}: #{error.message}"
+    end
+  end
+
+  # Enhanced plugin loading with capability specification
+  def self.load_plugin_with_capabilities(plugin_file, capabilities, options = {})
+    options[:capabilities] = capabilities
+    load_with_restrictions(plugin_file, nil, options)
+  end
+
+  # Load trusted plugin with elevated privileges
+  def self.load_trusted_plugin(plugin_file, options = {})
+    plugin_name = File.basename(plugin_file, '.rb')
+    options[:trusted_plugins] = [plugin_name]
+    options[:capabilities] = %i[read_data write_output file_read file_write network_access]
+    load_with_restrictions(plugin_file, nil, options)
+  end
+
+  def self.log_plugin_loading_success(plugin_name, security_level, capabilities)
+    timestamp = Time.now.strftime('%Y-%m-%d %H:%M:%S')
+    puts "[#{timestamp}] PLUGIN_LOADED plugin=\"#{plugin_name}\" security_level=#{security_level} capabilities=#{capabilities.inspect}"
+  end
+
+  def self.log_security_violation(plugin_name, message)
+    timestamp = Time.now.strftime('%Y-%m-%d %H:%M:%S')
+    puts "[#{timestamp}] SECURITY_VIOLATION plugin=\"#{plugin_name}\" message=\"#{message}\""
+  end
+
+  def self.log_timeout_violation(plugin_name, message)
+    timestamp = Time.now.strftime('%Y-%m-%d %H:%M:%S')
+    puts "[#{timestamp}] TIMEOUT_VIOLATION plugin=\"#{plugin_name}\" message=\"#{message}\""
+  end
+
+  def self.log_resource_violation(plugin_name, message)
+    timestamp = Time.now.strftime('%Y-%m-%d %H:%M:%S')
+    puts "[#{timestamp}] RESOURCE_VIOLATION plugin=\"#{plugin_name}\" message=\"#{message}\""
+  end
+
+  def self.log_capability_violation(plugin_name, message)
+    timestamp = Time.now.strftime('%Y-%m-%d %H:%M:%S')
+    puts "[#{timestamp}] CAPABILITY_VIOLATION plugin=\"#{plugin_name}\" message=\"#{message}\""
+  end
+
+  def self.log_execution_error(plugin_name, message)
+    timestamp = Time.now.strftime('%Y-%m-%d %H:%M:%S')
+    puts "[#{timestamp}] EXECUTION_ERROR plugin=\"#{plugin_name}\" message=\"#{message}\""
+  end
+
+  def self.log_unexpected_error(plugin_name, error_class, message)
+    timestamp = Time.now.strftime('%Y-%m-%d %H:%M:%S')
+    puts "[#{timestamp}] UNEXPECTED_ERROR plugin=\"#{plugin_name}\" class=\"#{error_class}\" message=\"#{message}\""
   end
 
   # Register plugin with the enhanced registry system
