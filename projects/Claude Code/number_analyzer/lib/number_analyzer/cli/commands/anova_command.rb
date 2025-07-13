@@ -2,6 +2,7 @@
 
 require_relative '../base_command'
 require_relative '../statistical_output_formatter'
+require_relative '../../presenters/anova_presenter'
 
 # Command for performing one-way ANOVA (Analysis of Variance)
 class NumberAnalyzer::Commands::AnovaCommand < NumberAnalyzer::Commands::BaseCommand
@@ -39,9 +40,9 @@ class NumberAnalyzer::Commands::AnovaCommand < NumberAnalyzer::Commands::BaseCom
   end
 
   def output_result(result)
-    # Format ANOVA results
-    formatted_result = NumberAnalyzer::OutputFormatter.format_anova(result, @options)
-    puts formatted_result
+    # Format ANOVA results using presenter
+    presenter = NumberAnalyzer::Presenters::AnovaPresenter.new(result, @options)
+    puts presenter.format
 
     # Perform post-hoc analysis if requested
     return unless @options[:post_hoc]
