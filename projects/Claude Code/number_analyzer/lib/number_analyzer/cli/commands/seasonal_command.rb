@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require_relative '../base_command'
+require_relative '../../presenters/seasonal_presenter'
 
 # Command for analyzing seasonal patterns and decomposition
 class NumberAnalyzer::Commands::SeasonalCommand < NumberAnalyzer::Commands::BaseCommand
@@ -51,99 +52,9 @@ class NumberAnalyzer::Commands::SeasonalCommand < NumberAnalyzer::Commands::Base
   end
 
   def output_result(result)
-    if @options[:format] == 'json'
-      output_json(result)
-    elsif @options[:quiet]
-      output_quiet(result)
-    else
-      output_standard(result)
-    end
-  end
-
-  def output_json(result)
-    require 'json'
-    puts JSON.generate(result)
-  end
-
-  def output_quiet(result)
-    seasonal_strength = result[:seasonal_strength]
-    if @options[:precision]
-      puts format("%.#{@options[:precision]}f", seasonal_strength)
-    else
-      puts format('%.4f', seasonal_strength)
-    end
-  end
-
-  def output_standard(result)
-    puts '季節性分析:'
-    puts ''
-
-    format_period_information(result)
-    format_seasonal_strength(result)
-    format_seasonal_pattern(result)
-    format_trend_information(result)
-
-    puts "データポイント数: #{result[:dataset_size]}"
-  end
-
-  def format_period_information(result)
-    period = result[:period]
-    specified = result[:specified_period]
-    puts "検出された周期: #{period}#{specified ? " (指定: #{specified})" : ' (自動検出)'}"
-    puts ''
-  end
-
-  def format_seasonal_strength(result)
-    seasonal_strength = result[:seasonal_strength]
-    formatted_strength = format_value(seasonal_strength)
-    puts "季節性の強さ: #{formatted_strength}"
-
-    strength_level = interpret_seasonal_strength(seasonal_strength)
-    puts "解釈: #{strength_level}季節性"
-    puts ''
-  end
-
-  def format_seasonal_pattern(result)
-    return unless result[:seasonal_pattern]
-
-    puts '季節パターン:'
-    result[:seasonal_pattern].each_with_index do |value, index|
-      formatted_value = format_value(value)
-      puts "  周期 #{index + 1}: #{formatted_value}"
-    end
-    puts ''
-  end
-
-  def format_trend_information(result)
-    return unless result[:trend]
-
-    trend_direction = result[:trend][:direction]
-    trend_strength = result[:trend][:strength]
-    formatted_trend_strength = format_value(trend_strength)
-
-    puts "トレンド: #{trend_direction} (強さ: #{formatted_trend_strength})"
-    puts ''
-  end
-
-  def format_value(value)
-    if @options[:precision]
-      format("%.#{@options[:precision]}f", value)
-    else
-      format('%.4f', value)
-    end
-  end
-
-  def interpret_seasonal_strength(seasonal_strength)
-    case seasonal_strength
-    when 0...0.3
-      '弱い'
-    when 0.3...0.6
-      '中程度'
-    when 0.6...0.8
-      '強い'
-    else
-      '非常に強い'
-    end
+    @options[:dataset_size] = result[:dataset_size] if result[:dataset_size]
+    presenter = NumberAnalyzer::Presenters::SeasonalPresenter.new(result, @options)
+    puts presenter.format
   end
 
   def show_help
