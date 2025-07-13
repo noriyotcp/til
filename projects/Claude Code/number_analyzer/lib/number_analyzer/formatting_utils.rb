@@ -6,7 +6,7 @@ require 'json'
 # Used by Presenter classes for consistent output formatting across all statistical commands
 #
 # This module consolidates common formatting logic that was previously scattered
-# across OutputFormatter, providing a clean, reusable interface for:
+# across the codebase, providing a clean, reusable interface for:
 # - Value formatting with precision control
 # - Array formatting for different output modes
 # - JSON output generation with metadata

@@ -88,7 +88,7 @@ RSpec.describe NumberAnalyzer::CLI, 'Plugin Integration' do
         expect do
           described_class.run(['unknown-command'])
         end.to raise_error(SystemExit)
-      end.to output(/Unknown command: unknown-command/).to_stdout
+      end.to output(/Unknown command: unknown-command/).to_stderr
     end
   end
 

@@ -105,9 +105,9 @@ RSpec.describe NumberAnalyzer::Commands::BaseCommand do
     context 'with JSON format' do
       before { command.instance_variable_set(:@options, { format: 'json' }) }
 
-      it 'delegates to OutputFormatter' do
-        expect(NumberAnalyzer::OutputFormatter)
-          .to receive(:format).with(42, hash_including(format: 'json')).and_return('{"value": 42}')
+      it 'uses FormattingUtils for JSON output' do
+        expect(command)
+          .to receive(:format_value).with(42, hash_including(format: 'json')).and_return('{"value": 42}')
 
         expect { command.send(:output_result, 42) }.to output("{\"value\": 42}\n").to_stdout
       end
@@ -116,9 +116,9 @@ RSpec.describe NumberAnalyzer::Commands::BaseCommand do
     context 'with precision option' do
       before { command.instance_variable_set(:@options, { precision: 2 }) }
 
-      it 'passes precision to formatter' do
-        expect(NumberAnalyzer::OutputFormatter)
-          .to receive(:format).with(3.14159, hash_including(precision: 2)).and_return('3.14')
+      it 'passes precision to FormattingUtils' do
+        expect(command)
+          .to receive(:format_value).with(3.14159, hash_including(precision: 2)).and_return('3.14')
 
         expect { command.send(:output_result, 3.14159) }.to output("3.14\n").to_stdout
       end
