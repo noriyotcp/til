@@ -21,8 +21,8 @@ class NumberAnalyzer::Commands::TrendCommand < NumberAnalyzer::Commands::BaseCom
 
   def output_result(result)
     @options[:dataset_size] = @data&.size if @data
-    formatted = NumberAnalyzer::OutputFormatter.format_trend(result, @options)
-    puts formatted
+    presenter = NumberAnalyzer::Presenters::TrendPresenter.new(result, @options)
+    puts presenter.format
   end
 
   def parse_input(args)
