@@ -103,22 +103,35 @@ module NumberAnalyzer::CLI::ErrorHandler
     return str2.length if str1.empty?
     return str1.length if str2.empty?
 
-    matrix = Array.new(str1.length + 1) { Array.new(str2.length + 1) }
+    matrix = initialize_distance_matrix(str1, str2)
+    fill_distance_matrix(matrix, str1, str2)
+    matrix[str1.length][str2.length]
+  end
 
+  # Initialize matrix for Levenshtein distance calculation
+  def initialize_distance_matrix(str1, str2)
+    matrix = Array.new(str1.length + 1) { Array.new(str2.length + 1) }
     (0..str1.length).each { |i| matrix[i][0] = i }
     (0..str2.length).each { |j| matrix[0][j] = j }
+    matrix
+  end
 
+  # Fill the distance matrix with calculated values
+  def fill_distance_matrix(matrix, str1, str2)
     (1..str1.length).each do |i|
       (1..str2.length).each do |j|
         cost = str1[i - 1] == str2[j - 1] ? 0 : 1
-        matrix[i][j] = [
-          matrix[i - 1][j] + 1,     # deletion
-          matrix[i][j - 1] + 1,     # insertion
-          matrix[i - 1][j - 1] + cost # substitution
-        ].min
+        matrix[i][j] = calculate_min_distance(matrix, i, j, cost)
       end
     end
+  end
 
-    matrix[str1.length][str2.length]
+  # Calculate minimum distance for a cell
+  def calculate_min_distance(matrix, row, col, cost)
+    [
+      matrix[row - 1][col] + 1,         # deletion
+      matrix[row][col - 1] + 1,         # insertion
+      matrix[row - 1][col - 1] + cost   # substitution
+    ].min
   end
 end

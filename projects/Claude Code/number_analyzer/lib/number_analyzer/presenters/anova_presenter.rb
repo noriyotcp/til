@@ -85,23 +85,35 @@ class NumberAnalyzer::Presenters::AnovaPresenter < NumberAnalyzer::Presenters::B
     output << '変動要因                  平方和      自由度         平均平方           F値'
     output << ('-' * 60)
 
-    ss_between = format_value(@result[:sum_of_squares][:between])
-    ss_within = format_value(@result[:sum_of_squares][:within])
-    ss_total = format_value(@result[:sum_of_squares][:total])
-
-    ms_between = format_value(@result[:mean_squares][:between])
-    ms_within = format_value(@result[:mean_squares][:within])
-
-    f_stat = format_value(@result[:f_statistic])
-    df_between, df_within = @result[:degrees_of_freedom]
-
-    output << Kernel.format('%-12s %12s %8d %12s %12s',
-                            '群間', ss_between, df_between, ms_between, f_stat)
-    output << Kernel.format('%-12s %12s %8d %12s %12s',
-                            '群内', ss_within, df_within, ms_within, '-')
-    output << Kernel.format('%-12s %12s %8d %12s %12s',
-                            '全体', ss_total, df_between + df_within, '-', '-')
+    values = extract_anova_values
+    output.concat(format_anova_rows(values))
     output
+  end
+
+  def extract_anova_values
+    {
+      ss_between: format_value(@result[:sum_of_squares][:between]),
+      ss_within: format_value(@result[:sum_of_squares][:within]),
+      ss_total: format_value(@result[:sum_of_squares][:total]),
+      ms_between: format_value(@result[:mean_squares][:between]),
+      ms_within: format_value(@result[:mean_squares][:within]),
+      f_stat: format_value(@result[:f_statistic]),
+      df_between: @result[:degrees_of_freedom][0],
+      df_within: @result[:degrees_of_freedom][1]
+    }
+  end
+
+  def format_anova_rows(values)
+    [
+      format_anova_row('群間', values[:ss_between], values[:df_between], values[:ms_between], values[:f_stat]),
+      format_anova_row('群内', values[:ss_within], values[:df_within], values[:ms_within], '-'),
+      format_anova_row('全体', values[:ss_total], values[:df_between] + values[:df_within], '-', '-')
+    ]
+  end
+
+  def format_anova_row(source, sum_squares, degrees_freedom, mean_squares, f_value)
+    Kernel.format('%-<source>12s %<ss>12s %<df>8d %<ms>12s %<f>12s',
+                  source: source, ss: sum_squares, df: degrees_freedom, ms: mean_squares, f: f_value)
   end
 
   def build_significance_section

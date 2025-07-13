@@ -53,6 +53,7 @@ Metrics/ClassLength:
     - 'lib/number_analyzer/cli.rb'          # CLI class requires all 24 subcommand implementations
     - 'lib/number_analyzer/cli/commands/plugins_command.rb'  # Complex plugin management CLI with comprehensive subcommands
     - 'lib/number_analyzer/statistics_presenter.rb'  # Statistical test formatting (Levene, Bartlett, etc.) requires multiple display methods
+    - 'lib/number_analyzer/presenters/two_way_anova_presenter.rb'  # Complex factorial ANOVA presentation requires comprehensive formatting methods
     - 'lib/number_analyzer/dependency_resolver.rb'  # Dependency resolution requires comprehensive graph algorithms (258 lines)
     - 'lib/number_analyzer/plugin_configuration.rb'  # Plugin configuration management requires extensive validation
     - 'lib/number_analyzer/plugin_configuration/**/*'  # Plugin configuration modules
@@ -71,6 +72,7 @@ Metrics/AbcSize:
     - 'lib/number_analyzer.rb'  # Statistical calculation methods have inherent complexity
     - 'lib/number_analyzer/statistics_presenter.rb'  # Display methods need to format 11+ statistical values
     - 'lib/number_analyzer/cli.rb'  # CLI argument parsing has inherent complexity
+    - 'lib/number_analyzer/presenters/two_way_anova_presenter.rb'  # Two-way ANOVA presentation requires complex output formatting
     - 'lib/number_analyzer/statistics/**/*'  # Statistical modules have high assignment/branch/condition complexity
     - 'lib/number_analyzer/plugin_configuration/**/*'  # Plugin configuration validation has high ABC complexity
     - 'lib/number_analyzer/dependency_resolver.rb'  # Dependency resolution has high assignment/branch complexity

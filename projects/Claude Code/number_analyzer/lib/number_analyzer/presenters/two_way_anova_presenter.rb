@@ -50,22 +50,23 @@ class NumberAnalyzer::Presenters::TwoWayAnovaPresenter < NumberAnalyzer::Present
   end
 
   def format_quiet
-    # Main effect A
-    f_a = format_value(@result[:main_effects][:factor_a][:f_statistic])
-    p_a = format_value(@result[:main_effects][:factor_a][:p_value])
-    sig_a = @result[:main_effects][:factor_a][:significant]
+    effect_a = extract_effect_values(@result[:main_effects][:factor_a])
+    effect_b = extract_effect_values(@result[:main_effects][:factor_b])
+    interaction = extract_effect_values(@result[:interaction])
 
-    # Main effect B
-    f_b = format_value(@result[:main_effects][:factor_b][:f_statistic])
-    p_b = format_value(@result[:main_effects][:factor_b][:p_value])
-    sig_b = @result[:main_effects][:factor_b][:significant]
+    "A:#{format_effect_string(effect_a)} B:#{format_effect_string(effect_b)} AB:#{format_effect_string(interaction)}"
+  end
 
-    # Interaction
-    f_ab = format_value(@result[:interaction][:f_statistic])
-    p_ab = format_value(@result[:interaction][:p_value])
-    sig_ab = @result[:interaction][:significant]
+  def extract_effect_values(effect_data)
+    {
+      f_stat: format_value(effect_data[:f_statistic]),
+      p_value: format_value(effect_data[:p_value]),
+      significant: effect_data[:significant]
+    }
+  end
 
-    "A:#{f_a},#{p_a},#{sig_a} B:#{f_b},#{p_b},#{sig_b} AB:#{f_ab},#{p_ab},#{sig_ab}"
+  def format_effect_string(effect)
+    "#{effect[:f_stat]},#{effect[:p_value]},#{effect[:significant]}"
   end
 
   def json_fields
@@ -123,34 +124,53 @@ class NumberAnalyzer::Presenters::TwoWayAnovaPresenter < NumberAnalyzer::Present
 
   def build_two_way_anova_table
     output = []
-    output << '【二元配置分散分析表】'
-    output << '変動要因                  平方和      自由度         平均平方           F値          p値'
+    output.concat(build_table_header)
+    output.concat(build_main_effects_rows)
+    output.concat(build_interaction_row)
+    output.concat(build_error_and_total_rows)
     output << ('-' * 80)
+    output
+  end
 
-    # Main effect A
-    output << build_anova_row('主効果A (要因A)', @result[:main_effects][:factor_a])
+  def build_table_header
+    [
+      '【二元配置分散分析表】',
+      '変動要因                  平方和      自由度         平均平方           F値          p値',
+      ('-' * 80)
+    ]
+  end
 
-    # Main effect B
-    output << build_anova_row('主効果B (要因B)', @result[:main_effects][:factor_b])
+  def build_main_effects_rows
+    [
+      build_anova_row('主効果A (要因A)', @result[:main_effects][:factor_a]),
+      build_anova_row('主効果B (要因B)', @result[:main_effects][:factor_b])
+    ]
+  end
 
-    # Interaction
-    output << build_anova_row('交互作用A×B', @result[:interaction])
+  def build_interaction_row
+    [build_anova_row('交互作用A×B', @result[:interaction])]
+  end
 
-    # Error
+  def build_error_and_total_rows
+    [
+      build_error_row,
+      build_total_row
+    ]
+  end
+
+  def build_error_row
     ss_error = format_value(@result[:error][:sum_of_squares])
     ms_error = format_value(@result[:error][:mean_squares])
     df_error = @result[:error][:degrees_of_freedom]
-    output << Kernel.format('%-20s %10s %10s %15s %12s %12s',
-                            '誤差', ss_error, df_error, ms_error, '-', '-')
+    Kernel.format('%-<label>20s %<ss>10s %<df>10s %<ms>15s %<f>12s %<p>12s',
+                  label: '誤差', ss: ss_error, df: df_error, ms: ms_error, f: '-', p: '-')
+  end
 
-    # Total
+  def build_total_row
     ss_total = format_value(@result[:total][:sum_of_squares])
     df_total = @result[:total][:degrees_of_freedom]
-    output << Kernel.format('%-20s %10s %10s %15s %12s %12s',
-                            '全体', ss_total, df_total, '-', '-', '-')
-
-    output << ('-' * 80)
-    output
+    Kernel.format('%-<label>20s %<ss>10s %<df>10s %<ms>15s %<f>12s %<p>12s',
+                  label: '全体', ss: ss_total, df: df_total, ms: '-', f: '-', p: '-')
   end
 
   def build_anova_row(label, effect_data)
@@ -161,8 +181,8 @@ class NumberAnalyzer::Presenters::TwoWayAnovaPresenter < NumberAnalyzer::Present
     df_num, = effect_data[:degrees_of_freedom]
 
     significance = effect_data[:significant] ? '*' : ''
-    Kernel.format('%-20s %10s %10s %15s %12s %10s%s',
-                  label, ss, df_num, ms, f_stat, p_value, significance)
+    Kernel.format('%-<label>20s %<ss>10s %<df>10s %<ms>15s %<f>12s %<p>10s%<sig>s',
+                  label: label, ss: ss, df: df_num, ms: ms, f: f_stat, p: p_value, sig: significance)
   end
 
   def build_effect_sizes_section
