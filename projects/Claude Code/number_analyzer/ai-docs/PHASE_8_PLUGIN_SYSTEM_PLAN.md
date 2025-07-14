@@ -34,7 +34,10 @@ lib/number_analyzer/statistics/
 ├── correlation_stats.rb    # 相関分析 (Pearson correlation)
 ├── time_series_stats.rb    # 時系列分析 (trend, moving_average, seasonal)
 ├── hypothesis_testing.rb   # 仮説検定 (t-test, confidence_interval, chi-square)
-├── anova_stats.rb          # 分散分析 (ANOVA, post-hoc, Levene, Bartlett)
+├── anova_stats.rb          # 分散分析 (modular: includes one_way_anova, two_way_anova, anova_helpers)
+├── one_way_anova.rb        # 一元ANOVA計算 (216行)
+├── two_way_anova.rb        # 二元ANOVA計算 (341行)
+├── anova_helpers.rb        # ANOVA共通ユーティリティ (368行)
 └── non_parametric_stats.rb # ノンパラメトリック (Kruskal-Wallis, Mann-Whitney, etc.)
 ```
 

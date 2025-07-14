@@ -248,7 +248,7 @@ end
 
 #### 実装完了内容
 ```ruby
-# lib/number_analyzer/statistics/anova_stats.rb (566行)
+# lib/number_analyzer/statistics/anova_stats.rb (902→17行, 3モジュール分割完了)
 module ANOVAStats
   def one_way_anova(*groups)
     # 一元配置分散分析（F統計量、効果サイズ測定）

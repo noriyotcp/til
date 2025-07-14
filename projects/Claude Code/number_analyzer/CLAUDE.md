@@ -107,19 +107,24 @@ lib/
     ├── file_reader.rb              # File input
     ├── statistics_presenter.rb     # Output formatting
     ├── plugin_system.rb            # Plugin core
+    ├── plugin_conflict_resolver.rb  # Conflict resolution (336 lines, strategies extracted)
+    ├── conflict_resolution_strategies.rb # Resolution strategies (260 lines)
     └── statistics/                 # Statistical modules (8 total)
         ├── basic_stats.rb          # Basic statistics
         ├── advanced_stats.rb       # Advanced analysis
         ├── correlation_stats.rb    # Correlation analysis
         ├── time_series_stats.rb    # Time series
         ├── hypothesis_testing.rb   # Statistical tests
-        ├── anova_stats.rb          # ANOVA analysis
+        ├── anova_stats.rb          # ANOVA analysis (modular: requires one_way_anova, two_way_anova, anova_helpers)
+        ├── one_way_anova.rb        # One-way ANOVA calculations (216 lines)
+        ├── two_way_anova.rb        # Two-way ANOVA calculations (341 lines)
+        ├── anova_helpers.rb        # Shared ANOVA utilities (368 lines)
         └── non_parametric_stats.rb # Non-parametric tests
 ```
 
 **Key Components**:
 - **CLI**: Command Pattern architecture with modular design
-- **Statistics Modules**: 8 specialized modules for different analysis types
+- **Statistics Modules**: 11 specialized modules for different analysis types (including 3 ANOVA sub-modules)
 - **Plugin System**: Dynamic command loading and conflict resolution
 - **Command Registry**: Unified command management system
 
