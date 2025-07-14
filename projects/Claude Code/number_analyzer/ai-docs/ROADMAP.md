@@ -924,10 +924,14 @@
 - **ResourceMonitor**: CPU/メモリ/出力サイズ制限（5秒/100MB/1MB）
 - **CapabilityManager**: 権限ベースアクセス制御（5段階リスクレベル）
 
-**Large Module Refactoring 📋 実装準備完了**:
-- **anova_stats.rb** (902行): 一元ANOVA + 二元ANOVA + helpers の3モジュール分割計画
-- **plugin_conflict_resolver.rb** (534行): 複雑メソッド抽出による最適化予定
-- **各モジュール400行以下**: 保守性向上を目指したサイズ最適化
+**Large Module Refactoring ✅ 完了**:
+- **anova_stats.rb** (902行 → 17行): 一元ANOVA + 二元ANOVA + helpers の3モジュール分割完了
+  - `one_way_anova.rb` (216行): 一元分散分析と事後検定
+  - `two_way_anova.rb` (341行): 二元分散分析と交互作用
+  - `anova_helpers.rb` (368行): 共通ヘルパーメソッドとLevene/Bartlett検定
+- **plugin_conflict_resolver.rb** (534行 → 336行): 複雑メソッド抽出による最適化完了
+  - `conflict_resolution_strategies.rb` (260行): 競合解決戦略の実装分離
+- **各モジュール400行以下**: 保守性向上を目指したサイズ最適化達成
 
 **実装タイムライン**:
 - **Week 1**: Plugin Sandboxing Core Implementation

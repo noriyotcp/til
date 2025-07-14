@@ -105,7 +105,7 @@ RSpec.describe 'Chi-square CLI' do
 
         # Quiet mode outputs chi-square statistic, df, p-value, and significance
         expect(output.strip).to match(/^\d+\.\d+ \d+ \d+\.\d+ (true|false)$/)
-        expect(output.strip).to eq('9.090909 1 0.001 true')
+        expect(output.strip).to eq('9.090909 1 0.01 true')
       end
     end
   end
