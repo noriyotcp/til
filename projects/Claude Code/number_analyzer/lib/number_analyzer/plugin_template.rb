@@ -263,11 +263,17 @@ class NumberAnalyzer::PluginTemplate
         <% config[:commands].each do |command| -%>
           # <%= command.capitalize.tr('_', ' ') %> implementation
           def <%= command %>
-            # TODO: Implement <%= command %> functionality
+            # Example implementation for <%= command %>
+            # Replace this with your statistical calculation
+            validate_numbers!
+        #{'    '}
+            # Example: Calculate <%= command %> statistic
+            result_value = @numbers.sum.to_f / @numbers.length # Replace with actual <%= command %> logic
+        #{'    '}
             {
-              result: "#{self.class.name}#<%= command %> called",
+              result: result_value,
               data: @numbers,
-              interpretation: "Please implement the <%= command %> method"
+              interpretation: "<%= command.capitalize.tr('_', ' ') %> analysis completed. Implement your statistical calculation here."
             }
           end
         <% end -%>
@@ -308,8 +314,12 @@ class NumberAnalyzer::PluginTemplate
         <% config[:commands].each do |command| -%>
           # <%= command.capitalize.tr('_', ' ') %> command implementation
           def self.<%= command %>(args)
-            # TODO: Implement <%= command %> command functionality
-            puts "#{name}#<%= command %> called with args: #{args.inspect}"
+            # Example CLI command implementation for <%= command %>
+            # Replace this with your command logic
+            puts "Executing <%= command %> command..."
+        #{'    '}
+            # Validate arguments
+            return { error: 'No arguments provided' } if args.empty?
         #{'    '}
             # Parse command line arguments
             options = parse_<%= command %>_options(args)
@@ -319,13 +329,46 @@ class NumberAnalyzer::PluginTemplate
           end
         #{'  '}
           def self.parse_<%= command %>_options(args)
-            # TODO: Implement argument parsing for <%= command %>
-            { args: args }
+            # Example argument parsing for <%= command %>
+            # Add your specific option parsing here
+            options = {#{' '}
+              data: [],
+              format: 'text',
+              precision: 2
+            }
+        #{'    '}
+            # Parse arguments (example implementation)
+            args.each_with_index do |arg, index|
+              case arg
+              when '--format'
+                options[:format] = args[index + 1] if args[index + 1]
+              when '--precision'
+                options[:precision] = args[index + 1].to_i if args[index + 1]
+              else
+                options[:data] << arg.to_f if arg.match?(/^-?\d+(.\d+)?$/)
+              end
+            end
+        #{'    '}
+            options
           end
         #{'  '}
           def self.execute_<%= command %>(options)
-            # TODO: Implement <%= command %> execution logic
-            puts "Executing <%= command %> with options: #{options.inspect}"
+            # Example execution logic for <%= command %>
+            # Implement your command's core functionality here
+        #{'    '}
+            if options[:data].empty?
+              puts "Error: No numerical data provided for <%= command %>"
+              return { error: 'No data provided' }
+            end
+        #{'    '}
+            # Example calculation (replace with actual <%= command %> logic)
+            result = options[:data].sum.to_f / options[:data].length
+        #{'    '}
+            # Format and display result
+            formatted_result = "%.#{options[:precision]}f" % result
+            puts "<%= command.capitalize.tr('_', ' ') %> result: #{formatted_result}"
+        #{'    '}
+            { success: true, result: result, formatted: formatted_result }
           end
         <% end -%>
         end
@@ -350,23 +393,45 @@ class NumberAnalyzer::PluginTemplate
           plugin_author '<%= config[:author] %>'
         #{'  '}
           # Supported file extensions
-          supported_extensions ['.ext']  # TODO: Define your file extensions
+          supported_extensions ['.csv', '.tsv', '.txt']  # Define supported file extensions
         #{'  '}
           # Read file and return data
           def self.read_file(file_path)
-            # TODO: Implement file reading logic
-            raise NotImplementedError, 'File reading not implemented'
+            # Example file reading implementation
+            # Customize this based on your file format
         #{'    '}
-            # Example implementation:
-            # content = File.read(file_path)
-            # parse_content(content)
+            unless File.exist?(file_path)
+              raise ArgumentError, "File not found: #{file_path}"
+            end
+        #{'    '}
+            content = File.read(file_path)
+            parse_content(content)
+          rescue => e
+            raise "Failed to read file #{file_path}: #{e.message}"
           end
         #{'  '}
           private
         #{'  '}
           def self.parse_content(content)
-            # TODO: Implement content parsing logic
-            []
+            # Example content parsing (customize for your format)
+            # This example handles CSV-like data with numbers
+        #{'    '}
+            lines = content.strip.split("\n")
+            data = []
+        #{'    '}
+            lines.each_with_index do |line, index|
+              # Skip empty lines and comments
+              next if line.strip.empty? || line.strip.start_with?('#')
+        #{'      '}
+              # Parse numerical data (example: comma or tab separated)
+              numbers = line.split(/[,\t]/).map(&:strip)
+                           .select { |val| val.match?(/^-?\d+(.\d+)?$/) }
+                           .map(&:to_f)
+        #{'      '}
+              data.concat(numbers) unless numbers.empty?
+            end
+        #{'    '}
+            data
           end
         end
       ERB
@@ -394,30 +459,47 @@ class NumberAnalyzer::PluginTemplate
         #{'  '}
           # Format data for output
           def self.format_data(data, options = {})
-            # TODO: Implement data formatting logic
-            raise NotImplementedError, 'Data formatting not implemented'
+            # Example data formatting implementation
+            # Customize this for your specific output format
         #{'    '}
-            # Example implementation:
-            # case data
-            # when Hash
-            #   format_hash(data, options)
-            # when Array
-            #   format_array(data, options)
-            # else
-            #   data.to_s
-            # end
+            case data
+            when Hash
+              format_hash(data, options)
+            when Array
+              format_array(data, options)
+            when Numeric
+              precision = options[:precision] || 2
+              "%.#{precision}f" % data
+            else
+              data.to_s
+            end
           end
         #{'  '}
           private
         #{'  '}
           def self.format_hash(hash, options)
-            # TODO: Implement hash formatting
-            hash.to_s
+            # Example hash formatting (customize for your format)
+            indent = options[:indent] || 0
+            spacing = ' ' * indent
+        #{'    '}
+            formatted = hash.map do |key, value|
+              formatted_value = value.is_a?(Numeric) ? ("%.#{options[:precision] || 2}f" % value) : value
+              "#{spacing}#{key}: #{formatted_value}"
+            end
+        #{'    '}
+            formatted.join("\n")
           end
         #{'  '}
           def self.format_array(array, options)
-            # TODO: Implement array formatting
-            array.to_s
+            # Example array formatting (customize for your format)
+            separator = options[:separator] || ', '
+            precision = options[:precision] || 2
+        #{'    '}
+            formatted_items = array.map do |item|
+              item.is_a?(Numeric) ? ("%.#{precision}f" % item) : item.to_s
+            end
+        #{'    '}
+            formatted_items.join(separator)
           end
         end
       ERB
@@ -445,12 +527,25 @@ class NumberAnalyzer::PluginTemplate
         #{'  '}
           # Validate data
           def self.validate(data, options = {})
-            # TODO: Implement data validation logic
+            # Example data validation implementation
+            # Add your specific validation rules here
             errors = []
         #{'    '}
-            # Example validations:
-            # errors << 'Data cannot be empty' if data.empty?
-            # errors << 'Data must be numeric' unless data.all? { |x| x.is_a?(Numeric) }
+            # Basic validations
+            errors << 'Data cannot be nil' if data.nil?
+            errors << 'Data cannot be empty' if data.respond_to?(:empty?) && data.empty?
+        #{'    '}
+            # Type-specific validations
+            if data.is_a?(Array)
+              errors << 'Array contains non-numeric values' unless data.all? { |x| x.is_a?(Numeric) }
+              errors << 'Array contains infinite values' if data.any? { |x| x.is_a?(Float) && x.infinite? }
+              errors << 'Array contains NaN values' if data.any? { |x| x.is_a?(Float) && x.nan? }
+            end
+        #{'    '}
+            # Custom validation based on options
+            if options[:min_size] && data.respond_to?(:size)
+              errors << "Data size #{data.size} is below minimum #{options[:min_size]}" if data.size < options[:min_size]
+            end
         #{'    '}
             {
               valid: errors.empty?,
@@ -462,8 +557,13 @@ class NumberAnalyzer::PluginTemplate
           private
         #{'  '}
           def self.validate_numeric(data)
-            # TODO: Implement numeric validation
-            data.all? { |x| x.is_a?(Numeric) }
+            # Example numeric validation with comprehensive checks
+            return false unless data.respond_to?(:all?)
+        #{'    '}
+            data.all? do |value|
+              value.is_a?(Numeric) &&#{' '}
+              !value.is_a?(Float) || (!value.infinite? && !value.nan?)
+            end
           end
         end
       ERB
@@ -497,24 +597,79 @@ class NumberAnalyzer::PluginTemplate
         #{'  '}
           # Main integration method
           def run_<%= config[:plugin_name] %>
-            # TODO: Implement integration logic
-            {
-              result: "#{self.class.name} integration completed",
-              data: @numbers,
-              interpretation: "Integration with external system successful"
-            }
+            # Example integration implementation
+            # Replace with your specific integration logic
+        #{'    '}
+            begin
+              # Step 1: Connect to external system
+              connection = connect_to_external_system
+        #{'      '}
+              # Step 2: Process data
+              processed_data = process_external_data(@numbers)
+        #{'      '}
+              # Step 3: Return results
+              {
+                result: "Integration completed successfully",
+                data: processed_data,
+                interpretation: "Successfully integrated #{@numbers.length} data points with external system",
+                connection_status: connection ? 'connected' : 'disconnected'
+              }
+            rescue => e
+              {
+                result: "Integration failed",
+                data: @numbers,
+                interpretation: "Integration failed: #{e.message}",
+                error: e.message
+              }
+            end
           end
         #{'  '}
           private
         #{'  '}
           # Helper methods for integration
           def connect_to_external_system
-            # TODO: Implement connection logic
+            # Example connection logic for external system
+            # Replace with your specific connection implementation
+        #{'    '}
+            begin
+              # Example: Connect to database, API, or external service
+              # connection = SomeExternalAPI.connect(
+              #   host: 'api.example.com',
+              #   token: ENV['API_TOKEN']
+              # )
+        #{'      '}
+              # For demonstration, return a mock connection
+              puts "Connecting to external system..."
+              sleep(0.1) # Simulate connection time
+        #{'      '}
+              # Return connection object or true/false
+              true
+            rescue => e
+              puts "Connection failed: #{e.message}"
+              false
+            end
           end
         #{'  '}
           def process_external_data(data)
-            # TODO: Implement data processing logic
-            data
+            # Example data processing logic
+            # Customize this based on your integration requirements
+        #{'    '}
+            return [] if data.nil? || data.empty?
+        #{'    '}
+            # Example: Transform data for external system
+            processed = data.map do |value|
+              {
+                original_value: value,
+                processed_value: value * 1.0, # Example transformation
+                timestamp: Time.now.iso8601,
+                status: 'processed'
+              }
+            end
+        #{'    '}
+            # Example: Log processing
+            puts "Processed #{processed.length} data points"
+        #{'    '}
+            processed
           end
         end
       ERB

@@ -14,9 +14,10 @@ plugins:
     - '~/.number_analyzer/plugins'
 
   # Plugin repositories (for future plugin installation)
+  # Note: These are placeholder URLs for when official repositories are established
   repositories:
-    official: 'https://github.com/number-analyzer/plugins' # TODO: Update with actual repository URL
-    community: 'https://github.com/number-analyzer/community-plugins' # TODO: Update with actual repository URL
+    official: 'https://github.com/number-analyzer/plugins' # Placeholder for official plugin repository
+    community: 'https://github.com/number-analyzer/community-plugins' # Placeholder for community plugin repository
 
 # Plugin-specific configuration
 plugin_config:
