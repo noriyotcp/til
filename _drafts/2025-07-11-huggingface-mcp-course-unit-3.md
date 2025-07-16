@@ -213,27 +213,66 @@ Cloudflare Tunnelを使用してMCPサーバーをテストする際、MCPサー
 
 ## Module 3: Slack Notification
 ### The Communication Gap Crisis
+**コミュニケーションギャップの解消：** CodeCraft Studiosの開発チームは、プルリクエストの説明が改善され、CI/CDの失敗も即座に検知できるようになりました。しかし、週末にバックエンドチームが修正したAPI統合の問題をフロントエンドチームが気づかず、12時間も無駄にするという新たな問題が発生しました。また、デザインチームが完成させた新しいユーザーオンボーディングのイラストも、フロントエンドチームに伝わらず、一時的なデザインが使用されるという情報のサイロ化が発生しました。
+
 ### What You’ll Build
+**Slack通知システムの構築：** このモジュールでは、チーム全体に重要な情報を自動的に通知するインテリジェントなSlack通知システムを構築します。これには、CI/CDイベントに関するSlackメッセージを送信するためのSlack webhookツール、通知のフォーマットを行うプロンプト、およびMCPプリミティブ全体の統合が含まれます。
+
+CI/CDパイプラインの状況（成功・失敗）を、状況に応じたメッセージとして自動でSlackに通知するシステムを構築します。完成した自動化システムのデモ動画も紹介されています。
+
 #### Screencast: The Complete Automation System! 🎉
 ### Learning Objectives
+このモジュールを通じて、MCPサーバーにSlack通知ツールを追加する方法、プロンプトを使ってメッセージを整形する方法、そしてCI/CDワークフローにこれらを統合する方法を学びます。
+
 ### Prerequisites
+前のモジュールで完成させたMCPサーバー、Slackワークスペース、そしてGitHubリポジトリの準備が必要であると説明しています。
+
 ### Key Concepts
+Webhook、MCPサーバー、Slackが連携する「MCP統合パターン」や、Slackメッセージで見栄えを良くするためのMarkdown記法について解説しています。
+
 #### MCP Integration Pattern
 #### Slack Markdown Formatting
+**Slack Markdownの活用：** Slackメッセージをリッチに表現するために、Slack Markdownを使用します。太字、イタリック、コードブロック、引用、絵文字、リンクなどの書式設定を活用し、情報を分かりやすく整理します。
+
 ### Project Structure
+演習で使うプロジェクトのディレクトリ構成（`starter`と`solution`）について説明しています。
+
 ### Implementation Steps
 #### Step 1: Set Up Slack Integration (10 min)
+1.  **Slack連携のセットアップ**: Slackアプリを作成し、通知を送るためのWebhook URLを取得します。
 #### Step 2: Add Slack Tool (15 min)
+2.  **Slackツールの追加**: `send_slack_notification`というツールをMCPサーバーに追加します。
+
+**Slackツールの実装：** Slackに通知を送信するためのMCPツール`send_slack_notification`を実装します。このツールは、環境変数からWebhook URLを読み取り、SlackのWebhookにHTTPリクエストを送信してメッセージを投稿します。エラー処理も含まれます。
+
 #### Step 3: Create Formatting Prompts (15 min)
+3.  **プロンプトの作成**: CIの失敗・成功を通知するためのメッセージを生成するプロンプトを作成します。
+
+**MCPツールとプロンプトの統合：** GitHub ActionsのイベントをSlackメッセージにフォーマットするために、`format_ci_failure_alert`と`format_ci_success_summary`という2つのMCPプロンプトを実装します。これらのプロンプトは、CI/CDの失敗や成功をチームに分かりやすく通知するために使用されます。
+
 #### Step 4: Test Complete Workflow (10 min)
+4.  **ワークフローのテスト**: Webhookの受信からSlack通知まで、一連の流れをテストします。
+
+**完全なワークフローのテスト：** Module 2からのWebhookキャプチャ、このモジュールからのプロンプトフォーマット、およびSlack通知を組み合わせて、完全なMCPワークフローをテストします。GitHub Webhookからのイベントをシミュレートし、Claudeにイベントをチェックさせ、プロンプトを使用してフォーマットさせ、Slackツールを使用してメッセージを送信させます。
+
 #### Step 5: Verify Integration (5 min)
+5.  **統合の検証**: `curl`コマンドを使い、手動でGitHubのWebhookイベントをシミュレートして動作確認する方法を説明しています。
+
 ### Example Workflow in Claude Code
+ユーザーがAIアシスタントであるClaude Codeに指示を出し、最近のイベントを確認させ、整形されたメッセージをSlackに送信させるまでの対話例を示しています。
+
 ### Expected Slack Message Output
+CI/CDの失敗時と成功時に、実際にSlackに投稿されるメッセージのサンプルを提示しています。
+
 ### Common Issues
+Webhook URLの設定ミス、メッセージフォーマットのエラー、ネットワークエラーなど、実装中によく発生する問題とその解決策をまとめています。
+
 #### Webhook URL Issues
 #### Message Formatting
 #### Network Errors
 ### Key Takeaways
+**実践的な応用例：** このモジュールは、外部APIとの統合、インテリジェントなメッセージフォーマット、MCPプリミティブの統合など、実際の開発チームが利用できる実用的な自動化ツールを構築する方法を示しています。特に、コミュニケーションギャップを解消し、開発効率を向上させるという点に重点が置かれています。
+
 ### Next Steps
 #### What to do next:
 #### The transformation is complete!
