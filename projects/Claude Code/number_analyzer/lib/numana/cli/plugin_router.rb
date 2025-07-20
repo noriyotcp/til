@@ -31,7 +31,7 @@ module Numana::CLI::PluginRouter
 
   # Execute command through CommandRegistry
   def execute_registry_command(command, args, options)
-    Numana::Commands::CommandRegistry.execute_command(command, args, options)
+    Numana::Commands::CommandRegistry.execute_command?(command, args, options)
   end
 
   # Get core command method name

@@ -3,6 +3,7 @@
 # Plugin System for NumberAnalyzer
 # Main interface that delegates to core components
 class Numana::PluginSystem
+  # Implementation added after require statements to resolve circular dependencies
 end
 
 require_relative 'plugin_system/core'
@@ -10,6 +11,7 @@ require_relative 'plugin_system/loader'
 require_relative 'plugin_system/health_monitor'
 require_relative 'plugin_system/priority_manager'
 
+# Reopen class to add implementation
 class Numana::PluginSystem
   def initialize
     @core = Numana::PluginSystem::Core.new

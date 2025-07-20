@@ -110,18 +110,18 @@ RSpec.describe Numana::Commands::CommandRegistry do
 
     context 'with registered command' do
       it 'creates instance and executes command' do
-        expect { described_class.execute_command('test', %w[1 2 3]) }
+        expect { described_class.execute_command?('test', %w[1 2 3]) }
           .to output("12.0\n").to_stdout # (1+2+3) * 2 = 12
       end
 
       it 'passes options to command execution' do
-        expect { described_class.execute_command('test', %w[1 2 3], format: 'json') }
+        expect { described_class.execute_command?('test', %w[1 2 3], format: 'json') }
           .to output(include('"value": 12')).to_stdout
       end
 
       it 'returns true on successful execution' do
         result = nil
-        expect { result = described_class.execute_command('test', %w[1 2 3]) }
+        expect { result = described_class.execute_command?('test', %w[1 2 3]) }
           .to output(anything).to_stdout
         expect(result).to be true
       end
@@ -129,12 +129,12 @@ RSpec.describe Numana::Commands::CommandRegistry do
 
     context 'with unregistered command' do
       it 'returns false' do
-        result = described_class.execute_command('nonexistent', %w[1 2 3])
+        result = described_class.execute_command?('nonexistent', %w[1 2 3])
         expect(result).to be false
       end
 
       it 'does not output anything' do
-        expect { described_class.execute_command('nonexistent', %w[1 2 3]) }
+        expect { described_class.execute_command?('nonexistent', %w[1 2 3]) }
           .not_to output.to_stdout
       end
     end
@@ -143,7 +143,7 @@ RSpec.describe Numana::Commands::CommandRegistry do
       it 'lets the error bubble up' do
         allow_any_instance_of(test_command_class).to receive(:execute).and_raise(StandardError, 'Test error')
 
-        expect { described_class.execute_command('test', %w[1 2 3]) }
+        expect { described_class.execute_command?('test', %w[1 2 3]) }
           .to raise_error(StandardError, 'Test error')
       end
     end

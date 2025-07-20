@@ -26,7 +26,7 @@ class Numana::Commands::CommandRegistry
 
     # Execute a command by name with arguments and options
     # Returns true if command was found and executed, false if command not found
-    def execute_command(command_name, args, options = {})
+    def execute_command?(command_name, args, options = {})
       command_class = get(command_name)
       return false unless command_class
 
