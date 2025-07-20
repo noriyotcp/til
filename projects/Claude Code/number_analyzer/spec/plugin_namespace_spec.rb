@@ -4,8 +4,8 @@ require 'spec_helper'
 require_relative '../lib/number_analyzer/plugin_namespace'
 require_relative '../lib/number_analyzer/plugin_priority'
 
-RSpec.describe NumberAnalyzer::PluginNamespace do
-  let(:priority_system) { NumberAnalyzer::PluginPriority.new }
+RSpec.describe Numana::PluginNamespace do
+  let(:priority_system) { Numana::PluginPriority.new }
   let(:namespace_system) { described_class.new(priority_system) }
 
   # Mock plugin metadata for testing

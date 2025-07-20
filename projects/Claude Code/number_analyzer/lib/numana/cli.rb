@@ -7,28 +7,28 @@ require_relative 'plugin_conflict_resolver'
 require_relative 'plugin_namespace'
 require_relative 'plugin_priority'
 
-# Command Line Interface for NumberAnalyzer
-# Handles command-line argument parsing and validation for NumberAnalyzer
-class NumberAnalyzer::CLI
+# Command Line Interface for Numana
+# Handles command-line argument parsing and validation for Numana
+class Numana::CLI
   # Core built-in commands (now moved to CommandRegistry)
   CORE_COMMANDS = {}.freeze
 
   class << self
     # Get all available commands (core + plugin + command registry)
     def commands
-      NumberAnalyzer::CLI::CommandCache.commands
+      Numana::CLI::CommandCache.commands
     end
 
     # Register a new command from a plugin
     def register_command(command_name, plugin_class, method_name)
       plugin_commands[command_name] = { plugin_class: plugin_class, method: method_name }
       # Invalidate cache when new command is registered
-      NumberAnalyzer::CLI::CommandCache.invalidate!
+      Numana::CLI::CommandCache.invalidate!
     end
 
     # Initialize plugin system
     def plugin_system
-      @plugin_system ||= NumberAnalyzer::PluginSystem.new
+      @plugin_system ||= Numana::PluginSystem.new
     end
 
     # Load plugins on CLI initialization
@@ -53,10 +53,10 @@ class NumberAnalyzer::CLI
   # Main entry point for CLI
   def self.run(argv = ARGV)
     initialize_plugins
-    return NumberAnalyzer::CLI::HelpGenerator.show_general_help if argv.empty?
+    return Numana::CLI::HelpGenerator.show_general_help if argv.empty?
 
     command = argv.first
-    return NumberAnalyzer::CLI::HelpGenerator.show_general_help if ['--help', '-h'].include?(command)
+    return Numana::CLI::HelpGenerator.show_general_help if ['--help', '-h'].include?(command)
 
     if commands.key?(command)
       run_subcommand(command, argv[1..])
@@ -68,24 +68,24 @@ class NumberAnalyzer::CLI
   end
 
   def self.parse_arguments(argv = ARGV)
-    NumberAnalyzer::CLI::InputProcessor.process_arguments(argv)
+    Numana::CLI::InputProcessor.process_arguments(argv)
   end
 
   private_class_method def self.run_full_analysis(argv)
     numbers = parse_arguments(argv)
-    analyzer = NumberAnalyzer.new(numbers)
+    analyzer = Numana.new(numbers)
     analyzer.calculate_statistics
   end
 
   private_class_method def self.run_subcommand(command, args)
-    options, remaining_args = NumberAnalyzer::CLI::Options.parse_special_command_options(args, command)
-    NumberAnalyzer::CLI::PluginRouter.route_command(command, remaining_args, options)
+    options, remaining_args = Numana::CLI::Options.parse_special_command_options(args, command)
+    Numana::CLI::PluginRouter.route_command(command, remaining_args, options)
   end
 
   private_class_method def self.handle_unknown_command(command)
-    NumberAnalyzer::CLI::ErrorHandler.handle_unknown_command(command, commands.keys)
-  rescue NumberAnalyzer::CLI::ErrorHandler::CLIError => e
-    NumberAnalyzer::CLI::ErrorHandler.print_error_and_exit(e)
+    Numana::CLI::ErrorHandler.handle_unknown_command(command, commands.keys)
+  rescue Numana::CLI::ErrorHandler::CLIError => e
+    Numana::CLI::ErrorHandler.print_error_and_exit(e)
   end
 end
 
@@ -98,4 +98,4 @@ require_relative 'cli/plugin_router'
 require_relative 'cli/commands'
 
 # Execution section (only when run as a Ruby script)
-NumberAnalyzer::CLI.run(ARGV) if __FILE__ == $PROGRAM_NAME
+Numana::CLI.run(ARGV) if __FILE__ == $PROGRAM_NAME

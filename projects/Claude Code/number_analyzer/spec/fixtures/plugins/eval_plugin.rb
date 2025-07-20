@@ -2,7 +2,7 @@
 
 # Dangerous plugin with eval - FOR TESTING ONLY
 module EvalPlugin
-  include NumberAnalyzer::StatisticsPlugin
+  include Numana::StatisticsPlugin
 
   plugin_name 'eval_danger'
   plugin_version '1.0.0'

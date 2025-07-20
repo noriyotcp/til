@@ -2,7 +2,7 @@
 
 # Command caching module for NumberAnalyzer CLI
 # Provides performance optimization through command list caching
-module NumberAnalyzer::CLI::CommandCache
+module Numana::CLI::CommandCache
   extend self
 
   # Cache time-to-live in seconds
@@ -25,9 +25,9 @@ module NumberAnalyzer::CLI::CommandCache
 
   # Check if plugin system is available
   def plugin_system_available?
-    return false unless NumberAnalyzer::CLI.respond_to?(:plugin_system)
+    return false unless Numana::CLI.respond_to?(:plugin_system)
 
-    !NumberAnalyzer::CLI.plugin_system.nil?
+    !Numana::CLI.plugin_system.nil?
   end
 
   # Get plugin commands if available
@@ -35,7 +35,7 @@ module NumberAnalyzer::CLI::CommandCache
     return {} unless plugin_system_available?
 
     # Get commands registered through plugins
-    NumberAnalyzer::CLI.instance_variable_get(:@plugin_commands) || {}
+    Numana::CLI.instance_variable_get(:@plugin_commands) || {}
   rescue StandardError
     {}
   end
@@ -54,11 +54,11 @@ module NumberAnalyzer::CLI::CommandCache
     commands = {}
 
     # Add core commands from CORE_COMMANDS constant
-    commands.merge!(NumberAnalyzer::CLI::CORE_COMMANDS) if defined?(NumberAnalyzer::CLI::CORE_COMMANDS)
+    commands.merge!(Numana::CLI::CORE_COMMANDS) if defined?(Numana::CLI::CORE_COMMANDS)
 
     # Add commands from CommandRegistry
-    if defined?(NumberAnalyzer::Commands::CommandRegistry)
-      NumberAnalyzer::Commands::CommandRegistry.all.each do |cmd|
+    if defined?(Numana::Commands::CommandRegistry)
+      Numana::Commands::CommandRegistry.all.each do |cmd|
         commands[cmd] ||= :run_from_registry
       end
     end

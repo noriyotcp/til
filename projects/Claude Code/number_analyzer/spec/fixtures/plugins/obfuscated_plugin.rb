@@ -2,7 +2,7 @@
 
 # Plugin with obfuscated code - FOR TESTING ONLY
 module ObfuscatedPlugin
-  include NumberAnalyzer::StatisticsPlugin
+  include Numana::StatisticsPlugin
 
   plugin_name 'obfuscated'
   plugin_version '1.0.0'

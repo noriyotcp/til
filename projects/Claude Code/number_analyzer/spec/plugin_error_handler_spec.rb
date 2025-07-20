@@ -4,7 +4,7 @@ require 'spec_helper'
 require 'number_analyzer/plugin_error_handler'
 require 'number_analyzer/dependency_resolver'
 
-RSpec.describe NumberAnalyzer::PluginErrorHandler do
+RSpec.describe Numana::PluginErrorHandler do
   let(:logger) { instance_double(Logger, error: nil, warn: nil, info: nil) }
   let(:error_handler) { described_class.new(logger: logger) }
 
@@ -244,8 +244,8 @@ RSpec.describe NumberAnalyzer::PluginErrorHandler do
   end
 end
 
-RSpec.describe NumberAnalyzer::PluginErrorReport do
-  let(:error_handler) { NumberAnalyzer::PluginErrorHandler.new }
+RSpec.describe Numana::PluginErrorReport do
+  let(:error_handler) { Numana::PluginErrorHandler.new }
 
   describe '.generate' do
     before do
@@ -269,7 +269,7 @@ RSpec.describe NumberAnalyzer::PluginErrorReport do
     end
 
     it 'handles empty error log gracefully' do
-      empty_handler = NumberAnalyzer::PluginErrorHandler.new
+      empty_handler = Numana::PluginErrorHandler.new
       report = described_class.generate(empty_handler)
 
       expect(report).to include('Total Errors: 0')

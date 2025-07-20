@@ -6,7 +6,7 @@ require 'json'
 # Handles reading numeric data from various file formats
 # FileReader provides functionality to read numeric data from CSV, JSON, and TXT files.
 # Supports automatic format detection and robust error handling for various data layouts.
-class NumberAnalyzer::FileReader
+class Numana::FileReader
   SUPPORTED_FORMATS = %w[.csv .json .txt].freeze
 
   def self.read_from_file(file_path)

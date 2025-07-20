@@ -3,7 +3,7 @@
 require 'spec_helper'
 require_relative '../lib/number_analyzer'
 
-RSpec.describe NumberAnalyzer do
+RSpec.describe Numana do
   describe 'Bartlett Test for Variance Homogeneity' do
     describe '#bartlett_test' do
       context 'when groups have equal variances' do
@@ -11,7 +11,7 @@ RSpec.describe NumberAnalyzer do
         let(:group1) { [1, 2, 3, 4, 5] }        # variance ≈ 2.5
         let(:group2) { [2, 3, 4, 5, 6] }        # variance ≈ 2.5
         let(:group3) { [3, 4, 5, 6, 7] }        # variance ≈ 2.5
-        let(:analyzer) { NumberAnalyzer.new([]) }
+        let(:analyzer) { Numana.new([]) }
 
         it 'returns correct test structure' do
           result = analyzer.bartlett_test(group1, group2, group3)
@@ -64,7 +64,7 @@ RSpec.describe NumberAnalyzer do
         let(:group1) { [1, 1, 1, 1, 1] }        # variance = 0 (constant)
         let(:group2) { [1, 5, 9, 13, 17] }      # variance = 40 (high variability)
         let(:group3) { [10, 10.1, 9.9, 10.2, 9.8] } # variance ≈ 0.025 (low variability)
-        let(:analyzer) { NumberAnalyzer.new([]) }
+        let(:analyzer) { Numana.new([]) }
 
         it 'detects variance heterogeneity' do
           result = analyzer.bartlett_test(group1, group2, group3)
@@ -84,7 +84,7 @@ RSpec.describe NumberAnalyzer do
       context 'with two groups' do
         let(:group1) { [1, 2, 3, 4, 5] }
         let(:group2) { [6, 7, 8, 9, 10] }
-        let(:analyzer) { NumberAnalyzer.new([]) }
+        let(:analyzer) { Numana.new([]) }
 
         it 'works with minimum number of groups' do
           result = analyzer.bartlett_test(group1, group2)
@@ -98,7 +98,7 @@ RSpec.describe NumberAnalyzer do
         # Test case with known statistical properties
         let(:group1) { [1, 2, 3] }    # n=3, mean=2, variance=1
         let(:group2) { [4, 5, 6] }    # n=3, mean=5, variance=1
-        let(:analyzer) { NumberAnalyzer.new([]) }
+        let(:analyzer) { Numana.new([]) }
 
         it 'calculates statistics with mathematical accuracy' do
           result = analyzer.bartlett_test(group1, group2)
@@ -113,7 +113,7 @@ RSpec.describe NumberAnalyzer do
       end
 
       context 'edge cases and error handling' do
-        let(:analyzer) { NumberAnalyzer.new([]) }
+        let(:analyzer) { Numana.new([]) }
 
         it 'returns nil for empty groups' do
           result = analyzer.bartlett_test([], [])
@@ -145,7 +145,7 @@ RSpec.describe NumberAnalyzer do
       end
 
       context 'statistical distributions and p-value accuracy' do
-        let(:analyzer) { NumberAnalyzer.new([]) }
+        let(:analyzer) { Numana.new([]) }
 
         it 'produces valid p-values between 0 and 1' do
           group1 = [1, 2, 3, 4, 5]

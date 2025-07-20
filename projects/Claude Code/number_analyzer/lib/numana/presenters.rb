@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 # Presenters module for statistical test output formatting
-module NumberAnalyzer::Presenters
+module Numana::Presenters
 end
 
 # Load all presenter classes

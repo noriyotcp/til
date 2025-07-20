@@ -4,7 +4,7 @@ require_relative '../base_command'
 require_relative '../../presenters/quartiles_presenter'
 
 # Command for calculating Q1, Q2 (median), and Q3 values
-class NumberAnalyzer::Commands::QuartilesCommand < NumberAnalyzer::Commands::BaseCommand
+class Numana::Commands::QuartilesCommand < Numana::Commands::BaseCommand
   command 'quartiles', 'Calculate Q1, Q2 (median), and Q3 values'
 
   private
@@ -18,13 +18,13 @@ class NumberAnalyzer::Commands::QuartilesCommand < NumberAnalyzer::Commands::Bas
   def perform_calculation(data)
     raise ArgumentError, 'Cannot calculate quartiles for empty array' if data.empty?
 
-    analyzer = NumberAnalyzer.new(data)
+    analyzer = Numana.new(data)
     analyzer.quartiles
   end
 
   def output_result(result)
     @options[:dataset_size] = @data&.size if @data
-    presenter = NumberAnalyzer::Presenters::QuartilesPresenter.new(result, @options)
+    presenter = Numana::Presenters::QuartilesPresenter.new(result, @options)
     puts presenter.format
   end
 

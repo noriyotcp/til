@@ -4,8 +4,8 @@ require_relative '../base_command'
 require_relative '../../formatting_utils'
 
 # Command for calculating percentile values (0-100)
-class NumberAnalyzer::Commands::PercentileCommand < NumberAnalyzer::Commands::BaseCommand
-  include NumberAnalyzer::FormattingUtils
+class Numana::Commands::PercentileCommand < Numana::Commands::BaseCommand
+  include Numana::FormattingUtils
   command 'percentile', 'Calculate percentile value (0-100)'
 
   private
@@ -20,7 +20,7 @@ class NumberAnalyzer::Commands::PercentileCommand < NumberAnalyzer::Commands::Ba
     raise ArgumentError, 'Cannot calculate percentile for empty array' if data.empty?
 
     percentile_value = parse_percentile_value(@percentile_value_str)
-    analyzer = NumberAnalyzer.new(data)
+    analyzer = Numana.new(data)
     analyzer.percentile(percentile_value)
   end
 

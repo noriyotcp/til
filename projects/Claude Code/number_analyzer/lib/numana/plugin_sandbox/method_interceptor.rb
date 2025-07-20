@@ -4,7 +4,7 @@ require 'set'
 
 # Method interceptor for plugin sandboxing
 # Blocks dangerous methods and allows only whitelisted operations
-class NumberAnalyzer::PluginSandbox::MethodInterceptor
+class Numana::PluginSandbox::MethodInterceptor
   ALLOWED_METHODS = {
     # Basic mathematical operations (always safe)
     mathematics: %i[

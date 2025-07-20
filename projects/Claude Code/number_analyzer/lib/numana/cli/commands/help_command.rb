@@ -3,7 +3,7 @@
 require_relative '../base_command'
 
 # Command for displaying help information
-class NumberAnalyzer::Commands::HelpCommand < NumberAnalyzer::Commands::BaseCommand
+class Numana::Commands::HelpCommand < Numana::Commands::BaseCommand
   command 'help', 'Display help information for commands'
 
   # Override to show help-specific help instead of general help
@@ -92,8 +92,8 @@ class NumberAnalyzer::Commands::HelpCommand < NumberAnalyzer::Commands::BaseComm
 
   def show_command_help(command_name)
     # Check if command exists in CommandRegistry
-    if NumberAnalyzer::Commands::CommandRegistry.exists?(command_name)
-      command_class = NumberAnalyzer::Commands::CommandRegistry.get(command_name)
+    if Numana::Commands::CommandRegistry.exists?(command_name)
+      command_class = Numana::Commands::CommandRegistry.get(command_name)
       command = command_class.new
       command.show_help
     else

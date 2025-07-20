@@ -3,7 +3,7 @@
 require 'spec_helper'
 require 'number_analyzer/presenters/kruskal_wallis_test_presenter'
 
-RSpec.describe NumberAnalyzer::Presenters::KruskalWallisTestPresenter do
+RSpec.describe Numana::Presenters::KruskalWallisTestPresenter do
   let(:kruskal_wallis_result) do
     {
       test_type: 'Kruskal-Wallis H Test',
@@ -33,7 +33,7 @@ RSpec.describe NumberAnalyzer::Presenters::KruskalWallisTestPresenter do
   describe '#initialize' do
     it 'inherits from BaseStatisticalPresenter' do
       presenter = described_class.new(kruskal_wallis_result, {})
-      expect(presenter).to be_a(NumberAnalyzer::Presenters::BaseStatisticalPresenter)
+      expect(presenter).to be_a(Numana::Presenters::BaseStatisticalPresenter)
     end
 
     it 'accepts result and options' do
@@ -186,21 +186,21 @@ RSpec.describe NumberAnalyzer::Presenters::KruskalWallisTestPresenter do
 
     it 'produces same output as StatisticsPresenter.format_kruskal_wallis_test for verbose format' do
       new_output = presenter.format_verbose
-      old_output = NumberAnalyzer::StatisticsPresenter.format_kruskal_wallis_test(kruskal_wallis_result, { precision: 3 })
+      old_output = Numana::StatisticsPresenter.format_kruskal_wallis_test(kruskal_wallis_result, { precision: 3 })
 
       expect(new_output).to eq(old_output)
     end
 
     it 'produces same output as StatisticsPresenter.format_kruskal_wallis_test for JSON format' do
       new_output = presenter.format_json
-      old_output = NumberAnalyzer::StatisticsPresenter.format_kruskal_wallis_test(kruskal_wallis_result, { format: 'json', precision: 3 })
+      old_output = Numana::StatisticsPresenter.format_kruskal_wallis_test(kruskal_wallis_result, { format: 'json', precision: 3 })
 
       expect(JSON.parse(new_output)).to eq(JSON.parse(old_output))
     end
 
     it 'produces same output as StatisticsPresenter.format_kruskal_wallis_test for quiet format' do
       new_output = presenter.format_quiet
-      old_output = NumberAnalyzer::StatisticsPresenter.format_kruskal_wallis_test(kruskal_wallis_result, { quiet: true, precision: 3 })
+      old_output = Numana::StatisticsPresenter.format_kruskal_wallis_test(kruskal_wallis_result, { quiet: true, precision: 3 })
 
       expect(new_output).to eq(old_output)
     end

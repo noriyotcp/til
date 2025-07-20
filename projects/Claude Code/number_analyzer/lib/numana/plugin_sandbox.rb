@@ -4,7 +4,7 @@ require 'timeout'
 
 # Plugin Sandbox for secure plugin execution
 # Provides multi-layer security through method interception, resource control, and capability management
-class NumberAnalyzer::PluginSandbox
+class Numana::PluginSandbox
   attr_reader :config, :interceptor, :resource_monitor, :capability_manager
 
   SECURITY_LEVELS = {
@@ -27,9 +27,9 @@ class NumberAnalyzer::PluginSandbox
 
   def initialize(security_level: :production, trusted_plugins: [])
     @config = load_security_config(security_level)
-    @interceptor = NumberAnalyzer::PluginSandbox::MethodInterceptor.new(@config[:method_whitelist])
-    @resource_monitor = NumberAnalyzer::PluginSandbox::ResourceMonitor.new
-    @capability_manager = NumberAnalyzer::PluginSandbox::CapabilityManager.new(trusted_plugins)
+    @interceptor = Numana::PluginSandbox::MethodInterceptor.new(@config[:method_whitelist])
+    @resource_monitor = Numana::PluginSandbox::ResourceMonitor.new
+    @capability_manager = Numana::PluginSandbox::CapabilityManager.new(trusted_plugins)
     @security_level = security_level
   end
 
@@ -77,16 +77,16 @@ class NumberAnalyzer::PluginSandbox
       yield sandbox_binding
     end
   rescue Timeout::Error
-    raise NumberAnalyzer::PluginTimeoutError,
+    raise Numana::PluginTimeoutError,
           "Plugin '#{plugin_name}' execution exceeded time limit (#{@resource_monitor.cpu_time_limit}s)"
   rescue SecurityError => e
-    raise NumberAnalyzer::PluginSecurityError,
+    raise Numana::PluginSecurityError,
           "Security violation in plugin '#{plugin_name}': #{e.message}"
-  rescue NumberAnalyzer::PluginResourceError, NumberAnalyzer::PluginTimeoutError => e
+  rescue Numana::PluginResourceError, Numana::PluginTimeoutError => e
     # Preserve resource and timeout errors as-is
     raise e
   rescue StandardError => e
-    raise NumberAnalyzer::PluginExecutionError,
+    raise Numana::PluginExecutionError,
           "Plugin '#{plugin_name}' execution failed: #{e.message}"
   end
 
@@ -104,7 +104,7 @@ class NumberAnalyzer::PluginSandbox
   def validate_plugin_syntax(plugin_code)
     RubyVM::InstructionSequence.compile(plugin_code)
   rescue SyntaxError => e
-    raise NumberAnalyzer::PluginSyntaxError, "Plugin syntax error: #{e.message}"
+    raise Numana::PluginSyntaxError, "Plugin syntax error: #{e.message}"
   end
 
   def load_security_config(security_level)
@@ -134,12 +134,12 @@ class NumberAnalyzer::PluginSandbox
 end
 
 # Custom error classes for plugin security
-class NumberAnalyzer::PluginSecurityError < StandardError; end
-class NumberAnalyzer::PluginTimeoutError < NumberAnalyzer::PluginSecurityError; end
-class NumberAnalyzer::PluginResourceError < NumberAnalyzer::PluginSecurityError; end
-class NumberAnalyzer::PluginExecutionError < StandardError; end
-class NumberAnalyzer::PluginSyntaxError < NumberAnalyzer::PluginExecutionError; end
-class NumberAnalyzer::PluginCapabilityError < NumberAnalyzer::PluginSecurityError; end
+class Numana::PluginSecurityError < StandardError; end
+class Numana::PluginTimeoutError < Numana::PluginSecurityError; end
+class Numana::PluginResourceError < Numana::PluginSecurityError; end
+class Numana::PluginExecutionError < StandardError; end
+class Numana::PluginSyntaxError < Numana::PluginExecutionError; end
+class Numana::PluginCapabilityError < Numana::PluginSecurityError; end
 
 # Load subcomponents after the main class and error classes are defined
 require_relative 'plugin_sandbox/method_interceptor'

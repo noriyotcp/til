@@ -8,7 +8,7 @@ require 'fileutils'
 # Centralized Plugin Registry for NumberAnalyzer
 # Manages plugin registration, discovery, and metadata validation
 # Central registry for managing all plugins in the system
-class NumberAnalyzer::PluginRegistry
+class Numana::PluginRegistry
   class << self
     # Plugin registration errors
     class PluginError < StandardError; end
@@ -378,8 +378,8 @@ class NumberAnalyzer::PluginRegistry
 
       commands.each do |command_name, method_name|
         # Register with CLI system if available
-        if defined?(NumberAnalyzer::CLI) && NumberAnalyzer::CLI.respond_to?(:register_command)
-          NumberAnalyzer::CLI.register_command(command_name, plugin_class, method_name)
+        if defined?(Numana::CLI) && Numana::CLI.respond_to?(:register_command)
+          Numana::CLI.register_command(command_name, plugin_class, method_name)
         end
       end
     end

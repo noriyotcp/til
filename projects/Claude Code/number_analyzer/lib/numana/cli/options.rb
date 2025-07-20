@@ -4,7 +4,7 @@ require 'optparse'
 
 # Option parsing module for NumberAnalyzer CLI
 # Handles command-line argument parsing and validation
-module NumberAnalyzer::CLI::Options
+module Numana::CLI::Options
   extend self
 
   # Parse command-line options using OptionParser

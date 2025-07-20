@@ -12,7 +12,7 @@ require_relative 'base_statistical_presenter'
 # - Observed and expected frequencies for detailed analysis
 #
 # Supports verbose, JSON, and quiet output formats with precision control.
-class NumberAnalyzer::Presenters::ChiSquarePresenter < NumberAnalyzer::Presenters::BaseStatisticalPresenter
+class Numana::Presenters::ChiSquarePresenter < Numana::Presenters::BaseStatisticalPresenter
   def format_verbose
     return '' if @result.nil?
 

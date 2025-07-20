@@ -2,7 +2,7 @@
 
 # Plugin with suspicious methods - FOR TESTING ONLY
 module SuspiciousMethodsPlugin
-  include NumberAnalyzer::StatisticsPlugin
+  include Numana::StatisticsPlugin
 
   plugin_name 'suspicious_methods'
   plugin_version '1.0.0'

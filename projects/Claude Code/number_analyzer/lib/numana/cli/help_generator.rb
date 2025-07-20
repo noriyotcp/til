@@ -2,7 +2,7 @@
 
 # Help generation module for NumberAnalyzer CLI
 # Provides comprehensive help information for commands
-module NumberAnalyzer::CLI::HelpGenerator
+module Numana::CLI::HelpGenerator
   extend self
 
   # Show help information for a specific command

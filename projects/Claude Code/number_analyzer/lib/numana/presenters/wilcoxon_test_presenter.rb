@@ -7,7 +7,7 @@ require_relative 'base_statistical_presenter'
 # Formats Wilcoxon signed-rank test results for non-parametric paired sample comparison
 # in multiple output formats. This test is used as an alternative to the paired t-test
 # when normal distribution cannot be assumed.
-class NumberAnalyzer::Presenters::WilcoxonTestPresenter < NumberAnalyzer::Presenters::BaseStatisticalPresenter
+class Numana::Presenters::WilcoxonTestPresenter < Numana::Presenters::BaseStatisticalPresenter
   def json_fields
     {
       test_type: @result[:test_type],

@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 # Handles validation for chi-square test inputs
-class NumberAnalyzer::CLI::ChiSquareValidator
+class Numana::CLI::ChiSquareValidator
   def initialize(options)
     @options = options
   end

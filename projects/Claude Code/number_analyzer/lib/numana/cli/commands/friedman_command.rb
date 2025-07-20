@@ -3,7 +3,7 @@
 require_relative '../base_command'
 
 # Command for performing Friedman test (non-parametric repeated measures ANOVA)
-class NumberAnalyzer::Commands::FriedmanCommand < NumberAnalyzer::Commands::BaseCommand
+class Numana::Commands::FriedmanCommand < Numana::Commands::BaseCommand
   command 'friedman', 'Non-parametric test for repeated measures across multiple conditions (Friedman test)'
 
   private
@@ -44,7 +44,7 @@ class NumberAnalyzer::Commands::FriedmanCommand < NumberAnalyzer::Commands::Base
 
   def perform_calculation(data)
     # Execute Friedman test
-    analyzer = NumberAnalyzer.new([])
+    analyzer = Numana.new([])
     result = analyzer.friedman_test(*data)
 
     raise ArgumentError, 'Could not perform Friedman test. Check your data' if result.nil?
@@ -53,7 +53,7 @@ class NumberAnalyzer::Commands::FriedmanCommand < NumberAnalyzer::Commands::Base
   end
 
   def output_result(result)
-    puts NumberAnalyzer::StatisticsPresenter.format_friedman_test(result, @options)
+    puts Numana::StatisticsPresenter.format_friedman_test(result, @options)
   end
 
   def show_help
@@ -97,7 +97,7 @@ class NumberAnalyzer::Commands::FriedmanCommand < NumberAnalyzer::Commands::Base
       raise ArgumentError, "File not found: #{filename}" unless File.exist?(filename)
 
       begin
-        data = NumberAnalyzer::FileReader.read_file(filename)
+        data = Numana::FileReader.read_file(filename)
         raise ArgumentError, "Empty file: #{filename}" if data.empty?
 
         groups << data

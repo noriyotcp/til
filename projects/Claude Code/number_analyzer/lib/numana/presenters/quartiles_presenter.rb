@@ -12,7 +12,7 @@ require_relative 'base_statistical_presenter'
 #
 # The quartiles divide a dataset into four equal parts, providing insight into
 # data distribution and variability.
-class NumberAnalyzer::Presenters::QuartilesPresenter < NumberAnalyzer::Presenters::BaseStatisticalPresenter
+class Numana::Presenters::QuartilesPresenter < Numana::Presenters::BaseStatisticalPresenter
   def format_verbose
     return '' if @result.nil?
 

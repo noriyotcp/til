@@ -2,7 +2,7 @@
 
 require 'spec_helper'
 
-RSpec.describe NumberAnalyzer::Presenters::TrendPresenter do
+RSpec.describe Numana::Presenters::TrendPresenter do
   let(:valid_trend_data) do
     {
       slope: 1.234567,

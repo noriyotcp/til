@@ -13,7 +13,7 @@ require_relative 'base_statistical_presenter'
 # - Japanese localization for user-friendly verbose output
 #
 # Supports all output modes with dataset metadata integration.
-class NumberAnalyzer::Presenters::ModePresenter < NumberAnalyzer::Presenters::BaseStatisticalPresenter
+class Numana::Presenters::ModePresenter < Numana::Presenters::BaseStatisticalPresenter
   def format_verbose
     return 'モードなし' if mode_empty?
 

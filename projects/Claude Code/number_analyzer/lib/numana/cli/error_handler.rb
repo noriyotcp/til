@@ -2,7 +2,7 @@
 
 # Error handling module for NumberAnalyzer CLI
 # Provides contextual error messages and command suggestions
-module NumberAnalyzer::CLI::ErrorHandler
+module Numana::CLI::ErrorHandler
   extend self
 
   # Custom error class with contextual information

@@ -3,7 +3,7 @@
 require_relative '../base_command'
 
 # Command for performing Levene test for variance homogeneity
-class NumberAnalyzer::Commands::LeveneCommand < NumberAnalyzer::Commands::BaseCommand
+class Numana::Commands::LeveneCommand < Numana::Commands::BaseCommand
   command 'levene', 'Test for variance homogeneity using Levene test (Brown-Forsythe)'
 
   private
@@ -35,7 +35,7 @@ class NumberAnalyzer::Commands::LeveneCommand < NumberAnalyzer::Commands::BaseCo
 
   def perform_calculation(data)
     # Execute Levene test
-    analyzer = NumberAnalyzer.new([])
+    analyzer = Numana.new([])
     result = analyzer.levene_test(*data)
 
     raise ArgumentError, 'Could not perform Levene test. Check your data' if result.nil?
@@ -44,7 +44,7 @@ class NumberAnalyzer::Commands::LeveneCommand < NumberAnalyzer::Commands::BaseCo
   end
 
   def output_result(result)
-    puts NumberAnalyzer::StatisticsPresenter.format_levene_test(result, @options)
+    puts Numana::StatisticsPresenter.format_levene_test(result, @options)
   end
 
   def show_help
@@ -88,7 +88,7 @@ class NumberAnalyzer::Commands::LeveneCommand < NumberAnalyzer::Commands::BaseCo
       raise ArgumentError, "ファイルが見つかりません: #{filename}" unless File.exist?(filename)
 
       begin
-        data = NumberAnalyzer::FileReader.read_file(filename)
+        data = Numana::FileReader.read_file(filename)
         raise ArgumentError, "空のファイル: #{filename}" if data.empty?
 
         groups << data

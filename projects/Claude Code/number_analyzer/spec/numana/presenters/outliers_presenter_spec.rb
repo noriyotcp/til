@@ -2,7 +2,7 @@
 
 require_relative '../../spec_helper'
 
-describe NumberAnalyzer::Presenters::OutliersPresenter do
+describe Numana::Presenters::OutliersPresenter do
   let(:options) { { precision: 3 } }
 
   describe 'With outliers' do

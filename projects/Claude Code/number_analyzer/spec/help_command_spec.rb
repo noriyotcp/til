@@ -3,7 +3,7 @@
 require 'spec_helper'
 require 'number_analyzer/cli/commands/help_command'
 
-RSpec.describe NumberAnalyzer::Commands::HelpCommand do
+RSpec.describe Numana::Commands::HelpCommand do
   let(:command) { described_class.new }
 
   describe '#execute' do
@@ -24,7 +24,7 @@ RSpec.describe NumberAnalyzer::Commands::HelpCommand do
     context 'with specific command argument' do
       before do
         # Ensure commands are registered
-        NumberAnalyzer::Commands.register_all
+        Numana::Commands.register_all
       end
 
       it 'shows help for valid command' do

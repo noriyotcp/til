@@ -3,7 +3,7 @@
 require 'spec_helper'
 require_relative '../lib/number_analyzer'
 
-RSpec.describe NumberAnalyzer do
+RSpec.describe Numana do
   describe 'Kruskal-Wallis H Test' do
     describe '#kruskal_wallis_test' do
       context 'when groups have different medians' do
@@ -11,7 +11,7 @@ RSpec.describe NumberAnalyzer do
         let(:group1) { [1, 2, 3, 4, 5] }        # median = 3
         let(:group2) { [6, 7, 8, 9, 10] }       # median = 8
         let(:group3) { [11, 12, 13, 14, 15] }   # median = 13
-        let(:analyzer) { NumberAnalyzer.new([]) }
+        let(:analyzer) { Numana.new([]) }
 
         it 'returns correct test structure' do
           result = analyzer.kruskal_wallis_test(group1, group2, group3)
@@ -53,7 +53,7 @@ RSpec.describe NumberAnalyzer do
         let(:group1) { [5, 6, 7, 8, 9] }        # median = 7
         let(:group2) { [4, 6, 7, 8, 10] }       # median = 7
         let(:group3) { [5, 6, 7, 8, 9] }        # median = 7
-        let(:analyzer) { NumberAnalyzer.new([]) }
+        let(:analyzer) { Numana.new([]) }
 
         it 'identifies similar medians correctly' do
           result = analyzer.kruskal_wallis_test(group1, group2, group3)
@@ -80,7 +80,7 @@ RSpec.describe NumberAnalyzer do
         let(:group1) { [1, 2, 2, 3, 4] }
         let(:group2) { [2, 3, 3, 4, 5] }
         let(:group3) { [3, 4, 4, 5, 6] }
-        let(:analyzer) { NumberAnalyzer.new([]) }
+        let(:analyzer) { Numana.new([]) }
 
         it 'handles tied values correctly' do
           result = analyzer.kruskal_wallis_test(group1, group2, group3)
@@ -108,7 +108,7 @@ RSpec.describe NumberAnalyzer do
         let(:group1) { [1, 2, 3] }              # n = 3
         let(:group2) { [4, 5, 6, 7] }           # n = 4
         let(:group3) { [8, 9, 10, 11, 12] }     # n = 5
-        let(:analyzer) { NumberAnalyzer.new([]) }
+        let(:analyzer) { Numana.new([]) }
 
         it 'handles unequal group sizes correctly' do
           result = analyzer.kruskal_wallis_test(group1, group2, group3)
@@ -126,7 +126,7 @@ RSpec.describe NumberAnalyzer do
       context 'with exactly two groups' do
         let(:group1) { [1, 2, 3, 4, 5] }
         let(:group2) { [6, 7, 8, 9, 10] }
-        let(:analyzer) { NumberAnalyzer.new([]) }
+        let(:analyzer) { Numana.new([]) }
 
         it 'works with minimum number of groups' do
           result = analyzer.kruskal_wallis_test(group1, group2)
@@ -145,7 +145,7 @@ RSpec.describe NumberAnalyzer do
         let(:group1) { [1] }
         let(:group2) { [5] }
         let(:group3) { [10] }
-        let(:analyzer) { NumberAnalyzer.new([]) }
+        let(:analyzer) { Numana.new([]) }
 
         it 'handles single values correctly' do
           result = analyzer.kruskal_wallis_test(group1, group2, group3)
@@ -160,7 +160,7 @@ RSpec.describe NumberAnalyzer do
       end
 
       context 'with error conditions' do
-        let(:analyzer) { NumberAnalyzer.new([]) }
+        let(:analyzer) { Numana.new([]) }
 
         it 'returns nil for single group' do
           result = analyzer.kruskal_wallis_test([1, 2, 3])
@@ -195,7 +195,7 @@ RSpec.describe NumberAnalyzer do
         # Known test case for verification
         let(:group1) { [1, 2, 3] }
         let(:group2) { [4, 5, 6] }
-        let(:analyzer) { NumberAnalyzer.new([]) }
+        let(:analyzer) { Numana.new([]) }
 
         it 'produces mathematically accurate results' do
           result = analyzer.kruskal_wallis_test(group1, group2)

@@ -3,7 +3,7 @@
 require_relative '../base_command'
 
 # Command for calculating linear trend analysis (slope, intercept, R²)
-class NumberAnalyzer::Commands::TrendCommand < NumberAnalyzer::Commands::BaseCommand
+class Numana::Commands::TrendCommand < Numana::Commands::BaseCommand
   command 'trend', 'Calculate linear trend analysis (slope, intercept, R²)'
 
   private
@@ -11,7 +11,7 @@ class NumberAnalyzer::Commands::TrendCommand < NumberAnalyzer::Commands::BaseCom
   def perform_calculation(data)
     raise ArgumentError, 'Error: Trend analysis requires at least 2 data points' if data.length < 2
 
-    analyzer = NumberAnalyzer.new(data)
+    analyzer = Numana.new(data)
     result = analyzer.linear_trend
 
     raise ArgumentError, 'Error: Trend analysis calculation failed' if result.nil?
@@ -21,7 +21,7 @@ class NumberAnalyzer::Commands::TrendCommand < NumberAnalyzer::Commands::BaseCom
 
   def output_result(result)
     @options[:dataset_size] = @data&.size if @data
-    presenter = NumberAnalyzer::Presenters::TrendPresenter.new(result, @options)
+    presenter = Numana::Presenters::TrendPresenter.new(result, @options)
     puts presenter.format
   end
 

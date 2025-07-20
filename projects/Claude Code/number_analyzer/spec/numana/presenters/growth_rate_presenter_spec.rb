@@ -2,7 +2,7 @@
 
 require 'spec_helper'
 
-RSpec.describe NumberAnalyzer::Presenters::GrowthRatePresenter do
+RSpec.describe Numana::Presenters::GrowthRatePresenter do
   let(:valid_growth_rate_data) do
     {
       growth_rates: [0.1, 0.2, 0.15, -0.05],

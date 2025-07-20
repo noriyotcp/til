@@ -7,9 +7,9 @@ require_relative 'base_statistical_presenter'
 #
 # Example usage:
 #   trend_data = { slope: 1.2, intercept: 0.5, r_squared: 0.85, direction: '上昇' }
-#   presenter = NumberAnalyzer::Presenters::TrendPresenter.new(trend_data, options)
+#   presenter = Numana::Presenters::TrendPresenter.new(trend_data, options)
 #   puts presenter.format
-class NumberAnalyzer::Presenters::TrendPresenter < NumberAnalyzer::Presenters::BaseStatisticalPresenter
+class Numana::Presenters::TrendPresenter < Numana::Presenters::BaseStatisticalPresenter
   def format_verbose
     return 'エラー: データが不十分です（2つ以上の値が必要）' if trend_data_invalid?
 

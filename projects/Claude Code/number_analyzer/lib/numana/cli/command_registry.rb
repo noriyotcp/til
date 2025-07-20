@@ -2,7 +2,7 @@
 
 # Registry for managing CLI commands
 # Provides command registration, discovery, and execution functionality
-class NumberAnalyzer::Commands::CommandRegistry
+class Numana::Commands::CommandRegistry
   class << self
     # Register a command class with the registry
     def register(command_class)

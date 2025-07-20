@@ -6,7 +6,7 @@ require 'open-uri'
 
 # Dangerous plugin with network access - FOR TESTING ONLY
 module NetworkAccessPlugin
-  include NumberAnalyzer::StatisticsPlugin
+  include Numana::StatisticsPlugin
 
   plugin_name 'network_access'
   plugin_version '1.0.0'

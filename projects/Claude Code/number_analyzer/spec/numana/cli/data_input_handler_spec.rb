@@ -4,7 +4,7 @@ require 'spec_helper'
 require 'fileutils'
 require 'number_analyzer/cli/data_input_handler'
 
-RSpec.describe NumberAnalyzer::Commands::DataInputHandler do
+RSpec.describe Numana::Commands::DataInputHandler do
   describe '.parse' do
     context 'with command line arguments' do
       it 'parses numeric strings to floats' do

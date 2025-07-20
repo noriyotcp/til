@@ -3,7 +3,7 @@
 require_relative '../base_command'
 
 # Command for calculating Pearson correlation coefficient between two datasets
-class NumberAnalyzer::Commands::CorrelationCommand < NumberAnalyzer::Commands::BaseCommand
+class Numana::Commands::CorrelationCommand < Numana::Commands::BaseCommand
   command 'correlation', 'Calculate Pearson correlation coefficient between two datasets'
 
   private
@@ -74,7 +74,7 @@ class NumberAnalyzer::Commands::CorrelationCommand < NumberAnalyzer::Commands::B
 
     raise ArgumentError, 'Error: Correlation calculation requires at least 2 data points' if dataset1.length < 2
 
-    analyzer = NumberAnalyzer.new(dataset1)
+    analyzer = Numana.new(dataset1)
     correlation = analyzer.correlation(dataset2)
     interpretation = analyzer.interpret_correlation(correlation)
 

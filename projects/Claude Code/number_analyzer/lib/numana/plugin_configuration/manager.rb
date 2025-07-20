@@ -4,7 +4,7 @@ require_relative 'loader'
 
 # Plugin management for NumberAnalyzer plugin system
 # Handles plugin enable/disable and status checks
-class NumberAnalyzer::PluginConfiguration::Manager
+class Numana::PluginConfiguration::Manager
   class << self
     # Enable a plugin
     def enable_plugin(plugin_name, config_path = nil)

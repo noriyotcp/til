@@ -2,7 +2,7 @@
 
 # Semantic version comparison utility for NumberAnalyzer
 # Handles version comparison and requirement satisfaction checks
-class NumberAnalyzer::VersionComparator
+class Numana::VersionComparator
   # Custom error for invalid version formats
   class InvalidVersionError < StandardError; end
 

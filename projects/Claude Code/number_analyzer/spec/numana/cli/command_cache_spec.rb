@@ -3,7 +3,7 @@
 require 'spec_helper'
 require 'number_analyzer/cli/command_cache'
 
-RSpec.describe NumberAnalyzer::CLI::CommandCache do
+RSpec.describe Numana::CLI::CommandCache do
   before do
     # Clear cache before each test
     described_class.invalidate!
@@ -51,23 +51,23 @@ RSpec.describe NumberAnalyzer::CLI::CommandCache do
   describe '.plugin_system_available?' do
     context 'when CLI has plugin_system method' do
       before do
-        allow(NumberAnalyzer::CLI).to receive(:respond_to?).and_return(true)
+        allow(Numana::CLI).to receive(:respond_to?).and_return(true)
       end
 
       it 'returns true when plugin system exists' do
-        allow(NumberAnalyzer::CLI).to receive(:plugin_system).and_return(double('PluginSystem'))
+        allow(Numana::CLI).to receive(:plugin_system).and_return(double('PluginSystem'))
         expect(described_class.plugin_system_available?).to be true
       end
 
       it 'returns false when plugin system is nil' do
-        allow(NumberAnalyzer::CLI).to receive(:plugin_system).and_return(nil)
+        allow(Numana::CLI).to receive(:plugin_system).and_return(nil)
         expect(described_class.plugin_system_available?).to be false
       end
     end
 
     context 'when CLI does not have plugin_system method' do
       before do
-        allow(NumberAnalyzer::CLI).to receive(:respond_to?).and_return(false)
+        allow(Numana::CLI).to receive(:respond_to?).and_return(false)
       end
 
       it 'returns false' do
@@ -84,21 +84,21 @@ RSpec.describe NumberAnalyzer::CLI::CommandCache do
 
       it 'returns plugin commands from CLI' do
         plugin_cmds = { 'custom' => { plugin_class: 'CustomPlugin', method: :run } }
-        allow(NumberAnalyzer::CLI).to receive(:instance_variable_get)
+        allow(Numana::CLI).to receive(:instance_variable_get)
           .with(:@plugin_commands).and_return(plugin_cmds)
 
         expect(described_class.plugin_commands).to eq(plugin_cmds)
       end
 
       it 'returns empty hash when no plugin commands exist' do
-        allow(NumberAnalyzer::CLI).to receive(:instance_variable_get)
+        allow(Numana::CLI).to receive(:instance_variable_get)
           .with(:@plugin_commands).and_return(nil)
 
         expect(described_class.plugin_commands).to eq({})
       end
 
       it 'returns empty hash on error' do
-        allow(NumberAnalyzer::CLI).to receive(:instance_variable_get)
+        allow(Numana::CLI).to receive(:instance_variable_get)
           .and_raise(StandardError.new('Test error'))
 
         expect(described_class.plugin_commands).to eq({})
@@ -120,12 +120,12 @@ RSpec.describe NumberAnalyzer::CLI::CommandCache do
     describe '#build_command_list' do
       it 'merges commands from all sources' do
         # Mock CORE_COMMANDS
-        stub_const('NumberAnalyzer::CLI::CORE_COMMANDS', { 'core' => :run_core })
+        stub_const('Numana::CLI::CORE_COMMANDS', { 'core' => :run_core })
 
         # Mock CommandRegistry
         registry = double('CommandRegistry')
         allow(registry).to receive(:all).and_return(['registry_cmd'])
-        stub_const('NumberAnalyzer::Commands::CommandRegistry', registry)
+        stub_const('Numana::Commands::CommandRegistry', registry)
 
         # Mock plugin commands
         allow(described_class).to receive(:plugin_commands).and_return({ 'plugin' => :run_plugin })
@@ -141,8 +141,8 @@ RSpec.describe NumberAnalyzer::CLI::CommandCache do
 
       it 'handles missing constants gracefully' do
         # Remove constants if they exist
-        NumberAnalyzer::CLI.send(:remove_const, :CORE_COMMANDS) if defined?(NumberAnalyzer::CLI::CORE_COMMANDS)
-        NumberAnalyzer::Commands.send(:remove_const, :CommandRegistry) if defined?(NumberAnalyzer::Commands::CommandRegistry)
+        Numana::CLI.send(:remove_const, :CORE_COMMANDS) if defined?(Numana::CLI::CORE_COMMANDS)
+        Numana::Commands.send(:remove_const, :CommandRegistry) if defined?(Numana::Commands::CommandRegistry)
 
         allow(described_class).to receive(:plugin_commands).and_return({})
 

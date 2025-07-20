@@ -12,7 +12,7 @@ RSpec.describe 'Chi-square CLI' do
     allow($stdout).to receive(:puts) { |msg| output.puts(msg) }
 
     begin
-      NumberAnalyzer::CLI.run(['chi-square'] + args)
+      Numana::CLI.run(['chi-square'] + args)
       output.string
     rescue SystemExit
       output.string

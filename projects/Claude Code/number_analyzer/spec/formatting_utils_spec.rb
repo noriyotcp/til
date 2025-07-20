@@ -5,10 +5,10 @@ require_relative '../lib/number_analyzer/formatting_utils'
 
 # Test class to include the module for testing
 class TestFormattingUtils
-  include NumberAnalyzer::FormattingUtils
+  include Numana::FormattingUtils
 end
 
-RSpec.describe NumberAnalyzer::FormattingUtils do
+RSpec.describe Numana::FormattingUtils do
   let(:formatter) { TestFormattingUtils.new }
 
   describe '#format_value' do

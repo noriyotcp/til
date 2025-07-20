@@ -4,7 +4,7 @@ require_relative 'loader'
 
 # Security settings management for NumberAnalyzer plugin system
 # Handles security settings and permissions
-class NumberAnalyzer::PluginConfiguration::Security
+class Numana::PluginConfiguration::Security
   class << self
     # Get security settings for a plugin
     def security_settings(plugin_name = nil, config = nil)

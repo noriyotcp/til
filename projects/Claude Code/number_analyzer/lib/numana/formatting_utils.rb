@@ -13,10 +13,10 @@ require 'json'
 # - Dataset metadata management
 #
 # Usage:
-#   include NumberAnalyzer::FormattingUtils
+#   include Numana::FormattingUtils
 #   formatted = format_value(3.14159, precision: 2) # => "3.14"
 #   json_result = format_json_value(42, {dataset_size: 100}) # => JSON with metadata
-module NumberAnalyzer::FormattingUtils
+module Numana::FormattingUtils
   # Format single numeric value based on options
   # Supports precision control and JSON output format
   #

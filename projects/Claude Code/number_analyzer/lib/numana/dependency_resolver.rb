@@ -6,7 +6,7 @@ require_relative 'dependency_resolution_strategies'
 
 # Advanced dependency resolution system for NumberAnalyzer plugins
 # Handles complex dependency resolution with circular dependency detection
-class NumberAnalyzer::DependencyResolver
+class Numana::DependencyResolver
   include TSort
 
   # Custom error classes
@@ -290,7 +290,7 @@ class NumberAnalyzer::DependencyResolver
   end
 
   def satisfy_version_requirement?(version, requirement)
-    NumberAnalyzer::VersionComparator.satisfies?(version, requirement)
+    Numana::VersionComparator.satisfies?(version, requirement)
   end
 
   # Standard resolution logic (used by strategies)
@@ -308,11 +308,11 @@ class NumberAnalyzer::DependencyResolver
 
   # Add convenience method for version comparison (used by other classes if needed)
   def compare_versions(version1, version2)
-    NumberAnalyzer::VersionComparator.compare(version1, version2)
+    Numana::VersionComparator.compare(version1, version2)
   end
 
   def create_strategy(strategy_name)
-    strategies = NumberAnalyzer::DependencyResolutionStrategies
+    strategies = Numana::DependencyResolutionStrategies
 
     case strategy_name
     when :aggressive

@@ -5,7 +5,7 @@ require_relative '../lib/number_analyzer/plugin_interface'
 # MachineLearningPlugin - Advanced statistical analysis with machine learning algorithms
 # Demonstrates complex plugin implementation with multiple algorithms
 module MachineLearningPlugin
-  include NumberAnalyzer::StatisticsPlugin
+  include Numana::StatisticsPlugin
 
   # Plugin metadata
   plugin_name 'machine_learning'

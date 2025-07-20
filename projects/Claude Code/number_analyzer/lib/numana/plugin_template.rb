@@ -6,7 +6,7 @@ require 'fileutils'
 # Plugin Template Generator for NumberAnalyzer
 # Provides utilities for creating standardized plugins
 # Generator for creating new plugins from templates
-class NumberAnalyzer::PluginTemplate
+class Numana::PluginTemplate
   # Plugin generation errors
   class TemplateError < StandardError; end
   class InvalidTemplateError < TemplateError; end
@@ -237,7 +237,7 @@ class NumberAnalyzer::PluginTemplate
         # Generated on <%= config[:timestamp] %>
         # Author: <%= config[:author] %>
         module <%= config[:module_name] %>
-          include NumberAnalyzer::StatisticsPlugin
+          include Numana::StatisticsPlugin
         #{'  '}
           # Plugin metadata
           plugin_name '<%= config[:plugin_name] %>'
@@ -297,7 +297,7 @@ class NumberAnalyzer::PluginTemplate
         # <%= config[:module_name] %> - <%= config[:description] %>
         # Generated on <%= config[:timestamp] %>
         # Author: <%= config[:author] %>
-        class <%= config[:module_name] %> < NumberAnalyzer::CLIPlugin
+        class <%= config[:module_name] %> < Numana::CLIPlugin
         #{'  '}
           # Plugin metadata
           plugin_name '<%= config[:plugin_name] %>'
@@ -384,7 +384,7 @@ class NumberAnalyzer::PluginTemplate
         # <%= config[:module_name] %> - <%= config[:description] %>
         # Generated on <%= config[:timestamp] %>
         # Author: <%= config[:author] %>
-        class <%= config[:module_name] %> < NumberAnalyzer::FileFormatPlugin
+        class <%= config[:module_name] %> < Numana::FileFormatPlugin
         #{'  '}
           # Plugin metadata
           plugin_name '<%= config[:plugin_name] %>'
@@ -446,7 +446,7 @@ class NumberAnalyzer::PluginTemplate
         # <%= config[:module_name] %> - <%= config[:description] %>
         # Generated on <%= config[:timestamp] %>
         # Author: <%= config[:author] %>
-        class <%= config[:module_name] %> < NumberAnalyzer::OutputFormatPlugin
+        class <%= config[:module_name] %> < Numana::OutputFormatPlugin
         #{'  '}
           # Plugin metadata
           plugin_name '<%= config[:plugin_name] %>'
@@ -514,7 +514,7 @@ class NumberAnalyzer::PluginTemplate
         # <%= config[:module_name] %> - <%= config[:description] %>
         # Generated on <%= config[:timestamp] %>
         # Author: <%= config[:author] %>
-        class <%= config[:module_name] %> < NumberAnalyzer::ValidatorPlugin
+        class <%= config[:module_name] %> < Numana::ValidatorPlugin
         #{'  '}
           # Plugin metadata
           plugin_name '<%= config[:plugin_name] %>'
@@ -579,7 +579,7 @@ class NumberAnalyzer::PluginTemplate
         # Generated on <%= config[:timestamp] %>
         # Author: <%= config[:author] %>
         module <%= config[:module_name] %>
-          include NumberAnalyzer::StatisticsPlugin
+          include Numana::StatisticsPlugin
         #{'  '}
           # Plugin metadata
           plugin_name '<%= config[:plugin_name] %>'
@@ -703,7 +703,7 @@ class NumberAnalyzer::PluginTemplate
         #{'  '}
         <% if config[:extension_point] == :statistics_module -%>
           describe 'statistical functions' do
-            let(:analyzer) { NumberAnalyzer.new([1, 2, 3, 4, 5]) }
+            let(:analyzer) { Numana.new([1, 2, 3, 4, 5]) }
         #{'    '}
             before do
               analyzer.extend(<%= config[:module_name] %>)
@@ -777,7 +777,7 @@ class NumberAnalyzer::PluginTemplate
         #### <%= command.capitalize.tr('_', ' ') %>
 
         ```ruby
-        analyzer = NumberAnalyzer.new([1, 2, 3, 4, 5])
+        analyzer = Numana.new([1, 2, 3, 4, 5])
         result = analyzer.<%= command %>
         puts result[:interpretation]
         ```

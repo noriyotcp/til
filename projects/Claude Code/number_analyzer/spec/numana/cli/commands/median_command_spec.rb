@@ -4,7 +4,7 @@ require 'spec_helper'
 require 'fileutils'
 require 'number_analyzer/cli/commands/median_command'
 
-RSpec.describe NumberAnalyzer::Commands::MedianCommand do
+RSpec.describe Numana::Commands::MedianCommand do
   let(:command) { described_class.new }
 
   describe 'command metadata' do

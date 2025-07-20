@@ -2,7 +2,7 @@
 
 require_relative '../../spec_helper'
 
-describe NumberAnalyzer::Presenters::PostHocPresenter do
+describe Numana::Presenters::PostHocPresenter do
   let(:options) { { precision: 3 } }
 
   describe 'Tukey HSD test' do

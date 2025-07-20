@@ -4,8 +4,8 @@ require_relative '../base_command'
 require_relative '../../formatting_utils'
 
 # Command for calculating variance
-class NumberAnalyzer::Commands::VarianceCommand < NumberAnalyzer::Commands::BaseCommand
-  include NumberAnalyzer::FormattingUtils
+class Numana::Commands::VarianceCommand < Numana::Commands::BaseCommand
+  include Numana::FormattingUtils
   command 'variance', 'Calculate variance (measure of data spread)'
 
   private
@@ -19,7 +19,7 @@ class NumberAnalyzer::Commands::VarianceCommand < NumberAnalyzer::Commands::Base
   def perform_calculation(data)
     raise ArgumentError, 'Cannot calculate variance for empty array' if data.empty?
 
-    analyzer = NumberAnalyzer.new(data)
+    analyzer = Numana.new(data)
     analyzer.variance
   end
 

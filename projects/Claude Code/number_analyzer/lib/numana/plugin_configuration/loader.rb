@@ -5,7 +5,7 @@ require_relative 'validator'
 
 # Configuration loading and saving for NumberAnalyzer plugin system
 # Handles loading and saving of configuration files
-class NumberAnalyzer::PluginConfiguration::Loader
+class Numana::PluginConfiguration::Loader
   include Base
 
   class << self

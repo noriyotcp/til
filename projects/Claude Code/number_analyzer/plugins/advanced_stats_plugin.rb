@@ -5,7 +5,7 @@ require_relative '../lib/number_analyzer/plugin_interface'
 # AdvancedStatsPlugin - Plugin implementation of advanced statistical functions
 # Provides advanced statistical analysis including percentiles, quartiles, outliers, and deviation scores
 module AdvancedStatsPlugin
-  include NumberAnalyzer::StatisticsPlugin
+  include Numana::StatisticsPlugin
 
   # Plugin metadata
   plugin_name 'advanced_stats'

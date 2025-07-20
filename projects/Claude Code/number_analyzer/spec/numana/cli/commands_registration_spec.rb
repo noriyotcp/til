@@ -6,12 +6,12 @@ require 'number_analyzer/cli/commands'
 RSpec.describe 'Command Registration' do
   before do
     # Clear and reload commands
-    NumberAnalyzer::Commands::CommandRegistry.clear
-    NumberAnalyzer::Commands.register_all
+    Numana::Commands::CommandRegistry.clear
+    Numana::Commands.register_all
   end
 
   describe 'CommandRegistry' do
-    let(:registry) { NumberAnalyzer::Commands::CommandRegistry }
+    let(:registry) { Numana::Commands::CommandRegistry }
 
     it 'registers all basic commands' do
       expected_commands = %w[max mean median min mode sum]

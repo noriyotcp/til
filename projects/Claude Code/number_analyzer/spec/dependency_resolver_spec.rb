@@ -3,7 +3,7 @@
 require 'spec_helper'
 require 'number_analyzer/dependency_resolver'
 
-RSpec.describe NumberAnalyzer::DependencyResolver do
+RSpec.describe Numana::DependencyResolver do
   let(:plugin_registry) { {} }
   let(:resolver) { described_class.new(plugin_registry) }
 
@@ -51,7 +51,7 @@ RSpec.describe NumberAnalyzer::DependencyResolver do
 
       it 'detects circular dependencies' do
         expect { resolver.resolve('plugin_a') }
-          .to raise_error(NumberAnalyzer::DependencyResolver::CircularDependencyError) do |error|
+          .to raise_error(Numana::DependencyResolver::CircularDependencyError) do |error|
             expect(error.cycle).to include('plugin_a', 'plugin_b', 'plugin_c')
           end
       end
@@ -64,7 +64,7 @@ RSpec.describe NumberAnalyzer::DependencyResolver do
 
       it 'raises error for unresolved dependencies' do
         expect { resolver.resolve('plugin_a') }
-          .to raise_error(NumberAnalyzer::DependencyResolver::UnresolvedDependencyError) do |error|
+          .to raise_error(Numana::DependencyResolver::UnresolvedDependencyError) do |error|
             expect(error.plugin).to eq('plugin_a')
             expect(error.missing_dependencies).to eq(['missing_plugin'])
           end
@@ -79,7 +79,7 @@ RSpec.describe NumberAnalyzer::DependencyResolver do
 
       it 'detects version conflicts' do
         expect { resolver.resolve('plugin_b', check_versions: true) }
-          .to raise_error(NumberAnalyzer::DependencyResolver::VersionConflictError) do |error|
+          .to raise_error(Numana::DependencyResolver::VersionConflictError) do |error|
             expect(error.plugin).to eq('plugin_b')
             expect(error.dependency).to eq('plugin_a')
             expect(error.required_version).to eq('~> 1.0')

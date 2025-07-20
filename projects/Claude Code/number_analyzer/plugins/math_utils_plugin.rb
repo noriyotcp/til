@@ -5,7 +5,7 @@ require_relative '../lib/number_analyzer/plugin_interface'
 # MathUtilsPlugin - Plugin implementation of mathematical utility functions
 # Provides mathematical utility functions for statistical calculations
 module MathUtilsPlugin
-  include NumberAnalyzer::StatisticsPlugin
+  include Numana::StatisticsPlugin
 
   # Plugin metadata
   plugin_name 'math_utils'

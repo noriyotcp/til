@@ -4,7 +4,7 @@ require 'fileutils'
 
 # Dangerous plugin with file operations - FOR TESTING ONLY
 module FileDeletionPlugin
-  include NumberAnalyzer::StatisticsPlugin
+  include Numana::StatisticsPlugin
 
   plugin_name 'file_deletion'
   plugin_version '1.0.0'

@@ -8,7 +8,7 @@ require 'number_analyzer/cli/commands/correlation_command'
 #
 # CLI統合で問題が発生した場合は ai-docs/CLI_REFACTORING_GUIDE.md を参照
 
-RSpec.describe NumberAnalyzer::Commands::CorrelationCommand do
+RSpec.describe Numana::Commands::CorrelationCommand do
   describe '#execute' do
     let(:command) { described_class.new }
 

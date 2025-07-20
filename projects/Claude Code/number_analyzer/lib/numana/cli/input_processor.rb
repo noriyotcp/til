@@ -2,16 +2,16 @@
 
 # Input processing module for NumberAnalyzer CLI
 # Handles file and command-line input processing
-module NumberAnalyzer::CLI::InputProcessor
+module Numana::CLI::InputProcessor
   extend self
 
   # Process arguments, handling both file input and command-line arguments
   def process_arguments(argv = ARGV)
-    options, remaining_args = NumberAnalyzer::CLI::Options.parse(argv)
+    options, remaining_args = Numana::CLI::Options.parse(argv)
 
     if options[:file]
       begin
-        NumberAnalyzer::FileReader.read_from_file(options[:file])
+        Numana::FileReader.read_from_file(options[:file])
       rescue StandardError => e
         puts "File read error: #{e.message}"
         exit 1
@@ -29,7 +29,7 @@ module NumberAnalyzer::CLI::InputProcessor
   def parse_numbers_with_options(args, options)
     if options[:file]
       begin
-        NumberAnalyzer::FileReader.read_from_file(options[:file])
+        Numana::FileReader.read_from_file(options[:file])
       rescue StandardError => e
         puts "File read error: #{e.message}"
         exit 1
@@ -98,7 +98,7 @@ module NumberAnalyzer::CLI::InputProcessor
       if looks_like_file_path?(input)
         # Try to read as file
         begin
-          file_numbers = NumberAnalyzer::FileReader.read_from_file(input)
+          file_numbers = Numana::FileReader.read_from_file(input)
           all_numbers.concat(file_numbers)
         rescue StandardError => e
           puts "Warning: Could not read file #{input}: #{e.message}"

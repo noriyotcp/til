@@ -3,7 +3,7 @@
 require_relative '../spec_helper'
 require_relative '../../lib/number_analyzer/presenters/seasonal_presenter'
 
-RSpec.describe NumberAnalyzer::Presenters::SeasonalPresenter do
+RSpec.describe Numana::Presenters::SeasonalPresenter do
   let(:valid_seasonal_data) do
     {
       period: 4,

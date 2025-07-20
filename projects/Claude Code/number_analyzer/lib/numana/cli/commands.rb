@@ -6,7 +6,7 @@
 require_relative '../../numana'
 
 # Command registration and management
-module NumberAnalyzer::Commands
+module Numana::Commands
 end
 
 require_relative 'command_registry'
@@ -44,7 +44,7 @@ require_relative 'commands/plugins_command'
 require_relative 'commands/help_command'
 
 # Extend the Commands module with registration functionality
-module NumberAnalyzer::Commands
+module Numana::Commands
   # Register all commands by category
   def self.register_all
     register_basic_commands
@@ -102,4 +102,4 @@ module NumberAnalyzer::Commands
 end
 
 # Auto-register when loaded
-NumberAnalyzer::Commands.register_all
+Numana::Commands.register_all

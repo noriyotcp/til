@@ -2,7 +2,7 @@
 
 require_relative '../../spec_helper'
 
-describe NumberAnalyzer::Presenters::QuartilesPresenter do
+describe Numana::Presenters::QuartilesPresenter do
   let(:options) { { precision: 3 } }
   let(:quartiles_result) do
     {

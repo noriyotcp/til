@@ -2,7 +2,7 @@
 
 require_relative '../lib/number_analyzer'
 
-RSpec.describe NumberAnalyzer::PluginPriority do
+RSpec.describe Numana::PluginPriority do
   after do
     described_class.reset_custom_priorities!
   end

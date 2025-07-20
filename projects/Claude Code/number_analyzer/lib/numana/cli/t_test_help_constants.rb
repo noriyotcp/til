@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 # Help text constants for TTestCommand
-module NumberAnalyzer::CLI::TTestHelpConstants
+module Numana::CLI::TTestHelpConstants
   HELP_TEXT = <<~HELP.freeze
     t-test - Perform statistical t-test analysis
 

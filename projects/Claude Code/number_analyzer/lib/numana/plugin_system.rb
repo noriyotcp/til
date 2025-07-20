@@ -10,7 +10,7 @@ require_relative 'plugin_priority'
 # Plugin System for NumberAnalyzer
 # Enables dynamic loading of statistical analysis plugins
 # Core plugin management system
-class NumberAnalyzer::PluginSystem
+class Numana::PluginSystem
   PLUGIN_EXTENSION_POINTS = %i[
     statistics_module
     cli_command
@@ -24,9 +24,9 @@ class NumberAnalyzer::PluginSystem
     @loaded_plugins = Set.new
     @extension_points = Hash.new { |h, k| h[k] = [] }
     @config = load_configuration
-    @dependency_resolver = NumberAnalyzer::DependencyResolver.new(@plugins)
-    @error_handler = NumberAnalyzer::PluginErrorHandler.new
-    @priority_system = NumberAnalyzer::PluginPriority.new
+    @dependency_resolver = Numana::DependencyResolver.new(@plugins)
+    @error_handler = Numana::PluginErrorHandler.new
+    @priority_system = Numana::PluginPriority.new
   end
 
   # Register a plugin with the system
@@ -48,7 +48,7 @@ class NumberAnalyzer::PluginSystem
     @priority_system.set_priority_with_auto_detection(plugin_name, metadata)
 
     # Update the dependency resolver with the new registry state
-    @dependency_resolver = NumberAnalyzer::DependencyResolver.new(@plugins)
+    @dependency_resolver = Numana::DependencyResolver.new(@plugins)
   end
 
   # Load a specific plugin with enhanced dependency resolution and error handling
@@ -74,13 +74,13 @@ class NumberAnalyzer::PluginSystem
       load_plugin_internal(plugin_name)
 
       true
-    rescue NumberAnalyzer::DependencyResolver::CircularDependencyError => e
+    rescue Numana::DependencyResolver::CircularDependencyError => e
       @error_handler.handle_error(e, context.merge(recovery_strategy: :disable))
       false
-    rescue NumberAnalyzer::DependencyResolver::UnresolvedDependencyError => e
+    rescue Numana::DependencyResolver::UnresolvedDependencyError => e
       @error_handler.handle_error(e, context.merge(recovery_strategy: :disable))
       false
-    rescue NumberAnalyzer::DependencyResolver::VersionConflictError => e
+    rescue Numana::DependencyResolver::VersionConflictError => e
       recovery = @error_handler.handle_error(e, context.merge(recovery_strategy: :fallback))
 
       if recovery[:action] == :fallback && recovery[:fallback_plugin]
@@ -319,7 +319,7 @@ class NumberAnalyzer::PluginSystem
     return unless plugin_class.respond_to?(:plugin_commands)
 
     plugin_class.plugin_commands.each do |command_name, method_name|
-      NumberAnalyzer::CLI.register_command(command_name, plugin_class, method_name)
+      Numana::CLI.register_command(command_name, plugin_class, method_name)
     end
   end
 
@@ -328,13 +328,13 @@ class NumberAnalyzer::PluginSystem
     return unless plugin_class.respond_to?(:plugin_commands)
 
     plugin_class.plugin_commands.each do |command_name, method_name|
-      NumberAnalyzer::CLI.register_command(command_name, plugin_class, method_name)
+      Numana::CLI.register_command(command_name, plugin_class, method_name)
     end
   end
 
   def load_file_format(plugin_name, plugin_class)
     # Register file format handlers
-    NumberAnalyzer::FileReader.register_format(plugin_name, plugin_class) if defined?(NumberAnalyzer::FileReader)
+    Numana::FileReader.register_format(plugin_name, plugin_class) if defined?(Numana::FileReader)
   end
 
   def load_output_format(plugin_name, plugin_class)
@@ -346,6 +346,6 @@ class NumberAnalyzer::PluginSystem
 
   def load_validator(plugin_name, plugin_class)
     # Register data validators
-    NumberAnalyzer::DataValidator.register_validator(plugin_name, plugin_class) if defined?(NumberAnalyzer::DataValidator)
+    Numana::DataValidator.register_validator(plugin_name, plugin_class) if defined?(Numana::DataValidator)
   end
 end

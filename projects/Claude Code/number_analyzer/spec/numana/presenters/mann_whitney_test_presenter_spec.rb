@@ -3,7 +3,7 @@
 require 'spec_helper'
 require 'number_analyzer/presenters/mann_whitney_test_presenter'
 
-RSpec.describe NumberAnalyzer::Presenters::MannWhitneyTestPresenter do
+RSpec.describe Numana::Presenters::MannWhitneyTestPresenter do
   let(:mann_whitney_result) do
     {
       test_type: 'Mann-Whitney U Test',
@@ -53,7 +53,7 @@ RSpec.describe NumberAnalyzer::Presenters::MannWhitneyTestPresenter do
   describe '#initialize' do
     it 'inherits from BaseStatisticalPresenter' do
       presenter = described_class.new(mann_whitney_result, {})
-      expect(presenter).to be_a(NumberAnalyzer::Presenters::BaseStatisticalPresenter)
+      expect(presenter).to be_a(Numana::Presenters::BaseStatisticalPresenter)
     end
 
     it 'accepts result and options' do
@@ -233,21 +233,21 @@ RSpec.describe NumberAnalyzer::Presenters::MannWhitneyTestPresenter do
 
     it 'produces same output as StatisticsPresenter.format_mann_whitney_test for verbose format' do
       new_output = presenter.format_verbose
-      old_output = NumberAnalyzer::StatisticsPresenter.format_mann_whitney_test(mann_whitney_result, { precision: 3 })
+      old_output = Numana::StatisticsPresenter.format_mann_whitney_test(mann_whitney_result, { precision: 3 })
 
       expect(new_output).to eq(old_output)
     end
 
     it 'produces same output as StatisticsPresenter.format_mann_whitney_test for JSON format' do
       new_output = presenter.format_json
-      old_output = NumberAnalyzer::StatisticsPresenter.format_mann_whitney_test(mann_whitney_result, { format: 'json', precision: 3 })
+      old_output = Numana::StatisticsPresenter.format_mann_whitney_test(mann_whitney_result, { format: 'json', precision: 3 })
 
       expect(JSON.parse(new_output)).to eq(JSON.parse(old_output))
     end
 
     it 'produces same output as StatisticsPresenter.format_mann_whitney_test for quiet format' do
       new_output = presenter.format_quiet
-      old_output = NumberAnalyzer::StatisticsPresenter.format_mann_whitney_test(mann_whitney_result, { quiet: true, precision: 3 })
+      old_output = Numana::StatisticsPresenter.format_mann_whitney_test(mann_whitney_result, { quiet: true, precision: 3 })
 
       expect(new_output).to eq(old_output)
     end

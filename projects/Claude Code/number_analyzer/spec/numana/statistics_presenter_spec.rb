@@ -3,7 +3,7 @@
 require 'spec_helper'
 require 'number_analyzer/statistics_presenter'
 
-RSpec.describe NumberAnalyzer::StatisticsPresenter do
+RSpec.describe Numana::StatisticsPresenter do
   describe '.display_results' do
     let(:stats) do
       {

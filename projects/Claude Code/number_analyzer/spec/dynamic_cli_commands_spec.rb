@@ -3,8 +3,8 @@
 require 'spec_helper'
 
 RSpec.describe 'Dynamic CLI Command Registration' do
-  let(:cli_class) { NumberAnalyzer::CLI }
-  let(:plugin_system) { NumberAnalyzer::PluginSystem.new }
+  let(:cli_class) { Numana::CLI }
+  let(:plugin_system) { Numana::PluginSystem.new }
 
   before do
     # Reset plugin commands for clean state
@@ -109,7 +109,7 @@ RSpec.describe 'Dynamic CLI Command Registration' do
   describe 'plugin system initialization' do
     it 'initializes plugin system when accessed' do
       system = cli_class.plugin_system
-      expect(system).to be_a(NumberAnalyzer::PluginSystem)
+      expect(system).to be_a(Numana::PluginSystem)
     end
 
     it 'uses singleton pattern for plugin system' do
@@ -120,7 +120,7 @@ RSpec.describe 'Dynamic CLI Command Registration' do
 
     it 'can load enabled plugins' do
       # Mock the plugin system loading
-      mock_system = instance_double(NumberAnalyzer::PluginSystem)
+      mock_system = instance_double(Numana::PluginSystem)
       expect(mock_system).to receive(:load_enabled_plugins)
 
       allow(cli_class).to receive(:plugin_system).and_return(mock_system)

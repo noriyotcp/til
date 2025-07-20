@@ -3,7 +3,7 @@
 require 'spec_helper'
 require_relative '../lib/number_analyzer'
 
-RSpec.describe NumberAnalyzer do
+RSpec.describe Numana do
   describe 'Post-hoc analysis' do
     # Three groups with different means for testing
     let(:group1) { [1, 2, 3, 4, 5] }        # mean = 3
@@ -15,7 +15,7 @@ RSpec.describe NumberAnalyzer do
         let(:groups) { [group1, group2, group3] }
 
         it 'performs Tukey HSD test for all pairwise comparisons' do
-          analyzer = NumberAnalyzer.new([])
+          analyzer = Numana.new([])
           anova_result = analyzer.one_way_anova(*groups)
 
           # ANOVA should be significant
@@ -43,7 +43,7 @@ RSpec.describe NumberAnalyzer do
         end
 
         it 'performs Bonferroni correction for multiple comparisons' do
-          analyzer = NumberAnalyzer.new([])
+          analyzer = Numana.new([])
           post_hoc_result = analyzer.post_hoc_analysis([group1, group2, group3], method: :bonferroni)
 
           expect(post_hoc_result[:method]).to eq('Bonferroni')
@@ -66,7 +66,7 @@ RSpec.describe NumberAnalyzer do
         let(:similar_group3) { [4, 6, 5, 5, 5, 5, 5, 5] }     # mean = 5
 
         it 'still performs post-hoc analysis when requested' do
-          analyzer = NumberAnalyzer.new([])
+          analyzer = Numana.new([])
           post_hoc_result = analyzer.post_hoc_analysis([similar_group1, similar_group2, similar_group3], method: :tukey)
 
           expect(post_hoc_result[:warning]).to include('ANOVA was not significant')
@@ -80,12 +80,12 @@ RSpec.describe NumberAnalyzer do
 
       context 'with invalid input' do
         it 'returns nil for less than 2 groups' do
-          analyzer = NumberAnalyzer.new([])
+          analyzer = Numana.new([])
           expect(analyzer.post_hoc_analysis([group1], method: :tukey)).to be_nil
         end
 
         it 'returns nil for invalid method' do
-          analyzer = NumberAnalyzer.new([])
+          analyzer = Numana.new([])
           expect(analyzer.post_hoc_analysis([group1, group2], method: :invalid)).to be_nil
         end
       end
@@ -93,7 +93,7 @@ RSpec.describe NumberAnalyzer do
 
     describe '#tukey_hsd' do
       it 'calculates correct q-statistic for pairwise comparison' do
-        analyzer = NumberAnalyzer.new([])
+        analyzer = Numana.new([])
         q_stat = analyzer.send(:calculate_tukey_q_statistic, group1, group2)
 
         # Manual calculation: q = |mean1 - mean2| / sqrt(MSE/n)
@@ -104,7 +104,7 @@ RSpec.describe NumberAnalyzer do
       end
 
       it 'determines critical q-value based on groups and total observations' do
-        analyzer = NumberAnalyzer.new([])
+        analyzer = Numana.new([])
         critical_q = analyzer.send(:tukey_critical_value, 3, 15, 0.05) # 3 groups, 15 total obs, alpha=0.05
 
         # Should return a reasonable critical value
@@ -115,7 +115,7 @@ RSpec.describe NumberAnalyzer do
 
     describe '#bonferroni_correction' do
       it 'adjusts p-values for multiple comparisons' do
-        analyzer = NumberAnalyzer.new([])
+        analyzer = Numana.new([])
         original_p_values = [0.01, 0.03, 0.04]
         adjusted = analyzer.send(:bonferroni_adjust, original_p_values)
 
@@ -126,7 +126,7 @@ RSpec.describe NumberAnalyzer do
       end
 
       it 'caps adjusted p-values at 1.0' do
-        analyzer = NumberAnalyzer.new([])
+        analyzer = Numana.new([])
         original_p_values = [0.5, 0.6]
         adjusted = analyzer.send(:bonferroni_adjust, original_p_values)
 

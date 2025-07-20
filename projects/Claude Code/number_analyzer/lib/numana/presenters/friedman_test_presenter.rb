@@ -7,7 +7,7 @@ require_relative 'base_statistical_presenter'
 # Formats Friedman test results for non-parametric repeated measures analysis in
 # multiple output formats. This test is used as an alternative to repeated measures
 # ANOVA when normal distribution cannot be assumed.
-class NumberAnalyzer::Presenters::FriedmanTestPresenter < NumberAnalyzer::Presenters::BaseStatisticalPresenter
+class Numana::Presenters::FriedmanTestPresenter < Numana::Presenters::BaseStatisticalPresenter
   def json_fields
     {
       test_type: @result[:test_type],

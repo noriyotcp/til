@@ -7,7 +7,7 @@ require_relative 'base_statistical_presenter'
 # Formats Bartlett test results for variance homogeneity testing in multiple output
 # formats. The Bartlett test assumes normal distribution and is more precise than
 # the Levene test when this assumption is satisfied.
-class NumberAnalyzer::Presenters::BartlettTestPresenter < NumberAnalyzer::Presenters::BaseStatisticalPresenter
+class Numana::Presenters::BartlettTestPresenter < Numana::Presenters::BaseStatisticalPresenter
   def json_fields
     {
       test_type: @result[:test_type],

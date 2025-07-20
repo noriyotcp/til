@@ -6,7 +6,7 @@ require 'fileutils'
 
 # Base configuration module for NumberAnalyzer plugin system
 # Configuration management system for plugin settings and validation
-module NumberAnalyzer::PluginConfiguration
+module Numana::PluginConfiguration
   # Configuration errors
   class ConfigurationError < StandardError; end
   class InvalidConfigurationError < ConfigurationError; end

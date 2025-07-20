@@ -3,7 +3,7 @@
 require 'spec_helper'
 require 'number_analyzer/cli/plugin_router'
 
-RSpec.describe NumberAnalyzer::CLI::PluginRouter do
+RSpec.describe Numana::CLI::PluginRouter do
   describe '.route_command' do
     let(:args) { %w[1 2 3] }
     let(:options) { { format: 'json' } }
@@ -13,11 +13,11 @@ RSpec.describe NumberAnalyzer::CLI::PluginRouter do
         registry = double('CommandRegistry')
         allow(registry).to receive(:exists?).with('mean').and_return(true)
         allow(registry).to receive(:execute_command).with('mean', args, options)
-        stub_const('NumberAnalyzer::Commands::CommandRegistry', registry)
+        stub_const('Numana::Commands::CommandRegistry', registry)
       end
 
       it 'executes command through registry' do
-        expect(NumberAnalyzer::Commands::CommandRegistry).to receive(:execute_command)
+        expect(Numana::Commands::CommandRegistry).to receive(:execute_command)
           .with('mean', args, options)
         described_class.route_command('mean', args, options)
       end
@@ -25,13 +25,13 @@ RSpec.describe NumberAnalyzer::CLI::PluginRouter do
 
     context 'when command is a core command' do
       before do
-        stub_const('NumberAnalyzer::CLI::CORE_COMMANDS', { 'test' => :run_test })
-        allow(NumberAnalyzer::CLI).to receive(:respond_to?).and_return(true)
-        allow(NumberAnalyzer::CLI).to receive(:send).with(:run_test, args, options)
+        stub_const('Numana::CLI::CORE_COMMANDS', { 'test' => :run_test })
+        allow(Numana::CLI).to receive(:respond_to?).and_return(true)
+        allow(Numana::CLI).to receive(:send).with(:run_test, args, options)
       end
 
       it 'executes core command' do
-        expect(NumberAnalyzer::CLI).to receive(:send).with(:run_test, args, options)
+        expect(Numana::CLI).to receive(:send).with(:run_test, args, options)
         described_class.route_command('test', args, options)
       end
     end
@@ -41,8 +41,8 @@ RSpec.describe NumberAnalyzer::CLI::PluginRouter do
       let(:plugin_info) { { plugin_class: plugin_class, method: :execute } }
 
       before do
-        allow(NumberAnalyzer::CLI).to receive(:respond_to?).and_return(true)
-        allow(NumberAnalyzer::CLI).to receive(:send).with(:plugin_commands).and_return({ 'custom' => plugin_info })
+        allow(Numana::CLI).to receive(:respond_to?).and_return(true)
+        allow(Numana::CLI).to receive(:send).with(:plugin_commands).and_return({ 'custom' => plugin_info })
       end
 
       it 'executes plugin command on class' do
@@ -71,11 +71,11 @@ RSpec.describe NumberAnalyzer::CLI::PluginRouter do
             # Mock implementation
           end
         end
-        stub_const('NumberAnalyzer::CLI::ErrorHandler', error_handler)
+        stub_const('Numana::CLI::ErrorHandler', error_handler)
       end
 
       it 'calls error handler with available commands' do
-        expect(NumberAnalyzer::CLI::ErrorHandler).to receive(:handle_unknown_command)
+        expect(Numana::CLI::ErrorHandler).to receive(:handle_unknown_command)
           .with('unknown', instance_of(Array))
         described_class.route_command('unknown', args, options)
       end
@@ -87,7 +87,7 @@ RSpec.describe NumberAnalyzer::CLI::PluginRouter do
       before do
         registry = double('CommandRegistry')
         allow(registry).to receive(:exists?).with('test').and_return(true)
-        stub_const('NumberAnalyzer::Commands::CommandRegistry', registry)
+        stub_const('Numana::Commands::CommandRegistry', registry)
       end
 
       it 'returns true for existing command' do
@@ -97,7 +97,7 @@ RSpec.describe NumberAnalyzer::CLI::PluginRouter do
 
     context 'when CommandRegistry is not defined' do
       before do
-        hide_const('NumberAnalyzer::Commands::CommandRegistry')
+        hide_const('Numana::Commands::CommandRegistry')
       end
 
       it 'returns false' do
@@ -113,12 +113,12 @@ RSpec.describe NumberAnalyzer::CLI::PluginRouter do
       let(:resolver) { double('PluginConflictResolver') }
 
       before do
-        stub_const('NumberAnalyzer::PluginConflictResolver', Class.new)
+        stub_const('Numana::PluginConflictResolver', Class.new)
         allow(resolver).to receive(:respond_to?).with(:has_conflicts?).and_return(true)
         allow(resolver).to receive(:has_conflicts?).with('test').and_return(true)
         allow(resolver).to receive(:resolve_conflict).with('test', strategy: :interactive)
                                                      .and_return('resolved_command')
-        allow(NumberAnalyzer::PluginConflictResolver).to receive(:new).and_return(resolver)
+        allow(Numana::PluginConflictResolver).to receive(:new).and_return(resolver)
       end
 
       it 'resolves conflicts using specified strategy' do
@@ -129,7 +129,7 @@ RSpec.describe NumberAnalyzer::CLI::PluginRouter do
 
     context 'when PluginConflictResolver is not available' do
       before do
-        hide_const('NumberAnalyzer::PluginConflictResolver')
+        hide_const('Numana::PluginConflictResolver')
       end
 
       it 'returns nil' do
@@ -145,14 +145,14 @@ RSpec.describe NumberAnalyzer::CLI::PluginRouter do
         # Mock CommandRegistry
         registry = double('CommandRegistry')
         allow(registry).to receive(:all).and_return(%w[registry1 registry2])
-        stub_const('NumberAnalyzer::Commands::CommandRegistry', registry)
+        stub_const('Numana::Commands::CommandRegistry', registry)
 
         # Mock CORE_COMMANDS
-        stub_const('NumberAnalyzer::CLI::CORE_COMMANDS', { 'core1' => :run, 'core2' => :run })
+        stub_const('Numana::CLI::CORE_COMMANDS', { 'core1' => :run, 'core2' => :run })
 
         # Mock plugin commands
-        allow(NumberAnalyzer::CLI).to receive(:respond_to?).and_return(true)
-        allow(NumberAnalyzer::CLI).to receive(:send).with(:plugin_commands)
+        allow(Numana::CLI).to receive(:respond_to?).and_return(true)
+        allow(Numana::CLI).to receive(:send).with(:plugin_commands)
                                                     .and_return({ 'plugin1' => {}, 'plugin2' => {} })
 
         commands = described_class.send(:all_available_commands)

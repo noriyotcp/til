@@ -8,12 +8,12 @@ require 'number_analyzer/plugin_interface'
 RSpec.describe 'Plugins CLI Commands' do
   before do
     # Reset plugin state for each test
-    NumberAnalyzer::CLI.reset_plugin_state!
-    allow(NumberAnalyzer::CLI).to receive(:plugin_system).and_return(plugin_system)
-    allow(NumberAnalyzer::CLI).to receive(:initialize_plugins) # Skip plugin initialization
+    Numana::CLI.reset_plugin_state!
+    allow(Numana::CLI).to receive(:plugin_system).and_return(plugin_system)
+    allow(Numana::CLI).to receive(:initialize_plugins) # Skip plugin initialization
   end
 
-  let(:plugin_system) { instance_double(NumberAnalyzer::PluginSystem) }
+  let(:plugin_system) { instance_double(Numana::PluginSystem) }
   let(:mock_plugins) do
     {
       'test_plugin' => {
@@ -53,15 +53,15 @@ RSpec.describe 'Plugins CLI Commands' do
 
   describe 'plugins help' do
     it 'shows help when no subcommand is provided' do
-      expect { NumberAnalyzer::CLI.run(['plugins']) }.to output(/Usage: bundle exec number_analyzer plugins/).to_stdout
+      expect { Numana::CLI.run(['plugins']) }.to output(/Usage: bundle exec number_analyzer plugins/).to_stdout
     end
 
     it 'shows help with --help flag' do
-      expect { NumberAnalyzer::CLI.run(['plugins', '--help']) }.to output(/Subcommands:/).to_stdout
+      expect { Numana::CLI.run(['plugins', '--help']) }.to output(/Subcommands:/).to_stdout
     end
 
     it 'shows help with help subcommand' do
-      expect { NumberAnalyzer::CLI.run(%w[plugins help]) }.to output(/list \[--show-conflicts\]/).to_stdout
+      expect { Numana::CLI.run(%w[plugins help]) }.to output(/list \[--show-conflicts\]/).to_stdout
     end
   end
 
@@ -71,7 +71,7 @@ RSpec.describe 'Plugins CLI Commands' do
     end
 
     it 'lists all loaded plugins' do
-      output = capture_stdout { NumberAnalyzer::CLI.run(%w[plugins list]) }
+      output = capture_stdout { Numana::CLI.run(%w[plugins list]) }
 
       expect(output).to include('ロード済みプラグイン (2個):')
       expect(output).to include('test_plugin:')
@@ -83,12 +83,12 @@ RSpec.describe 'Plugins CLI Commands' do
     it 'shows message when no plugins are loaded' do
       allow(plugin_system).to receive(:instance_variable_get).with(:@plugins).and_return({})
 
-      expect { NumberAnalyzer::CLI.run(%w[plugins list]) }
+      expect { Numana::CLI.run(%w[plugins list]) }
         .to output(/プラグインがロードされていません。/).to_stdout
     end
 
     it 'detects and shows conflicts with --show-conflicts flag' do
-      output = capture_stdout { NumberAnalyzer::CLI.run(['plugins', 'list', '--show-conflicts']) }
+      output = capture_stdout { Numana::CLI.run(['plugins', 'list', '--show-conflicts']) }
 
       expect(output).to include('⚠️  重複:')
       expect(output).to include('コマンド重複 with another_plugin: test-command')
@@ -102,7 +102,7 @@ RSpec.describe 'Plugins CLI Commands' do
     end
 
     it 'shows all conflicts' do
-      output = capture_stdout { NumberAnalyzer::CLI.run(%w[plugins conflicts]) }
+      output = capture_stdout { Numana::CLI.run(%w[plugins conflicts]) }
 
       expect(output).to include('プラグイン重複検出結果:')
       expect(output).to include('コマンドの重複:')
@@ -112,7 +112,7 @@ RSpec.describe 'Plugins CLI Commands' do
     end
 
     it 'works with --conflicts flag' do
-      output = capture_stdout { NumberAnalyzer::CLI.run(['plugins', '--conflicts']) }
+      output = capture_stdout { Numana::CLI.run(['plugins', '--conflicts']) }
 
       expect(output).to include('プラグイン重複検出結果:')
     end
@@ -132,7 +132,7 @@ RSpec.describe 'Plugins CLI Commands' do
 
       allow(plugin_system).to receive(:instance_variable_get).with(:@plugins).and_return(non_conflicting_plugins)
 
-      output = capture_stdout { NumberAnalyzer::CLI.run(%w[plugins conflicts]) }
+      output = capture_stdout { Numana::CLI.run(%w[plugins conflicts]) }
       expect(output).to include('✅ 重複は検出されませんでした。')
       expect(output).to include('ロード済みプラグイン数: 2')
     end
@@ -145,19 +145,19 @@ RSpec.describe 'Plugins CLI Commands' do
     end
 
     it 'requires plugin name' do
-      expect { NumberAnalyzer::CLI.run(%w[plugins resolve]) }
+      expect { Numana::CLI.run(%w[plugins resolve]) }
         .to output(/エラー: 解決するプラグイン名を指定してください。/)
         .to_stdout.and raise_error(SystemExit)
     end
 
     it 'validates plugin exists' do
-      expect { NumberAnalyzer::CLI.run(%w[plugins resolve nonexistent]) }
+      expect { Numana::CLI.run(%w[plugins resolve nonexistent]) }
         .to output(/エラー: プラグイン 'nonexistent' が見つかりません。/)
         .to_stdout.and raise_error(SystemExit)
     end
 
     it 'detects conflicts for specified plugin' do
-      output = capture_stdout { NumberAnalyzer::CLI.run(%w[plugins resolve test_plugin]) }
+      output = capture_stdout { Numana::CLI.run(%w[plugins resolve test_plugin]) }
 
       expect(output).to include("プラグイン 'test_plugin' の重複:")
       expect(output).to include('コマンド重複 with another_plugin: test-command')
@@ -173,14 +173,14 @@ RSpec.describe 'Plugins CLI Commands' do
       }
       allow(plugin_system).to receive(:instance_variable_get).with(:@plugins).and_return(non_conflicting_plugins)
 
-      output = capture_stdout { NumberAnalyzer::CLI.run(%w[plugins resolve unique_plugin]) }
+      output = capture_stdout { Numana::CLI.run(%w[plugins resolve unique_plugin]) }
       expect(output).to include("プラグイン 'unique_plugin' に重複はありません。")
     end
 
     context 'with namespace strategy' do
       it 'resolves conflicts using namespace' do
         output = capture_stdout do
-          NumberAnalyzer::CLI.run(['plugins', 'resolve', 'test_plugin', '--strategy=namespace'])
+          Numana::CLI.run(['plugins', 'resolve', 'test_plugin', '--strategy=namespace'])
         end
 
         expect(output).to include('名前空間を使用して解決します...')
@@ -193,7 +193,7 @@ RSpec.describe 'Plugins CLI Commands' do
     context 'with priority strategy' do
       it 'resolves conflicts using priority' do
         output = capture_stdout do
-          NumberAnalyzer::CLI.run(['plugins', 'resolve', 'test_plugin', '--strategy=priority'])
+          Numana::CLI.run(['plugins', 'resolve', 'test_plugin', '--strategy=priority'])
         end
 
         expect(output).to include('優先度に基づいて解決します...')
@@ -205,7 +205,7 @@ RSpec.describe 'Plugins CLI Commands' do
     context 'with disable strategy' do
       it 'suggests disabling the plugin' do
         output = capture_stdout do
-          NumberAnalyzer::CLI.run(['plugins', 'resolve', 'test_plugin', '--strategy=disable'])
+          Numana::CLI.run(['plugins', 'resolve', 'test_plugin', '--strategy=disable'])
         end
 
         expect(output).to include("プラグイン 'test_plugin' を無効化します...")
@@ -218,7 +218,7 @@ RSpec.describe 'Plugins CLI Commands' do
         allow($stdin).to receive(:gets).and_return("y\n", "4\n") # Yes, then Cancel
 
         output = capture_stdout do
-          NumberAnalyzer::CLI.run(['plugins', 'resolve', 'test_plugin', '--strategy=interactive'])
+          Numana::CLI.run(['plugins', 'resolve', 'test_plugin', '--strategy=interactive'])
         end
 
         expect(output).to include('対話的重複解決モード')
@@ -231,7 +231,7 @@ RSpec.describe 'Plugins CLI Commands' do
         allow($stdin).to receive(:gets).and_return("4\n") # Cancel
 
         output = capture_stdout do
-          NumberAnalyzer::CLI.run(['plugins', 'resolve', 'test_plugin', '--strategy=interactive', '--force'])
+          Numana::CLI.run(['plugins', 'resolve', 'test_plugin', '--strategy=interactive', '--force'])
         end
 
         expect(output).not_to include('重複を解決しますか? (y/n)')
@@ -240,7 +240,7 @@ RSpec.describe 'Plugins CLI Commands' do
     end
 
     it 'validates strategy option' do
-      expect { NumberAnalyzer::CLI.run(['plugins', 'resolve', 'test_plugin', '--strategy=invalid']) }
+      expect { Numana::CLI.run(['plugins', 'resolve', 'test_plugin', '--strategy=invalid']) }
         .to output(/エラー: 無効な戦略: invalid/)
         .to_stdout.and raise_error(SystemExit)
     end
@@ -248,7 +248,7 @@ RSpec.describe 'Plugins CLI Commands' do
 
   describe 'unknown subcommand' do
     it 'shows error for unknown subcommand' do
-      expect { NumberAnalyzer::CLI.run(%w[plugins unknown]) }
+      expect { Numana::CLI.run(%w[plugins unknown]) }
         .to output(/エラー: 不明なpluginsサブコマンド: unknown/)
         .to_stdout.and raise_error(SystemExit)
     end

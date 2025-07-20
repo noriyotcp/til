@@ -4,7 +4,7 @@ require 'spec_helper'
 require 'fileutils'
 require_relative '../../../../lib/number_analyzer/cli/commands/outliers_command'
 
-RSpec.describe NumberAnalyzer::Commands::OutliersCommand do
+RSpec.describe Numana::Commands::OutliersCommand do
   let(:command) { described_class.new }
 
   describe '#execute' do

@@ -7,7 +7,7 @@ require_relative 'base_statistical_presenter'
 # Formats Mann-Whitney U test results for non-parametric two-group comparison in
 # multiple output formats. This test is used as an alternative to the t-test when
 # normal distribution cannot be assumed.
-class NumberAnalyzer::Presenters::MannWhitneyTestPresenter < NumberAnalyzer::Presenters::BaseStatisticalPresenter
+class Numana::Presenters::MannWhitneyTestPresenter < Numana::Presenters::BaseStatisticalPresenter
   def json_fields
     {
       test_type: @result[:test_type],

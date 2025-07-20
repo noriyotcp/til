@@ -2,7 +2,7 @@
 
 require_relative '../../spec_helper'
 
-describe NumberAnalyzer::Presenters::CorrelationPresenter do
+describe Numana::Presenters::CorrelationPresenter do
   let(:options) { { precision: 3 } }
 
   describe 'Valid correlation coefficient' do

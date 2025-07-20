@@ -2,7 +2,7 @@
 
 # Plugin routing module for NumberAnalyzer CLI
 # Handles smart command routing with conflict resolution
-module NumberAnalyzer::CLI::PluginRouter
+module Numana::CLI::PluginRouter
   extend self
 
   # Route command with conflict resolution
@@ -24,33 +24,33 @@ module NumberAnalyzer::CLI::PluginRouter
 
   # Check if command exists in CommandRegistry
   def command_registry_exists?(command)
-    return false unless defined?(NumberAnalyzer::Commands::CommandRegistry)
+    return false unless defined?(Numana::Commands::CommandRegistry)
 
-    NumberAnalyzer::Commands::CommandRegistry.exists?(command)
+    Numana::Commands::CommandRegistry.exists?(command)
   end
 
   # Execute command through CommandRegistry
   def execute_registry_command(command, args, options)
-    NumberAnalyzer::Commands::CommandRegistry.execute_command(command, args, options)
+    Numana::Commands::CommandRegistry.execute_command(command, args, options)
   end
 
   # Get core command method name
   def core_command_method(command)
-    return nil unless defined?(NumberAnalyzer::CLI::CORE_COMMANDS)
+    return nil unless defined?(Numana::CLI::CORE_COMMANDS)
 
-    NumberAnalyzer::CLI::CORE_COMMANDS[command]
+    Numana::CLI::CORE_COMMANDS[command]
   end
 
   # Execute core command
   def execute_core_command(method_name, args, options)
-    NumberAnalyzer::CLI.send(method_name, args, options)
+    Numana::CLI.send(method_name, args, options)
   end
 
   # Get plugin command info
   def plugin_command_info(command)
-    return nil unless NumberAnalyzer::CLI.respond_to?(:plugin_commands, true)
+    return nil unless Numana::CLI.respond_to?(:plugin_commands, true)
 
-    plugin_commands = NumberAnalyzer::CLI.send(:plugin_commands)
+    plugin_commands = Numana::CLI.send(:plugin_commands)
     plugin_commands[command]
   end
 
@@ -72,9 +72,9 @@ module NumberAnalyzer::CLI::PluginRouter
 
   # Handle conflicts using existing PluginConflictResolver
   def handle_conflicts(command, _args, options)
-    return nil unless defined?(NumberAnalyzer::PluginConflictResolver)
+    return nil unless defined?(Numana::PluginConflictResolver)
 
-    resolver = NumberAnalyzer::PluginConflictResolver.new
+    resolver = Numana::PluginConflictResolver.new
     return nil unless resolver.respond_to?(:has_conflicts?) && resolver.has_conflicts?(command)
 
     strategy = options[:conflict_strategy] || :priority
@@ -85,10 +85,10 @@ module NumberAnalyzer::CLI::PluginRouter
 
   # Handle unknown command
   def handle_unknown_command(command)
-    raise StandardError, "Unknown command: #{command}" unless defined?(NumberAnalyzer::CLI::ErrorHandler)
+    raise StandardError, "Unknown command: #{command}" unless defined?(Numana::CLI::ErrorHandler)
 
     available_commands = all_available_commands
-    NumberAnalyzer::CLI::ErrorHandler.handle_unknown_command(command, available_commands)
+    Numana::CLI::ErrorHandler.handle_unknown_command(command, available_commands)
   end
 
   # Get all available commands for error suggestions
@@ -96,14 +96,14 @@ module NumberAnalyzer::CLI::PluginRouter
     commands = []
 
     # Add registry commands
-    commands.concat(NumberAnalyzer::Commands::CommandRegistry.all) if defined?(NumberAnalyzer::Commands::CommandRegistry)
+    commands.concat(Numana::Commands::CommandRegistry.all) if defined?(Numana::Commands::CommandRegistry)
 
     # Add core commands
-    commands.concat(NumberAnalyzer::CLI::CORE_COMMANDS.keys) if defined?(NumberAnalyzer::CLI::CORE_COMMANDS)
+    commands.concat(Numana::CLI::CORE_COMMANDS.keys) if defined?(Numana::CLI::CORE_COMMANDS)
 
     # Add plugin commands
-    if NumberAnalyzer::CLI.respond_to?(:plugin_commands, true)
-      plugin_cmds = NumberAnalyzer::CLI.send(:plugin_commands)
+    if Numana::CLI.respond_to?(:plugin_commands, true)
+      plugin_cmds = Numana::CLI.send(:plugin_commands)
       commands.concat(plugin_cmds.keys)
     end
 

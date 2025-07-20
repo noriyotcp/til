@@ -12,9 +12,9 @@ require_relative 'base_statistical_presenter'
 #     seasonal_strength: 0.15,
 #     has_seasonality: true
 #   }
-#   presenter = NumberAnalyzer::Presenters::SeasonalPresenter.new(seasonal_data, options)
+#   presenter = Numana::Presenters::SeasonalPresenter.new(seasonal_data, options)
 #   puts presenter.format
-class NumberAnalyzer::Presenters::SeasonalPresenter < NumberAnalyzer::Presenters::BaseStatisticalPresenter
+class Numana::Presenters::SeasonalPresenter < Numana::Presenters::BaseStatisticalPresenter
   def format_verbose
     return 'エラー: データが不十分です（季節性分析には最低4つの値が必要）' if seasonal_data_invalid?
 

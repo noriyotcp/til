@@ -3,7 +3,7 @@
 require 'spec_helper'
 require 'number_analyzer/presenters/friedman_test_presenter'
 
-RSpec.describe NumberAnalyzer::Presenters::FriedmanTestPresenter do
+RSpec.describe Numana::Presenters::FriedmanTestPresenter do
   let(:friedman_result) do
     {
       test_type: 'Friedman Test',
@@ -37,7 +37,7 @@ RSpec.describe NumberAnalyzer::Presenters::FriedmanTestPresenter do
   describe '#initialize' do
     it 'inherits from BaseStatisticalPresenter' do
       presenter = described_class.new(friedman_result, {})
-      expect(presenter).to be_a(NumberAnalyzer::Presenters::BaseStatisticalPresenter)
+      expect(presenter).to be_a(Numana::Presenters::BaseStatisticalPresenter)
     end
 
     it 'accepts result and options' do
@@ -218,21 +218,21 @@ RSpec.describe NumberAnalyzer::Presenters::FriedmanTestPresenter do
 
     it 'produces same output as StatisticsPresenter.format_friedman_test for verbose format' do
       new_output = presenter.format_verbose
-      old_output = NumberAnalyzer::StatisticsPresenter.format_friedman_test(friedman_result, { precision: 3 })
+      old_output = Numana::StatisticsPresenter.format_friedman_test(friedman_result, { precision: 3 })
 
       expect(new_output).to eq(old_output)
     end
 
     it 'produces same output as StatisticsPresenter.format_friedman_test for JSON format' do
       new_output = presenter.format_json
-      old_output = NumberAnalyzer::StatisticsPresenter.format_friedman_test(friedman_result, { format: 'json', precision: 3 })
+      old_output = Numana::StatisticsPresenter.format_friedman_test(friedman_result, { format: 'json', precision: 3 })
 
       expect(JSON.parse(new_output)).to eq(JSON.parse(old_output))
     end
 
     it 'produces same output as StatisticsPresenter.format_friedman_test for quiet format' do
       new_output = presenter.format_quiet
-      old_output = NumberAnalyzer::StatisticsPresenter.format_friedman_test(friedman_result, { quiet: true, precision: 3 })
+      old_output = Numana::StatisticsPresenter.format_friedman_test(friedman_result, { quiet: true, precision: 3 })
 
       expect(new_output).to eq(old_output)
     end

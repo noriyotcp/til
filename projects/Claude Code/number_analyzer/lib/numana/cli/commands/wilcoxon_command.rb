@@ -3,7 +3,7 @@
 require_relative '../base_command'
 
 # Command for performing Wilcoxon signed-rank test (non-parametric paired comparison)
-class NumberAnalyzer::Commands::WilcoxonCommand < NumberAnalyzer::Commands::BaseCommand
+class Numana::Commands::WilcoxonCommand < Numana::Commands::BaseCommand
   command 'wilcoxon', 'Non-parametric test for comparing paired samples (Wilcoxon signed-rank test)'
 
   private
@@ -43,7 +43,7 @@ class NumberAnalyzer::Commands::WilcoxonCommand < NumberAnalyzer::Commands::Base
 
   def perform_calculation(data)
     # Execute Wilcoxon signed-rank test
-    analyzer = NumberAnalyzer.new([])
+    analyzer = Numana.new([])
     result = analyzer.wilcoxon_signed_rank_test(data[0], data[1])
 
     raise ArgumentError, 'Could not perform Wilcoxon signed-rank test. Check your data' if result.nil?
@@ -52,7 +52,7 @@ class NumberAnalyzer::Commands::WilcoxonCommand < NumberAnalyzer::Commands::Base
   end
 
   def output_result(result)
-    puts NumberAnalyzer::StatisticsPresenter.format_wilcoxon_test(result, @options)
+    puts Numana::StatisticsPresenter.format_wilcoxon_test(result, @options)
   end
 
   def show_help
@@ -96,7 +96,7 @@ class NumberAnalyzer::Commands::WilcoxonCommand < NumberAnalyzer::Commands::Base
       raise ArgumentError, "File not found: #{filename}" unless File.exist?(filename)
 
       begin
-        data = NumberAnalyzer::FileReader.read_file(filename)
+        data = Numana::FileReader.read_file(filename)
         raise ArgumentError, "Empty file: #{filename}" if data.empty?
 
         groups << data

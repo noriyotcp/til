@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 # Dependency resolution strategies for NumberAnalyzer
-module NumberAnalyzer::DependencyResolutionStrategies
+module Numana::DependencyResolutionStrategies
   # Base strategy interface
   class BaseStrategy
     attr_reader :options
@@ -37,7 +37,7 @@ module NumberAnalyzer::DependencyResolutionStrategies
     def select_version(versions, requirement)
       # Select oldest version that satisfies requirement
       satisfying = versions.select do |v|
-        NumberAnalyzer::VersionComparator.satisfies?(v, requirement)
+        Numana::VersionComparator.satisfies?(v, requirement)
       end
 
       return nil if satisfying.empty?
@@ -62,7 +62,7 @@ module NumberAnalyzer::DependencyResolutionStrategies
     def select_version(versions, requirement)
       # Select newest version that satisfies requirement
       satisfying = versions.select do |v|
-        NumberAnalyzer::VersionComparator.satisfies?(v, requirement)
+        Numana::VersionComparator.satisfies?(v, requirement)
       end
 
       return nil if satisfying.empty?

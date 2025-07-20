@@ -11,8 +11,8 @@ require_relative '../formatting_utils'
 # methods to provide test-specific formatting logic.
 #
 # @abstract Subclasses must implement #json_fields, #format_quiet, and #format_verbose
-class NumberAnalyzer::Presenters::BaseStatisticalPresenter
-  include NumberAnalyzer::FormattingUtils
+class Numana::Presenters::BaseStatisticalPresenter
+  include Numana::FormattingUtils
 
   attr_reader :result, :options, :precision
 

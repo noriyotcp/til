@@ -12,7 +12,7 @@ require_relative 'base_statistical_presenter'
 # - Comprehensive ANOVA table with error and total rows
 #
 # Supports verbose, JSON, and quiet output formats with precision control.
-class NumberAnalyzer::Presenters::TwoWayAnovaPresenter < NumberAnalyzer::Presenters::BaseStatisticalPresenter
+class Numana::Presenters::TwoWayAnovaPresenter < Numana::Presenters::BaseStatisticalPresenter
   def format_verbose
     output = []
     output << '=== 二元配置分散分析結果 ==='

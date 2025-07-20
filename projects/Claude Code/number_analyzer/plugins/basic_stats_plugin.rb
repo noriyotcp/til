@@ -5,7 +5,7 @@ require_relative '../lib/number_analyzer/plugin_interface'
 # BasicStatsPlugin - Plugin implementation of basic statistical functions
 # Provides fundamental statistical calculations as a plugin
 module BasicStatsPlugin
-  include NumberAnalyzer::StatisticsPlugin
+  include Numana::StatisticsPlugin
 
   # Plugin metadata
   plugin_name 'basic_stats'

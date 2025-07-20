@@ -23,7 +23,7 @@ require_relative 'conflict_resolution_strategies'
 # @example Custom strategy
 #   resolver.set_default_strategy(:command_name, :namespace)
 #   resolution = resolver.resolve_conflict(:command_name, ['plugin_a', 'plugin_b'], :strict)
-class NumberAnalyzer::PluginConflictResolver
+class Numana::PluginConflictResolver
   include ConflictResolutionStrategies
 
   # Available conflict resolution strategies
@@ -46,8 +46,8 @@ class NumberAnalyzer::PluginConflictResolver
   }.freeze
 
   def initialize(priority_system = nil)
-    @priority_system = priority_system || NumberAnalyzer::PluginPriority.new
-    @namespace_system = NumberAnalyzer::PluginNamespace.new(@priority_system)
+    @priority_system = priority_system || Numana::PluginPriority.new
+    @namespace_system = Numana::PluginNamespace.new(@priority_system)
     @conflict_log = []
     @resolution_cache = {}
     @interactive_responses = {} # Cache for interactive responses

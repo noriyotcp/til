@@ -2,7 +2,7 @@
 
 # Resource monitor for plugin sandboxing
 # Monitors and limits CPU time, memory usage, and output size
-class NumberAnalyzer::PluginSandbox::ResourceMonitor
+class Numana::PluginSandbox::ResourceMonitor
   DEFAULT_LIMITS = {
     cpu_time: 5.0,          # Maximum execution time in seconds
     memory: 100_000_000,    # Maximum memory usage in bytes (100MB)
@@ -76,21 +76,21 @@ class NumberAnalyzer::PluginSandbox::ResourceMonitor
   def check_resource_limits
     # Check CPU time limit
     if elapsed_time > @cpu_time_limit
-      Thread.main.raise NumberAnalyzer::PluginTimeoutError,
+      Thread.main.raise Numana::PluginTimeoutError,
                         "CPU time limit exceeded: #{elapsed_time.round(2)}s (limit: #{@cpu_time_limit}s)"
     end
 
     # Check memory limit
     current_usage = current_memory_usage - (@start_memory || 0)
     if current_usage > @memory_limit
-      Thread.main.raise NumberAnalyzer::PluginResourceError,
+      Thread.main.raise Numana::PluginResourceError,
                         "Memory limit exceeded: #{format_bytes(current_usage)} (limit: #{format_bytes(@memory_limit)})"
     end
 
     # Check stack depth (approximate)
     return unless caller.length > @stack_depth_limit
 
-    Thread.main.raise NumberAnalyzer::PluginResourceError,
+    Thread.main.raise Numana::PluginResourceError,
                       "Stack depth limit exceeded: #{caller.length} (limit: #{@stack_depth_limit})"
   end
 
@@ -157,7 +157,7 @@ class NumberAnalyzer::PluginSandbox::ResourceMonitor
 
     return unless output_size > @output_size_limit
 
-    raise NumberAnalyzer::PluginResourceError,
+    raise Numana::PluginResourceError,
           "Output size limit exceeded: #{format_bytes(output_size)} (limit: #{format_bytes(@output_size_limit)})"
   end
 

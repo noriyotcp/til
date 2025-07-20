@@ -2,7 +2,7 @@
 
 require 'spec_helper'
 
-RSpec.describe NumberAnalyzer::CLI, 'Plugin Integration' do
+RSpec.describe Numana::CLI, 'Plugin Integration' do
   let(:test_plugin_class) do
     Class.new do
       def self.name
@@ -113,7 +113,7 @@ RSpec.describe NumberAnalyzer::CLI, 'Plugin Integration' do
 
       # Verify that a plugin system instance is created
       plugin_system = described_class.plugin_system
-      expect(plugin_system).to be_an_instance_of(NumberAnalyzer::PluginSystem)
+      expect(plugin_system).to be_an_instance_of(Numana::PluginSystem)
     end
   end
 end

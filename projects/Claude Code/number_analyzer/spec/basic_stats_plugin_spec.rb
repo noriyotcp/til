@@ -3,7 +3,7 @@
 require 'spec_helper'
 
 RSpec.describe 'BasicStatsPlugin' do
-  let(:plugin_system) { NumberAnalyzer::PluginSystem.new }
+  let(:plugin_system) { Numana::PluginSystem.new }
   let(:sample_data) { [1, 2, 3, 4, 5] }
 
   before do
@@ -55,7 +55,7 @@ RSpec.describe 'BasicStatsPlugin' do
 
     it 'extends NumberAnalyzer with basic statistics methods' do
       plugin_system.load_plugin('basic_stats')
-      analyzer = NumberAnalyzer.new(sample_data)
+      analyzer = Numana.new(sample_data)
 
       expect(analyzer).to respond_to(:sum)
       expect(analyzer).to respond_to(:mean)
@@ -66,7 +66,7 @@ RSpec.describe 'BasicStatsPlugin' do
 
     it 'provides correct statistical calculations' do
       plugin_system.load_plugin('basic_stats')
-      analyzer = NumberAnalyzer.new(sample_data)
+      analyzer = Numana.new(sample_data)
 
       expect(analyzer.sum).to eq(15)
       expect(analyzer.mean).to eq(3.0)
@@ -109,8 +109,8 @@ RSpec.describe 'BasicStatsPlugin' do
       plugin_system.register_plugin('basic_stats', BasicStatsPlugin, extension_point: :statistics_module)
       plugin_system.load_plugin('basic_stats')
 
-      plugin_analyzer = NumberAnalyzer.new(sample_data)
-      legacy_analyzer = NumberAnalyzer.new(sample_data)
+      plugin_analyzer = Numana.new(sample_data)
+      legacy_analyzer = Numana.new(sample_data)
       legacy_analyzer.extend(BasicStats)
 
       # Compare results
@@ -128,7 +128,7 @@ RSpec.describe 'BasicStatsPlugin' do
       plugin_system.register_plugin('basic_stats', BasicStatsPlugin, extension_point: :statistics_module)
       plugin_system.load_plugin('basic_stats')
 
-      analyzer = NumberAnalyzer.new([])
+      analyzer = Numana.new([])
 
       expect(analyzer.sum).to eq(0)
       expect(analyzer.variance).to eq(0.0)
@@ -140,7 +140,7 @@ RSpec.describe 'BasicStatsPlugin' do
       plugin_system.register_plugin('basic_stats', BasicStatsPlugin, extension_point: :statistics_module)
       plugin_system.load_plugin('basic_stats')
 
-      analyzer = NumberAnalyzer.new([42])
+      analyzer = Numana.new([42])
 
       expect(analyzer.sum).to eq(42)
       expect(analyzer.mean).to eq(42.0)

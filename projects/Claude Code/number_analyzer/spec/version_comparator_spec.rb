@@ -3,7 +3,7 @@
 require 'spec_helper'
 require 'number_analyzer/version_comparator'
 
-RSpec.describe NumberAnalyzer::VersionComparator do
+RSpec.describe Numana::VersionComparator do
   describe '.compare' do
     context 'when comparing major versions' do
       it 'returns 1 when first version is greater' do
@@ -62,17 +62,17 @@ RSpec.describe NumberAnalyzer::VersionComparator do
     context 'when validating version formats' do
       it 'raises error for invalid version with letters' do
         expect { described_class.compare('1.2.a', '1.0.0') }
-          .to raise_error(NumberAnalyzer::VersionComparator::InvalidVersionError)
+          .to raise_error(Numana::VersionComparator::InvalidVersionError)
       end
 
       it 'raises error for invalid version with special characters' do
         expect { described_class.compare('1.2-beta', '1.0.0') }
-          .to raise_error(NumberAnalyzer::VersionComparator::InvalidVersionError)
+          .to raise_error(Numana::VersionComparator::InvalidVersionError)
       end
 
       it 'raises error for empty version' do
         expect { described_class.compare('', '1.0.0') }
-          .to raise_error(NumberAnalyzer::VersionComparator::InvalidVersionError)
+          .to raise_error(Numana::VersionComparator::InvalidVersionError)
       end
 
       it 'accepts valid numeric versions' do

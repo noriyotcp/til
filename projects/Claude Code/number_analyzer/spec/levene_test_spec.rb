@@ -3,7 +3,7 @@
 require 'spec_helper'
 require_relative '../lib/number_analyzer'
 
-RSpec.describe NumberAnalyzer do
+RSpec.describe Numana do
   describe 'Levene Test for Variance Homogeneity' do
     describe '#levene_test' do
       context 'when groups have equal variances' do
@@ -11,7 +11,7 @@ RSpec.describe NumberAnalyzer do
         let(:group1) { [1, 2, 3, 4, 5] }        # variance ≈ 2.5
         let(:group2) { [2, 3, 4, 5, 6] }        # variance ≈ 2.5
         let(:group3) { [3, 4, 5, 6, 7] }        # variance ≈ 2.5
-        let(:analyzer) { NumberAnalyzer.new([]) }
+        let(:analyzer) { Numana.new([]) }
 
         it 'returns correct test structure' do
           result = analyzer.levene_test(group1, group2, group3)
@@ -47,7 +47,7 @@ RSpec.describe NumberAnalyzer do
         let(:group1) { [1, 1, 1, 1, 1] }        # variance = 0 (constant)
         let(:group2) { [1, 5, 9, 13, 17] }      # variance = 40 (high variability)
         let(:group3) { [10, 10.1, 9.9, 10.2, 9.8] } # variance ≈ 0.025 (low variability)
-        let(:analyzer) { NumberAnalyzer.new([]) }
+        let(:analyzer) { Numana.new([]) }
 
         it 'detects unequal variances' do
           result = analyzer.levene_test(group1, group2, group3)
@@ -65,7 +65,7 @@ RSpec.describe NumberAnalyzer do
       end
 
       context 'with edge cases' do
-        let(:analyzer) { NumberAnalyzer.new([]) }
+        let(:analyzer) { Numana.new([]) }
 
         it 'handles minimum valid input (2 groups)' do
           group1 = [1, 2, 3]
@@ -115,7 +115,7 @@ RSpec.describe NumberAnalyzer do
       end
 
       context 'with realistic data scenarios' do
-        let(:analyzer) { NumberAnalyzer.new([]) }
+        let(:analyzer) { Numana.new([]) }
 
         it 'handles small effect sizes (borderline significance)' do
           # Groups with slightly different variances
@@ -144,7 +144,7 @@ RSpec.describe NumberAnalyzer do
       end
 
       context 'mathematical accuracy validation' do
-        let(:analyzer) { NumberAnalyzer.new([]) }
+        let(:analyzer) { Numana.new([]) }
 
         it 'calculates degrees of freedom correctly' do
           # 4 groups, total 20 observations

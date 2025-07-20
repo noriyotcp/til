@@ -3,7 +3,7 @@
 require_relative '../base_command'
 
 # Command for performing two-way ANOVA (Analysis of Variance)
-class NumberAnalyzer::Commands::TwoWayAnovaCommand < NumberAnalyzer::Commands::BaseCommand
+class Numana::Commands::TwoWayAnovaCommand < Numana::Commands::BaseCommand
   command 'two-way-anova', 'Perform two-way Analysis of Variance (ANOVA)'
 
   private
@@ -27,7 +27,7 @@ class NumberAnalyzer::Commands::TwoWayAnovaCommand < NumberAnalyzer::Commands::B
     factor_a_levels, factor_b_levels, values = data
 
     # Create NumberAnalyzer instance
-    analyzer = NumberAnalyzer.new([])
+    analyzer = Numana.new([])
     result = analyzer.two_way_anova(nil, factor_a_levels, factor_b_levels, values)
 
     raise ArgumentError, 'Could not calculate Two-way ANOVA. Check your data' if result.nil?
@@ -37,7 +37,7 @@ class NumberAnalyzer::Commands::TwoWayAnovaCommand < NumberAnalyzer::Commands::B
 
   def output_result(result)
     require_relative '../../presenters/two_way_anova_presenter'
-    presenter = NumberAnalyzer::Presenters::TwoWayAnovaPresenter.new(result, @options)
+    presenter = Numana::Presenters::TwoWayAnovaPresenter.new(result, @options)
     puts presenter.format
   end
 

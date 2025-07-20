@@ -3,7 +3,7 @@
 require 'logger'
 
 # Enhanced error handling and recovery system for NumberAnalyzer plugins
-class NumberAnalyzer
+class Numana
   # Handles plugin errors with recovery mechanisms
   class PluginErrorHandler
     # Error recovery strategies

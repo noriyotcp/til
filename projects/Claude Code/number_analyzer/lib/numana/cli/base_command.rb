@@ -4,8 +4,8 @@ require_relative '../formatting_utils'
 
 # Base class for all CLI commands
 # Provides common functionality for command execution, error handling, and output formatting
-class NumberAnalyzer::Commands::BaseCommand
-  include NumberAnalyzer::FormattingUtils
+class Numana::Commands::BaseCommand
+  include Numana::FormattingUtils
   attr_reader :name, :description, :options
 
   def initialize
@@ -54,7 +54,7 @@ class NumberAnalyzer::Commands::BaseCommand
   # Parse input data from arguments or file
   def parse_input(args)
     require_relative 'data_input_handler'
-    NumberAnalyzer::Commands::DataInputHandler.parse(args, @options)
+    Numana::Commands::DataInputHandler.parse(args, @options)
   end
 
   # Must be implemented by subclasses

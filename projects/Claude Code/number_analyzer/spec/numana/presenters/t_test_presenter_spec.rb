@@ -2,7 +2,7 @@
 
 require_relative '../../spec_helper'
 
-describe NumberAnalyzer::Presenters::TTestPresenter do
+describe Numana::Presenters::TTestPresenter do
   let(:options) { { precision: 3 } }
 
   describe 'Independent samples t-test' do

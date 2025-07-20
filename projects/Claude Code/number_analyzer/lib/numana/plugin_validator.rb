@@ -6,7 +6,7 @@ require 'json'
 # Plugin Validation and Security System for NumberAnalyzer
 # Provides security validation and integrity checking for external plugins
 # Security validation system for plugins
-class NumberAnalyzer::PluginValidator
+class Numana::PluginValidator
   # Validation errors
   class ValidationError < StandardError; end
   class SecurityViolationError < ValidationError; end
@@ -421,11 +421,11 @@ class NumberAnalyzer::PluginValidator
 
     def validate_plugin_structure(content, results)
       # Check for required plugin interface inclusion
-      unless content.include?('NumberAnalyzer::StatisticsPlugin') ||
-             content.include?('NumberAnalyzer::CLIPlugin') ||
-             content.include?('NumberAnalyzer::FileFormatPlugin') ||
-             content.include?('NumberAnalyzer::OutputFormatPlugin') ||
-             content.include?('NumberAnalyzer::ValidatorPlugin')
+      unless content.include?('Numana::StatisticsPlugin') ||
+             content.include?('Numana::CLIPlugin') ||
+             content.include?('Numana::FileFormatPlugin') ||
+             content.include?('Numana::OutputFormatPlugin') ||
+             content.include?('Numana::ValidatorPlugin')
         results[:warnings] << 'Plugin does not include any recognized NumberAnalyzer plugin interface'
       end
 

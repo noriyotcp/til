@@ -3,14 +3,14 @@
 require 'spec_helper'
 require 'number_analyzer/cli/error_handler'
 
-RSpec.describe NumberAnalyzer::CLI::ErrorHandler do
+RSpec.describe Numana::CLI::ErrorHandler do
   describe '.handle_unknown_command' do
     let(:available_commands) { %w[mean median mode sum variance std] }
 
     context 'when similar commands exist' do
       it 'suggests similar commands for typos' do
         expect { described_class.handle_unknown_command('mena', available_commands) }
-          .to raise_error(NumberAnalyzer::CLI::ErrorHandler::CLIError) do |error|
+          .to raise_error(Numana::CLI::ErrorHandler::CLIError) do |error|
           expect(error.message).to eq('Unknown command: mena')
           expect(error.suggestion).to eq('Did you mean: mean?')
           expect(error.error_code).to eq(:unknown_command)
@@ -19,7 +19,7 @@ RSpec.describe NumberAnalyzer::CLI::ErrorHandler do
 
       it 'suggests multiple similar commands' do
         expect { described_class.handle_unknown_command('mde', available_commands) }
-          .to raise_error(NumberAnalyzer::CLI::ErrorHandler::CLIError) do |error|
+          .to raise_error(Numana::CLI::ErrorHandler::CLIError) do |error|
           expect(error.suggestion).to include('mode')
           # Should suggest commands within distance 2
         end
@@ -29,7 +29,7 @@ RSpec.describe NumberAnalyzer::CLI::ErrorHandler do
     context 'when no similar commands exist' do
       it 'provides help context' do
         expect { described_class.handle_unknown_command('xyz', available_commands) }
-          .to raise_error(NumberAnalyzer::CLI::ErrorHandler::CLIError) do |error|
+          .to raise_error(Numana::CLI::ErrorHandler::CLIError) do |error|
           expect(error.message).to eq('Unknown command: xyz')
           expect(error.context).to eq("Use 'bundle exec number_analyzer help' for available commands.")
           expect(error.suggestion).to be_nil
@@ -41,7 +41,7 @@ RSpec.describe NumberAnalyzer::CLI::ErrorHandler do
   describe '.handle_invalid_option' do
     it 'suggests similar options for typos' do
       expect { described_class.handle_invalid_option('--helpp') }
-        .to raise_error(NumberAnalyzer::CLI::ErrorHandler::CLIError) do |error|
+        .to raise_error(Numana::CLI::ErrorHandler::CLIError) do |error|
         expect(error.message).to eq('Invalid option: --helpp')
         expect(error.suggestion).to eq('Did you mean: --help?')
         expect(error.error_code).to eq(:invalid_option)
@@ -50,7 +50,7 @@ RSpec.describe NumberAnalyzer::CLI::ErrorHandler do
 
     it 'includes command context when provided' do
       expect { described_class.handle_invalid_option('--bad', 'mean') }
-        .to raise_error(NumberAnalyzer::CLI::ErrorHandler::CLIError) do |error|
+        .to raise_error(Numana::CLI::ErrorHandler::CLIError) do |error|
         expect(error.command).to eq('mean')
       end
     end
@@ -59,7 +59,7 @@ RSpec.describe NumberAnalyzer::CLI::ErrorHandler do
   describe '.handle_argument_error' do
     it 'provides context for numeric values' do
       expect { described_class.handle_argument_error('invalid number format') }
-        .to raise_error(NumberAnalyzer::CLI::ErrorHandler::CLIError) do |error|
+        .to raise_error(Numana::CLI::ErrorHandler::CLIError) do |error|
         expect(error.message).to eq('Argument error: invalid number format')
         expect(error.context).to eq('Please provide numeric values')
         expect(error.error_code).to eq(:invalid_argument)
@@ -96,7 +96,7 @@ RSpec.describe NumberAnalyzer::CLI::ErrorHandler do
   describe '.print_error_and_exit' do
     context 'with CLIError' do
       it 'prints user message to stderr and exits with appropriate code' do
-        error = NumberAnalyzer::CLI::ErrorHandler::CLIError.new(
+        error = Numana::CLI::ErrorHandler::CLIError.new(
           'Test error',
           command: 'test',
           suggestion: 'Try this instead',
@@ -109,7 +109,7 @@ RSpec.describe NumberAnalyzer::CLI::ErrorHandler do
       end
 
       it 'exits with code 2 for non-unknown_command errors' do
-        error = NumberAnalyzer::CLI::ErrorHandler::CLIError.new(
+        error = Numana::CLI::ErrorHandler::CLIError.new(
           'Test error',
           code: :invalid_option
         )
@@ -133,7 +133,7 @@ RSpec.describe NumberAnalyzer::CLI::ErrorHandler do
 
   describe 'CLIError' do
     it 'formats user message correctly' do
-      error = NumberAnalyzer::CLI::ErrorHandler::CLIError.new(
+      error = Numana::CLI::ErrorHandler::CLIError.new(
         'Main error message',
         command: 'test-command',
         context: 'Additional context',
@@ -152,7 +152,7 @@ RSpec.describe NumberAnalyzer::CLI::ErrorHandler do
     end
 
     it 'omits nil fields from user message' do
-      error = NumberAnalyzer::CLI::ErrorHandler::CLIError.new(
+      error = Numana::CLI::ErrorHandler::CLIError.new(
         'Main error message',
         command: 'test-command'
       )

@@ -14,7 +14,7 @@ require_relative 'base_statistical_presenter'
 # - Japanese localization for user-friendly verbose output
 #
 # Supports all output modes with dataset metadata integration.
-class NumberAnalyzer::Presenters::OutliersPresenter < NumberAnalyzer::Presenters::BaseStatisticalPresenter
+class Numana::Presenters::OutliersPresenter < Numana::Presenters::BaseStatisticalPresenter
   def format_verbose
     return 'なし' if outliers_empty?
 

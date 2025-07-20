@@ -3,7 +3,7 @@
 require_relative '../base_command'
 
 # Command for calculating arithmetic mean (average) of numbers
-class NumberAnalyzer::Commands::MeanCommand < NumberAnalyzer::Commands::BaseCommand
+class Numana::Commands::MeanCommand < Numana::Commands::BaseCommand
   command 'mean', 'Calculate the arithmetic mean (average) of numbers'
 
   private
@@ -11,7 +11,7 @@ class NumberAnalyzer::Commands::MeanCommand < NumberAnalyzer::Commands::BaseComm
   def perform_calculation(data)
     raise ArgumentError, 'Cannot calculate mean for empty array' if data.empty?
 
-    analyzer = NumberAnalyzer.new(data)
+    analyzer = Numana.new(data)
     analyzer.mean
   end
 end

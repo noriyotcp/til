@@ -3,7 +3,7 @@
 require 'spec_helper'
 require 'number_analyzer/presenters/wilcoxon_test_presenter'
 
-RSpec.describe NumberAnalyzer::Presenters::WilcoxonTestPresenter do
+RSpec.describe Numana::Presenters::WilcoxonTestPresenter do
   let(:wilcoxon_result) do
     {
       test_type: 'Wilcoxon Signed-Rank Test',
@@ -53,7 +53,7 @@ RSpec.describe NumberAnalyzer::Presenters::WilcoxonTestPresenter do
   describe '#initialize' do
     it 'inherits from BaseStatisticalPresenter' do
       presenter = described_class.new(wilcoxon_result, {})
-      expect(presenter).to be_a(NumberAnalyzer::Presenters::BaseStatisticalPresenter)
+      expect(presenter).to be_a(Numana::Presenters::BaseStatisticalPresenter)
     end
 
     it 'accepts result and options' do
@@ -240,21 +240,21 @@ RSpec.describe NumberAnalyzer::Presenters::WilcoxonTestPresenter do
 
     it 'produces same output as StatisticsPresenter.format_wilcoxon_test for verbose format' do
       new_output = presenter.format_verbose
-      old_output = NumberAnalyzer::StatisticsPresenter.format_wilcoxon_test(wilcoxon_result, { precision: 3 })
+      old_output = Numana::StatisticsPresenter.format_wilcoxon_test(wilcoxon_result, { precision: 3 })
 
       expect(new_output).to eq(old_output)
     end
 
     it 'produces same output as StatisticsPresenter.format_wilcoxon_test for JSON format' do
       new_output = presenter.format_json
-      old_output = NumberAnalyzer::StatisticsPresenter.format_wilcoxon_test(wilcoxon_result, { format: 'json', precision: 3 })
+      old_output = Numana::StatisticsPresenter.format_wilcoxon_test(wilcoxon_result, { format: 'json', precision: 3 })
 
       expect(JSON.parse(new_output)).to eq(JSON.parse(old_output))
     end
 
     it 'produces same output as StatisticsPresenter.format_wilcoxon_test for quiet format' do
       new_output = presenter.format_quiet
-      old_output = NumberAnalyzer::StatisticsPresenter.format_wilcoxon_test(wilcoxon_result, { quiet: true, precision: 3 })
+      old_output = Numana::StatisticsPresenter.format_wilcoxon_test(wilcoxon_result, { quiet: true, precision: 3 })
 
       expect(new_output).to eq(old_output)
     end

@@ -3,8 +3,8 @@
 require 'spec_helper'
 
 RSpec.describe 'Plugin System Integration' do
-  let(:plugin_system) { NumberAnalyzer::PluginSystem.new }
-  let(:cli_class) { NumberAnalyzer::CLI }
+  let(:plugin_system) { Numana::PluginSystem.new }
+  let(:cli_class) { Numana::CLI }
   let(:sample_data) { [1, 2, 3, 4, 5, 6, 7, 8, 9, 10] }
 
   before do
@@ -42,7 +42,7 @@ RSpec.describe 'Plugin System Integration' do
         plugin_system.load_plugin('basic_stats')
 
         # Create a NumberAnalyzer instance
-        analyzer = NumberAnalyzer.new([1, 2, 3, 4, 5])
+        analyzer = Numana.new([1, 2, 3, 4, 5])
 
         # Plugin methods should be available
         expect(analyzer).to respond_to(:sum)
@@ -91,7 +91,7 @@ RSpec.describe 'Plugin System Integration' do
         expect(cli_class.commands).to include('sum', 'mean', 'mode', 'variance', 'std-dev')
 
         # 5. Verify NumberAnalyzer has the methods
-        analyzer = NumberAnalyzer.new([10, 20, 30])
+        analyzer = Numana.new([10, 20, 30])
         expect(analyzer.sum).to eq(60)
         expect(analyzer.mean).to eq(20.0)
 
@@ -179,7 +179,7 @@ RSpec.describe 'Plugin System Integration' do
       plugin_system.load_plugin('basic_stats')
       plugin_system.load_plugin('advanced_stats')
 
-      analyzer = NumberAnalyzer.new(sample_data)
+      analyzer = Numana.new(sample_data)
 
       # BasicStats methods
       expect(analyzer).to respond_to(:sum, :mean, :mode, :variance, :standard_deviation)
@@ -205,7 +205,7 @@ RSpec.describe 'Plugin System Integration' do
       plugin_system.load_plugin('advanced_stats')
 
       # AdvancedStats depends on BasicStats methods (mean, standard_deviation)
-      analyzer = NumberAnalyzer.new([1, 1, 1, 1, 1]) # All same values
+      analyzer = Numana.new([1, 1, 1, 1, 1]) # All same values
 
       # This should work because BasicStats provides mean and standard_deviation
       deviation_scores = analyzer.deviation_scores
@@ -272,10 +272,10 @@ RSpec.describe 'Plugin System Integration' do
 
     it 'initializes plugin system correctly through CLI' do
       # Mock the enabled plugins configuration
-      allow_any_instance_of(NumberAnalyzer::PluginSystem).to receive(:load_enabled_plugins)
+      allow_any_instance_of(Numana::PluginSystem).to receive(:load_enabled_plugins)
 
       # Initialize plugins through CLI
-      expect_any_instance_of(NumberAnalyzer::PluginSystem).to receive(:load_enabled_plugins)
+      expect_any_instance_of(Numana::PluginSystem).to receive(:load_enabled_plugins)
       cli_class.initialize_plugins
     end
 
@@ -283,7 +283,7 @@ RSpec.describe 'Plugin System Integration' do
       system1 = cli_class.plugin_system
       system2 = cli_class.plugin_system
 
-      expect(system1).to be_a(NumberAnalyzer::PluginSystem)
+      expect(system1).to be_a(Numana::PluginSystem)
       expect(system1).to be(system2) # Same instance
     end
   end
@@ -300,10 +300,10 @@ RSpec.describe 'Plugin System Integration' do
       plugin_system.load_plugin('advanced_stats')
 
       # Plugin-based analyzer
-      plugin_analyzer = NumberAnalyzer.new(sample_data)
+      plugin_analyzer = Numana.new(sample_data)
 
       # Legacy analyzer using original modules
-      legacy_analyzer = NumberAnalyzer.new(sample_data)
+      legacy_analyzer = Numana.new(sample_data)
       legacy_analyzer.extend(BasicStats)
       legacy_analyzer.extend(AdvancedStats)
 
@@ -317,7 +317,7 @@ RSpec.describe 'Plugin System Integration' do
 
     it 'maintains existing NumberAnalyzer API without plugins' do
       # Even without loading plugins, core NumberAnalyzer functionality should work
-      analyzer = NumberAnalyzer.new(sample_data)
+      analyzer = Numana.new(sample_data)
 
       # These methods should be available from the original implementation
       expect(analyzer).to respond_to(:calculate_statistics)

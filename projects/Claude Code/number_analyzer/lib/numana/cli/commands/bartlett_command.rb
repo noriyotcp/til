@@ -3,7 +3,7 @@
 require_relative '../base_command'
 
 # Command for performing Bartlett test for variance homogeneity
-class NumberAnalyzer::Commands::BartlettCommand < NumberAnalyzer::Commands::BaseCommand
+class Numana::Commands::BartlettCommand < Numana::Commands::BaseCommand
   command 'bartlett', 'Test for variance homogeneity using Bartlett test (assumes normality)'
 
   private
@@ -35,7 +35,7 @@ class NumberAnalyzer::Commands::BartlettCommand < NumberAnalyzer::Commands::Base
 
   def perform_calculation(data)
     # Execute Bartlett test
-    analyzer = NumberAnalyzer.new([])
+    analyzer = Numana.new([])
     result = analyzer.bartlett_test(*data)
 
     raise ArgumentError, 'Could not perform Bartlett test. Check your data' if result.nil?
@@ -44,7 +44,7 @@ class NumberAnalyzer::Commands::BartlettCommand < NumberAnalyzer::Commands::Base
   end
 
   def output_result(result)
-    puts NumberAnalyzer::StatisticsPresenter.format_bartlett_test(result, @options)
+    puts Numana::StatisticsPresenter.format_bartlett_test(result, @options)
   end
 
   def show_help
@@ -88,7 +88,7 @@ class NumberAnalyzer::Commands::BartlettCommand < NumberAnalyzer::Commands::Base
       raise ArgumentError, "ファイルが見つかりません: #{filename}" unless File.exist?(filename)
 
       begin
-        data = NumberAnalyzer::FileReader.read_file(filename)
+        data = Numana::FileReader.read_file(filename)
         raise ArgumentError, "空のファイル: #{filename}" if data.empty?
 
         groups << data

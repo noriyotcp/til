@@ -3,7 +3,7 @@
 require 'spec_helper'
 require_relative '../../lib/number_analyzer/plugin_sandbox'
 
-RSpec.describe NumberAnalyzer::PluginSandbox do
+RSpec.describe Numana::PluginSandbox do
   let(:sandbox) { described_class.new(security_level: :test) }
   let(:strict_sandbox) { described_class.new(security_level: :production) }
 
@@ -14,7 +14,7 @@ RSpec.describe NumberAnalyzer::PluginSandbox do
 
         expect do
           sandbox.execute_plugin(malicious_code, plugin_name: 'test_eval')
-        end.to raise_error(NumberAnalyzer::PluginSecurityError, /eval.*prohibited/)
+        end.to raise_error(Numana::PluginSecurityError, /eval.*prohibited/)
       end
 
       it 'blocks system commands' do
@@ -22,7 +22,7 @@ RSpec.describe NumberAnalyzer::PluginSandbox do
 
         expect do
           sandbox.execute_plugin(malicious_code, plugin_name: 'test_system')
-        end.to raise_error(NumberAnalyzer::PluginSecurityError, /system.*not allowed/)
+        end.to raise_error(Numana::PluginSecurityError, /system.*not allowed/)
       end
 
       it 'blocks file access' do
@@ -30,7 +30,7 @@ RSpec.describe NumberAnalyzer::PluginSandbox do
 
         expect do
           sandbox.execute_plugin(malicious_code, plugin_name: 'test_file')
-        end.to raise_error(NumberAnalyzer::PluginSecurityError, /File.*prohibited/)
+        end.to raise_error(Numana::PluginSecurityError, /File.*prohibited/)
       end
 
       it 'blocks require statements' do
@@ -38,7 +38,7 @@ RSpec.describe NumberAnalyzer::PluginSandbox do
 
         expect do
           sandbox.execute_plugin(malicious_code, plugin_name: 'test_require')
-        end.to raise_error(NumberAnalyzer::PluginSecurityError, /require.*restricted/)
+        end.to raise_error(Numana::PluginSecurityError, /require.*restricted/)
       end
 
       it 'blocks send method' do
@@ -46,7 +46,7 @@ RSpec.describe NumberAnalyzer::PluginSandbox do
 
         expect do
           sandbox.execute_plugin(malicious_code, plugin_name: 'test_send')
-        end.to raise_error(NumberAnalyzer::PluginSecurityError, /send.*not permitted/)
+        end.to raise_error(Numana::PluginSecurityError, /send.*not permitted/)
       end
 
       it 'blocks thread creation' do
@@ -54,7 +54,7 @@ RSpec.describe NumberAnalyzer::PluginSandbox do
 
         expect do
           sandbox.execute_plugin(malicious_code, plugin_name: 'test_thread')
-        end.to raise_error(NumberAnalyzer::PluginSecurityError, /Thread.*restricted/)
+        end.to raise_error(Numana::PluginSecurityError, /Thread.*restricted/)
       end
     end
 
@@ -96,7 +96,7 @@ RSpec.describe NumberAnalyzer::PluginSandbox do
 
       expect do
         sandbox.execute_plugin(infinite_loop, plugin_name: 'test_infinite_loop')
-      end.to raise_error(NumberAnalyzer::PluginTimeoutError, /time limit exceeded/)
+      end.to raise_error(Numana::PluginTimeoutError, /time limit exceeded/)
     end
 
     it 'prevents excessive memory usage' do
@@ -105,7 +105,7 @@ RSpec.describe NumberAnalyzer::PluginSandbox do
 
       expect do
         sandbox.execute_plugin(memory_bomb, plugin_name: 'test_memory_bomb')
-      end.to raise_error(NumberAnalyzer::PluginResourceError, /Memory limit exceeded/)
+      end.to raise_error(Numana::PluginResourceError, /Memory limit exceeded/)
     end
 
     it 'limits output size' do
@@ -114,7 +114,7 @@ RSpec.describe NumberAnalyzer::PluginSandbox do
 
       expect do
         sandbox.execute_plugin(large_output, plugin_name: 'test_large_output')
-      end.to raise_error(NumberAnalyzer::PluginResourceError, /Output size limit exceeded/)
+      end.to raise_error(Numana::PluginResourceError, /Output size limit exceeded/)
     end
 
     it 'allows normal resource usage' do
@@ -140,7 +140,7 @@ RSpec.describe NumberAnalyzer::PluginSandbox do
 
       expect do
         sandbox.execute_plugin(code, plugin_name: 'test_high_risk', capabilities: capabilities)
-      end.to raise_error(NumberAnalyzer::PluginCapabilityError, /requires explicit approval/)
+      end.to raise_error(Numana::PluginCapabilityError, /requires explicit approval/)
     end
 
     it 'allows trusted plugins to use any capability' do
@@ -164,7 +164,7 @@ RSpec.describe NumberAnalyzer::PluginSandbox do
 
       expect do
         sandbox.execute_plugin(invalid_code, plugin_name: 'test_syntax')
-      end.to raise_error(NumberAnalyzer::PluginSyntaxError, /syntax error/)
+      end.to raise_error(Numana::PluginSyntaxError, /syntax error/)
     end
 
     it 'allows valid syntax' do
@@ -172,7 +172,7 @@ RSpec.describe NumberAnalyzer::PluginSandbox do
 
       expect do
         sandbox.execute_plugin(valid_code, plugin_name: 'test_valid_syntax')
-      end.not_to raise_error(NumberAnalyzer::PluginSyntaxError)
+      end.not_to raise_error(Numana::PluginSyntaxError)
     end
   end
 
@@ -197,7 +197,7 @@ RSpec.describe NumberAnalyzer::PluginSandbox do
 
         expect do
           strict_sandbox.execute_plugin(code, plugin_name: 'prod_test')
-        end.to raise_error(NumberAnalyzer::PluginSecurityError)
+        end.to raise_error(Numana::PluginSecurityError)
       end
     end
   end
@@ -223,12 +223,12 @@ RSpec.describe NumberAnalyzer::PluginSandbox do
     it 'provides helpful error messages for blocked methods' do
       expect do
         sandbox.execute_plugin('system("ls")', plugin_name: 'error_test')
-      end.to raise_error(NumberAnalyzer::PluginSecurityError)
+      end.to raise_error(Numana::PluginSecurityError)
 
       # Verify error message content separately
       begin
         sandbox.execute_plugin('system("ls")', plugin_name: 'error_test')
-      rescue NumberAnalyzer::PluginSecurityError => e
+      rescue Numana::PluginSecurityError => e
         expect(e.message).to include('system')
         expect(e.message).to include('not allowed')
       end
@@ -240,7 +240,7 @@ RSpec.describe NumberAnalyzer::PluginSandbox do
 
       expect do
         sandbox.execute_plugin(error_code, plugin_name: 'error_test')
-      end.to raise_error(NumberAnalyzer::PluginExecutionError, /plugin error/)
+      end.to raise_error(Numana::PluginExecutionError, /plugin error/)
     end
   end
 
@@ -255,7 +255,7 @@ RSpec.describe NumberAnalyzer::PluginSandbox do
     it 'logs violations' do
       expect do
         sandbox.execute_plugin('eval("test")', plugin_name: 'violation_test')
-      rescue NumberAnalyzer::PluginSecurityError
+      rescue Numana::PluginSecurityError
         # Expected to fail
       end.to output(/PLUGIN_EXECUTION_ERROR.*violation_test/).to_stdout
     end

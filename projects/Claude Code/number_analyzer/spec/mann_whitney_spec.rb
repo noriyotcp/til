@@ -3,14 +3,14 @@
 require 'spec_helper'
 require_relative '../lib/number_analyzer'
 
-RSpec.describe NumberAnalyzer do
+RSpec.describe Numana do
   describe 'Mann-Whitney U Test' do
     describe '#mann_whitney_u_test' do
       context 'when groups have clear differences' do
         # Groups with clearly different distributions
         let(:group1) { [1, 2, 3, 4, 5] }        # lower values
         let(:group2) { [6, 7, 8, 9, 10] }       # higher values
-        let(:analyzer) { NumberAnalyzer.new([]) }
+        let(:analyzer) { Numana.new([]) }
 
         it 'returns correct test structure' do
           result = analyzer.mann_whitney_u_test(group1, group2)
@@ -62,7 +62,7 @@ RSpec.describe NumberAnalyzer do
         # Groups with overlapping distributions
         let(:group1) { [4, 5, 6, 7, 8] }        # overlapping values
         let(:group2) { [5, 6, 7, 8, 9] }        # overlapping values
-        let(:analyzer) { NumberAnalyzer.new([]) }
+        let(:analyzer) { Numana.new([]) }
 
         it 'identifies similar distributions correctly' do
           result = analyzer.mann_whitney_u_test(group1, group2)
@@ -89,7 +89,7 @@ RSpec.describe NumberAnalyzer do
         # Groups with identical values (ties)
         let(:group1) { [1, 2, 2, 3, 4] }
         let(:group2) { [2, 3, 3, 4, 5] }
-        let(:analyzer) { NumberAnalyzer.new([]) }
+        let(:analyzer) { Numana.new([]) }
 
         it 'handles tied values correctly' do
           result = analyzer.mann_whitney_u_test(group1, group2)
@@ -116,7 +116,7 @@ RSpec.describe NumberAnalyzer do
       context 'with unequal group sizes' do
         let(:group1) { [1, 2, 3] }              # n = 3
         let(:group2) { [4, 5, 6, 7, 8] }        # n = 5
-        let(:analyzer) { NumberAnalyzer.new([]) }
+        let(:analyzer) { Numana.new([]) }
 
         it 'handles unequal group sizes correctly' do
           result = analyzer.mann_whitney_u_test(group1, group2)
@@ -146,7 +146,7 @@ RSpec.describe NumberAnalyzer do
       context 'with small sample sizes' do
         let(:group1) { [1, 2] }
         let(:group2) { [4, 5] }
-        let(:analyzer) { NumberAnalyzer.new([]) }
+        let(:analyzer) { Numana.new([]) }
 
         it 'handles small samples correctly' do
           result = analyzer.mann_whitney_u_test(group1, group2)
@@ -163,7 +163,7 @@ RSpec.describe NumberAnalyzer do
       context 'with single values per group' do
         let(:group1) { [1] }
         let(:group2) { [5] }
-        let(:analyzer) { NumberAnalyzer.new([]) }
+        let(:analyzer) { Numana.new([]) }
 
         it 'handles single values correctly' do
           result = analyzer.mann_whitney_u_test(group1, group2)
@@ -177,7 +177,7 @@ RSpec.describe NumberAnalyzer do
       end
 
       context 'with error conditions' do
-        let(:analyzer) { NumberAnalyzer.new([]) }
+        let(:analyzer) { Numana.new([]) }
 
         it 'returns nil for nil groups' do
           result = analyzer.mann_whitney_u_test(nil, [1, 2, 3])
@@ -214,7 +214,7 @@ RSpec.describe NumberAnalyzer do
         # Known test case for verification
         let(:group1) { [1, 2, 3, 4] }
         let(:group2) { [5, 6, 7, 8] }
-        let(:analyzer) { NumberAnalyzer.new([]) }
+        let(:analyzer) { Numana.new([]) }
 
         it 'produces mathematically accurate results' do
           result = analyzer.mann_whitney_u_test(group1, group2)
@@ -244,7 +244,7 @@ RSpec.describe NumberAnalyzer do
       context 'with identical distributions' do
         let(:group1) { [1, 2, 3, 4, 5] }
         let(:group2) { [1, 2, 3, 4, 5] }
-        let(:analyzer) { NumberAnalyzer.new([]) }
+        let(:analyzer) { Numana.new([]) }
 
         it 'correctly identifies no difference' do
           result = analyzer.mann_whitney_u_test(group1, group2)

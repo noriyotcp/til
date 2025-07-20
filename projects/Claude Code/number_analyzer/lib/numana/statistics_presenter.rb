@@ -10,7 +10,7 @@ require_relative 'presenters'
 # basic statistics, histograms, and advanced statistical tests (ANOVA, t-tests,
 # non-parametric tests, etc.). Supports multiple output formats including
 # verbose, JSON, and quiet modes with customizable precision.
-class NumberAnalyzer::StatisticsPresenter
+class Numana::StatisticsPresenter
   def self.display_results(stats)
     puts <<~RESULTS
       Total: #{stats[:total]}
@@ -62,27 +62,27 @@ class NumberAnalyzer::StatisticsPresenter
   end
 
   def self.format_levene_test(result, options = {})
-    NumberAnalyzer::Presenters::LeveneTestPresenter.new(result, options).format
+    Numana::Presenters::LeveneTestPresenter.new(result, options).format
   end
 
   def self.format_bartlett_test(result, options = {})
-    NumberAnalyzer::Presenters::BartlettTestPresenter.new(result, options).format
+    Numana::Presenters::BartlettTestPresenter.new(result, options).format
   end
 
   def self.format_kruskal_wallis_test(result, options = {})
-    NumberAnalyzer::Presenters::KruskalWallisTestPresenter.new(result, options).format
+    Numana::Presenters::KruskalWallisTestPresenter.new(result, options).format
   end
 
   def self.format_mann_whitney_test(result, options = {})
-    NumberAnalyzer::Presenters::MannWhitneyTestPresenter.new(result, options).format
+    Numana::Presenters::MannWhitneyTestPresenter.new(result, options).format
   end
 
   def self.format_wilcoxon_test(result, options = {})
-    NumberAnalyzer::Presenters::WilcoxonTestPresenter.new(result, options).format
+    Numana::Presenters::WilcoxonTestPresenter.new(result, options).format
   end
 
   def self.format_friedman_test(result, options = {})
-    NumberAnalyzer::Presenters::FriedmanTestPresenter.new(result, options).format
+    Numana::Presenters::FriedmanTestPresenter.new(result, options).format
   end
 
   private_class_method :format_mode, :format_outliers, :format_deviation_scores, :display_histogram

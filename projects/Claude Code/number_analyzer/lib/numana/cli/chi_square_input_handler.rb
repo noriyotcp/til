@@ -3,7 +3,7 @@
 require_relative 'data_input_handler'
 
 # Handles input parsing for chi-square test with various test types
-class NumberAnalyzer::CLI::ChiSquareInputHandler
+class Numana::CLI::ChiSquareInputHandler
   def initialize(options)
     @options = options
   end
@@ -38,7 +38,7 @@ class NumberAnalyzer::CLI::ChiSquareInputHandler
 
   def parse_goodness_of_fit_input(args)
     if @options[:uniform]
-      observed = NumberAnalyzer::Commands::DataInputHandler.parse(args, @options)
+      observed = Numana::Commands::DataInputHandler.parse(args, @options)
       [observed, nil]
     else
       parse_observed_expected_datasets(args)
@@ -111,13 +111,13 @@ class NumberAnalyzer::CLI::ChiSquareInputHandler
   end
 
   def parse_from_two_files(args)
-    observed = NumberAnalyzer::FileReader.read_from_file(args[0])
-    expected = NumberAnalyzer::FileReader.read_from_file(args[1])
+    observed = Numana::FileReader.read_from_file(args[0])
+    expected = Numana::FileReader.read_from_file(args[1])
     [observed, expected]
   end
 
   def parse_from_single_file
-    combined_data = NumberAnalyzer::Commands::DataInputHandler.parse([], @options)
+    combined_data = Numana::Commands::DataInputHandler.parse([], @options)
     mid = combined_data.length / 2
     observed = combined_data[0...mid]
     expected = combined_data[mid..]

@@ -12,7 +12,7 @@ require_relative 'base_statistical_presenter'
 # - Group statistics and ANOVA table
 #
 # Supports verbose, JSON, and quiet output formats with precision control.
-class NumberAnalyzer::Presenters::AnovaPresenter < NumberAnalyzer::Presenters::BaseStatisticalPresenter
+class Numana::Presenters::AnovaPresenter < Numana::Presenters::BaseStatisticalPresenter
   def format_verbose
     output = []
     output << '=== 一元配置分散分析結果 ==='

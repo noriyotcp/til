@@ -3,7 +3,7 @@
 require 'spec_helper'
 require 'number_analyzer/cli/base_command'
 
-RSpec.describe NumberAnalyzer::Commands::BaseCommand do
+RSpec.describe Numana::Commands::BaseCommand do
   # テスト用の具象コマンドクラスを定義
   let(:test_command_class) do
     Class.new(described_class) do
@@ -73,7 +73,7 @@ RSpec.describe NumberAnalyzer::Commands::BaseCommand do
 
     context 'with file input' do
       it 'delegates to DataInputHandler' do
-        expect(NumberAnalyzer::Commands::DataInputHandler)
+        expect(Numana::Commands::DataInputHandler)
           .to receive(:parse).with([], hash_including(file: 'test.csv')).and_return([1, 2, 3])
 
         expect { command.execute([], file: 'test.csv') }.to output("6\n").to_stdout

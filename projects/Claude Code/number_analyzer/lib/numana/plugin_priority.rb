@@ -7,14 +7,14 @@
 # Priority levels range from development (100) to local_plugins (30).
 #
 # @example Basic usage with class methods
-#   NumberAnalyzer::PluginPriority.get(:core_plugins) # => 90
-#   NumberAnalyzer::PluginPriority.set(:my_plugin, 95)
-#   NumberAnalyzer::PluginPriority.can_override?(new_plugin, existing_plugin)
+#   Numana::PluginPriority.get(:core_plugins) # => 90
+#   Numana::PluginPriority.set(:my_plugin, 95)
+#   Numana::PluginPriority.can_override?(new_plugin, existing_plugin)
 #
 # @example Instance usage for backward compatibility
-#   priority = NumberAnalyzer::PluginPriority.new
+#   priority = Numana::PluginPriority.new
 #   priority.set_priority_with_auto_detection('plugin_name', metadata)
-class NumberAnalyzer::PluginPriority
+class Numana::PluginPriority
   # 階層的優先度システム - 数値が高い = 高優先度
   DEFAULT_PRIORITIES = {
     development: 100,     # 開発・テスト用 - 最高優先度（何でも上書き）

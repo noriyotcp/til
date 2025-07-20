@@ -10,7 +10,7 @@ require_relative 'plugin_configuration/security'
 # Provides flexible, multi-layer configuration system for plugins
 # Main entry point for plugin configuration
 # Delegates to modular components for better maintainability
-class NumberAnalyzer::PluginConfiguration
+class Numana::PluginConfiguration
   # Re-export errors from base module
   ConfigurationError = PluginConfiguration::ConfigurationError
   InvalidConfigurationError = PluginConfiguration::InvalidConfigurationError

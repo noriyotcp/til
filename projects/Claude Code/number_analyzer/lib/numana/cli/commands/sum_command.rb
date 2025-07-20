@@ -3,7 +3,7 @@
 require_relative '../base_command'
 
 # Command for calculating sum of numbers
-class NumberAnalyzer::Commands::SumCommand < NumberAnalyzer::Commands::BaseCommand
+class Numana::Commands::SumCommand < Numana::Commands::BaseCommand
   command 'sum', 'Calculate the sum of numbers'
 
   private
@@ -11,7 +11,7 @@ class NumberAnalyzer::Commands::SumCommand < NumberAnalyzer::Commands::BaseComma
   def perform_calculation(data)
     raise ArgumentError, 'Cannot calculate sum for empty array' if data.empty?
 
-    analyzer = NumberAnalyzer.new(data)
+    analyzer = Numana.new(data)
     analyzer.sum
   end
 end

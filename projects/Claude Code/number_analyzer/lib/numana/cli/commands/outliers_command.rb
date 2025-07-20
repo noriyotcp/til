@@ -4,7 +4,7 @@ require_relative '../base_command'
 require_relative '../../presenters/outliers_presenter'
 
 # Command for detecting outliers using IQR * 1.5 rule
-class NumberAnalyzer::Commands::OutliersCommand < NumberAnalyzer::Commands::BaseCommand
+class Numana::Commands::OutliersCommand < Numana::Commands::BaseCommand
   command 'outliers', 'Detect outliers using IQR * 1.5 rule'
 
   private
@@ -18,13 +18,13 @@ class NumberAnalyzer::Commands::OutliersCommand < NumberAnalyzer::Commands::Base
   def perform_calculation(data)
     raise ArgumentError, 'Cannot calculate outliers for empty array' if data.empty?
 
-    analyzer = NumberAnalyzer.new(data)
+    analyzer = Numana.new(data)
     analyzer.outliers
   end
 
   def output_result(result)
     @options[:dataset_size] = @data&.size if @data
-    presenter = NumberAnalyzer::Presenters::OutliersPresenter.new(result, @options)
+    presenter = Numana::Presenters::OutliersPresenter.new(result, @options)
     puts presenter.format
   end
 

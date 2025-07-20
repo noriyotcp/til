@@ -4,7 +4,7 @@ require_relative 'base'
 
 # Configuration validation for NumberAnalyzer plugin system
 # Validates configuration data
-class NumberAnalyzer::PluginConfiguration::Validator
+class Numana::PluginConfiguration::Validator
   class << self
     # Validate the entire configuration
     def validate_configuration!(config)

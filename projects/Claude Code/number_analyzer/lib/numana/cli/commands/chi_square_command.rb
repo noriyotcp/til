@@ -5,7 +5,7 @@ require_relative '../chi_square_input_handler'
 require_relative '../chi_square_validator'
 
 # Command for performing chi-square test for independence or goodness-of-fit
-class NumberAnalyzer::Commands::ChiSquareCommand < NumberAnalyzer::Commands::BaseCommand
+class Numana::Commands::ChiSquareCommand < Numana::Commands::BaseCommand
   command 'chi-square', 'Perform chi-square test for independence or goodness-of-fit'
 
   private
@@ -27,11 +27,11 @@ class NumberAnalyzer::Commands::ChiSquareCommand < NumberAnalyzer::Commands::Bas
   end
 
   def input_handler
-    @input_handler ||= NumberAnalyzer::CLI::ChiSquareInputHandler.new(@options)
+    @input_handler ||= Numana::CLI::ChiSquareInputHandler.new(@options)
   end
 
   def validator
-    @validator ||= NumberAnalyzer::CLI::ChiSquareValidator.new(@options)
+    @validator ||= Numana::CLI::ChiSquareValidator.new(@options)
   end
 
   def perform_calculation(data)
@@ -46,7 +46,7 @@ class NumberAnalyzer::Commands::ChiSquareCommand < NumberAnalyzer::Commands::Bas
   end
 
   def perform_independence_test(contingency_table)
-    analyzer = NumberAnalyzer.new(contingency_table.flatten)
+    analyzer = Numana.new(contingency_table.flatten)
     result = analyzer.chi_square_test(contingency_table, type: :independence)
 
     raise ArgumentError, 'Error: Could not perform chi-square test. Check your data' if result.nil?
@@ -60,7 +60,7 @@ class NumberAnalyzer::Commands::ChiSquareCommand < NumberAnalyzer::Commands::Bas
   def perform_goodness_of_fit_test(data)
     observed, expected = data
 
-    analyzer = NumberAnalyzer.new(observed)
+    analyzer = Numana.new(observed)
     result = analyzer.chi_square_test(expected, type: :goodness_of_fit)
 
     raise ArgumentError, 'Error: Could not perform chi-square test. Check your data' if result.nil?
@@ -72,7 +72,7 @@ class NumberAnalyzer::Commands::ChiSquareCommand < NumberAnalyzer::Commands::Bas
   end
 
   def output_result(result)
-    presenter = NumberAnalyzer::Presenters::ChiSquarePresenter.new(result, @options)
+    presenter = Numana::Presenters::ChiSquarePresenter.new(result, @options)
     puts presenter.format
   end
 

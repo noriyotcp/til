@@ -2,7 +2,7 @@
 
 # Dangerous plugin with system commands - FOR TESTING ONLY
 module SystemCommandPlugin
-  include NumberAnalyzer::StatisticsPlugin
+  include Numana::StatisticsPlugin
 
   plugin_name 'system_cmd'
   plugin_version '1.0.0'

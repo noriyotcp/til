@@ -16,9 +16,9 @@ require_relative 'base_statistical_presenter'
 #
 # Example usage:
 #   result = { growth_rates: [0.1, 0.1], compound_annual_growth_rate: 0.1, average_growth_rate: 0.1, dataset_size: 3 }
-#   presenter = NumberAnalyzer::Presenters::GrowthRatePresenter.new(result, options)
+#   presenter = Numana::Presenters::GrowthRatePresenter.new(result, options)
 #   puts presenter.format
-class NumberAnalyzer::Presenters::GrowthRatePresenter < NumberAnalyzer::Presenters::BaseStatisticalPresenter
+class Numana::Presenters::GrowthRatePresenter < Numana::Presenters::BaseStatisticalPresenter
   def format_verbose
     return 'エラー: データが不十分です（2つ以上の値が必要）' if growth_rate_invalid?
 

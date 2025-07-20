@@ -5,7 +5,7 @@ require_relative '../lib/number_analyzer/plugin_interface'
 # VisualizationPlugin - Advanced ASCII visualization capabilities
 # Demonstrates output format plugin implementation with comprehensive chart generation
 module VisualizationPlugin
-  include NumberAnalyzer::StatisticsPlugin
+  include Numana::StatisticsPlugin
 
   # Plugin metadata
   plugin_name 'visualization'

@@ -7,7 +7,7 @@ require 'json'
 # DataExportPlugin - Advanced data export capabilities with multiple formats
 # Demonstrates output format plugin implementation with comprehensive export options
 module DataExportPlugin
-  include NumberAnalyzer::StatisticsPlugin
+  include Numana::StatisticsPlugin
 
   # Plugin metadata
   plugin_name 'data_export'

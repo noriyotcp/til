@@ -4,7 +4,7 @@ require_relative '../../../lib/number_analyzer/plugin_interface'
 
 # Safe example plugin for testing
 module SafeStatsPlugin
-  include NumberAnalyzer::StatisticsPlugin
+  include Numana::StatisticsPlugin
 
   plugin_name 'safe_stats'
   plugin_version '1.0.0'

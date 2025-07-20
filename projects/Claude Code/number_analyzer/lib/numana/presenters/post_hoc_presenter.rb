@@ -12,7 +12,7 @@ require_relative 'base_statistical_presenter'
 # - Warning messages for assumption violations
 #
 # Supports verbose, JSON, and quiet output formats with precision control.
-class NumberAnalyzer::Presenters::PostHocPresenter < NumberAnalyzer::Presenters::BaseStatisticalPresenter
+class Numana::Presenters::PostHocPresenter < Numana::Presenters::BaseStatisticalPresenter
   def format_verbose
     lines = []
     lines << "=== Post-hoc Analysis (#{@result[:method]}) ==="

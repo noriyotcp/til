@@ -3,7 +3,7 @@
 require_relative '../file_reader'
 
 # Handles data input from command line arguments or files
-class NumberAnalyzer::Commands::DataInputHandler
+class Numana::Commands::DataInputHandler
   class << self
     def parse(args, options)
       if options[:file]
@@ -30,7 +30,7 @@ class NumberAnalyzer::Commands::DataInputHandler
 
       begin
         # Use existing FileReader for consistency
-        NumberAnalyzer::FileReader.read_from_file(file_path)
+        Numana::FileReader.read_from_file(file_path)
       rescue StandardError => e
         raise ArgumentError, "Invalid data: #{e.message}"
       end

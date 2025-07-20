@@ -57,7 +57,7 @@ module VersionedPluginC
 end
 
 RSpec.describe 'PluginSystem with Advanced Features' do
-  let(:plugin_system) { NumberAnalyzer::PluginSystem.new }
+  let(:plugin_system) { Numana::PluginSystem.new }
 
   describe 'dependency resolution' do
     before do
@@ -270,7 +270,7 @@ RSpec.describe 'PluginSystem with Advanced Features' do
   describe 'integration with CLI commands' do
     before do
       # Mock CLI module
-      stub_const('NumberAnalyzer::CLI', Module.new do
+      stub_const('Numana::CLI', Module.new do
         @commands = {}
         def self.register_command(name, plugin, method)
           @commands[name] = { plugin: plugin, method: method }
@@ -286,7 +286,7 @@ RSpec.describe 'PluginSystem with Advanced Features' do
     end
 
     it 'registers plugin commands with CLI' do
-      expect(NumberAnalyzer::CLI.commands).to have_key('test-a')
+      expect(Numana::CLI.commands).to have_key('test-a')
     end
   end
 end

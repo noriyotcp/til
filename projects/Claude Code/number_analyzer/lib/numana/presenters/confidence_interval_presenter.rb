@@ -11,7 +11,7 @@ require_relative 'base_statistical_presenter'
 # - Support for different confidence levels (90%, 95%, 99%, etc.)
 #
 # Supports verbose, JSON, and quiet output formats with precision control.
-class NumberAnalyzer::Presenters::ConfidenceIntervalPresenter < NumberAnalyzer::Presenters::BaseStatisticalPresenter
+class Numana::Presenters::ConfidenceIntervalPresenter < Numana::Presenters::BaseStatisticalPresenter
   def format_verbose
     return '' if @result.nil?
 

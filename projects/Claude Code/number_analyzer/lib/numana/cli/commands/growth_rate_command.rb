@@ -3,20 +3,20 @@
 require_relative '../base_command'
 
 # Command for analyzing growth rates including period-over-period rates and CAGR
-class NumberAnalyzer::Commands::GrowthRateCommand < NumberAnalyzer::Commands::BaseCommand
+class Numana::Commands::GrowthRateCommand < Numana::Commands::BaseCommand
   command 'growth-rate', 'Analyze growth rates including period-over-period rates and CAGR'
 
   private
 
   def parse_input(args)
     require_relative '../data_input_handler'
-    NumberAnalyzer::Commands::DataInputHandler.parse(args, @options)
+    Numana::Commands::DataInputHandler.parse(args, @options)
   end
 
   def perform_calculation(data)
     raise ArgumentError, 'Error: Growth rate calculation requires at least 2 data points' if data.length < 2
 
-    analyzer = NumberAnalyzer.new(data)
+    analyzer = Numana.new(data)
 
     # Calculate growth rate metrics
     growth_rates = analyzer.growth_rates
@@ -35,7 +35,7 @@ class NumberAnalyzer::Commands::GrowthRateCommand < NumberAnalyzer::Commands::Ba
 
   def output_result(result)
     require_relative '../../presenters/growth_rate_presenter'
-    presenter = NumberAnalyzer::Presenters::GrowthRatePresenter.new(result, @options)
+    presenter = Numana::Presenters::GrowthRatePresenter.new(result, @options)
     puts presenter.format
   end
 

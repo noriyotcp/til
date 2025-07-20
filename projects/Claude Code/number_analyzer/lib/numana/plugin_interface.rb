@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 # Plugin Interface definitions and base classes for NumberAnalyzer
-class NumberAnalyzer
+class Numana
   # Base module that all statistics plugins must include
   module StatisticsPlugin
     def self.included(base)

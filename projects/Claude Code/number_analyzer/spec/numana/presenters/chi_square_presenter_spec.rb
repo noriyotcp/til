@@ -2,7 +2,7 @@
 
 require_relative '../../spec_helper'
 
-describe NumberAnalyzer::Presenters::ChiSquarePresenter do
+describe Numana::Presenters::ChiSquarePresenter do
   let(:options) { { precision: 3 } }
 
   describe 'Independence test' do

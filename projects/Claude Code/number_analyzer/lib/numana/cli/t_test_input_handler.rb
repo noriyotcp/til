@@ -3,7 +3,7 @@
 require_relative 'data_input_handler'
 
 # Handles input parsing for t-test with various test types
-class NumberAnalyzer::CLI::TTestInputHandler
+class Numana::CLI::TTestInputHandler
   def initialize(options)
     @options = options
   end
@@ -66,7 +66,7 @@ class NumberAnalyzer::CLI::TTestInputHandler
   end
 
   def parse_one_sample_input(args)
-    NumberAnalyzer::Commands::DataInputHandler.parse(args, @options)
+    Numana::Commands::DataInputHandler.parse(args, @options)
   end
 
   def parse_independent_input(args)
@@ -88,8 +88,8 @@ class NumberAnalyzer::CLI::TTestInputHandler
   end
 
   def parse_file_datasets(files)
-    dataset1 = NumberAnalyzer::FileReader.read_from_file(files[0])
-    dataset2 = NumberAnalyzer::FileReader.read_from_file(files[1])
+    dataset1 = Numana::FileReader.read_from_file(files[0])
+    dataset2 = Numana::FileReader.read_from_file(files[1])
     [dataset1, dataset2]
   rescue StandardError => e
     raise ArgumentError, "File read error: #{e.message}"

@@ -4,7 +4,7 @@ require_relative '../base_command'
 require 'json'
 
 # Command for displaying frequency distribution histogram
-class NumberAnalyzer::Commands::HistogramCommand < NumberAnalyzer::Commands::BaseCommand
+class Numana::Commands::HistogramCommand < Numana::Commands::BaseCommand
   command 'histogram', 'Display frequency distribution histogram'
 
   private
@@ -18,7 +18,7 @@ class NumberAnalyzer::Commands::HistogramCommand < NumberAnalyzer::Commands::Bas
   def perform_calculation(data)
     raise ArgumentError, 'Cannot calculate histogram for empty array' if data.empty?
 
-    analyzer = NumberAnalyzer.new(data)
+    analyzer = Numana.new(data)
     display_histogram_output(analyzer, data.size)
   end
 

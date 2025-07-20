@@ -9,7 +9,7 @@ require_relative 'plugin_registry'
 
 # Enhanced Plugin discovery and loading utilities with security validation
 # Handles plugin discovery, validation, and secure loading
-class NumberAnalyzer::PluginLoader
+class Numana::PluginLoader
   # Loading errors
   class LoadingError < StandardError; end
   class SecurityError < LoadingError; end
@@ -120,9 +120,9 @@ class NumberAnalyzer::PluginLoader
 
     # Check if it follows plugin conventions
     if content.match?(/include.*StatisticsPlugin/) ||
-       content.match?(/< NumberAnalyzer::CLIPlugin/) ||
+       content.match?(/< Numana::CLIPlugin/) ||
        content.match?(/plugin_name/) ||
-       content.match?(/NumberAnalyzer::.*Plugin/)
+       content.match?(/Numana::.*Plugin/)
 
       metadata[:valid] = true
 
@@ -188,9 +188,9 @@ class NumberAnalyzer::PluginLoader
 
     # Try different namespace combinations
     candidates = [
-      "NumberAnalyzer::#{class_name}",
+      "Numana::#{class_name}",
       "#{class_name}Plugin",
-      "NumberAnalyzer::#{class_name}Plugin",
+      "Numana::#{class_name}Plugin",
       class_name
     ]
 
@@ -295,7 +295,7 @@ class NumberAnalyzer::PluginLoader
     security_level = options[:security_level] || ENV['NUMBER_ANALYZER_SECURITY'] || :production
     trusted_plugins = options[:trusted_plugins] || []
 
-    NumberAnalyzer::PluginSandbox.new(
+    Numana::PluginSandbox.new(
       security_level: security_level.to_sym,
       trusted_plugins: trusted_plugins
     )
@@ -310,10 +310,10 @@ class NumberAnalyzer::PluginLoader
       result = sandbox.load_plugin_file(plugin_file, plugin_name: plugin_name, capabilities: capabilities)
       log_plugin_loading_success(plugin_name, security_level, capabilities)
       result
-    rescue NumberAnalyzer::PluginSecurityError, NumberAnalyzer::PluginTimeoutError,
-           NumberAnalyzer::PluginResourceError, NumberAnalyzer::PluginCapabilityError => e
+    rescue Numana::PluginSecurityError, Numana::PluginTimeoutError,
+           Numana::PluginResourceError, Numana::PluginCapabilityError => e
       handle_plugin_security_error(e, plugin_file, plugin_name)
-    rescue NumberAnalyzer::PluginExecutionError => e
+    rescue Numana::PluginExecutionError => e
       log_execution_error(plugin_name, e.message)
       raise ValidationError, "Failed to execute plugin #{plugin_file}: #{e.message}"
     rescue StandardError => e
@@ -325,16 +325,16 @@ class NumberAnalyzer::PluginLoader
   # Handle plugin security-related errors
   def self.handle_plugin_security_error(error, plugin_file, plugin_name)
     case error
-    when NumberAnalyzer::PluginSecurityError
+    when Numana::PluginSecurityError
       log_security_violation(plugin_name, error.message)
       raise SecurityError, "Security violation in plugin #{plugin_file}: #{error.message}"
-    when NumberAnalyzer::PluginTimeoutError
+    when Numana::PluginTimeoutError
       log_timeout_violation(plugin_name, error.message)
       raise SecurityError, "Timeout violation in plugin #{plugin_file}: #{error.message}"
-    when NumberAnalyzer::PluginResourceError
+    when Numana::PluginResourceError
       log_resource_violation(plugin_name, error.message)
       raise SecurityError, "Resource violation in plugin #{plugin_file}: #{error.message}"
-    when NumberAnalyzer::PluginCapabilityError
+    when Numana::PluginCapabilityError
       log_capability_violation(plugin_name, error.message)
       raise SecurityError, "Capability violation in plugin #{plugin_file}: #{error.message}"
     end

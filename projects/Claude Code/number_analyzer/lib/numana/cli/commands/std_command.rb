@@ -4,8 +4,8 @@ require_relative '../base_command'
 require_relative '../../formatting_utils'
 
 # Command for calculating standard deviation
-class NumberAnalyzer::Commands::StdCommand < NumberAnalyzer::Commands::BaseCommand
-  include NumberAnalyzer::FormattingUtils
+class Numana::Commands::StdCommand < Numana::Commands::BaseCommand
+  include Numana::FormattingUtils
 
   command 'std', 'Calculate standard deviation (square root of variance)'
 
@@ -20,7 +20,7 @@ class NumberAnalyzer::Commands::StdCommand < NumberAnalyzer::Commands::BaseComma
   def perform_calculation(data)
     raise ArgumentError, 'Cannot calculate std for empty array' if data.empty?
 
-    analyzer = NumberAnalyzer.new(data)
+    analyzer = Numana.new(data)
     analyzer.standard_deviation
   end
 

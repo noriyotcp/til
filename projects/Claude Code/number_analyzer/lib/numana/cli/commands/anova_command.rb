@@ -5,7 +5,7 @@ require_relative '../../presenters/anova_presenter'
 require_relative '../../presenters/post_hoc_presenter'
 
 # Command for performing one-way ANOVA (Analysis of Variance)
-class NumberAnalyzer::Commands::AnovaCommand < NumberAnalyzer::Commands::BaseCommand
+class Numana::Commands::AnovaCommand < Numana::Commands::BaseCommand
   command 'anova', 'Perform one-way Analysis of Variance (ANOVA)'
 
   private
@@ -31,7 +31,7 @@ class NumberAnalyzer::Commands::AnovaCommand < NumberAnalyzer::Commands::BaseCom
 
   def perform_calculation(data)
     # Create NumberAnalyzer instance (dummy, since we'll call class method)
-    analyzer = NumberAnalyzer.new([])
+    analyzer = Numana.new([])
     result = analyzer.one_way_anova(*data)
 
     raise ArgumentError, 'Could not calculate ANOVA. Check your data' if result.nil?
@@ -41,19 +41,19 @@ class NumberAnalyzer::Commands::AnovaCommand < NumberAnalyzer::Commands::BaseCom
 
   def output_result(result)
     # Format ANOVA results using presenter
-    presenter = NumberAnalyzer::Presenters::AnovaPresenter.new(result, @options)
+    presenter = Numana::Presenters::AnovaPresenter.new(result, @options)
     puts presenter.format
 
     # Perform post-hoc analysis if requested
     return unless @options[:post_hoc]
 
-    analyzer = NumberAnalyzer.new([])
+    analyzer = Numana.new([])
     post_hoc_result = analyzer.post_hoc_analysis(@groups, method: @options[:post_hoc].to_sym)
 
     return unless post_hoc_result
 
     puts "\n" unless @options[:format] == 'json'
-    presenter = NumberAnalyzer::Presenters::PostHocPresenter.new(post_hoc_result, @options)
+    presenter = Numana::Presenters::PostHocPresenter.new(post_hoc_result, @options)
     puts presenter.format
   end
 
@@ -115,7 +115,7 @@ class NumberAnalyzer::Commands::AnovaCommand < NumberAnalyzer::Commands::BaseCom
     filenames.each do |filename|
       raise ArgumentError, "File not found: #{filename}" unless File.exist?(filename)
 
-      data = NumberAnalyzer::FileReader.read_file(filename)
+      data = Numana::FileReader.read_file(filename)
       raise ArgumentError, "Empty file: #{filename}" if data.empty?
 
       groups << data

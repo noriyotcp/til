@@ -4,9 +4,9 @@ require 'spec_helper'
 require 'number_analyzer/cli/command_registry'
 require 'number_analyzer/cli/base_command'
 
-RSpec.describe NumberAnalyzer::Commands::CommandRegistry do
+RSpec.describe Numana::Commands::CommandRegistry do
   let(:test_command_class) do
-    Class.new(NumberAnalyzer::Commands::BaseCommand) do
+    Class.new(Numana::Commands::BaseCommand) do
       command 'test', 'Test command for registry'
 
       protected
@@ -18,7 +18,7 @@ RSpec.describe NumberAnalyzer::Commands::CommandRegistry do
   end
 
   let(:another_command_class) do
-    Class.new(NumberAnalyzer::Commands::BaseCommand) do
+    Class.new(Numana::Commands::BaseCommand) do
       command 'another', 'Another test command'
 
       protected
@@ -53,7 +53,7 @@ RSpec.describe NumberAnalyzer::Commands::CommandRegistry do
       described_class.register(another_command_class)
 
       # Register different class with same name
-      new_test_class = Class.new(NumberAnalyzer::Commands::BaseCommand) do
+      new_test_class = Class.new(Numana::Commands::BaseCommand) do
         command 'test', 'New test command'
       end
 

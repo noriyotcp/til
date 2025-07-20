@@ -2,7 +2,7 @@
 
 require 'spec_helper'
 
-RSpec.describe NumberAnalyzer::Presenters::MovingAveragePresenter do
+RSpec.describe Numana::Presenters::MovingAveragePresenter do
   let(:valid_moving_average_data) do
     {
       moving_average: [1.666667, 2.666667, 3.666667, 4.666667, 5.666667],

@@ -7,7 +7,7 @@ require_relative 'base_statistical_presenter'
 # Formats Kruskal-Wallis H test results for non-parametric one-way ANOVA in multiple
 # output formats. This test compares medians of multiple groups without requiring
 # normal distribution assumptions.
-class NumberAnalyzer::Presenters::KruskalWallisTestPresenter < NumberAnalyzer::Presenters::BaseStatisticalPresenter
+class Numana::Presenters::KruskalWallisTestPresenter < Numana::Presenters::BaseStatisticalPresenter
   def json_fields
     {
       test_type: @result[:test_type],

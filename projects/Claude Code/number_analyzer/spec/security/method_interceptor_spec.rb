@@ -4,7 +4,7 @@ require 'spec_helper'
 require_relative '../../lib/number_analyzer'
 require_relative '../../lib/number_analyzer/plugin_sandbox'
 
-RSpec.describe NumberAnalyzer::PluginSandbox::MethodInterceptor do
+RSpec.describe Numana::PluginSandbox::MethodInterceptor do
   let(:strict_interceptor) { described_class.new(:strict) }
   let(:standard_interceptor) { described_class.new(:standard) }
   let(:permissive_interceptor) { described_class.new(:permissive) }

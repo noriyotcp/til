@@ -7,7 +7,7 @@ require_relative 'base_statistical_presenter'
 # Formats Levene Test (Brown-Forsythe Modified) results in multiple output formats.
 # The Levene test is used to assess the equality of variances in different groups
 # and is commonly used to check ANOVA assumptions.
-class NumberAnalyzer::Presenters::LeveneTestPresenter < NumberAnalyzer::Presenters::BaseStatisticalPresenter
+class Numana::Presenters::LeveneTestPresenter < Numana::Presenters::BaseStatisticalPresenter
   def json_fields
     {
       test_type: @result[:test_type],

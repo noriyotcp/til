@@ -3,7 +3,7 @@
 require_relative '../base_command'
 
 # Command for calculating moving average with customizable window size
-class NumberAnalyzer::Commands::MovingAverageCommand < NumberAnalyzer::Commands::BaseCommand
+class Numana::Commands::MovingAverageCommand < Numana::Commands::BaseCommand
   command 'moving-average', 'Calculate moving average with specified window size'
 
   private
@@ -19,7 +19,7 @@ class NumberAnalyzer::Commands::MovingAverageCommand < NumberAnalyzer::Commands:
 
   def parse_input(args)
     require_relative '../data_input_handler'
-    NumberAnalyzer::Commands::DataInputHandler.parse(args, @options)
+    Numana::Commands::DataInputHandler.parse(args, @options)
   end
 
   def perform_calculation(data)
@@ -34,7 +34,7 @@ class NumberAnalyzer::Commands::MovingAverageCommand < NumberAnalyzer::Commands:
 
     raise ArgumentError, 'Error: Window size must be a positive integer' if window_size <= 0
 
-    analyzer = NumberAnalyzer.new(data)
+    analyzer = Numana.new(data)
     result = analyzer.moving_average(window_size)
 
     {
@@ -45,7 +45,7 @@ class NumberAnalyzer::Commands::MovingAverageCommand < NumberAnalyzer::Commands:
   end
 
   def output_result(result)
-    presenter = NumberAnalyzer::Presenters::MovingAveragePresenter.new(result, @options)
+    presenter = Numana::Presenters::MovingAveragePresenter.new(result, @options)
     puts presenter.format
   end
 

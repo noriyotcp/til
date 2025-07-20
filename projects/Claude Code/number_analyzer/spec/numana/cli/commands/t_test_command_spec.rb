@@ -3,7 +3,7 @@
 require 'spec_helper'
 require 'number_analyzer/cli/commands/t_test_command'
 
-RSpec.describe NumberAnalyzer::Commands::TTestCommand do
+RSpec.describe Numana::Commands::TTestCommand do
   describe '#show_help' do
     let(:command) { described_class.new }
 

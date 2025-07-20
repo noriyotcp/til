@@ -2,7 +2,7 @@
 
 require_relative '../../spec_helper'
 
-describe NumberAnalyzer::Presenters::AnovaPresenter do
+describe Numana::Presenters::AnovaPresenter do
   let(:options) { { precision: 3 } }
 
   describe 'One-way ANOVA' do

@@ -9,8 +9,8 @@ require_relative 'plugin_priority'
 # similar names or overlapping functionality.
 #
 # @example Basic usage
-#   priority_system = NumberAnalyzer::PluginPriority.new
-#   namespace_system = NumberAnalyzer::PluginNamespace.new(priority_system)
+#   priority_system = Numana::PluginPriority.new
+#   namespace_system = Numana::PluginNamespace.new(priority_system)
 #
 #   namespace = namespace_system.generate_namespace(plugin_metadata)
 #   conflicts = namespace_system.detect_naming_conflicts(plugins_list)
@@ -22,7 +22,7 @@ require_relative 'plugin_priority'
 #   # Official gems: 'official_ml_extension'
 #   # Third party: 'third_external_analyzer'
 #   # Local plugins: 'local_project_specific'
-class NumberAnalyzer::PluginNamespace
+class Numana::PluginNamespace
   # Similarity threshold for detecting naming conflicts
   SIMILARITY_THRESHOLD = 0.7
 

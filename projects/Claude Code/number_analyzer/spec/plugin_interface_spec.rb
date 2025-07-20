@@ -3,10 +3,10 @@
 require 'spec_helper'
 require 'tempfile'
 
-RSpec.describe NumberAnalyzer::StatisticsPlugin do
+RSpec.describe Numana::StatisticsPlugin do
   let(:test_plugin_class) do
     Class.new do
-      include NumberAnalyzer::StatisticsPlugin
+      include Numana::StatisticsPlugin
 
       plugin_name 'test_statistics'
       plugin_version '2.0.0'
@@ -63,7 +63,7 @@ RSpec.describe NumberAnalyzer::StatisticsPlugin do
   describe 'default values' do
     let(:minimal_plugin) do
       Class.new do
-        include NumberAnalyzer::StatisticsPlugin
+        include Numana::StatisticsPlugin
       end
     end
 
@@ -89,9 +89,9 @@ RSpec.describe NumberAnalyzer::StatisticsPlugin do
   end
 end
 
-RSpec.describe NumberAnalyzer::CLIPlugin do
+RSpec.describe Numana::CLIPlugin do
   let(:test_cli_plugin) do
-    Class.new(NumberAnalyzer::CLIPlugin) do
+    Class.new(Numana::CLIPlugin) do
       plugin_name 'test_cli_commands'
       plugin_version '1.5.0'
       plugin_description 'Test CLI plugin'
@@ -154,9 +154,9 @@ RSpec.describe NumberAnalyzer::CLIPlugin do
   end
 end
 
-RSpec.describe NumberAnalyzer::FileFormatPlugin do
+RSpec.describe Numana::FileFormatPlugin do
   let(:test_file_format_plugin) do
-    Class.new(NumberAnalyzer::FileFormatPlugin) do
+    Class.new(Numana::FileFormatPlugin) do
       plugin_name 'test_format'
       supported_extensions ['.test', '.demo']
 
@@ -199,9 +199,9 @@ RSpec.describe NumberAnalyzer::FileFormatPlugin do
   end
 end
 
-RSpec.describe NumberAnalyzer::OutputFormatPlugin do
+RSpec.describe Numana::OutputFormatPlugin do
   let(:test_output_plugin) do
-    Class.new(NumberAnalyzer::OutputFormatPlugin) do
+    Class.new(Numana::OutputFormatPlugin) do
       plugin_name 'test_output'
       format_name 'test_format'
 
@@ -225,9 +225,9 @@ RSpec.describe NumberAnalyzer::OutputFormatPlugin do
   end
 end
 
-RSpec.describe NumberAnalyzer::ValidatorPlugin do
+RSpec.describe Numana::ValidatorPlugin do
   let(:test_validator_plugin) do
-    Class.new(NumberAnalyzer::ValidatorPlugin) do
+    Class.new(Numana::ValidatorPlugin) do
       plugin_name 'test_validator'
       validation_name 'positive_numbers'
 

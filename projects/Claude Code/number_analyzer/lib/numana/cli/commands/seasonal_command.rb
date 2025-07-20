@@ -4,7 +4,7 @@ require_relative '../base_command'
 require_relative '../../presenters/seasonal_presenter'
 
 # Command for analyzing seasonal patterns and decomposition
-class NumberAnalyzer::Commands::SeasonalCommand < NumberAnalyzer::Commands::BaseCommand
+class Numana::Commands::SeasonalCommand < Numana::Commands::BaseCommand
   command 'seasonal', 'Analyze seasonal patterns and decomposition'
 
   private
@@ -25,7 +25,7 @@ class NumberAnalyzer::Commands::SeasonalCommand < NumberAnalyzer::Commands::Base
 
   def parse_input(args)
     require_relative '../data_input_handler'
-    NumberAnalyzer::Commands::DataInputHandler.parse(args, @options)
+    Numana::Commands::DataInputHandler.parse(args, @options)
   end
 
   def perform_calculation(data)
@@ -42,7 +42,7 @@ class NumberAnalyzer::Commands::SeasonalCommand < NumberAnalyzer::Commands::Base
       end
     end
 
-    analyzer = NumberAnalyzer.new(data)
+    analyzer = Numana.new(data)
     result = analyzer.seasonal_decomposition(period)
 
     result.merge({
@@ -53,7 +53,7 @@ class NumberAnalyzer::Commands::SeasonalCommand < NumberAnalyzer::Commands::Base
 
   def output_result(result)
     @options[:dataset_size] = result[:dataset_size] if result[:dataset_size]
-    presenter = NumberAnalyzer::Presenters::SeasonalPresenter.new(result, @options)
+    presenter = Numana::Presenters::SeasonalPresenter.new(result, @options)
     puts presenter.format
   end
 

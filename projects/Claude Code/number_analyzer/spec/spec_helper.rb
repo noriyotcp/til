@@ -20,13 +20,13 @@
 $LOAD_PATH.unshift File.expand_path('../lib', __dir__)
 
 # Require the main files
-require 'number_analyzer'
+require 'numana'
 require 'stringio'
-require 'number_analyzer/cli'
-require 'number_analyzer/file_reader'
-require 'number_analyzer/statistics_presenter'
-require 'number_analyzer/plugin_system'
-require 'number_analyzer/plugin_interface'
+require 'numana/cli'
+require 'numana/file_reader'
+require 'numana/statistics_presenter'
+require 'numana/plugin_system'
+require 'numana/plugin_interface'
 
 RSpec.configure do |config|
   # rspec-expectations config goes here. You can use an alternate

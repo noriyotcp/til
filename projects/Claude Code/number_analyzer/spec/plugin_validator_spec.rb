@@ -5,7 +5,7 @@ require 'tmpdir'
 require 'fileutils'
 require 'number_analyzer/plugin_validator'
 
-RSpec.describe NumberAnalyzer::PluginValidator do
+RSpec.describe Numana::PluginValidator do
   let(:fixtures_dir) { File.join(__dir__, 'fixtures', 'plugins') }
   let(:safe_plugin_path) { File.join(fixtures_dir, 'safe_plugin.rb') }
   let(:dangerous_plugin_path) { File.join(fixtures_dir, 'dangerous_plugin.rb') }
@@ -45,7 +45,7 @@ RSpec.describe NumberAnalyzer::PluginValidator do
       it 'raises ValidationError' do
         expect do
           described_class.validate_plugin_file('/path/to/nonexistent.rb')
-        end.to raise_error(NumberAnalyzer::PluginValidator::ValidationError, /does not exist/)
+        end.to raise_error(Numana::PluginValidator::ValidationError, /does not exist/)
       end
     end
 
@@ -152,7 +152,7 @@ RSpec.describe NumberAnalyzer::PluginValidator do
 
       before do
         # Create a large file temporarily (> 1MB)
-        content = "# frozen_string_literal: true\n\nmodule LargePlugin\n  include NumberAnalyzer::StatisticsPlugin\n  plugin_name 'large'\n  plugin_version '1.0.0'\n\n"
+        content = "# frozen_string_literal: true\n\nmodule LargePlugin\n  include Numana::StatisticsPlugin\n  plugin_name 'large'\n  plugin_version '1.0.0'\n\n"
         content += "  # Large comment to make file > 1MB\n" * 40_000
         content += "\nend"
         File.write(large_plugin_path, content)

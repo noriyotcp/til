@@ -2,7 +2,7 @@
 
 require_relative '../../spec_helper'
 
-describe NumberAnalyzer::Presenters::ConfidenceIntervalPresenter do
+describe Numana::Presenters::ConfidenceIntervalPresenter do
   let(:options) { { precision: 3 } }
   let(:result) do
     {

@@ -2,7 +2,7 @@
 
 require_relative '../../spec_helper'
 
-describe NumberAnalyzer::Presenters::ModePresenter do
+describe Numana::Presenters::ModePresenter do
   let(:options) { { precision: 3 } }
 
   describe 'Single mode value' do

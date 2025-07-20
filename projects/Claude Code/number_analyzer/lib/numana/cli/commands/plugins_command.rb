@@ -3,7 +3,7 @@
 require_relative '../base_command'
 
 # Command for managing plugins (list, resolve conflicts, etc.)
-class NumberAnalyzer::Commands::PluginsCommand < NumberAnalyzer::Commands::BaseCommand
+class Numana::Commands::PluginsCommand < Numana::Commands::BaseCommand
   command 'plugins', 'Manage plugins (list, resolve conflicts)'
 
   def execute(args, global_options = {})
@@ -116,7 +116,7 @@ class NumberAnalyzer::Commands::PluginsCommand < NumberAnalyzer::Commands::BaseC
   end
 
   def loaded_plugins
-    NumberAnalyzer::CLI.plugin_system.instance_variable_get(:@plugins) || {}
+    Numana::CLI.plugin_system.instance_variable_get(:@plugins) || {}
   end
 
   def display_interface_message(type, data = nil)

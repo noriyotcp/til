@@ -12,7 +12,7 @@ require_relative 'base_statistical_presenter'
 # - Support for verbose, JSON, and quiet output formats
 #
 # Supports all output modes with dataset metadata integration.
-class NumberAnalyzer::Presenters::CorrelationPresenter < NumberAnalyzer::Presenters::BaseStatisticalPresenter
+class Numana::Presenters::CorrelationPresenter < Numana::Presenters::BaseStatisticalPresenter
   def format_verbose
     return 'エラー: データセットが無効です' if correlation_invalid?
 
@@ -44,7 +44,7 @@ class NumberAnalyzer::Presenters::CorrelationPresenter < NumberAnalyzer::Present
     # Use NumberAnalyzer's built-in correlation interpretation
     # Convert to numeric if it's a string (from format_value)
     numeric_value = value.is_a?(String) ? value.to_f : value
-    analyzer = NumberAnalyzer.new([])
+    analyzer = Numana.new([])
     analyzer.interpret_correlation(numeric_value)
   end
 end

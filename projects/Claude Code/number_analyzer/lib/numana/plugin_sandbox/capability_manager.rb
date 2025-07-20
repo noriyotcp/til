@@ -4,7 +4,7 @@ require 'set'
 
 # Capability manager for plugin security
 # Manages permission-based access control with 5 risk levels
-class NumberAnalyzer::PluginSandbox::CapabilityManager
+class Numana::PluginSandbox::CapabilityManager
   CAPABILITIES = {
     read_data: {
       description: 'プラグインが入力データを読み取る',
@@ -94,7 +94,7 @@ class NumberAnalyzer::PluginSandbox::CapabilityManager
     requested_capabilities.each do |capability|
       unless CAPABILITIES.key?(capability)
         log_violation(plugin_name, :unknown_capability, capability)
-        raise NumberAnalyzer::PluginCapabilityError,
+        raise Numana::PluginCapabilityError,
               "Unknown capability requested: #{capability}"
       end
 
@@ -113,7 +113,7 @@ class NumberAnalyzer::PluginSandbox::CapabilityManager
 
       next unless capability_config[:requires_approval]
 
-      raise NumberAnalyzer::PluginCapabilityError,
+      raise Numana::PluginCapabilityError,
             "Capability '#{capability}' (#{capability_config[:risk_level]} risk) requires explicit approval. " \
             "Description: #{capability_config[:description]}"
     end

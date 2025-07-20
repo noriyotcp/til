@@ -15,9 +15,9 @@ require_relative 'base_statistical_presenter'
 #
 # Example usage:
 #   result = { moving_average: [1.0, 1.5, 2.0], window_size: 3, dataset_size: 5 }
-#   presenter = NumberAnalyzer::Presenters::MovingAveragePresenter.new(result, options)
+#   presenter = Numana::Presenters::MovingAveragePresenter.new(result, options)
 #   puts presenter.format
-class NumberAnalyzer::Presenters::MovingAveragePresenter < NumberAnalyzer::Presenters::BaseStatisticalPresenter
+class Numana::Presenters::MovingAveragePresenter < Numana::Presenters::BaseStatisticalPresenter
   def format_verbose
     return 'エラー: データが不十分です（ウィンドウサイズがデータ長を超えています）' if moving_average_invalid?
 

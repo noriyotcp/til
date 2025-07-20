@@ -3,7 +3,7 @@
 require_relative '../base_command'
 
 # Command for performing Kruskal-Wallis test (non-parametric ANOVA)
-class NumberAnalyzer::Commands::KruskalWallisCommand < NumberAnalyzer::Commands::BaseCommand
+class Numana::Commands::KruskalWallisCommand < Numana::Commands::BaseCommand
   command 'kruskal-wallis', 'Non-parametric test for comparing medians across multiple groups'
 
   private
@@ -35,7 +35,7 @@ class NumberAnalyzer::Commands::KruskalWallisCommand < NumberAnalyzer::Commands:
 
   def perform_calculation(data)
     # Execute Kruskal-Wallis test
-    analyzer = NumberAnalyzer.new([])
+    analyzer = Numana.new([])
     result = analyzer.kruskal_wallis_test(*data)
 
     raise ArgumentError, 'Could not perform Kruskal-Wallis test. Check your data' if result.nil?
@@ -44,7 +44,7 @@ class NumberAnalyzer::Commands::KruskalWallisCommand < NumberAnalyzer::Commands:
   end
 
   def output_result(result)
-    puts NumberAnalyzer::StatisticsPresenter.format_kruskal_wallis_test(result, @options)
+    puts Numana::StatisticsPresenter.format_kruskal_wallis_test(result, @options)
   end
 
   def show_help
@@ -88,7 +88,7 @@ class NumberAnalyzer::Commands::KruskalWallisCommand < NumberAnalyzer::Commands:
       raise ArgumentError, "ファイルが見つかりません: #{filename}" unless File.exist?(filename)
 
       begin
-        data = NumberAnalyzer::FileReader.read_file(filename)
+        data = Numana::FileReader.read_file(filename)
         raise ArgumentError, "空のファイル: #{filename}" if data.empty?
 
         groups << data

@@ -4,8 +4,8 @@ require 'spec_helper'
 require_relative '../lib/number_analyzer/plugin_conflict_resolver'
 require_relative '../lib/number_analyzer/plugin_priority'
 
-RSpec.describe NumberAnalyzer::PluginConflictResolver do
-  let(:priority_system) { NumberAnalyzer::PluginPriority.new }
+RSpec.describe Numana::PluginConflictResolver do
+  let(:priority_system) { Numana::PluginPriority.new }
   let(:resolver) { described_class.new(priority_system) }
 
   # Mock plugin classes for testing
@@ -58,7 +58,7 @@ RSpec.describe NumberAnalyzer::PluginConflictResolver do
     end
 
     it 'uses provided priority system' do
-      custom_priority = NumberAnalyzer::PluginPriority.new
+      custom_priority = Numana::PluginPriority.new
       custom_resolver = described_class.new(custom_priority)
       expect(custom_resolver).to be_a(described_class)
     end

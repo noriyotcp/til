@@ -6,8 +6,8 @@ require_relative '../t_test_help_constants'
 require_relative '../../presenters/t_test_presenter'
 
 # Command for performing statistical t-test analysis (independent, paired, one-sample)
-class NumberAnalyzer::Commands::TTestCommand < NumberAnalyzer::Commands::BaseCommand
-  include NumberAnalyzer::CLI::TTestHelpConstants
+class Numana::Commands::TTestCommand < Numana::Commands::BaseCommand
+  include Numana::CLI::TTestHelpConstants
   command 't-test', 'Perform statistical t-test analysis'
 
   private
@@ -21,7 +21,7 @@ class NumberAnalyzer::Commands::TTestCommand < NumberAnalyzer::Commands::BaseCom
   end
 
   def input_handler
-    @input_handler ||= NumberAnalyzer::CLI::TTestInputHandler.new(@options)
+    @input_handler ||= Numana::CLI::TTestInputHandler.new(@options)
   end
 
   def perform_calculation(data)
@@ -64,7 +64,7 @@ class NumberAnalyzer::Commands::TTestCommand < NumberAnalyzer::Commands::BaseCom
   end
 
   def execute_t_test(data, params, test_type)
-    analyzer = NumberAnalyzer.new(test_type == :one_sample ? data : data.first)
+    analyzer = Numana.new(test_type == :one_sample ? data : data.first)
     analyzer.t_test(
       test_type == :one_sample ? nil : data.last,
       { type: test_type }.merge(params)
@@ -108,7 +108,7 @@ class NumberAnalyzer::Commands::TTestCommand < NumberAnalyzer::Commands::BaseCom
   end
 
   def output_result(result)
-    presenter = NumberAnalyzer::Presenters::TTestPresenter.new(result, @options)
+    presenter = Numana::Presenters::TTestPresenter.new(result, @options)
     puts presenter.format
   end
 

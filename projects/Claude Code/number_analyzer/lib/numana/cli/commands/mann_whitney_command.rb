@@ -3,7 +3,7 @@
 require_relative '../base_command'
 
 # Command for performing Mann-Whitney U test (non-parametric two-group comparison)
-class NumberAnalyzer::Commands::MannWhitneyCommand < NumberAnalyzer::Commands::BaseCommand
+class Numana::Commands::MannWhitneyCommand < Numana::Commands::BaseCommand
   command 'mann-whitney', 'Non-parametric test for comparing two independent groups (Wilcoxon rank-sum test)'
 
   private
@@ -35,7 +35,7 @@ class NumberAnalyzer::Commands::MannWhitneyCommand < NumberAnalyzer::Commands::B
 
   def perform_calculation(data)
     # Execute Mann-Whitney U test
-    analyzer = NumberAnalyzer.new([])
+    analyzer = Numana.new([])
     result = analyzer.mann_whitney_u_test(data[0], data[1])
 
     raise ArgumentError, 'Could not perform Mann-Whitney test. Check your data' if result.nil?
@@ -44,7 +44,7 @@ class NumberAnalyzer::Commands::MannWhitneyCommand < NumberAnalyzer::Commands::B
   end
 
   def output_result(result)
-    puts NumberAnalyzer::StatisticsPresenter.format_mann_whitney_test(result, @options)
+    puts Numana::StatisticsPresenter.format_mann_whitney_test(result, @options)
   end
 
   def show_help
@@ -88,7 +88,7 @@ class NumberAnalyzer::Commands::MannWhitneyCommand < NumberAnalyzer::Commands::B
       raise ArgumentError, "File not found: #{filename}" unless File.exist?(filename)
 
       begin
-        data = NumberAnalyzer::FileReader.read_file(filename)
+        data = Numana::FileReader.read_file(filename)
         raise ArgumentError, "Empty file: #{filename}" if data.empty?
 
         groups << data

@@ -10,7 +10,7 @@ require_relative 'base_statistical_presenter'
 # - One-sample t-test
 #
 # Supports verbose, JSON, and quiet output formats with precision control.
-class NumberAnalyzer::Presenters::TTestPresenter < NumberAnalyzer::Presenters::BaseStatisticalPresenter
+class Numana::Presenters::TTestPresenter < Numana::Presenters::BaseStatisticalPresenter
   def format_verbose
     test_type_names = {
       'independent_samples' => '独立2標本t検定',

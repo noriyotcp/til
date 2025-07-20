@@ -4,7 +4,7 @@ require 'spec_helper'
 require 'tempfile'
 require 'yaml'
 
-RSpec.describe NumberAnalyzer::PluginSystem do
+RSpec.describe Numana::PluginSystem do
   let(:plugin_system) { described_class.new }
   let(:temp_config_file) { Tempfile.new(['plugins', '.yml']) }
 
@@ -145,7 +145,7 @@ RSpec.describe NumberAnalyzer::PluginSystem do
     it 'includes plugin module in NumberAnalyzer when loaded' do
       plugin_system.load_plugin('test_stats')
 
-      analyzer = NumberAnalyzer.new([1, 2, 3])
+      analyzer = Numana.new([1, 2, 3])
       expect(analyzer).to respond_to(:test_calculation)
       expect(analyzer.test_calculation([1, 2, 3])).to eq(12) # (1+2+3) * 2
     end

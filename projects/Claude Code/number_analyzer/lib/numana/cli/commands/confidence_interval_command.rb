@@ -4,7 +4,7 @@ require_relative '../base_command'
 require_relative '../../presenters/confidence_interval_presenter'
 
 # Command for calculating confidence interval for population mean
-class NumberAnalyzer::Commands::ConfidenceIntervalCommand < NumberAnalyzer::Commands::BaseCommand
+class Numana::Commands::ConfidenceIntervalCommand < Numana::Commands::BaseCommand
   command 'confidence-interval', 'Calculate confidence interval for population mean'
 
   private
@@ -26,7 +26,7 @@ class NumberAnalyzer::Commands::ConfidenceIntervalCommand < NumberAnalyzer::Comm
     remaining_args = confidence_level_from_args?(args) ? args[1..] : args
 
     require_relative '../data_input_handler'
-    data = NumberAnalyzer::Commands::DataInputHandler.parse(remaining_args, @options)
+    data = Numana::Commands::DataInputHandler.parse(remaining_args, @options)
 
     [data, confidence_level]
   end
@@ -70,7 +70,7 @@ class NumberAnalyzer::Commands::ConfidenceIntervalCommand < NumberAnalyzer::Comm
 
     raise ArgumentError, 'Error: Confidence interval calculation requires at least 2 data points' if data.length < 2
 
-    analyzer = NumberAnalyzer.new(data)
+    analyzer = Numana.new(data)
     result = analyzer.confidence_interval(confidence_level)
 
     raise ArgumentError, 'Error: Could not calculate confidence interval. Check your data' if result.nil?
@@ -85,7 +85,7 @@ class NumberAnalyzer::Commands::ConfidenceIntervalCommand < NumberAnalyzer::Comm
     # Add sample_mean to result if missing (for compatibility)
     result[:sample_mean] ||= result[:point_estimate]
 
-    presenter = NumberAnalyzer::Presenters::ConfidenceIntervalPresenter.new(result, @options)
+    presenter = Numana::Presenters::ConfidenceIntervalPresenter.new(result, @options)
     puts presenter.format
   end
 

@@ -4,8 +4,8 @@ require 'spec_helper'
 require 'number_analyzer/dependency_resolution_strategies'
 require 'number_analyzer/dependency_resolver'
 
-RSpec.describe NumberAnalyzer::DependencyResolutionStrategies do
-  describe NumberAnalyzer::DependencyResolutionStrategies::BaseStrategy do
+RSpec.describe Numana::DependencyResolutionStrategies do
+  describe Numana::DependencyResolutionStrategies::BaseStrategy do
     subject { described_class.new }
 
     describe '#resolve' do
@@ -24,7 +24,7 @@ RSpec.describe NumberAnalyzer::DependencyResolutionStrategies do
     end
   end
 
-  describe NumberAnalyzer::DependencyResolutionStrategies::ConservativeStrategy do
+  describe Numana::DependencyResolutionStrategies::ConservativeStrategy do
     subject { described_class.new }
 
     describe '#resolve' do
@@ -56,7 +56,7 @@ RSpec.describe NumberAnalyzer::DependencyResolutionStrategies do
     end
   end
 
-  describe NumberAnalyzer::DependencyResolutionStrategies::AggressiveStrategy do
+  describe Numana::DependencyResolutionStrategies::AggressiveStrategy do
     subject { described_class.new }
 
     describe '#resolve' do
@@ -88,7 +88,7 @@ RSpec.describe NumberAnalyzer::DependencyResolutionStrategies do
     end
   end
 
-  describe NumberAnalyzer::DependencyResolutionStrategies::MinimalStrategy do
+  describe Numana::DependencyResolutionStrategies::MinimalStrategy do
     subject { described_class.new }
 
     describe '#resolve' do
@@ -135,25 +135,25 @@ RSpec.describe NumberAnalyzer::DependencyResolutionStrategies do
 
     describe 'with different strategies' do
       it 'works with conservative strategy' do
-        resolver = NumberAnalyzer::DependencyResolver.new(plugin_registry, strategy: :conservative)
+        resolver = Numana::DependencyResolver.new(plugin_registry, strategy: :conservative)
         result = resolver.resolve('plugin_a')
         expect(result).to eq(%w[plugin_b plugin_a])
       end
 
       it 'works with aggressive strategy' do
-        resolver = NumberAnalyzer::DependencyResolver.new(plugin_registry, strategy: :aggressive)
+        resolver = Numana::DependencyResolver.new(plugin_registry, strategy: :aggressive)
         result = resolver.resolve('plugin_a')
         expect(result).to eq(%w[plugin_b plugin_a])
       end
 
       it 'works with minimal strategy' do
-        resolver = NumberAnalyzer::DependencyResolver.new(plugin_registry, strategy: :minimal)
+        resolver = Numana::DependencyResolver.new(plugin_registry, strategy: :minimal)
         result = resolver.resolve('plugin_a')
         expect(result).to eq(%w[plugin_b plugin_a])
       end
 
       it 'defaults to conservative strategy when none specified' do
-        resolver = NumberAnalyzer::DependencyResolver.new(plugin_registry)
+        resolver = Numana::DependencyResolver.new(plugin_registry)
         result = resolver.resolve('plugin_a')
         expect(result).to eq(%w[plugin_b plugin_a])
       end
