@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
 require 'spec_helper'
-require 'number_analyzer/plugin_error_handler'
-require 'number_analyzer/dependency_resolver'
+require 'numana/plugin_error_handler'
+require 'numana/dependency_resolver'
 
 RSpec.describe Numana::PluginErrorHandler do
   let(:logger) { instance_double(Logger, error: nil, warn: nil, info: nil) }

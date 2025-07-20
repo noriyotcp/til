@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 require 'spec_helper'
-require_relative '../../../lib/number_analyzer/statistics/non_parametric_stats'
+require_relative '../../../lib/numana/statistics/non_parametric_stats'
 
 # Test class to include the module
 class TestNonParametricStats

@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 require 'spec_helper'
-require 'number_analyzer/dependency_resolver'
+require 'numana/dependency_resolver'
 
 RSpec.describe Numana::DependencyResolver do
   let(:plugin_registry) { {} }

@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
 require 'spec_helper'
-require_relative '../lib/number_analyzer/plugin_conflict_resolver'
-require_relative '../lib/number_analyzer/plugin_priority'
+require_relative '../lib/numana/plugin_conflict_resolver'
+require_relative '../lib/numana/plugin_priority'
 
 RSpec.describe Numana::PluginConflictResolver do
   let(:priority_system) { Numana::PluginPriority.new }

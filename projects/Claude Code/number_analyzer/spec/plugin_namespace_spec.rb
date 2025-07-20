@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
 require 'spec_helper'
-require_relative '../lib/number_analyzer/plugin_namespace'
-require_relative '../lib/number_analyzer/plugin_priority'
+require_relative '../lib/numana/plugin_namespace'
+require_relative '../lib/numana/plugin_priority'
 
 RSpec.describe Numana::PluginNamespace do
   let(:priority_system) { Numana::PluginPriority.new }

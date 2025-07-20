@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 require 'spec_helper'
-require 'number_analyzer/cli/base_command'
+require 'numana/cli/base_command'
 
 RSpec.describe Numana::Commands::BaseCommand do
   # テスト用の具象コマンドクラスを定義

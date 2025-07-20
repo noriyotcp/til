@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 require 'spec_helper'
-require 'number_analyzer/presenters/kruskal_wallis_test_presenter'
+require 'numana/presenters/kruskal_wallis_test_presenter'
 
 RSpec.describe Numana::Presenters::KruskalWallisTestPresenter do
   let(:kruskal_wallis_result) do

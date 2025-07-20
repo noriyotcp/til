@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
 require 'spec_helper'
-require 'number_analyzer/dependency_resolution_strategies'
-require 'number_analyzer/dependency_resolver'
+require 'numana/dependency_resolution_strategies'
+require 'numana/dependency_resolver'
 
 RSpec.describe Numana::DependencyResolutionStrategies do
   describe Numana::DependencyResolutionStrategies::BaseStrategy do

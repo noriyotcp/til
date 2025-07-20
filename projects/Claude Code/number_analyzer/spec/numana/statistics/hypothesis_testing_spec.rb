@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 require 'spec_helper'
-require_relative '../../../lib/number_analyzer/statistics/hypothesis_testing'
+require_relative '../../../lib/numana/statistics/hypothesis_testing'
 
 # Test class that includes HypothesisTesting module
 class TestHypothesisTesting

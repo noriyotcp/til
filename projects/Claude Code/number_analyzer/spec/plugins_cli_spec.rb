@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
 require 'spec_helper'
-require 'number_analyzer/cli'
-require 'number_analyzer/plugin_system'
-require 'number_analyzer/plugin_interface'
+require 'numana/cli'
+require 'numana/plugin_system'
+require 'numana/plugin_interface'
 
 RSpec.describe 'Plugins CLI Commands' do
   before do

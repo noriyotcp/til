@@ -2,7 +2,7 @@
 
 require 'spec_helper'
 require 'fileutils'
-require 'number_analyzer/cli/commands/median_command'
+require 'numana/cli/commands/median_command'
 
 RSpec.describe Numana::Commands::MedianCommand do
   let(:command) { described_class.new }

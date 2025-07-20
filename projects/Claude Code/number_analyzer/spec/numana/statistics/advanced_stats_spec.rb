@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
 require 'spec_helper'
-require_relative '../../../lib/number_analyzer/statistics/advanced_stats'
-require_relative '../../../lib/number_analyzer/statistics/basic_stats'
+require_relative '../../../lib/numana/statistics/advanced_stats'
+require_relative '../../../lib/numana/statistics/basic_stats'
 
 RSpec.describe AdvancedStats do
   # Create a test class that includes both BasicStats and AdvancedStats

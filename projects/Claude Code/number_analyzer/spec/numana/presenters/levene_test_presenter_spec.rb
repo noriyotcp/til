@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 require 'spec_helper'
-require 'number_analyzer/presenters/levene_test_presenter'
+require 'numana/presenters/levene_test_presenter'
 
 RSpec.describe Numana::Presenters::LeveneTestPresenter do
   let(:levene_result) do

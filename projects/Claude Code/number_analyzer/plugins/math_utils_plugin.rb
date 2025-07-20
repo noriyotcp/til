@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require_relative '../lib/number_analyzer/plugin_interface'
+require_relative '../lib/numana/plugin_interface'
 
 # MathUtilsPlugin - Plugin implementation of mathematical utility functions
 # Provides mathematical utility functions for statistical calculations

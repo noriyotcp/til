@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 require 'spec_helper'
-require 'number_analyzer/presenters/wilcoxon_test_presenter'
+require 'numana/presenters/wilcoxon_test_presenter'
 
 RSpec.describe Numana::Presenters::WilcoxonTestPresenter do
   let(:wilcoxon_result) do

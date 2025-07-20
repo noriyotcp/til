@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 require 'spec_helper'
-require 'number_analyzer/version_comparator'
+require 'numana/version_comparator'
 
 RSpec.describe Numana::VersionComparator do
   describe '.compare' do

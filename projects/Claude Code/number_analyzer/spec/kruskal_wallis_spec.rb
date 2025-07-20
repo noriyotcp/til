@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 require 'spec_helper'
-require_relative '../lib/number_analyzer'
+require_relative '../lib/numana'
 
 RSpec.describe Numana do
   describe 'Kruskal-Wallis H Test' do

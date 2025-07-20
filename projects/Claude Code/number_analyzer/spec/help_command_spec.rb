@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 require 'spec_helper'
-require 'number_analyzer/cli/commands/help_command'
+require 'numana/cli/commands/help_command'
 
 RSpec.describe Numana::Commands::HelpCommand do
   let(:command) { described_class.new }

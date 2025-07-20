@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 require 'spec_helper'
-require_relative '../../../lib/number_analyzer/statistics/time_series_stats'
+require_relative '../../../lib/numana/statistics/time_series_stats'
 
 # Test class that includes TimeSeriesStats module
 class TestTimeSeriesStats

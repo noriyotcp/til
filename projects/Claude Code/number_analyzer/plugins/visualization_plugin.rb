@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require_relative '../lib/number_analyzer/plugin_interface'
+require_relative '../lib/numana/plugin_interface'
 
 # VisualizationPlugin - Advanced ASCII visualization capabilities
 # Demonstrates output format plugin implementation with comprehensive chart generation

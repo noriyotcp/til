@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require_relative '../lib/number_analyzer'
+require_relative '../lib/numana'
 
 RSpec.describe Numana::PluginPriority do
   after do

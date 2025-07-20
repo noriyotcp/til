@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 require 'spec_helper'
-require 'number_analyzer/plugin_system'
+require 'numana/plugin_system'
 
 # Define test plugin modules outside of RSpec block
 module TestPluginA

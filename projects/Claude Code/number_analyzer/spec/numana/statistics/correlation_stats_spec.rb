@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 require 'spec_helper'
-require_relative '../../../lib/number_analyzer/statistics/correlation_stats'
+require_relative '../../../lib/numana/statistics/correlation_stats'
 
 # Simple test class
 class TestCorrelationClass

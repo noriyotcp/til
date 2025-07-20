@@ -1,12 +1,12 @@
 # frozen_string_literal: true
 
 require 'spec_helper'
-require 'number_analyzer/cli/commands/median_command'
-require 'number_analyzer/cli/commands/mean_command'
-require 'number_analyzer/cli/commands/sum_command'
-require 'number_analyzer/cli/commands/min_command'
-require 'number_analyzer/cli/commands/max_command'
-require 'number_analyzer/cli/commands/mode_command'
+require 'numana/cli/commands/median_command'
+require 'numana/cli/commands/mean_command'
+require 'numana/cli/commands/sum_command'
+require 'numana/cli/commands/min_command'
+require 'numana/cli/commands/max_command'
+require 'numana/cli/commands/mode_command'
 
 RSpec.describe 'Basic Commands Integration' do
   let(:test_data) { %w[1 2 3 4 5] }

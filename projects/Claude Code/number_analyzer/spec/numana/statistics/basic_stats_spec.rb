@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require_relative '../../../lib/number_analyzer/statistics/basic_stats'
+require_relative '../../../lib/numana/statistics/basic_stats'
 
 # Test helper class to include BasicStats module
 class TestAnalyzer

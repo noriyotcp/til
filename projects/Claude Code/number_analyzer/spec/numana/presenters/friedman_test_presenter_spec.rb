@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 require 'spec_helper'
-require 'number_analyzer/presenters/friedman_test_presenter'
+require 'numana/presenters/friedman_test_presenter'
 
 RSpec.describe Numana::Presenters::FriedmanTestPresenter do
   let(:friedman_result) do

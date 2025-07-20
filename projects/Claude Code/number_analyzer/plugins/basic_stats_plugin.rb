@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require_relative '../lib/number_analyzer/plugin_interface'
+require_relative '../lib/numana/plugin_interface'
 
 # BasicStatsPlugin - Plugin implementation of basic statistical functions
 # Provides fundamental statistical calculations as a plugin

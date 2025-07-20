@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 require 'spec_helper'
-require 'number_analyzer/statistics_presenter'
+require 'numana/statistics_presenter'
 
 RSpec.describe Numana::StatisticsPresenter do
   describe '.display_results' do

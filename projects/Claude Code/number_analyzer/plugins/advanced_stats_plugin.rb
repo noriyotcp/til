@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require_relative '../lib/number_analyzer/plugin_interface'
+require_relative '../lib/numana/plugin_interface'
 
 # AdvancedStatsPlugin - Plugin implementation of advanced statistical functions
 # Provides advanced statistical analysis including percentiles, quartiles, outliers, and deviation scores

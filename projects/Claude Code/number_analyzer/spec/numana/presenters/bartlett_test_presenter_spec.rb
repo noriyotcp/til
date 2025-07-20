@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 require 'spec_helper'
-require 'number_analyzer/presenters/bartlett_test_presenter'
+require 'numana/presenters/bartlett_test_presenter'
 
 RSpec.describe Numana::Presenters::BartlettTestPresenter do
   let(:bartlett_result) do

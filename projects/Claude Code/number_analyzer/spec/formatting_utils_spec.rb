@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 require_relative 'spec_helper'
-require_relative '../lib/number_analyzer/formatting_utils'
+require_relative '../lib/numana/formatting_utils'
 
 # Test class to include the module for testing
 class TestFormattingUtils

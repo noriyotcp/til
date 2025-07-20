@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
 require 'spec_helper'
-require 'number_analyzer/cli/command_registry'
-require 'number_analyzer/cli/base_command'
+require 'numana/cli/command_registry'
+require 'numana/cli/base_command'
 
 RSpec.describe Numana::Commands::CommandRegistry do
   let(:test_command_class) do

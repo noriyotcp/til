@@ -2,7 +2,7 @@
 
 require 'spec_helper'
 require 'fileutils'
-require 'number_analyzer/cli/data_input_handler'
+require 'numana/cli/data_input_handler'
 
 RSpec.describe Numana::Commands::DataInputHandler do
   describe '.parse' do

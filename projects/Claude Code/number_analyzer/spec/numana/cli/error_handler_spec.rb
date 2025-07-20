@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 require 'spec_helper'
-require 'number_analyzer/cli/error_handler'
+require 'numana/cli/error_handler'
 
 RSpec.describe Numana::CLI::ErrorHandler do
   describe '.handle_unknown_command' do

@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 require_relative '../spec_helper'
-require_relative '../../lib/number_analyzer/presenters/seasonal_presenter'
+require_relative '../../lib/numana/presenters/seasonal_presenter'
 
 RSpec.describe Numana::Presenters::SeasonalPresenter do
   let(:valid_seasonal_data) do

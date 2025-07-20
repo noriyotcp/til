@@ -3,7 +3,7 @@
 require 'spec_helper'
 require 'tmpdir'
 require 'fileutils'
-require 'number_analyzer/plugin_validator'
+require 'numana/plugin_validator'
 
 RSpec.describe Numana::PluginValidator do
   let(:fixtures_dir) { File.join(__dir__, 'fixtures', 'plugins') }

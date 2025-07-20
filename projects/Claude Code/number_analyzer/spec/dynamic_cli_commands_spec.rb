@@ -95,7 +95,7 @@ RSpec.describe 'Dynamic CLI Command Registration' do
 
     it 'executes plugin commands correctly' do
       # Mock the NumberAnalyzer creation and method calls
-      allow(NumberAnalyzer).to receive(:new).and_return(
+      allow(Numana).to receive(:new).and_return(
         double('analyzer', sum: 15, mean: 3.0, mode: [], variance: 2.0, standard_deviation: 1.414)
       )
 

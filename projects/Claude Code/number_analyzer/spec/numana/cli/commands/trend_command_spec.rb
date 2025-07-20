@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 require 'spec_helper'
-require 'number_analyzer/cli/commands/trend_command'
+require 'numana/cli/commands/trend_command'
 
 # NOTE: これは単体テストです。実際のCLI経由での動作も必ず確認してください！
 # 例: bundle exec number_analyzer trend 1 2 3 4 5

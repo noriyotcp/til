@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
 require 'spec_helper'
-require_relative '../../lib/number_analyzer'
-require_relative '../../lib/number_analyzer/plugin_sandbox'
+require_relative '../../lib/numana'
+require_relative '../../lib/numana/plugin_sandbox'
 
 RSpec.describe Numana::PluginSandbox::MethodInterceptor do
   let(:strict_interceptor) { described_class.new(:strict) }

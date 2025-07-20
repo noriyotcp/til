@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 require 'spec_helper'
-require 'number_analyzer/cli/commands'
+require 'numana/cli/commands'
 
 RSpec.describe 'Command Registration' do
   before do

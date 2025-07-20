@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 require 'spec_helper'
-require 'number_analyzer/cli/plugin_router'
+require 'numana/cli/plugin_router'
 
 RSpec.describe Numana::CLI::PluginRouter do
   describe '.route_command' do

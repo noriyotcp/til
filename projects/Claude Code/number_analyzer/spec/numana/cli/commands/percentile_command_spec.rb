@@ -2,7 +2,7 @@
 
 require 'spec_helper'
 require 'fileutils'
-require_relative '../../../../lib/number_analyzer/cli/commands/percentile_command'
+require_relative '../../../../lib/numana/cli/commands/percentile_command'
 
 RSpec.describe Numana::Commands::PercentileCommand do
   let(:command) { described_class.new }

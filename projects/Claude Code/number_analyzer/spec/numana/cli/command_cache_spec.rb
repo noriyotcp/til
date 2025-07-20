@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 require 'spec_helper'
-require 'number_analyzer/cli/command_cache'
+require 'numana/cli/command_cache'
 
 RSpec.describe Numana::CLI::CommandCache do
   before do

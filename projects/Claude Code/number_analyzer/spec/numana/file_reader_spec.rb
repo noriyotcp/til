@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require_relative '../../lib/number_analyzer/file_reader'
+require_relative '../../lib/numana/file_reader'
 require 'tempfile'
 
 RSpec.describe Numana::FileReader do
