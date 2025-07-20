@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 require 'tsort'
+require_relative 'version_comparator'
+require_relative 'dependency_resolution_strategies'
 
 # Advanced dependency resolution system for NumberAnalyzer plugins
 # Handles complex dependency resolution with circular dependency detection
@@ -41,11 +43,12 @@ class NumberAnalyzer::DependencyResolver
     end
   end
 
-  def initialize(plugin_registry)
+  def initialize(plugin_registry, options = {})
     @plugin_registry = plugin_registry
     @dependency_graph = {}
     @version_requirements = {}
     @resolution_cache = {}
+    @strategy = create_strategy(options[:strategy])
   end
 
   # Resolve dependencies for a plugin, returning ordered load sequence
@@ -200,7 +203,7 @@ class NumberAnalyzer::DependencyResolver
   def resolve_dependencies(plugin_name)
     # Topological sort gives us the correct load order
     all_dependencies = Set.new([plugin_name])
-    collect_all_dependencies(plugin_name, all_dependencies)
+    collect_all_dependencies(plugin_name, all_dependencies, {})
 
     # Sort in dependency order
     sorted = tsort_nodes(all_dependencies.to_a)
@@ -212,15 +215,22 @@ class NumberAnalyzer::DependencyResolver
     sorted
   end
 
-  def collect_all_dependencies(plugin_name, collected)
+  def collect_all_dependencies(plugin_name, collected, options = {})
     dependencies = @dependency_graph[plugin_name] || []
 
     dependencies.each do |dep|
       next if collected.include?(dep)
+      next if options[:skip_optional] && optional_dependency?(plugin_name, dep)
 
       collected.add(dep)
-      collect_all_dependencies(dep, collected)
+      collect_all_dependencies(dep, collected, options)
     end
+  end
+
+  def optional_dependency?(_plugin_name, _dependency_name)
+    # For now, consider all dependencies as required
+    # This can be extended in the future to support optional dependencies
+    false
   end
 
   def tsort_nodes(nodes)
@@ -280,120 +290,37 @@ class NumberAnalyzer::DependencyResolver
   end
 
   def satisfy_version_requirement?(version, requirement)
-    return true if requirement.nil? || requirement == '*'
-
-    match_version_pattern?(version, requirement)
+    NumberAnalyzer::VersionComparator.satisfies?(version, requirement)
   end
 
-  def match_version_pattern?(version, requirement)
-    if pessimistic_constraint?(requirement)
-      handle_pessimistic_constraint?(version, requirement)
-    elsif comparison_constraint?(requirement)
-      handle_comparison_constraint?(version, requirement)
-    elsif exact_match_constraint?(requirement)
-      handle_exact_match?(version, requirement)
-    else
-      version == requirement
-    end
+  # Standard resolution logic (used by strategies)
+  def standard_resolve(plugin_name, options = {})
+    all_dependencies = Set.new([plugin_name])
+    collect_all_dependencies(plugin_name, all_dependencies, options)
+
+    sorted = tsort_nodes(all_dependencies.to_a)
+
+    missing = sorted.reject { |dep| dependency_available?(dep) }
+    raise UnresolvedDependencyError.new(plugin_name, missing) if missing.any?
+
+    sorted
   end
 
-  def pessimistic_constraint?(requirement)
-    requirement.match?(/^~>(.+)$/)
-  end
-
-  def comparison_constraint?(requirement)
-    requirement.match?(/^(>=|>|<=|<)(.+)$/)
-  end
-
-  def exact_match_constraint?(requirement)
-    requirement.match?(/^(=|==)(.+)$/)
-  end
-
-  def handle_pessimistic_constraint?(version, requirement)
-    required_version = requirement.match(/^~>(.+)$/)[1].strip
-    pessimistic_version_satisfied?(required_version, version)
-  end
-
-  def handle_comparison_constraint?(version, requirement)
-    operator, required_version = parse_comparison_constraint(requirement)
-    case operator
-    when '>='
-      version_greater_or_equal?(version, required_version)
-    when '>'
-      version_greater?(version, required_version)
-    when '<='
-      version_less_or_equal?(version, required_version)
-    when '<'
-      version_less?(version, required_version)
-    end
-  end
-
-  def handle_exact_match?(version, requirement)
-    required_version = requirement.match(/^(=|==)(.+)$/)[2].strip
-    version == required_version
-  end
-
-  def parse_comparison_constraint(requirement)
-    match = requirement.match(/^(>=|>|<=|<)(.+)$/)
-    [match[1], match[2].strip]
-  end
-
-  def version_greater_or_equal?(version, required)
-    compare_versions(version, required) >= 0
-  end
-
-  def version_greater?(version, required)
-    compare_versions(version, required).positive?
-  end
-
-  def version_less_or_equal?(version, required)
-    compare_versions(version, required) <= 0
-  end
-
-  def version_less?(version, required)
-    compare_versions(version, required).negative?
-  end
-
-  def pessimistic_version_satisfied?(required, actual)
-    required_parts = required.split('.')
-    actual_parts = actual.split('.')
-
-    # For ~> to work, actual version must have at least as many parts as required
-    return false if actual_parts.size < required_parts.size
-
-    # Check all parts except the last one must match exactly
-    (0...(required_parts.size - 1)).each do |i|
-      return false if required_parts[i] != actual_parts[i]
-    end
-
-    # For the position of the last required part, actual must be >= required
-    actual_parts[required_parts.size - 1].to_i >= required_parts.last.to_i
-  end
-
+  # Add convenience method for version comparison (used by other classes if needed)
   def compare_versions(version1, version2)
-    parts1, parts2 = normalize_version_parts(version1, version2)
-
-    compare_version_parts(parts1, parts2)
+    NumberAnalyzer::VersionComparator.compare(version1, version2)
   end
 
-  def normalize_version_parts(version1, version2)
-    parts1 = version1.split('.').map(&:to_i)
-    parts2 = version2.split('.').map(&:to_i)
+  def create_strategy(strategy_name)
+    strategies = NumberAnalyzer::DependencyResolutionStrategies
 
-    # Pad with zeros to make equal length
-    max_length = [parts1.size, parts2.size].max
-    parts1 += [0] * (max_length - parts1.size)
-    parts2 += [0] * (max_length - parts2.size)
-
-    [parts1, parts2]
-  end
-
-  def compare_version_parts(parts1, parts2)
-    parts1.zip(parts2).each do |p1, p2|
-      return 1 if p1 > p2
-      return -1 if p1 < p2
+    case strategy_name
+    when :aggressive
+      strategies::AggressiveStrategy.new
+    when :minimal
+      strategies::MinimalStrategy.new
+    else
+      strategies::ConservativeStrategy.new
     end
-
-    0
   end
 end
