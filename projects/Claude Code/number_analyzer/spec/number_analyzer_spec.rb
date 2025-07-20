@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require_relative '../lib/number_analyzer'
+require_relative '../lib/numana'
 
 RSpec.describe NumberAnalyzer do
   let(:numbers) { [1, 2, 3, 4, 5, 6, 7, 8, 9, 10] }

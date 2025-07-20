@@ -3,7 +3,7 @@
 # Auto-loader for all command classes
 # This file ensures all command classes are loaded and registered
 
-require_relative '../../number_analyzer'
+require_relative '../../numana'
 
 # Command registration and management
 module NumberAnalyzer::Commands

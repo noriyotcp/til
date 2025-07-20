@@ -2,7 +2,7 @@
 
 require 'English'
 require 'fileutils'
-require_relative '../../lib/number_analyzer/cli'
+require_relative '../../lib/numana/cli'
 
 RSpec.describe NumberAnalyzer::CLI do
   let(:script_path) { File.join(__dir__, '..', '..', 'lib', 'number_analyzer', 'cli.rb') }

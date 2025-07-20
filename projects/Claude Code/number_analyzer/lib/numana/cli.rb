@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require_relative '../number_analyzer'
+require_relative '../numana'
 require_relative 'file_reader'
 require_relative 'plugin_system'
 require_relative 'plugin_conflict_resolver'
