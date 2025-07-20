@@ -1,16 +1,16 @@
 # frozen_string_literal: true
 
-require_relative 'number_analyzer/statistics/basic_stats'
-require_relative 'number_analyzer/statistics/math_utils'
-require_relative 'number_analyzer/statistics/advanced_stats'
-require_relative 'number_analyzer/statistics/correlation_stats'
-require_relative 'number_analyzer/statistics/time_series_stats'
-require_relative 'number_analyzer/statistics/hypothesis_testing'
-require_relative 'number_analyzer/statistics/anova_stats'
-require_relative 'number_analyzer/statistics/non_parametric_stats'
+require_relative 'numana/statistics/basic_stats'
+require_relative 'numana/statistics/math_utils'
+require_relative 'numana/statistics/advanced_stats'
+require_relative 'numana/statistics/correlation_stats'
+require_relative 'numana/statistics/time_series_stats'
+require_relative 'numana/statistics/hypothesis_testing'
+require_relative 'numana/statistics/anova_stats'
+require_relative 'numana/statistics/non_parametric_stats'
 
 # 数値配列の統計を計算するプログラム
-class NumberAnalyzer
+class Numana
   include BasicStats
   include AdvancedStats
   include CorrelationStats
@@ -63,7 +63,7 @@ class NumberAnalyzer
   end
 end
 
-# Load StatisticsPresenter after NumberAnalyzer class is defined
-require_relative 'number_analyzer/statistics_presenter'
-require_relative 'number_analyzer/presenters/base_statistical_presenter'
-require_relative 'number_analyzer/presenters/levene_test_presenter'
+# Load StatisticsPresenter after Numana class is defined
+require_relative 'numana/statistics_presenter'
+require_relative 'numana/presenters/base_statistical_presenter'
+require_relative 'numana/presenters/levene_test_presenter'

@@ -1,14 +1,15 @@
 # frozen_string_literal: true
 
 Gem::Specification.new do |spec|
-  spec.name          = 'number_analyzer'
+  spec.name          = 'numana'
   spec.version       = '1.0.0'
   spec.authors       = ['Claude Code User']
   spec.email         = ['user@example.com']
 
   spec.summary       = 'A comprehensive statistical analysis tool for number arrays'
-  spec.description   = 'NumberAnalyzer provides statistical calculations including sum, average, median, mode, standard deviation, and more for arrays of numbers.'
-  spec.homepage      = 'https://github.com/user/number_analyzer'
+  spec.description   = 'Numana provides statistical calculations including sum, average, median, mode, ' \
+                       'standard deviation, and more for arrays of numbers.'
+  spec.homepage      = 'https://github.com/user/numana'
   spec.license       = 'MIT'
   spec.required_ruby_version = '>= 3.0.0'
 
@@ -23,8 +24,8 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'logger', '~> 1.5'
 
   # Specify which files should be added to the gem when it is released.
-  spec.files = Dir['lib/**/*.rb'] + Dir['bin/*'] + ['number_analyzer.gemspec', 'Gemfile', 'CLAUDE.md']
+  spec.files = Dir['lib/**/*.rb'] + Dir['bin/*'] + ['numana.gemspec', 'Gemfile', 'CLAUDE.md']
   spec.bindir = 'bin'
-  spec.executables = ['number_analyzer']
+  spec.executables = ['numana']
   spec.require_paths = ['lib']
 end
