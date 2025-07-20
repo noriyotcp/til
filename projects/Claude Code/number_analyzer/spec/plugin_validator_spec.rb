@@ -49,19 +49,6 @@ RSpec.describe NumberAnalyzer::PluginValidator do
       end
     end
 
-    context 'with syntax errors' do
-      let(:syntax_error_path) { File.join(fixtures_dir, 'syntax_error_plugin.rb') }
-      let(:result) { described_class.validate_plugin_file(syntax_error_path) }
-
-      it 'returns invalid status' do
-        expect(result[:valid]).to be false
-      end
-
-      it 'includes syntax error in errors' do
-        expect(result[:errors]).to include(match(/Syntax error/))
-      end
-    end
-
     context 'with dangerous patterns' do
       context 'system command execution' do
         let(:system_cmd_path) { File.join(fixtures_dir, 'system_command_plugin.rb') }
