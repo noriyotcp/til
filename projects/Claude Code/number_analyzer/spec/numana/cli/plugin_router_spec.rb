@@ -153,7 +153,7 @@ RSpec.describe Numana::CLI::PluginRouter do
         # Mock plugin commands
         allow(Numana::CLI).to receive(:respond_to?).and_return(true)
         allow(Numana::CLI).to receive(:send).with(:plugin_commands)
-                                                    .and_return({ 'plugin1' => {}, 'plugin2' => {} })
+                                            .and_return({ 'plugin1' => {}, 'plugin2' => {} })
 
         commands = described_class.send(:all_available_commands)
         expect(commands).to contain_exactly('registry1', 'registry2', 'core1', 'core2', 'plugin1', 'plugin2')

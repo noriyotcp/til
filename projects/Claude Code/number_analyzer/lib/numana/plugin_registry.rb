@@ -378,9 +378,7 @@ class Numana::PluginRegistry
 
       commands.each do |command_name, method_name|
         # Register with CLI system if available
-        if defined?(Numana::CLI) && Numana::CLI.respond_to?(:register_command)
-          Numana::CLI.register_command(command_name, plugin_class, method_name)
-        end
+        Numana::CLI.register_command(command_name, plugin_class, method_name) if defined?(Numana::CLI) && Numana::CLI.respond_to?(:register_command)
       end
     end
   end
