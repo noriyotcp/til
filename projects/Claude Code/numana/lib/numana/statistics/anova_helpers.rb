@@ -10,181 +10,36 @@ module AnovaHelpers
   # Levene test for variance homogeneity (Brown-Forsythe modification)
   # Used as prerequisite check for ANOVA assumptions
   def levene_test(*groups)
-    # Validate input - need at least 2 groups
-    groups = groups.compact
-    groups = groups.reject { |group| group.is_a?(Array) && group.empty? }
+    validated_groups = validate_levene_groups(groups)
+    return nil unless validated_groups
 
-    return nil if groups.length < 2
+    k = validated_groups.length
+    n_total = validated_groups.flatten.length
 
-    # Ensure each group has at least one value and is an array
-    groups.each do |group|
-      return nil unless group.is_a?(Array)
-      return nil if group.empty?
-    end
+    z_groups, z_group_means, z_overall_mean = calculate_levene_z_values(validated_groups)
+    ss_between, ss_within = calculate_levene_sum_of_squares(z_groups, z_group_means, z_overall_mean)
 
-    # Calculate basic parameters
-    k = groups.length # number of groups
-    n_total = groups.flatten.length # total sample size
-
-    # Calculate median for each group (Brown-Forsythe modification)
-    group_medians = groups.map { |group| calculate_group_median(group) }
-
-    # Transform data: Zij = |Xij - median_i|
-    z_groups = groups.each_with_index.map do |group, i|
-      median_i = group_medians[i]
-      group.map { |x| (x - median_i).abs }
-    end
-
-    # Calculate group means of Z values
-    z_group_means = z_groups.map { |z_group| z_group.sum.to_f / z_group.length }
-
-    # Calculate overall mean of Z values
-    all_z_values = z_groups.flatten
-    z_overall_mean = all_z_values.sum.to_f / all_z_values.length
-
-    # Calculate sum of squares between groups
-    ss_between = 0.0
-    z_groups.each_with_index do |z_group, i|
-      n_i = z_group.length
-      z_bar_i = z_group_means[i]
-      ss_between += n_i * ((z_bar_i - z_overall_mean)**2)
-    end
-
-    # Calculate sum of squares within groups
-    ss_within = 0.0
-    z_groups.each_with_index do |z_group, i|
-      z_bar_i = z_group_means[i]
-      z_group.each do |z_ij|
-        ss_within += (z_ij - z_bar_i)**2
-      end
-    end
-
-    # Calculate degrees of freedom
     df_between = k - 1
     df_within = n_total - k
 
-    # Calculate mean squares
-    ms_between = ss_between / df_between
-    ms_within = df_within.zero? ? 0.0 : ss_within / df_within
+    f_statistic, p_value = calculate_levene_f_statistic_and_p_value(ss_between, ss_within, df_between, df_within)
 
-    # Calculate F-statistic
-    f_statistic = if ms_within.zero?
-                    ms_between.zero? ? 0.0 : Float::INFINITY
-                  else
-                    ms_between / ms_within
-                  end
-
-    # Calculate p-value using F-distribution
-    p_value = MathUtils.calculate_f_distribution_p_value(f_statistic, df_between, df_within)
-
-    # Determine significance and interpretation
-    significant = p_value < 0.05
-    interpretation = if significant
-                       'Homogeneity of variance hypothesis is rejected (group variances are not equal)'
-                     else
-                       'Homogeneity of variance hypothesis is not rejected (group variances are considered equal)'
-                     end
-
-    {
-      test_type: 'Levene Test (Brown-Forsythe)',
-      f_statistic: f_statistic.round(6),
-      p_value: p_value.round(6),
-      degrees_of_freedom: [df_between, df_within],
-      significant: significant,
-      interpretation: interpretation
-    }
+    format_levene_test_result(f_statistic, p_value, df_between, df_within)
   end
 
   # Bartlett test for variance homogeneity (assumes normality)
   # Provides high precision variance equality testing under normal distribution
   def bartlett_test(*groups)
-    # Validate input - need at least 2 groups
-    groups = groups.compact
-    groups = groups.reject { |group| group.is_a?(Array) && group.empty? }
+    validated_groups = validate_bartlett_groups(groups)
+    return nil unless validated_groups
 
-    return nil if groups.length < 2
+    params = calculate_bartlett_parameters(validated_groups)
+    return bartlett_zero_variance_result(params[:k]) if bartlett_has_zero_variance?(params)
 
-    # Ensure each group has at least one value and is an array
-    groups.each do |group|
-      return nil unless group.is_a?(Array)
-      return nil if group.empty?
-    end
+    stat_results = calculate_bartlett_statistic(params)
+    p_value = calculate_chi_square_p_value(stat_results[:chi_square_statistic], params[:k] - 1)
 
-    # Calculate basic parameters
-    k = groups.length # number of groups
-    n_total = groups.flatten.length # total sample size
-    group_sizes = groups.map(&:length)
-
-    # Calculate sample variances for each group
-    group_variances = groups.map do |group|
-      next 0.0 if group.length <= 1
-
-      mean = group.sum.to_f / group.length
-      sum_squared_deviations = group.sum { |x| (x - mean)**2 }
-      sum_squared_deviations / (group.length - 1)
-    end
-
-    # Calculate pooled variance (S²p)
-    numerator = group_variances.each_with_index.sum do |var, i|
-      (group_sizes[i] - 1) * var
-    end
-    pooled_variance = numerator / (n_total - k)
-
-    # Handle edge case where all variances are zero
-    if pooled_variance <= 0.0 || group_variances.all? { |var| var <= 0.0 }
-      return {
-        test_type: 'Bartlett Test',
-        chi_square_statistic: 0.0,
-        p_value: 1.0,
-        degrees_of_freedom: k - 1,
-        significant: false,
-        interpretation: 'Homogeneity of variance hypothesis is not rejected (group variances are assumed equal)',
-        correction_factor: 1.0,
-        pooled_variance: 0.0
-      }
-    end
-
-    # Calculate correction factor C
-    # C = 1 + (1/(3(k-1))) * [Σ(1/(ni-1)) - 1/(N-k)]
-    sum_inverse_df = group_sizes.sum { |n_i| 1.0 / (n_i - 1) }
-    inverse_total_df = 1.0 / (n_total - k)
-    correction_factor = 1.0 + ((1.0 / (3.0 * (k - 1))) * (sum_inverse_df - inverse_total_df))
-
-    # Calculate Bartlett statistic
-    # χ² = (1/C) * [(N-k)ln(S²p) - Σ(ni-1)ln(S²i)]
-    pooled_log_variance = Math.log(pooled_variance)
-    sum_weighted_log_variances = group_variances.each_with_index.sum do |var, i|
-      next 0.0 if var <= 0.0
-
-      (group_sizes[i] - 1) * Math.log(var)
-    end
-
-    chi_square_statistic = (((n_total - k) * pooled_log_variance) - sum_weighted_log_variances) / correction_factor
-
-    # Degrees of freedom
-    df = k - 1
-
-    # Calculate p-value using chi-square distribution
-    p_value = calculate_chi_square_p_value(chi_square_statistic, df)
-
-    # Determine significance and interpretation
-    significant = p_value < 0.05
-    interpretation = if significant
-                       'Homogeneity of variance hypothesis is rejected (group variances are not equal)'
-                     else
-                       'Homogeneity of variance hypothesis is not rejected (group variances are considered equal)'
-                     end
-
-    {
-      test_type: 'Bartlett Test',
-      chi_square_statistic: chi_square_statistic.round(6),
-      p_value: p_value.round(6),
-      degrees_of_freedom: df,
-      significant: significant,
-      interpretation: interpretation,
-      correction_factor: correction_factor.round(6),
-      pooled_variance: pooled_variance.round(6)
-    }
+    format_bartlett_result(params, stat_results, p_value)
   end
 
   # ANOVA helper methods
@@ -364,5 +219,150 @@ module AnovaHelpers
     else
       'negligible'
     end
+  end
+
+  private
+
+  def validate_levene_groups(groups)
+    groups = groups.compact.reject { |g| g.is_a?(Array) && g.empty? }
+    return nil if groups.length < 2
+    return nil unless groups.all? { |g| g.is_a?(Array) && !g.empty? }
+
+    groups
+  end
+
+  def calculate_levene_z_values(groups)
+    group_medians = groups.map { |group| calculate_group_median(group) }
+
+    z_groups = groups.each_with_index.map do |group, i|
+      group.map { |x| (x - group_medians[i]).abs }
+    end
+
+    z_group_means = z_groups.map { |z_group| z_group.sum.to_f / z_group.length }
+    z_overall_mean = z_groups.flatten.sum.to_f / z_groups.flatten.length
+
+    [z_groups, z_group_means, z_overall_mean]
+  end
+
+  def calculate_levene_sum_of_squares(z_groups, z_group_means, z_overall_mean)
+    ss_between = z_groups.each_with_index.sum do |z_group, i|
+      z_group.length * ((z_group_means[i] - z_overall_mean)**2)
+    end
+
+    ss_within = z_groups.each_with_index.sum do |z_group, i|
+      z_group.sum { |z_ij| (z_ij - z_group_means[i])**2 }
+    end
+
+    [ss_between, ss_within]
+  end
+
+  def calculate_levene_f_statistic_and_p_value(ss_between, ss_within, df_between, df_within)
+    ms_between = ss_between / df_between
+    ms_within = df_within.zero? ? 0.0 : ss_within / df_within
+
+    f_statistic = if ms_within.zero?
+                    ms_between.zero? ? 0.0 : Float::INFINITY
+                  else
+                    ms_between / ms_within
+                  end
+
+    p_value = MathUtils.calculate_f_distribution_p_value(f_statistic, df_between, df_within)
+    [f_statistic, p_value]
+  end
+
+  def format_levene_test_result(f_statistic, p_value, df_between, df_within)
+    significant = p_value < 0.05
+    interpretation = if significant
+                       'Homogeneity of variance hypothesis is rejected (group variances are not equal)'
+                     else
+                       'Homogeneity of variance hypothesis is not rejected (group variances are considered equal)'
+                     end
+
+    {
+      test_type: 'Levene Test (Brown-Forsythe)',
+      f_statistic: f_statistic.round(6),
+      p_value: p_value.round(6),
+      degrees_of_freedom: [df_between, df_within],
+      significant: significant,
+      interpretation: interpretation
+    }
+  end
+
+  def validate_bartlett_groups(groups)
+    groups = groups.compact.reject { |g| g.is_a?(Array) && g.empty? }
+    return nil if groups.length < 2
+    return nil unless groups.all? { |g| g.is_a?(Array) && !g.empty? }
+
+    groups
+  end
+
+  def calculate_bartlett_parameters(groups)
+    k = groups.length
+    n_total = groups.flatten.length
+    group_sizes = groups.map(&:length)
+    group_variances = groups.map { |group| variance_of_array(group) }
+
+    df_total = n_total - k
+    return { k: k, n_total: n_total, group_sizes: group_sizes, group_variances: group_variances, pooled_variance: 0.0 } if df_total.zero?
+
+    numerator = group_variances.each_with_index.sum { |var, i| (group_sizes[i] - 1) * var }
+    pooled_variance = numerator / df_total
+
+    { k: k, n_total: n_total, group_sizes: group_sizes, group_variances: group_variances, pooled_variance: pooled_variance }
+  end
+
+  def bartlett_has_zero_variance?(params)
+    params[:pooled_variance] <= 0.0 || params[:group_variances].all? { |var| var <= 0.0 }
+  end
+
+  def bartlett_zero_variance_result(num_groups)
+    {
+      test_type: 'Bartlett Test', chi_square_statistic: 0.0, p_value: 1.0,
+      degrees_of_freedom: num_groups - 1, significant: false,
+      interpretation: 'Homogeneity of variance hypothesis is not rejected (group variances are assumed equal)',
+      correction_factor: 1.0, pooled_variance: 0.0
+    }
+  end
+
+  def calculate_bartlett_statistic(params)
+    correction_factor = calculate_bartlett_correction_factor(params)
+    k, n_total, group_variances, pooled_variance = params.values_at(:k, :n_total, :group_variances, :pooled_variance)
+
+    pooled_log_variance = Math.log(pooled_variance)
+    sum_weighted_log_variances = group_variances.each_with_index.sum do |var, i|
+      var > 0.0 ? (params[:group_sizes][i] - 1) * Math.log(var) : 0.0
+    end
+
+    numerator = ((n_total - k) * pooled_log_variance) - sum_weighted_log_variances
+    chi_square_statistic = numerator / correction_factor
+
+    { chi_square_statistic: chi_square_statistic, correction_factor: correction_factor }
+  end
+
+  def calculate_bartlett_correction_factor(params)
+    k, n_total, group_sizes = params.values_at(:k, :n_total, :group_sizes)
+    sum_inverse_df = group_sizes.sum { |n_i| n_i > 1 ? 1.0 / (n_i - 1) : 0.0 }
+    inverse_total_df = n_total > k ? 1.0 / (n_total - k) : 0.0
+    1.0 + ((1.0 / (3.0 * (k - 1))) * (sum_inverse_df - inverse_total_df))
+  end
+
+  def format_bartlett_result(params, stat_results, p_value)
+    significant = p_value < 0.05
+    interpretation = if significant
+                       'Homogeneity of variance hypothesis is rejected (group variances are not equal)'
+                     else
+                       'Homogeneity of variance hypothesis is not rejected (group variances are considered equal)'
+                     end
+
+    {
+      test_type: 'Bartlett Test',
+      chi_square_statistic: stat_results[:chi_square_statistic].round(6),
+      p_value: p_value.round(6),
+      degrees_of_freedom: params[:k] - 1,
+      significant: significant,
+      interpretation: interpretation,
+      correction_factor: stat_results[:correction_factor].round(6),
+      pooled_variance: params[:pooled_variance].round(6)
+    }
   end
 end

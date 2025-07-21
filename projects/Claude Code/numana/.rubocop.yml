@@ -15,8 +15,8 @@ Metrics/BlockLength:
 Metrics/MethodLength:
   Max: 35  # Increased for plugin system complexity
   Exclude:
-    - 'lib/numana/statistics/advanced_stats.rb'
-    - 'lib/numana/statistics/anova_helpers.rb'
+    
+    
     - 'lib/numana/statistics/anova_stats.rb'
     
     - 'lib/numana/statistics/hypothesis_testing.rb'
@@ -30,8 +30,8 @@ Metrics/MethodLength:
 Metrics/CyclomaticComplexity:
   Max: 10  # Increased for plugin system complexity
   Exclude:
-    - 'lib/numana/statistics/advanced_stats.rb'
-    - 'lib/numana/statistics/anova_helpers.rb'
+    
+    
     - 'lib/numana/statistics/anova_stats.rb'
     
     - 'lib/numana/statistics/hypothesis_testing.rb'
@@ -47,8 +47,8 @@ Metrics/CyclomaticComplexity:
 Metrics/PerceivedComplexity:
   Max: 12  # Increased for plugin system complexity
   Exclude:
-    - 'lib/numana/statistics/advanced_stats.rb'
-    - 'lib/numana/statistics/anova_helpers.rb'
+    
+    
     - 'lib/numana/statistics/anova_stats.rb'
     
     - 'lib/numana/statistics/hypothesis_testing.rb'
@@ -83,8 +83,8 @@ Metrics/ClassLength:
 
 Metrics/ModuleLength:
   Exclude:
-    - 'lib/numana/statistics/advanced_stats.rb'
-    - 'lib/numana/statistics/anova_helpers.rb'
+    
+    
     - 'lib/numana/statistics/anova_stats.rb'
     
     - 'lib/numana/statistics/hypothesis_testing.rb'
@@ -98,8 +98,8 @@ Metrics/AbcSize:
   Exclude:
     - 'lib/numana/statistics_presenter.rb'
     - 'lib/numana/presenters/two_way_anova_presenter.rb'
-    - 'lib/numana/statistics/advanced_stats.rb'
-    - 'lib/numana/statistics/anova_helpers.rb'
+    
+    
     - 'lib/numana/statistics/anova_stats.rb'
     
     - 'lib/numana/statistics/hypothesis_testing.rb'
@@ -130,8 +130,8 @@ Metrics/ParameterLists:
 
 Naming/MethodParameterName:
   Exclude:
-    - 'lib/numana/statistics/advanced_stats.rb'
-    - 'lib/numana/statistics/anova_helpers.rb'
+    
+    
     - 'lib/numana/statistics/anova_stats.rb'
     
     - 'lib/numana/statistics/hypothesis_testing.rb'
