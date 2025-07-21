@@ -231,7 +231,7 @@ module TwoWayAnova
   end
 
   # Calculates sum of squares for factor A
-  def calculate_factor_a_sum_of_squares(cell_data, marginal_means_a, grand_mean, a_levels, _b)
+  def calculate_factor_a_sum_of_squares(cell_data, marginal_means_a, grand_mean, a_levels, _b_levels)
     ss_a = 0.0
     a_levels.each do |a|
       n_a = cell_data[a].values.sum(&:length)
@@ -241,7 +241,7 @@ module TwoWayAnova
   end
 
   # Calculates sum of squares for factor B
-  def calculate_factor_b_sum_of_squares(cell_data, marginal_means_b, grand_mean, b_levels, _a)
+  def calculate_factor_b_sum_of_squares(cell_data, marginal_means_b, grand_mean, b_levels, _a_levels)
     ss_b = 0.0
     b_levels.each do |b|
       n_b = cell_data.values.sum { |row| row[b].length }
@@ -337,5 +337,120 @@ module TwoWayAnova
     end
 
     interpretation.join(' ')
+  end
+
+  # Calculate sum of squares components for two-way ANOVA
+  def calculate_sum_of_squares_components(params)
+    ss_total = calculate_total_sum_of_squares(params[:values], params[:grand_mean])
+    ss_a = calculate_factor_a_sum_of_squares(
+      params[:cell_data], params[:marginal_means_a],
+      params[:grand_mean], params[:a_levels], params[:b_levels].length
+    )
+    ss_b = calculate_factor_b_sum_of_squares(
+      params[:cell_data], params[:marginal_means_b],
+      params[:grand_mean], params[:b_levels], params[:a_levels].length
+    )
+    ss_ab = calculate_interaction_sum_of_squares({
+                                                   cell_data: params[:cell_data],
+                                                   cell_means: params[:cell_means],
+                                                   marginal_means_a: params[:marginal_means_a],
+                                                   marginal_means_b: params[:marginal_means_b],
+                                                   grand_mean: params[:grand_mean],
+                                                   a_levels: params[:a_levels],
+                                                   b_levels: params[:b_levels]
+                                                 })
+    ss_error = ss_total - ss_a - ss_b - ss_ab
+
+    {
+      total: ss_total,
+      factor_a: ss_a,
+      factor_b: ss_b,
+      interaction: ss_ab,
+      error: ss_error
+    }
+  end
+
+  # Calculate degrees of freedom for all components
+  def calculate_degrees_of_freedom(a_levels, b_levels, cell_data, n_total)
+    df_a = a_levels.length - 1
+    df_b = b_levels.length - 1
+    df_ab = df_a * df_b
+
+    cell_sample_sizes = calculate_cell_sample_sizes(cell_data, a_levels, b_levels)
+    df_error = cell_sample_sizes.values.sum - (a_levels.length * b_levels.length)
+    df_total = n_total - 1
+
+    {
+      factor_a: df_a,
+      factor_b: df_b,
+      interaction: df_ab,
+      error: df_error,
+      total: df_total
+    }
+  end
+
+  # Calculate mean squares from sum of squares and degrees of freedom
+  def calculate_mean_squares(sum_of_squares, degrees_of_freedom)
+    {
+      factor_a: degrees_of_freedom[:factor_a].zero? ? 0.0 : sum_of_squares[:factor_a] / degrees_of_freedom[:factor_a],
+      factor_b: degrees_of_freedom[:factor_b].zero? ? 0.0 : sum_of_squares[:factor_b] / degrees_of_freedom[:factor_b],
+      interaction: degrees_of_freedom[:interaction].zero? ? 0.0 : sum_of_squares[:interaction] / degrees_of_freedom[:interaction],
+      error: degrees_of_freedom[:error].zero? ? 0.0 : sum_of_squares[:error] / degrees_of_freedom[:error]
+    }
+  end
+
+  # Calculate F-statistics from mean squares
+  def calculate_f_statistics(mean_squares)
+    ms_error = mean_squares[:error]
+
+    {
+      factor_a: calculate_f_value(mean_squares[:factor_a], ms_error),
+      factor_b: calculate_f_value(mean_squares[:factor_b], ms_error),
+      interaction: calculate_f_value(mean_squares[:interaction], ms_error)
+    }
+  end
+
+  # Calculate single F value with proper handling for zero error
+  def calculate_f_value(ms_treatment, ms_error)
+    if ms_error.zero?
+      ms_treatment.zero? ? 0.0 : Float::INFINITY
+    else
+      ms_treatment / ms_error
+    end
+  end
+
+  # Calculate p-values and effect sizes
+  def calculate_statistics(f_stats, degrees_of_freedom, sum_of_squares)
+    {
+      p_values: {
+        factor_a: MathUtils.calculate_f_distribution_p_value(f_stats[:factor_a], degrees_of_freedom[:factor_a], degrees_of_freedom[:error]),
+        factor_b: MathUtils.calculate_f_distribution_p_value(f_stats[:factor_b], degrees_of_freedom[:factor_b], degrees_of_freedom[:error]),
+        interaction: MathUtils.calculate_f_distribution_p_value(f_stats[:interaction], degrees_of_freedom[:interaction], degrees_of_freedom[:error])
+      },
+      effect_sizes: {
+        factor_a: calculate_partial_eta_squared(sum_of_squares[:factor_a], sum_of_squares[:error]),
+        factor_b: calculate_partial_eta_squared(sum_of_squares[:factor_b], sum_of_squares[:error]),
+        interaction: calculate_partial_eta_squared(sum_of_squares[:interaction], sum_of_squares[:error])
+      }
+    }
+  end
+
+  # Calculate partial eta squared effect size
+  def calculate_partial_eta_squared(ss_effect, ss_error)
+    total = ss_effect + ss_error
+    total.zero? ? 0.0 : ss_effect / total
+  end
+
+  # Build the final result hash for a factor
+  def build_factor_result(f_stat, p_value, df_factor, df_error, sum_squares, mean_squares, eta_squared)
+    {
+      f_statistic: f_stat.round(6),
+      p_value: p_value.round(6),
+      degrees_of_freedom: [df_factor, df_error],
+      sum_of_squares: sum_squares.round(6),
+      mean_squares: mean_squares.round(6),
+      eta_squared: eta_squared.round(6),
+      significant: p_value < 0.05
+    }
   end
 end

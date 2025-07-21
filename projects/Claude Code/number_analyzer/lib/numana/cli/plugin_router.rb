@@ -8,7 +8,7 @@ module Numana::CLI::PluginRouter
   # Route command with conflict resolution
   def route_command(command, args, options)
     # Check if it's a registry command first
-    return execute_registry_command(command, args, options) if command_registry_exists?(command)
+    return execute_registry_command?(command, args, options) if command_registry_exists?(command)
 
     # Check if it's a core command
     core_method = core_command_method(command)
@@ -30,7 +30,7 @@ module Numana::CLI::PluginRouter
   end
 
   # Execute command through CommandRegistry
-  def execute_registry_command(command, args, options)
+  def execute_registry_command?(command, args, options)
     Numana::Commands::CommandRegistry.execute_command?(command, args, options)
   end
 

@@ -103,13 +103,10 @@ class Numana::PluginSystem::Loader
   def handle_error_with_recovery(error, context)
     recovery = @core.error_handler.handle_error(error, context)
 
-    case recovery[:action]
-    when :retry
-      # Retry should be handled at a higher level that has a rescue block
-      false
-    when :fallback
-      recovery[:fallback_plugin] ? load_plugin(recovery[:fallback_plugin]) : false
+    if recovery[:action] == :fallback && recovery[:fallback_plugin]
+      load_plugin(recovery[:fallback_plugin])
     else
+      # For :retry and other cases, no immediate recovery possible
       false
     end
   end

@@ -18,17 +18,17 @@ class TestHypothesisTesting
     @numbers.sum.to_f / @numbers.length
   end
 
-  def standard_normal_cdf(z)
+  def standard_normal_cdf(z_value)
     # Simple approximation for standard normal CDF
-    return 0.0 if z <= -6
-    return 1.0 if z >= 6
+    return 0.0 if z_value <= -6
+    return 1.0 if z_value >= 6
 
     # Abramowitz and Stegun approximation
-    t = 1.0 / (1.0 + (0.2316419 * z.abs))
-    d = 0.3989423 * Math.exp(-z * z / 2.0)
+    t = 1.0 / (1.0 + (0.2316419 * z_value.abs))
+    d = 0.3989423 * Math.exp(-z_value * z_value / 2.0)
     prob = d * t * (0.3193815 + (t * (-0.3565638 + (t * (1.781478 + (t * (-1.821256 + (t * 1.330274))))))))
 
-    z >= 0 ? 1.0 - prob : prob
+    z_value >= 0 ? 1.0 - prob : prob
   end
 end
 

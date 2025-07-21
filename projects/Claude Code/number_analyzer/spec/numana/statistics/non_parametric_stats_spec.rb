@@ -25,11 +25,11 @@ class TestNonParametricStats
   end
 
   # Mock method to satisfy dependency
-  def calculate_chi_square_p_value(statistic, df)
+  def calculate_chi_square_p_value(statistic, degrees_freedom)
     # Simple chi-square p-value approximation for testing
     if statistic <= 0
       1.0
-    elsif (df == 1 && statistic >= 3.841) || (df == 2 && statistic >= 5.991)
+    elsif (degrees_freedom == 1 && statistic >= 3.841) || (degrees_freedom == 2 && statistic >= 5.991)
       0.05
     else
       statistic > 10 ? 0.001 : 0.1

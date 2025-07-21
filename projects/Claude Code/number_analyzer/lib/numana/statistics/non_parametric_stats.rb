@@ -418,9 +418,9 @@ module NonParametricStats
     end
   end
 
-  def calculate_wilcoxon_variance(n, abs_diffs)
+  def calculate_wilcoxon_variance(n_pairs, abs_diffs)
     # Basic variance without tie correction
-    basic_variance = (n * (n + 1) * ((2 * n) + 1)) / 24.0
+    basic_variance = (n_pairs * (n_pairs + 1) * ((2 * n_pairs) + 1)) / 24.0
 
     # Apply tie correction
     value_counts = abs_diffs.tally
