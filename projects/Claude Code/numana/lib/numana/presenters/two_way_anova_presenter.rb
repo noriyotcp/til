@@ -12,41 +12,27 @@ require_relative 'base_statistical_presenter'
 # - Comprehensive ANOVA table with error and total rows
 #
 # Supports verbose, JSON, and quiet output formats with precision control.
+# rubocop:disable Metrics/ClassLength
 class Numana::Presenters::TwoWayAnovaPresenter < Numana::Presenters::BaseStatisticalPresenter
   def format_verbose
-    output = []
-    output << '=== 二元配置分散分析結果 ==='
-    output << ''
-
-    # Marginal means
-    output << "全体平均値: #{format_value(@result[:grand_mean])}"
-    output << ''
-
-    # Factor A marginal means
-    output.concat(build_factor_a_means_section)
-    output << ''
-
-    # Factor B marginal means
-    output.concat(build_factor_b_means_section)
-    output << ''
-
-    # Cell means
-    output.concat(build_cell_means_section)
-    output << ''
-
-    # Two-way ANOVA table
-    output.concat(build_two_way_anova_table)
-    output << ''
-
-    # Effect sizes
-    output.concat(build_effect_sizes_section)
-    output << ''
-
-    # Interpretation
-    output << '【解釈】'
-    output << @result[:interpretation]
-
-    output.join("\n")
+    [
+      '=== 二元配置分散分析結果 ===',
+      '',
+      "全体平均値: #{format_value(@result[:grand_mean])}",
+      '',
+      build_means_section('要因A 水準別平均値', @result[:marginal_means][:factor_a]),
+      '',
+      build_means_section('要因B 水準別平均値', @result[:marginal_means][:factor_b]),
+      '',
+      build_cell_means_section,
+      '',
+      build_two_way_anova_table,
+      '',
+      build_effect_sizes_section,
+      '',
+      '【解釈】',
+      @result[:interpretation]
+    ].join("\n")
   end
 
   def format_quiet
@@ -93,20 +79,10 @@ class Numana::Presenters::TwoWayAnovaPresenter < Numana::Presenters::BaseStatist
 
   private
 
-  def build_factor_a_means_section
-    output = ['【要因A 水準別平均値】']
-    @result[:marginal_means][:factor_a].each do |level, mean|
-      formatted_mean = format_value(mean)
-      output << "  #{level}: #{formatted_mean}"
-    end
-    output
-  end
-
-  def build_factor_b_means_section
-    output = ['【要因B 水準別平均値】']
-    @result[:marginal_means][:factor_b].each do |level, mean|
-      formatted_mean = format_value(mean)
-      output << "  #{level}: #{formatted_mean}"
+  def build_means_section(title, means)
+    output = ["【#{title}】"]
+    means.each do |level, mean|
+      output << "  #{level}: #{format_value(mean)}"
     end
     output
   end
@@ -115,8 +91,7 @@ class Numana::Presenters::TwoWayAnovaPresenter < Numana::Presenters::BaseStatist
     output = ['【セル平均値 (要因A × 要因B)】']
     @result[:cell_means].each do |a_level, b_hash|
       b_hash.each do |b_level, mean|
-        formatted_mean = format_value(mean)
-        output << "  #{a_level} × #{b_level}: #{formatted_mean}"
+        output << "  #{a_level} × #{b_level}: #{format_value(mean)}"
       end
     end
     output
@@ -252,3 +227,4 @@ class Numana::Presenters::TwoWayAnovaPresenter < Numana::Presenters::BaseStatist
     end
   end
 end
+# rubocop:enable Metrics/ClassLength
