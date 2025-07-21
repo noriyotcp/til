@@ -23,6 +23,7 @@ require_relative 'conflict_resolution_strategies'
 # @example Custom strategy
 #   resolver.set_default_strategy(:command_name, :namespace)
 #   resolution = resolver.resolve_conflict(:command_name, ['plugin_a', 'plugin_b'], :strict)
+# rubocop:disable Metrics/ClassLength
 class Numana::PluginConflictResolver
   include ConflictResolutionStrategies
 
@@ -334,3 +335,4 @@ class Numana::PluginConflictResolver
                          "Available strategies: #{RESOLUTION_STRATEGIES.keys.join(', ')}"
   end
 end
+# rubocop:enable Metrics/ClassLength

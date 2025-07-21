@@ -40,7 +40,7 @@ Metrics/CyclomaticComplexity:
     
     - 'lib/numana/plugin_configuration/**/*'
     
-    - 'lib/numana/plugin_conflict_resolver.rb'
+    
     - 'lib/numana/plugin_validator.rb'
     - 'plugins/**/*'
 
@@ -57,7 +57,7 @@ Metrics/PerceivedComplexity:
     
     - 'lib/numana/plugin_configuration/**/*'
     
-    - 'lib/numana/plugin_conflict_resolver.rb'
+    
     - 'lib/numana/plugin_validator.rb'
     - 'plugins/**/*'
 
@@ -71,7 +71,7 @@ Metrics/ClassLength:
     
     
     - 'lib/numana/plugin_configuration/**/*'
-    - 'lib/numana/plugin_conflict_resolver.rb'
+    
     - 'lib/numana/plugin_sandbox/capability_manager.rb'
     - 'lib/numana/plugin_sandbox/method_interceptor.rb'
     - 'lib/numana/plugin_loader.rb'
@@ -108,7 +108,7 @@ Metrics/AbcSize:
     
     - 'lib/numana/plugin_configuration/**/*'
     
-    - 'lib/numana/plugin_conflict_resolver.rb'
+    
     - 'lib/numana/plugin_error_handler.rb'
     - 'lib/numana/plugin_validator.rb'
     - 'plugins/**/*'
