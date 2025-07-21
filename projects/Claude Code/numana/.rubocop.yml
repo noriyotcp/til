@@ -15,7 +15,6 @@ Metrics/BlockLength:
 Metrics/MethodLength:
   Max: 35  # Increased for plugin system complexity
   Exclude:
-    - 'lib/numana.rb'  # Chi-square and other statistical methods require comprehensive calculations
     - 'lib/numana/statistics/**/*'  # Statistical modules contain complex mathematical algorithms
     - 'lib/numana/plugin_configuration.rb'  # Plugin configuration methods require complex setup
     - 'lib/numana/plugin_configuration/**/*'  # Plugin configuration modules
@@ -24,7 +23,6 @@ Metrics/MethodLength:
 Metrics/CyclomaticComplexity:
   Max: 10  # Increased for plugin system complexity
   Exclude:
-    - 'lib/numana.rb'  # Chi-square statistical methods have inherent mathematical complexity
     - 'lib/numana/statistics/**/*'  # Statistical algorithms require complex conditional logic
     - 'lib/numana/plugin_configuration/**/*'  # Plugin configuration validation requires complex logic
     - 'lib/numana/dependency_resolver.rb'  # Dependency resolution requires complex graph algorithms
@@ -35,7 +33,6 @@ Metrics/CyclomaticComplexity:
 Metrics/PerceivedComplexity:
   Max: 12  # Increased for plugin system complexity
   Exclude:
-    - 'lib/numana.rb'  # Chi-square and statistical calculation methods require complex logic
     - 'lib/numana/statistics/**/*'  # Statistical algorithms require complex mathematical logic
     - 'lib/numana/plugin_configuration/**/*'  # Plugin configuration validation requires complex logic
     - 'lib/numana/dependency_resolver.rb'  # Dependency resolution requires complex graph algorithms
@@ -46,7 +43,6 @@ Metrics/PerceivedComplexity:
 Metrics/ClassLength:
   Max: 150  # Increased for plugin system complexity
   Exclude:
-    - 'lib/numana.rb'              # Core statistical analysis with 30 statistical functions
     - 'lib/numana/file_reader.rb'  # Multi-format file reader (CSV/JSON/TXT) requires comprehensive methods
     - 'lib/numana/cli/commands/plugins_command.rb'  # Complex plugin management CLI with comprehensive subcommands
     - 'lib/numana/statistics_presenter.rb'  # Statistical test formatting (Levene, Bartlett, etc.) requires multiple display methods
@@ -72,7 +68,6 @@ Metrics/ModuleLength:
 Metrics/AbcSize:
   Max: 25  # Increased for plugin system complexity
   Exclude:
-    - 'lib/numana.rb'  # Statistical calculation methods have inherent complexity
     - 'lib/numana/statistics_presenter.rb'  # Display methods need to format 11+ statistical values
     - 'lib/numana/presenters/two_way_anova_presenter.rb'  # Two-way ANOVA presentation requires complex output formatting
     - 'lib/numana/statistics/**/*'  # Statistical modules have high assignment/branch/condition complexity
@@ -100,7 +95,6 @@ Metrics/ParameterLists:
 
 Naming/MethodParameterName:
   Exclude:
-    - 'lib/numana.rb'  # Mathematical variables (z, t, f) follow standard statistical notation
     - 'lib/numana/statistics/**/*'  # Statistical modules use standard mathematical parameter names (z, t, f, p)
     - 'spec/numana/statistics/**/*'  # Test helper methods use mathematical notation
     - 'plugins/**/*'  # Plugin modules use standard mathematical parameter names (k, x, y, z, p, t)
