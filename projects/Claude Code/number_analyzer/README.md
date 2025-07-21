@@ -1,10 +1,10 @@
-# NumberAnalyzer
+# Numana
 
 A comprehensive statistical analysis tool for number arrays, implemented in Ruby.
 
 ## Features
 
-NumberAnalyzer provides the following statistical calculations:
+Numana provides the following statistical calculations:
 
 - **Sum** - Total of all numbers
 - **Average** - Arithmetic mean
@@ -68,7 +68,7 @@ NumberAnalyzer provides the following statistical calculations:
   - **✅ 100% RuboCop Compliance**: Zero violations across 116 files with automated style enforcement
   - **TDD Methodology**: Test-Driven Development with Red-Green-Refactor cycle for all new features
   - **Comprehensive Test Coverage**: Extensive test suite with 100% passing rate maintained throughout development
-  - **Compact Style Consistency**: All files follow Ruby compact style (`NumberAnalyzer::ClassName`) for namespace clarity
+  - **Compact Style Consistency**: All files follow Ruby compact style (`Numana::ClassName`) for namespace clarity
   - **Automated Quality Gates**: RuboCop hooks integration for continuous code quality assurance
   - **English Error Messages**: Consistent English error messages for international accessibility
 
@@ -88,37 +88,37 @@ bundle install
 ```bash
 # Build the gem using rake (creates gem in pkg/ directory)
 rake build
-gem install pkg/number_analyzer-*.gem
+gem install pkg/numana-*.gem
 
 # Verify installation location
-gem which number_analyzer
+gem which numana
 ```
 
 **Alternative build method:**
 ```bash
 # Direct build (creates gem in current directory)
-gem build number_analyzer.gemspec
-gem install ./number_analyzer-*.gem
+gem build numana.gemspec
+gem install ./numana-*.gem
 ```
 
 **For active development (most efficient):**
 ```bash
 # Add to your project's Gemfile for immediate source changes reflection:
-# gem 'number_analyzer', path: '/path/to/number_analyzer'
+# gem 'numana', path: '/path/to/numana'
 # Then run: bundle install
 
 # No rebuilding needed - changes are immediately reflected
-bundle exec number_analyzer
+bundle exec numana
 ```
 
 **Check installation:**
 ```bash
 # Find where the gem is installed
 gem environment
-gem which number_analyzer
+gem which numana
 
 # List installed versions
-gem list number_analyzer
+gem list numana
 ```
 
 ## Usage
@@ -130,128 +130,128 @@ gem list number_analyzer
 **Using bundle exec (recommended for development)**
 ```bash
 # Show help
-bundle exec number_analyzer
-bundle exec number_analyzer --help
-bundle exec number_analyzer help
+bundle exec numana
+bundle exec numana --help
+bundle exec numana help
 
 # With custom numbers (explicit data input required)
-bundle exec number_analyzer mean 1 2 3 4 5
-bundle exec number_analyzer median 10.5 20.3 15.7 8.2
+bundle exec numana mean 1 2 3 4 5
+bundle exec numana median 10.5 20.3 15.7 8.2
 
 # From files (CSV, JSON, TXT formats supported)
-bundle exec number_analyzer mean --file data.csv
-bundle exec number_analyzer median -f numbers.json
-bundle exec number_analyzer sum --file values.txt
+bundle exec numana mean --file data.csv
+bundle exec numana median -f numbers.json
+bundle exec numana sum --file values.txt
 
 # Correlation analysis with files
-bundle exec number_analyzer correlation file1.csv file2.csv
-bundle exec number_analyzer correlation --format=json file1.csv file2.csv
+bundle exec numana correlation file1.csv file2.csv
+bundle exec numana correlation --format=json file1.csv file2.csv
 
 # Time series analysis
-bundle exec number_analyzer trend 1 2 3 4 5
-bundle exec number_analyzer trend --format=json --file sales.csv
-bundle exec number_analyzer moving-average --window=5 1 2 3 4 5 6 7
-bundle exec number_analyzer growth-rate 100 110 121 133
-bundle exec number_analyzer seasonal 10 20 15 25 12 22 17 27
+bundle exec numana trend 1 2 3 4 5
+bundle exec numana trend --format=json --file sales.csv
+bundle exec numana moving-average --window=5 1 2 3 4 5 6 7
+bundle exec numana growth-rate 100 110 121 133
+bundle exec numana seasonal 10 20 15 25 12 22 17 27
 
 # Statistical hypothesis testing
-bundle exec number_analyzer t-test group1.csv group2.csv
-bundle exec number_analyzer t-test --paired before.csv after.csv
-bundle exec number_analyzer t-test --one-sample --population-mean=100 data.csv
+bundle exec numana t-test group1.csv group2.csv
+bundle exec numana t-test --paired before.csv after.csv
+bundle exec numana t-test --one-sample --population-mean=100 data.csv
 
 # Confidence interval analysis
-bundle exec number_analyzer confidence-interval 95 1 2 3 4 5
-bundle exec number_analyzer confidence-interval --level=90 --file data.csv
-bundle exec number_analyzer confidence-interval --format=json --precision=2 10 20 30
+bundle exec numana confidence-interval 95 1 2 3 4 5
+bundle exec numana confidence-interval --level=90 --file data.csv
+bundle exec numana confidence-interval --format=json --precision=2 10 20 30
 
 # Chi-square test analysis
-bundle exec number_analyzer chi-square --independence 30 20 -- 15 35
-bundle exec number_analyzer chi-square --independence 10 20 30 -- 15 25 35 -- 20 30 40
-bundle exec number_analyzer chi-square --goodness-of-fit 8 12 10 15 10 10 10 10
-bundle exec number_analyzer chi-square --uniform 8 12 10 15 9 6
-bundle exec number_analyzer chi-square --independence --file contingency_table.csv
+bundle exec numana chi-square --independence 30 20 -- 15 35
+bundle exec numana chi-square --independence 10 20 30 -- 15 25 35 -- 20 30 40
+bundle exec numana chi-square --goodness-of-fit 8 12 10 15 10 10 10 10
+bundle exec numana chi-square --uniform 8 12 10 15 9 6
+bundle exec numana chi-square --independence --file contingency_table.csv
 
 # Wilcoxon signed-rank test (paired samples)
-bundle exec number_analyzer wilcoxon 10 12 14 -- 15 18 20
-bundle exec number_analyzer wilcoxon before.csv after.csv
-bundle exec number_analyzer wilcoxon --format=json --precision=3 1 2 3 -- 4 5 6
+bundle exec numana wilcoxon 10 12 14 -- 15 18 20
+bundle exec numana wilcoxon before.csv after.csv
+bundle exec numana wilcoxon --format=json --precision=3 1 2 3 -- 4 5 6
 
 # Friedman test (repeated measures across multiple conditions)
-bundle exec number_analyzer friedman 1 2 3 -- 4 5 6 -- 7 8 9
-bundle exec number_analyzer friedman condition1.csv condition2.csv condition3.csv
-bundle exec number_analyzer friedman --format=json --precision=3 1 2 3 -- 4 5 6 -- 7 8 9
+bundle exec numana friedman 1 2 3 -- 4 5 6 -- 7 8 9
+bundle exec numana friedman condition1.csv condition2.csv condition3.csv
+bundle exec numana friedman --format=json --precision=3 1 2 3 -- 4 5 6 -- 7 8 9
 ```
 
 #### Using the bin file directly
 ```bash
-ruby -Ilib bin/number_analyzer 1 2 3 4 5
+ruby -Ilib bin/numana 1 2 3 4 5
 ```
 
 #### As an installed gem
 ```bash
-number_analyzer 1 2 3 4 5
+numana 1 2 3 4 5
 ```
 
 #### Advanced Usage with Options (Phase 6.3)
 
-NumberAnalyzer supports advanced output formatting and control options for all 29 core subcommands + 19 plugin commands:
+Numana supports advanced output formatting and control options for all 29 core subcommands + 19 plugin commands:
 
 **JSON Output Format**
 ```bash
 # Get JSON output for API integration
-bundle exec number_analyzer median --format=json 1 2 3 4 5
+bundle exec numana median --format=json 1 2 3 4 5
 #=> {"value":3.0,"dataset_size":5}
 
-bundle exec number_analyzer quartiles --format=json 1 2 3 4 5
+bundle exec numana quartiles --format=json 1 2 3 4 5
 #=> {"q1":2.0,"q2":3.0,"q3":4.0,"dataset_size":5}
 
-bundle exec number_analyzer outliers --format=json 1 2 3 100
+bundle exec numana outliers --format=json 1 2 3 100
 #=> {"outliers":[100.0],"dataset_size":4}
 ```
 
 **Precision Control**
 ```bash
 # Control decimal places for output
-bundle exec number_analyzer mean --precision=2 1.23456 2.34567
+bundle exec numana mean --precision=2 1.23456 2.34567
 #=> 1.79
 
-bundle exec number_analyzer variance --precision=1 1.1111 2.2222 3.3333
+bundle exec numana variance --precision=1 1.1111 2.2222 3.3333
 #=> 0.8
 
 # Works with JSON format
-bundle exec number_analyzer median --format=json --precision=1 1.234 2.567
+bundle exec numana median --format=json --precision=1 1.234 2.567
 #=> {"value":1.9,"dataset_size":2}
 ```
 
 **Quiet Mode (Script-Friendly)**
 ```bash
 # Minimal output for scripting
-bundle exec number_analyzer median --quiet 1 2 3 4 5
+bundle exec numana median --quiet 1 2 3 4 5
 #=> 3.0
 
-bundle exec number_analyzer quartiles --quiet 1 2 3 4 5
+bundle exec numana quartiles --quiet 1 2 3 4 5
 #=> 2.0 3.0 4.0
 
-bundle exec number_analyzer outliers --quiet 1 2 3 100
+bundle exec numana outliers --quiet 1 2 3 100
 #=> 100.0
 ```
 
 **Help System**
 ```bash
 # General help (shows all available commands)
-bundle exec number_analyzer
-bundle exec number_analyzer --help
-bundle exec number_analyzer help
+bundle exec numana
+bundle exec numana --help
+bundle exec numana help
 
 # Get help for specific commands
-bundle exec number_analyzer help median
-bundle exec number_analyzer help percentile
-bundle exec number_analyzer help histogram
+bundle exec numana help median
+bundle exec numana help percentile
+bundle exec numana help histogram
 
 # Alternative help syntax for specific commands
-bundle exec number_analyzer median --help
-bundle exec number_analyzer percentile --help
-bundle exec number_analyzer histogram --help
+bundle exec numana median --help
+bundle exec numana percentile --help
+bundle exec numana histogram --help
 ```
 
 **Subcommands with Options**
@@ -260,129 +260,129 @@ All 29 core subcommands + 19 plugin commands support the new options:
 
 ```bash
 # Basic Statistics with Options
-bundle exec number_analyzer sum --format=json 1 2 3 4 5
-bundle exec number_analyzer min --precision=3 1.123456 2.654321
-bundle exec number_analyzer max --quiet 10 20 30 40 50
+bundle exec numana sum --format=json 1 2 3 4 5
+bundle exec numana min --precision=3 1.123456 2.654321
+bundle exec numana max --quiet 10 20 30 40 50
 
 # Advanced Statistics with Options  
-bundle exec number_analyzer variance --format=json --precision=2 1 2 3 4 5
-bundle exec number_analyzer std --quiet 1.5 2.5 3.5 4.5
-bundle exec number_analyzer deviation-scores --precision=1 60 70 80 90
-bundle exec number_analyzer correlation 1 2 3 2 4 6
-bundle exec number_analyzer correlation --format=json --precision=3 1 2 3 2 4 6
+bundle exec numana variance --format=json --precision=2 1 2 3 4 5
+bundle exec numana std --quiet 1.5 2.5 3.5 4.5
+bundle exec numana deviation-scores --precision=1 60 70 80 90
+bundle exec numana correlation 1 2 3 2 4 6
+bundle exec numana correlation --format=json --precision=3 1 2 3 2 4 6
 
 # Time Series Analysis
-bundle exec number_analyzer trend 1 2 3 4 5
-bundle exec number_analyzer moving-average --window=5 1 2 3 4 5 6 7 8
-bundle exec number_analyzer growth-rate --format=json 100 110 121 133
-bundle exec number_analyzer seasonal --period=4 10 20 15 25 12 22 17 27
+bundle exec numana trend 1 2 3 4 5
+bundle exec numana moving-average --window=5 1 2 3 4 5 6 7 8
+bundle exec numana growth-rate --format=json 100 110 121 133
+bundle exec numana seasonal --period=4 10 20 15 25 12 22 17 27
 
 # Statistical Tests
-bundle exec number_analyzer t-test --format=json group1.csv group2.csv
-bundle exec number_analyzer t-test --paired --precision=3 before.csv after.csv
-bundle exec number_analyzer t-test --one-sample --population-mean=50 --quiet data.csv
-bundle exec number_analyzer confidence-interval 95 --format=json 1 2 3 4 5
-bundle exec number_analyzer confidence-interval --level=90 --precision=2 --file data.csv
-bundle exec number_analyzer confidence-interval --quiet 99 10 20 30 40
+bundle exec numana t-test --format=json group1.csv group2.csv
+bundle exec numana t-test --paired --precision=3 before.csv after.csv
+bundle exec numana t-test --one-sample --population-mean=50 --quiet data.csv
+bundle exec numana confidence-interval 95 --format=json 1 2 3 4 5
+bundle exec numana confidence-interval --level=90 --precision=2 --file data.csv
+bundle exec numana confidence-interval --quiet 99 10 20 30 40
 
 # Chi-square Tests
-bundle exec number_analyzer chi-square --independence 30 20 -- 15 35
-bundle exec number_analyzer chi-square --goodness-of-fit 8 12 10 15 9 6 10 10 10 10 10 10
-bundle exec number_analyzer chi-square --uniform --format=json 8 12 10 15 9 6
+bundle exec numana chi-square --independence 30 20 -- 15 35
+bundle exec numana chi-square --goodness-of-fit 8 12 10 15 9 6 10 10 10 10 10 10
+bundle exec numana chi-square --uniform --format=json 8 12 10 15 9 6
 
 # Analysis of Variance (ANOVA)
-bundle exec number_analyzer anova 1 2 3 -- 4 5 6 -- 7 8 9
-bundle exec number_analyzer anova --file group1.csv group2.csv group3.csv
-bundle exec number_analyzer anova --format=json --precision=3 1 2 3 -- 4 5 6 -- 7 8 9
-bundle exec number_analyzer anova --alpha=0.01 --quiet 1 2 3 -- 4 5 6 -- 7 8 9
+bundle exec numana anova 1 2 3 -- 4 5 6 -- 7 8 9
+bundle exec numana anova --file group1.csv group2.csv group3.csv
+bundle exec numana anova --format=json --precision=3 1 2 3 -- 4 5 6 -- 7 8 9
+bundle exec numana anova --alpha=0.01 --quiet 1 2 3 -- 4 5 6 -- 7 8 9
 
 # Two-way ANOVA (Factorial Design)
-bundle exec number_analyzer two-way-anova --factor-a A1,A1,A2,A2 --factor-b B1,B2,B1,B2 10,12,20,22
-bundle exec number_analyzer two-way-anova --file factorial_data.csv
-bundle exec number_analyzer two-way-anova --format=json --precision=3 --factor-a Drug,Drug,Placebo,Placebo --factor-b Male,Female,Male,Female 5.2,7.1,3.8,4.5
-bundle exec number_analyzer two-way-anova --quiet --factor-a Treatment,Treatment,Control,Control --factor-b Young,Old,Young,Old 15,18,12,14
+bundle exec numana two-way-anova --factor-a A1,A1,A2,A2 --factor-b B1,B2,B1,B2 10,12,20,22
+bundle exec numana two-way-anova --file factorial_data.csv
+bundle exec numana two-way-anova --format=json --precision=3 --factor-a Drug,Drug,Placebo,Placebo --factor-b Male,Female,Male,Female 5.2,7.1,3.8,4.5
+bundle exec numana two-way-anova --quiet --factor-a Treatment,Treatment,Control,Control --factor-b Young,Old,Young,Old 15,18,12,14
 
 # Levene Test for Variance Homogeneity  
-bundle exec number_analyzer levene 1 2 3 -- 4 5 6 -- 7 8 9
-bundle exec number_analyzer levene --file group1.csv group2.csv group3.csv
-bundle exec number_analyzer levene --format=json --precision=3 1 2 3 -- 4 5 6 -- 7 8 9
-bundle exec number_analyzer levene --quiet 1 2 3 -- 4 5 6 -- 7 8 9
+bundle exec numana levene 1 2 3 -- 4 5 6 -- 7 8 9
+bundle exec numana levene --file group1.csv group2.csv group3.csv
+bundle exec numana levene --format=json --precision=3 1 2 3 -- 4 5 6 -- 7 8 9
+bundle exec numana levene --quiet 1 2 3 -- 4 5 6 -- 7 8 9
 
 # Bartlett Test for Variance Homogeneity
-bundle exec number_analyzer bartlett 1 2 3 -- 4 5 6 -- 7 8 9
-bundle exec number_analyzer bartlett --file group1.csv group2.csv group3.csv
-bundle exec number_analyzer bartlett --format=json --precision=3 1 2 3 -- 4 5 6 -- 7 8 9
-bundle exec number_analyzer bartlett --quiet 1 2 3 -- 4 5 6 -- 7 8 9
+bundle exec numana bartlett 1 2 3 -- 4 5 6 -- 7 8 9
+bundle exec numana bartlett --file group1.csv group2.csv group3.csv
+bundle exec numana bartlett --format=json --precision=3 1 2 3 -- 4 5 6 -- 7 8 9
+bundle exec numana bartlett --quiet 1 2 3 -- 4 5 6 -- 7 8 9
 
 # Kruskal-Wallis Test (Non-parametric ANOVA)
-bundle exec number_analyzer kruskal-wallis 1 2 3 -- 4 5 6 -- 7 8 9
-bundle exec number_analyzer kruskal-wallis --file group1.csv group2.csv group3.csv
-bundle exec number_analyzer kruskal-wallis --format=json --precision=3 1 2 3 -- 4 5 6 -- 7 8 9
-bundle exec number_analyzer kruskal-wallis --quiet 1 2 3 -- 4 5 6 -- 7 8 9
+bundle exec numana kruskal-wallis 1 2 3 -- 4 5 6 -- 7 8 9
+bundle exec numana kruskal-wallis --file group1.csv group2.csv group3.csv
+bundle exec numana kruskal-wallis --format=json --precision=3 1 2 3 -- 4 5 6 -- 7 8 9
+bundle exec numana kruskal-wallis --quiet 1 2 3 -- 4 5 6 -- 7 8 9
 
 # Mann-Whitney U Test (Non-parametric t-test)
-bundle exec number_analyzer mann-whitney 1 2 3 -- 4 5 6
-bundle exec number_analyzer mann-whitney --file group1.csv group2.csv
-bundle exec number_analyzer mann-whitney --format=json --precision=3 1 2 3 -- 6 7 8
-bundle exec number_analyzer mann-whitney --quiet 10 20 30 -- 40 50 60
+bundle exec numana mann-whitney 1 2 3 -- 4 5 6
+bundle exec numana mann-whitney --file group1.csv group2.csv
+bundle exec numana mann-whitney --format=json --precision=3 1 2 3 -- 6 7 8
+bundle exec numana mann-whitney --quiet 10 20 30 -- 40 50 60
 
 # Specialized Commands with Options
-bundle exec number_analyzer percentile 75 --format=json 1 2 3 4 5
-bundle exec number_analyzer histogram --quiet 1 2 2 3 3 3
+bundle exec numana percentile 75 --format=json 1 2 3 4 5
+bundle exec numana histogram --quiet 1 2 2 3 3 3
 ```
 
 **Combined Options**
 ```bash
 # Multiple options can be combined
-bundle exec number_analyzer mean --format=json --precision=2 --file data.csv
-bundle exec number_analyzer outliers --quiet --precision=1 1 2 3 4 5 100
+bundle exec numana mean --format=json --precision=2 --file data.csv
+bundle exec numana outliers --quiet --precision=1 1 2 3 4 5 100
 ```
 
 #### Plugin Management Commands (Phase 8.0 Step 5)
 
-NumberAnalyzer provides comprehensive plugin management commands for discovering, managing, and resolving conflicts between plugins:
+Numana provides comprehensive plugin management commands for discovering, managing, and resolving conflicts between plugins:
 
 **List Plugins**
 ```bash
 # List all loaded plugins
-bundle exec number_analyzer plugins list
+bundle exec numana plugins list
 
 # List plugins with conflict detection
-bundle exec number_analyzer plugins list --show-conflicts
+bundle exec numana plugins list --show-conflicts
 ```
 
 **Detect Conflicts**
 ```bash
 # Show all plugin conflicts
-bundle exec number_analyzer plugins conflicts
+bundle exec numana plugins conflicts
 
 # Alternative syntax
-bundle exec number_analyzer plugins --conflicts
+bundle exec numana plugins --conflicts
 ```
 
 **Resolve Conflicts**
 ```bash
 # Interactive conflict resolution (recommended)
-bundle exec number_analyzer plugins resolve my_plugin --strategy=interactive
+bundle exec numana plugins resolve my_plugin --strategy=interactive
 
 # Automatic namespace resolution
-bundle exec number_analyzer plugins resolve my_plugin --strategy=namespace
+bundle exec numana plugins resolve my_plugin --strategy=namespace
 
 # Priority-based resolution
-bundle exec number_analyzer plugins resolve my_plugin --strategy=priority
+bundle exec numana plugins resolve my_plugin --strategy=priority
 
 # Disable conflicting plugin
-bundle exec number_analyzer plugins resolve my_plugin --strategy=disable
+bundle exec numana plugins resolve my_plugin --strategy=disable
 
 # Force resolution without confirmation
-bundle exec number_analyzer plugins resolve my_plugin --strategy=interactive --force
+bundle exec numana plugins resolve my_plugin --strategy=interactive --force
 ```
 
 **Plugin Help**
 ```bash
 # Get help for plugin commands
-bundle exec number_analyzer plugins --help
-bundle exec number_analyzer plugins help
+bundle exec numana plugins --help
+bundle exec numana plugins help
 ```
 
 **Plugin System Features**:
@@ -395,10 +395,10 @@ bundle exec number_analyzer plugins help
 ### As a Ruby Library
 
 ```ruby
-require 'number_analyzer'
+require 'numana'
 
 # Create analyzer with number array
-analyzer = NumberAnalyzer.new([1, 2, 3, 4, 5, 6, 7, 8, 9, 10])
+analyzer = Numana.new([1, 2, 3, 4, 5, 6, 7, 8, 9, 10])
 
 # Calculate and display all statistics
 analyzer.calculate_statistics
@@ -424,22 +424,22 @@ other_data = [2, 4, 6, 8, 10, 12, 14, 16, 18, 20]
 puts analyzer.correlation(other_data)  # => 1.0 (perfect positive correlation)
 
 # T-test analysis (statistical hypothesis testing)
-group1 = NumberAnalyzer.new([1, 2, 3, 4, 5])
+group1 = Numana.new([1, 2, 3, 4, 5])
 group2 = [6, 7, 8, 9, 10]
 puts group1.t_test(group2, type: :independent)
 # => {test_type: "independent_samples", t_statistic: -5.0, degrees_of_freedom: 8.0, p_value: 0.0001794861, significant: true, ...}
 
 # Paired t-test
-before = NumberAnalyzer.new([10, 12, 14, 16, 18])
+before = Numana.new([10, 12, 14, 16, 18])
 after = [11, 14, 15, 18, 22]
 puts before.t_test(after, type: :paired)
 
 # One-sample t-test
-sample = NumberAnalyzer.new([18, 20, 22, 24, 26])
+sample = Numana.new([18, 20, 22, 24, 26])
 puts sample.t_test(nil, type: :one_sample, population_mean: 20)
 
 # Confidence interval analysis
-data = NumberAnalyzer.new([1, 2, 3, 4, 5])
+data = Numana.new([1, 2, 3, 4, 5])
 puts data.confidence_interval(95)
 # => {confidence_level: 95, lower_bound: 1.037, upper_bound: 4.963, point_estimate: 3.0, margin_of_error: 1.963, ...}
 
@@ -447,7 +447,7 @@ puts data.confidence_interval(90)  # 90% confidence interval
 puts data.confidence_interval(99)  # 99% confidence interval
 
 # One-way ANOVA analysis
-analyzer = NumberAnalyzer.new([])  # Empty analyzer for ANOVA
+analyzer = Numana.new([])  # Empty analyzer for ANOVA
 group1 = [1, 2, 3]
 group2 = [4, 5, 6] 
 group3 = [7, 8, 9]
@@ -464,11 +464,11 @@ puts analyzer.levene_test(group1, group2, group3)
 puts analyzer.frequency_distribution # => {1=>1, 2=>1, 3=>1, 4=>1, 5=>1, 6=>1, 7=>1, 8=>1, 9=>1, 10=>1}
 
 # Example with repeated values for histogram visualization
-scores = NumberAnalyzer.new([85, 90, 85, 92, 88, 85, 90])
+scores = Numana.new([85, 90, 85, 92, 88, 85, 90])
 puts scores.frequency_distribution  # => {85=>3, 90=>2, 92=>1, 88=>1}
 
 # Example with outliers
-outlier_data = NumberAnalyzer.new([1, 2, 3, 4, 5, 100])
+outlier_data = Numana.new([1, 2, 3, 4, 5, 100])
 puts outlier_data.outliers  # => [100.0]
 
 # Histogram display (automatically included in calculate_statistics output)
@@ -480,16 +480,16 @@ scores.display_histogram
 # => 92: ■ (1)
 
 # Or read data from files
-require 'number_analyzer/file_reader'
+require 'numana/file_reader'
 
-numbers = NumberAnalyzer::FileReader.read_from_file('data.csv')
-analyzer = NumberAnalyzer.new(numbers)
+numbers = Numana::FileReader.read_from_file('data.csv')
+analyzer = Numana.new(numbers)
 analyzer.calculate_statistics
 ```
 
 ### Plugin System Foundation (Phase 8.0 Step 1)
 
-NumberAnalyzer now includes foundational infrastructure for an extensible plugin system. This foundation provides the architecture for future plugin development and extensibility.
+Numana now includes foundational infrastructure for an extensible plugin system. This foundation provides the architecture for future plugin development and extensibility.
 
 **Current Infrastructure:**
 - **Plugin System Core**: Plugin registration, loading, and management system
@@ -512,7 +512,7 @@ plugins:
   enabled: []  # Plugin loading disabled by default
   paths:
     - './plugins'
-    - './lib/number_analyzer/plugins'
+    - './lib/numana/plugins'
   
 plugin_config:
   # Future plugin configurations
@@ -551,7 +551,7 @@ plugin_config:
 For data with repeated values, the histogram shows frequency patterns:
 
 ```bash
-bundle exec number_analyzer 1 2 2 3 3 3 4 5
+bundle exec numana histogram 1 2 2 3 3 3 4 5
 ```
 
 Output includes:
@@ -604,27 +604,27 @@ or
 
 ## CLI Entry Points
 
-NumberAnalyzer provides two entry points for different usage scenarios:
+Numana provides two entry points for different usage scenarios:
 
-### Production Entry Point (`bin/number_analyzer`)
+### Production Entry Point (`bin/numana`)
 **Primary CLI executable for end users and production environments**
 
 ```bash
-bundle exec number_analyzer [command] [args]
+bundle exec numana [command] [args]
 ```
 
 **Characteristics:**
 - Contains shebang (`#!/usr/bin/env ruby`) for direct execution
 - Always executes CLI when invoked
 - Official entry point for gem users
-- Used by bundler when running `bundle exec number_analyzer`
+- Used by bundler when running `bundle exec numana`
 - Recommended for production deployments and regular usage
 
-### Development Entry Point (`lib/number_analyzer/cli.rb`)
+### Development Entry Point (`lib/numana/cli.rb`)
 **Direct execution for development and debugging**
 
 ```bash
-ruby lib/number_analyzer/cli.rb [command] [args]
+ruby lib/numana/cli.rb [command] [args]
 ```
 
 **Characteristics:**
@@ -639,18 +639,18 @@ ruby lib/number_analyzer/cli.rb [command] [args]
 **Production Usage:**
 ```bash
 # Standard gem execution
-bundle exec number_analyzer mean 1 2 3 4 5
-bundle exec number_analyzer --help
+bundle exec numana mean 1 2 3 4 5
+bundle exec numana --help
 
 # After gem installation
-number_analyzer mean 1 2 3 4 5
+numana mean 1 2 3 4 5
 ```
 
 **Development Usage:**
 ```bash
 # Direct execution from source
-ruby lib/number_analyzer/cli.rb mean 1 2 3 4 5
-ruby lib/number_analyzer/cli.rb --help
+ruby lib/numana/cli.rb mean 1 2 3 4 5
+ruby lib/numana/cli.rb --help
 ```
 
 **Architecture Note**: This dual entry point design follows Ruby gem best practices, providing both a production-ready executable and development convenience while maintaining clean separation between library and CLI functionality.
@@ -673,7 +673,7 @@ bundle exec rubocop  # ✅ Zero violations achieved (116 files)
 
 ### Getting Started with Plugin API
 
-NumberAnalyzer provides a comprehensive plugin framework for extending statistical capabilities. Create custom plugins for new algorithms, data formats, or visualization methods.
+Numana provides a comprehensive plugin framework for extending statistical capabilities. Create custom plugins for new algorithms, data formats, or visualization methods.
 
 #### Creating a New Plugin
 
@@ -681,7 +681,7 @@ Generate a plugin template using the built-in generator:
 
 ```ruby
 # Generate a statistics plugin template
-NumberAnalyzer::PluginTemplate.generate('my_stats', :statistics, {
+Numana::PluginTemplate.generate('my_stats', :statistics, {
   author: 'Your Name',
   description: 'Custom statistical analysis methods'
 })
@@ -699,19 +699,19 @@ NumberAnalyzer::PluginTemplate.generate('my_stats', :statistics, {
 
 ```bash
 # Machine Learning Plugin Commands
-bundle exec number_analyzer linear-regression 1 2 3 4 5
-bundle exec number_analyzer k-means --k=3 1 2 3 4 5 6 7 8 9
-bundle exec number_analyzer pca --components=2 1 2 3 4 5
+bundle exec numana linear-regression 1 2 3 4 5
+bundle exec numana k-means --k=3 1 2 3 4 5 6 7 8 9
+bundle exec numana pca --components=2 1 2 3 4 5
 
 # Data Export Plugin Commands  
-bundle exec number_analyzer export-csv --file data.txt
-bundle exec number_analyzer export-json --precision=3 1 2 3 4 5
-bundle exec number_analyzer export-profile --file results.csv
+bundle exec numana export-csv --file data.txt
+bundle exec numana export-json --precision=3 1 2 3 4 5
+bundle exec numana export-profile --file results.csv
 
 # Visualization Plugin Commands
-bundle exec number_analyzer histogram --width=60 1 2 3 4 5
-bundle exec number_analyzer dashboard 1 2 3 4 5 6 7 8 9 10
-bundle exec number_analyzer scatter 1 2 3 4 5 -- 2 4 6 8 10
+bundle exec numana histogram --width=60 1 2 3 4 5
+bundle exec numana dashboard 1 2 3 4 5 6 7 8 9 10
+bundle exec numana scatter 1 2 3 4 5 -- 2 4 6 8 10
 ```
 
 #### Plugin Security & Validation
@@ -746,12 +746,12 @@ plugins:
     - visualization
   paths:
     - ./plugins
-    - ~/.number_analyzer/plugins
+    - ~/.numana/plugins
 security:
   sandbox_mode: standard
   allow_network_access: false
   trusted_authors:
-    - "NumberAnalyzer Team"
+    - "Numana Team"
 ```
 
 
@@ -760,22 +760,22 @@ security:
 The project follows clean architecture principles with separation of concerns:
 
 ### Core Components
-- **NumberAnalyzer** - Pure statistical calculation library (8 modular components, 96.1% code reduction)
-- **NumberAnalyzer::CLI** - Lightweight command orchestrator (138 lines) with 29 core subcommands + 19 plugin commands
-- **NumberAnalyzer::CLI::Options** - Comprehensive option parsing system (243 lines)
-- **NumberAnalyzer::CLI::HelpGenerator** - Dynamic help generation with command descriptions (155 lines)
-- **NumberAnalyzer::CLI::InputProcessor** - Unified input processing for files and CLI arguments (160 lines)
-- **NumberAnalyzer::FileReader** - File input handling (CSV/JSON/TXT support)
-- **NumberAnalyzer::StatisticsPresenter** - Display and formatting logic for full analysis (89 lines, 82% reduction achieved through Template Method Pattern delegation)
-- **NumberAnalyzer::FormattingUtils** - Advanced output formatting utilities (JSON, precision, quiet mode)
+- **Numana** - Pure statistical calculation library (8 modular components, 96.1% code reduction)
+- **Numana::CLI** - Lightweight command orchestrator (138 lines) with 29 core subcommands + 19 plugin commands
+- **Numana::CLI::Options** - Comprehensive option parsing system (243 lines)
+- **Numana::CLI::HelpGenerator** - Dynamic help generation with command descriptions (155 lines)
+- **Numana::CLI::InputProcessor** - Unified input processing for files and CLI arguments (160 lines)
+- **Numana::FileReader** - File input handling (CSV/JSON/TXT support)
+- **Numana::StatisticsPresenter** - Display and formatting logic for full analysis (89 lines, 82% reduction achieved through Template Method Pattern delegation)
+- **Numana::FormattingUtils** - Advanced output formatting utilities (JSON, precision, quiet mode)
 
 ### Plugin API Framework
-- **NumberAnalyzer::PluginSystem** - Core plugin management and lifecycle control
-- **NumberAnalyzer::PluginRegistry** - Centralized plugin discovery and registration system
-- **NumberAnalyzer::PluginConfiguration** - Multi-layer configuration management (default/file/environment)
-- **NumberAnalyzer::PluginValidator** - Security validation with 76 dangerous pattern detection rules
-- **NumberAnalyzer::PluginTemplate** - ERB-based standardized plugin generation for 5 plugin types
-- **NumberAnalyzer::PluginLoader** - Secure plugin loading with risk-based strategies
+- **Numana::PluginSystem** - Core plugin management and lifecycle control
+- **Numana::PluginRegistry** - Centralized plugin discovery and registration system
+- **Numana::PluginConfiguration** - Multi-layer configuration management (default/file/environment)
+- **Numana::PluginValidator** - Security validation with 76 dangerous pattern detection rules
+- **Numana::PluginTemplate** - ERB-based standardized plugin generation for 5 plugin types
+- **Numana::PluginLoader** - Secure plugin loading with risk-based strategies
 
 ### Modular Statistics (8 Extracted Modules)
 - **BasicStats**, **AdvancedStats**, **MathUtils**, **CorrelationStats**
@@ -786,7 +786,7 @@ The project follows clean architecture principles with separation of concerns:
 - **DataExportPlugin** - Multi-format data export with quality assessment
 - **VisualizationPlugin** - ASCII visualization with statistical interpretation
 
-This modular design enables independent use of statistical functionality while providing a secure, extensible plugin framework for third-party developers. The CLI modularization (Phase 1 complete) achieves 93% code reduction while improving maintainability through single-responsibility modules. The Phase 8.0 Step 4 plugin API standardization establishes NumberAnalyzer as a platform for statistical analysis extensions.
+This modular design enables independent use of statistical functionality while providing a secure, extensible plugin framework for third-party developers. The CLI modularization (Phase 1 complete) achieves 93% code reduction while improving maintainability through single-responsibility modules. The Phase 8.0 Step 4 plugin API standardization establishes Numana as a platform for statistical analysis extensions.
 
 ## License
 

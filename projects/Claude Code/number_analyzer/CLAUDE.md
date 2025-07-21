@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-NumberAnalyzer is a comprehensive statistical analysis tool built in Ruby. Originally started as a refactoring exercise from beginner-level code to professional Ruby Gem, it has evolved into an enterprise-ready statistical analysis library with data visualization capabilities.
+Numana is a comprehensive statistical analysis tool built in Ruby. Originally started as a refactoring exercise from beginner-level code to professional Ruby Gem, it has evolved into an enterprise-ready statistical analysis library with data visualization capabilities.
 
 **Current Status**: ✅ **Production Ready** - 33 statistical functions, comprehensive test suite, CLI Modularization Phase 1 **COMPLETE** + CLI Refactoring Phase 1-2 **COMPLETE** + **Phase 9 CLI Ultimate Optimization COMPLETE** with Command Pattern architecture (31/31 commands migrated) and fully modular architecture (8 modules extracted + 6 CLI modules), 96.1%+ code reduction achieved + CLI 95.1% reduction (2094→102 lines), **100% RuboCop compliance**, enterprise-level code quality with TDD methodology, intelligent error handling and performance optimization, English error messages for international accessibility
 
@@ -136,7 +136,7 @@ lib/
 
 **Architecture Principles**:
 - **Single Responsibility Principle**: Each class has one clear purpose
-- **Clean Dependencies**: `bin → CLI → NumberAnalyzer ← StatisticsPresenter`
+- **Clean Dependencies**: `bin → CLI → Numana ← StatisticsPresenter`
 - **Ruby Idioms**: Effective use of `sum`, `tally`, `sort`, endless methods
 - **TDD Practice**: Red-Green-Refactor cycle for all new features
 
@@ -146,24 +146,24 @@ lib/
 - **Style Consistency**: All code must conform to project's .rubocop.yml configuration
 - **Auto-correction First**: Always apply `bundle exec rubocop -a` before manual fixes
 - **Configuration Changes**: RuboCop config modifications require documentation update
-- **Compact Style Mandatory**: All classes/modules must use compact style (`NumberAnalyzer::ClassName`)
+- **Compact Style Mandatory**: All classes/modules must use compact style (`Numana::ClassName`)
 
 **Compact Style Standards** (MANDATORY - Project Standard):
 - **Namespace Declaration**: Use compact style for all new classes/modules
-- **Reference Resolution**: Always use fully qualified names (`NumberAnalyzer::CLI`, not `CLI`)
+- **Reference Resolution**: Always use fully qualified names (`Numana::CLI`, not `CLI`)
 - **Consistency Enforcement**: RuboCop Style/ClassAndModuleChildren set to `EnforcedStyle: compact`
 - **Migration Completed**: 100+ files successfully converted to compact style (January 2025)
 
 ```ruby
 # ✅ Correct - Compact style (MANDATORY)
-class NumberAnalyzer::CLI
+class Numana::CLI
   def self.run
-    NumberAnalyzer::PluginSystem.new
+    Numana::PluginSystem.new
   end
 end
 
 # ❌ Incorrect - Nested style (FORBIDDEN)
-module NumberAnalyzer
+module Numana
   class CLI
     def self.run
       PluginSystem.new  # Also wrong - unqualified reference

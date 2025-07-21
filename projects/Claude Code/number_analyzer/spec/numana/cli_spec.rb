@@ -5,7 +5,7 @@ require 'fileutils'
 require_relative '../../lib/numana/cli'
 
 RSpec.describe Numana::CLI do
-  let(:script_path) { File.join(__dir__, '..', '..', 'lib', 'number_analyzer', 'cli.rb') }
+  let(:script_path) { File.join(__dir__, '..', '..', 'lib', 'numana', 'cli.rb') }
 
   describe 'CLI.parse_arguments' do
     context 'with no arguments and no file option' do
@@ -95,7 +95,7 @@ RSpec.describe Numana::CLI do
   describe 'CLI integration' do
     it 'shows help when no arguments provided' do
       output = `ruby "#{script_path}"`
-      expect(output).to include('NumberAnalyzer - Statistical Analysis Tool')
+      expect(output).to include('Numana - Statistical Analysis Tool')
       expect(output).to include('Available Commands:')
       expect($CHILD_STATUS.success?).to be true
     end
@@ -510,7 +510,7 @@ RSpec.describe Numana::CLI do
       context 'help system' do
         it 'shows help for median command' do
           expect { Numana::CLI.run(%w[median --help]) }
-            .to output(/Usage: bundle exec number_analyzer median/).to_stdout
+            .to output(/Usage: bundle exec numana median/).to_stdout
         end
 
         it 'shows help for percentile command' do
@@ -602,7 +602,7 @@ RSpec.describe Numana::CLI do
 
       it 'shows help when requested' do
         expect { Numana::CLI.run(%w[trend --help]) }
-          .to output(/Usage: bundle exec number_analyzer trend/).to_stdout
+          .to output(/Usage: bundle exec numana trend/).to_stdout
       end
     end
 

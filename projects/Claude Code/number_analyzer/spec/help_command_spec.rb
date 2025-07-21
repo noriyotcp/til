@@ -9,7 +9,7 @@ RSpec.describe Numana::Commands::HelpCommand do
   describe '#execute' do
     context 'with no arguments' do
       it 'shows general help' do
-        expect { command.execute([]) }.to output(/NumberAnalyzer - Statistical Analysis Tool/).to_stdout
+        expect { command.execute([]) }.to output(/Numana - Statistical Analysis Tool/).to_stdout
       end
 
       it 'shows available commands' do
@@ -17,7 +17,7 @@ RSpec.describe Numana::Commands::HelpCommand do
       end
 
       it 'shows usage examples' do
-        expect { command.execute([]) }.to output(/bundle exec number_analyzer mean 1 2 3 4 5/).to_stdout
+        expect { command.execute([]) }.to output(/bundle exec numana mean 1 2 3 4 5/).to_stdout
       end
     end
 
@@ -40,7 +40,7 @@ RSpec.describe Numana::Commands::HelpCommand do
       it 'shows help for help command itself' do
         output = capture_output { command.execute([], help: true) }
         expect(output).to include('help - Display help information for commands')
-        expect(output).to include('Usage: number_analyzer help [COMMAND]')
+        expect(output).to include('Usage: numana help [COMMAND]')
       end
     end
 
@@ -55,8 +55,8 @@ RSpec.describe Numana::Commands::HelpCommand do
     it 'shows help-specific help message' do
       output = capture_output { command.show_help }
       expect(output).to include('help - Display help information for commands')
-      expect(output).to include('Usage: number_analyzer help [COMMAND]')
-      expect(output).to include('number_analyzer help mean')
+      expect(output).to include('Usage: numana help [COMMAND]')
+      expect(output).to include('numana help mean')
     end
   end
 

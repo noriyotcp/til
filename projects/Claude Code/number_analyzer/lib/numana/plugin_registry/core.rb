@@ -7,7 +7,7 @@ require 'fileutils'
 require_relative 'discovery'
 require_relative 'validator'
 
-# Core Plugin Registry for NumberAnalyzer
+# Core Plugin Registry for Numana
 # Manages plugin registration and basic operations
 class Numana::PluginRegistry::Core
   class << self

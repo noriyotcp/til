@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-# Help generation module for NumberAnalyzer CLI
+# Help generation module for Numana CLI
 # Provides comprehensive help information for commands
 module Numana::CLI::HelpGenerator
   extend self
@@ -10,7 +10,7 @@ module Numana::CLI::HelpGenerator
     description ||= default_description_for(command)
 
     puts <<~HELP
-      Usage: bundle exec number_analyzer #{command} [options] numbers...
+      Usage: bundle exec numana #{command} [options] numbers...
 
       Description: #{description}
 
@@ -22,17 +22,17 @@ module Numana::CLI::HelpGenerator
         --help           Show this help
 
       Examples:
-        bundle exec number_analyzer #{command} 1 2 3 4 5
-        bundle exec number_analyzer #{command} --format=json 1 2 3
-        bundle exec number_analyzer #{command} --precision=2 1.234 2.567
-        bundle exec number_analyzer #{command} --file data.csv
+        bundle exec numana #{command} 1 2 3 4 5
+        bundle exec numana #{command} --format=json 1 2 3
+        bundle exec numana #{command} --precision=2 1.234 2.567
+        bundle exec numana #{command} --file data.csv
     HELP
   end
 
   # Show help information for chi-square command
   def show_chi_square_help
     puts <<~HELP
-      Usage: bundle exec number_analyzer chi-square [options] numbers...
+      Usage: bundle exec numana chi-square [options] numbers...
 
       Description: Perform chi-square test for independence or goodness-of-fit
 
@@ -47,20 +47,20 @@ module Numana::CLI::HelpGenerator
         --help           Show this help
 
       Examples:
-        bundle exec number_analyzer chi-square --independence 30 20 -- 15 35
-        bundle exec number_analyzer chi-square --goodness-of-fit observed.csv expected.csv
-        bundle exec number_analyzer chi-square --uniform 8 12 10 15 9 6
+        bundle exec numana chi-square --independence 30 20 -- 15 35
+        bundle exec numana chi-square --goodness-of-fit observed.csv expected.csv
+        bundle exec numana chi-square --uniform 8 12 10 15 9 6
     HELP
   end
 
   # Show general help information
   def show_general_help
     puts <<~HELP
-      NumberAnalyzer - Statistical Analysis Tool
+      Numana - Statistical Analysis Tool
 
       Usage:
-        bundle exec number_analyzer <command> [options] [numbers...]
-        bundle exec number_analyzer --file data.csv
+        bundle exec numana <command> [options] [numbers...]
+        bundle exec numana --file data.csv
 
       Available Commands:
         Basic Statistics:
@@ -85,22 +85,22 @@ module Numana::CLI::HelpGenerator
           plugins
 
       Detailed Help:
-        bundle exec number_analyzer help <command>
-        bundle exec number_analyzer <command> --help
+        bundle exec numana help <command>
+        bundle exec numana <command> --help
 
       Examples:
-        bundle exec number_analyzer mean 1 2 3 4 5
-        bundle exec number_analyzer median --file data.csv
-        bundle exec number_analyzer histogram --format=json 1 2 3 4 5
+        bundle exec numana mean 1 2 3 4 5
+        bundle exec numana median --file data.csv
+        bundle exec numana histogram --format=json 1 2 3 4 5
     HELP
   end
 
   # Show help for plugin-related commands
   def show_plugin_help
     puts <<~HELP
-      Usage: bundle exec number_analyzer plugins [subcommand] [options]
+      Usage: bundle exec numana plugins [subcommand] [options]
 
-      Description: Manage NumberAnalyzer plugins
+      Description: Manage Numana plugins
 
       Subcommands:
         list               List all available plugins
@@ -115,10 +115,10 @@ module Numana::CLI::HelpGenerator
         --strategy=disable       Disable conflicting plugin
 
       Examples:
-        bundle exec number_analyzer plugins list
-        bundle exec number_analyzer plugins list --show-conflicts
-        bundle exec number_analyzer plugins conflicts
-        bundle exec number_analyzer plugins resolve myplugin --strategy=interactive
+        bundle exec numana plugins list
+        bundle exec numana plugins list --show-conflicts
+        bundle exec numana plugins conflicts
+        bundle exec numana plugins resolve myplugin --strategy=interactive
     HELP
   end
 
@@ -143,7 +143,7 @@ module Numana::CLI::HelpGenerator
     'moving-average' => 'Calculate moving average',
     'growth-rate' => 'Calculate growth rates',
     'seasonal' => 'Analyze seasonal patterns',
-    'plugins' => 'Manage NumberAnalyzer plugins'
+    'plugins' => 'Manage Numana plugins'
   }.freeze
 
   private

@@ -11,15 +11,15 @@ class Numana::Commands::HelpCommand < Numana::Commands::BaseCommand
     puts <<~HELP
       help - Display help information for commands
 
-      Usage: number_analyzer help [COMMAND]
+      Usage: numana help [COMMAND]
 
       Arguments:
         COMMAND               Show help for a specific command
 
       Examples:
-        number_analyzer help           Show general help
-        number_analyzer help mean      Show help for mean command
-        number_analyzer help median    Show help for median command
+        numana help           Show general help
+        numana help mean      Show help for mean command
+        numana help median    Show help for median command
     HELP
   end
 
@@ -51,11 +51,11 @@ class Numana::Commands::HelpCommand < Numana::Commands::BaseCommand
 
   def show_general_help
     puts <<~HELP
-      NumberAnalyzer - Statistical Analysis Tool
+      Numana - Statistical Analysis Tool
 
       Usage:
-        bundle exec number_analyzer <command> [options] [numbers...]
-        bundle exec number_analyzer --file data.csv
+        bundle exec numana <command> [options] [numbers...]
+        bundle exec numana --file data.csv
 
       Available Commands:
         Basic Statistics:
@@ -80,13 +80,13 @@ class Numana::Commands::HelpCommand < Numana::Commands::BaseCommand
           plugins
 
       Detailed Help:
-        bundle exec number_analyzer help <command>
-        bundle exec number_analyzer <command> --help
+        bundle exec numana help <command>
+        bundle exec numana <command> --help
 
       Examples:
-        bundle exec number_analyzer mean 1 2 3 4 5
-        bundle exec number_analyzer median --file data.csv
-        bundle exec number_analyzer histogram --format=json 1 2 3 4 5
+        bundle exec numana mean 1 2 3 4 5
+        bundle exec numana median --file data.csv
+        bundle exec numana histogram --format=json 1 2 3 4 5
     HELP
   end
 
@@ -98,7 +98,7 @@ class Numana::Commands::HelpCommand < Numana::Commands::BaseCommand
       command.show_help
     else
       puts "Unknown command: #{command_name}"
-      puts "Use 'bundle exec number_analyzer help' to see available commands."
+      puts "Use 'bundle exec numana help' to see available commands."
     end
   end
 end
