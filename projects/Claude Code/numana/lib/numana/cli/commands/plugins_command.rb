@@ -10,6 +10,7 @@ require_relative 'plugins/list_command'
 require_relative 'plugins/conflicts_command'
 require_relative 'plugins/resolve_command'
 
+# Main command for managing plugins. Acts as a dispatcher for subcommands.
 class Numana::Commands::PluginsCommand < Numana::Commands::BaseCommand
   command 'plugins', 'Manage plugins (list, resolve conflicts)'
 

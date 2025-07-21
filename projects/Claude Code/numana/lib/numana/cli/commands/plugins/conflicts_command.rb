@@ -2,6 +2,7 @@
 
 require_relative '../../base_command'
 
+# Subcommand for detecting and displaying plugin conflicts.
 class Numana::Commands::Plugins::ConflictsCommand < Numana::Commands::BaseCommand
   def execute(_args, global_options = {})
     @options = @options.merge(global_options)

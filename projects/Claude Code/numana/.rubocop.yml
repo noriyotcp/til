@@ -66,7 +66,7 @@ Metrics/ClassLength:
   Exclude:
     
     
-    - 'lib/numana/statistics_presenter.rb'
+    
     - 'lib/numana/presenters/two_way_anova_presenter.rb'
     - 'lib/numana/dependency_resolver.rb'
     - 'lib/numana/plugin_configuration.rb'
@@ -96,7 +96,7 @@ Metrics/ModuleLength:
 Metrics/AbcSize:
   Max: 25  # Increased for plugin system complexity
   Exclude:
-    - 'lib/numana/statistics_presenter.rb'
+    
     - 'lib/numana/presenters/two_way_anova_presenter.rb'
     
     

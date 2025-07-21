@@ -2,6 +2,7 @@
 
 require_relative '../../base_command'
 
+# Subcommand for resolving plugin conflicts.
 class Numana::Commands::Plugins::ResolveCommand < Numana::Commands::BaseCommand
   def execute(args, global_options = {})
     @options = @options.merge(global_options)
