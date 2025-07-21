@@ -2,9 +2,11 @@
 
 # Plugin System for NumberAnalyzer
 # Main interface that delegates to core components
+# rubocop:disable Lint/EmptyClass
 class Numana::PluginSystem
   # Implementation added after require statements to resolve circular dependencies
 end
+# rubocop:enable Lint/EmptyClass
 
 require_relative 'plugin_system/core'
 require_relative 'plugin_system/loader'

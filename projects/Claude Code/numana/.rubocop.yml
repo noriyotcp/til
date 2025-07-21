@@ -23,7 +23,7 @@ Metrics/MethodLength:
     
     
     
-    - 'lib/numana/plugin_configuration.rb'
+    
     - 'lib/numana/plugin_configuration/**/*'
     - 'plugins/**/*'
 
@@ -39,7 +39,7 @@ Metrics/CyclomaticComplexity:
     
     
     - 'lib/numana/plugin_configuration/**/*'
-    - 'lib/numana/dependency_resolver.rb'
+    
     - 'lib/numana/plugin_conflict_resolver.rb'
     - 'lib/numana/plugin_validator.rb'
     - 'plugins/**/*'
@@ -56,7 +56,7 @@ Metrics/PerceivedComplexity:
     
     
     - 'lib/numana/plugin_configuration/**/*'
-    - 'lib/numana/dependency_resolver.rb'
+    
     - 'lib/numana/plugin_conflict_resolver.rb'
     - 'lib/numana/plugin_validator.rb'
     - 'plugins/**/*'
@@ -68,8 +68,8 @@ Metrics/ClassLength:
     
     
     
-    - 'lib/numana/dependency_resolver.rb'
-    - 'lib/numana/plugin_configuration.rb'
+    
+    
     - 'lib/numana/plugin_configuration/**/*'
     - 'lib/numana/plugin_conflict_resolver.rb'
     - 'lib/numana/plugin_sandbox/capability_manager.rb'
@@ -107,7 +107,7 @@ Metrics/AbcSize:
     
     
     - 'lib/numana/plugin_configuration/**/*'
-    - 'lib/numana/dependency_resolver.rb'
+    
     - 'lib/numana/plugin_conflict_resolver.rb'
     - 'lib/numana/plugin_error_handler.rb'
     - 'lib/numana/plugin_validator.rb'
@@ -153,4 +153,4 @@ Style/ClassAndModuleChildren:
 
 Lint/EmptyClass:
   Exclude:
-    - 'lib/numana/plugin_system.rb'
+    

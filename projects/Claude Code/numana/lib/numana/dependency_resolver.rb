@@ -6,6 +6,7 @@ require_relative 'dependency_resolution_strategies'
 
 # Advanced dependency resolution system for NumberAnalyzer plugins
 # Handles complex dependency resolution with circular dependency detection
+# rubocop:disable Metrics/ClassLength
 class Numana::DependencyResolver
   include TSort
 
@@ -324,3 +325,4 @@ class Numana::DependencyResolver
     end
   end
 end
+# rubocop:enable Metrics/ClassLength
