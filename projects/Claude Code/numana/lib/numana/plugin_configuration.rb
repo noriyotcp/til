@@ -100,8 +100,8 @@ class Numana::PluginConfiguration
                                                'enabled' => %w[basic_stats advanced_stats],
                                                'paths' => [
                                                  './plugins',
-                                                 './lib/number_analyzer/plugins',
-                                                 '~/.number_analyzer/plugins'
+                                                 './lib/numana/plugins',
+                                                 '~/.numana/plugins'
                                                ]
                                              })
 
@@ -129,7 +129,7 @@ class Numana::PluginConfiguration
     end
 
     def merge_environment_configs(base_config, environment = nil)
-      environment ||= ENV['NUMBER_ANALYZER_ENV'] || 'development'
+      environment ||= ENV['NUMANA_ENV'] || 'development'
 
       env_config_path = "config/plugins.#{environment}.yml"
       return base_config unless File.exist?(env_config_path)

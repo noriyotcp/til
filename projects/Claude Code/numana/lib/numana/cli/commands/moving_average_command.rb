@@ -53,7 +53,7 @@ class Numana::Commands::MovingAverageCommand < Numana::Commands::BaseCommand
     puts <<~HELP
       moving-average - #{self.class.description}
 
-      Usage: number_analyzer moving-average [OPTIONS] [NUMBERS...]
+      Usage: numana moving-average [OPTIONS] [NUMBERS...]
 
       Options:
         --help                Show this help message
@@ -65,16 +65,16 @@ class Numana::Commands::MovingAverageCommand < Numana::Commands::BaseCommand
 
       Examples:
         # Default 3-period moving average
-        number_analyzer moving-average 1 2 3 4 5 6 7
+        numana moving-average 1 2 3 4 5 6 7
 
         # 5-period moving average
-        number_analyzer moving-average --window=5 1 2 3 4 5 6 7 8 9
+        numana moving-average --window=5 1 2 3 4 5 6 7 8 9
 
         # From file with JSON output
-        number_analyzer moving-average --file sales.csv --format=json
+        numana moving-average --file sales.csv --format=json
 
         # Custom precision
-        number_analyzer moving-average --precision=2 --window=3 1.1 2.3 3.2 4.8
+        numana moving-average --precision=2 --window=3 1.1 2.3 3.2 4.8
     HELP
   end
 

@@ -31,7 +31,7 @@ RSpec.describe Numana::CLI::ErrorHandler do
         expect { described_class.handle_unknown_command('xyz', available_commands) }
           .to raise_error(Numana::CLI::ErrorHandler::CLIError) do |error|
           expect(error.message).to eq('Unknown command: xyz')
-          expect(error.context).to eq("Use 'bundle exec number_analyzer help' for available commands.")
+          expect(error.context).to eq("Use 'bundle exec numana help' for available commands.")
           expect(error.suggestion).to be_nil
         end
       end

@@ -4,7 +4,7 @@ require 'spec_helper'
 require 'numana/cli/commands/trend_command'
 
 # NOTE: これは単体テストです。実際のCLI経由での動作も必ず確認してください！
-# 例: bundle exec number_analyzer trend 1 2 3 4 5
+# 例: bundle exec numana trend 1 2 3 4 5
 #
 # CLI統合で問題が発生した場合は ai-docs/CLI_REFACTORING_GUIDE.md を参照
 
@@ -109,7 +109,7 @@ RSpec.describe Numana::Commands::TrendCommand do
           command.execute([], { help: true })
         end
         expect(output).to include('trend - Calculate linear trend analysis')
-        expect(output).to include('Usage: number_analyzer trend')
+        expect(output).to include('Usage: numana trend')
         expect(output).to include('Options:')
         expect(output).to include('--help')
         expect(output).to include('--file')

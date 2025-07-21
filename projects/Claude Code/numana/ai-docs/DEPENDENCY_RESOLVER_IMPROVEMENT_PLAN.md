@@ -24,7 +24,7 @@ DependencyResolver（399行）の複雑度を削減し、保守性・拡張性�
 
 ### Phase 1: VersionComparator の実装（優先度：高）
 
-#### 新規ファイル: `lib/number_analyzer/version_comparator.rb`
+#### 新規ファイル: `lib/numana/version_comparator.rb`
 
 ```ruby
 # frozen_string_literal: true
@@ -145,7 +145,7 @@ end
 
 ### Phase 2: 依存関係解決戦略（優先度：中）
 
-#### 新規ファイル: `lib/number_analyzer/dependency_resolution_strategies.rb`
+#### 新規ファイル: `lib/numana/dependency_resolution_strategies.rb`
 
 ```ruby
 # frozen_string_literal: true
@@ -229,7 +229,7 @@ end
 
 ### Phase 3: DependencyResolver のリファクタリング
 
-#### 更新: `lib/number_analyzer/dependency_resolver.rb`
+#### 更新: `lib/numana/dependency_resolver.rb`
 
 主な変更点：
 1. バージョン比較メソッドを削除（-120行）
@@ -385,7 +385,7 @@ dependency_resolver:
 # frozen_string_literal: true
 
 require 'spec_helper'
-require 'number_analyzer/version_comparator'
+require 'numana/version_comparator'
 
 RSpec.describe NumberAnalyzer::VersionComparator do
   describe '.compare' do

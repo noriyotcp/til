@@ -260,7 +260,7 @@ plugin_security:
     allowed_paths:
       - "./data"
       - "./input"
-      - "/tmp/number_analyzer"
+      - "/tmp/numana"
     blocked_paths:
       - "/etc"
       - "/usr"

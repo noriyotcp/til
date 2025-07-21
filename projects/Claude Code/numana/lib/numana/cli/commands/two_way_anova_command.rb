@@ -43,9 +43,9 @@ class Numana::Commands::TwoWayAnovaCommand < Numana::Commands::BaseCommand
 
   def show_help
     puts <<~HELP
-      Usage: bundle exec number_analyzer two-way-anova [options]
+      Usage: bundle exec numana two-way-anova [options]
              --factor-a A1,A1,A2,A2 --factor-b B1,B2,B1,B2 data1,data2,data3,data4
-             bundle exec number_analyzer two-way-anova [options] --file data.csv
+             bundle exec numana two-way-anova [options] --file data.csv
 
       Options:
         --format=FORMAT        Output format (json)
@@ -57,9 +57,9 @@ class Numana::Commands::TwoWayAnovaCommand < Numana::Commands::BaseCommand
         -h, --help             Show this help
 
       Examples:
-        bundle exec number_analyzer two-way-anova --factor-a A1,A1,A2,A2 --factor-b B1,B2,B1,B2 10,15,20,25
-        bundle exec number_analyzer two-way-anova --file factorial_data.csv
-        bundle exec number_analyzer two-way-anova --format=json --precision=3
+        bundle exec numana two-way-anova --factor-a A1,A1,A2,A2 --factor-b B1,B2,B1,B2 10,15,20,25
+        bundle exec numana two-way-anova --file factorial_data.csv
+        bundle exec numana two-way-anova --format=json --precision=3
           --factor-a Drug,Drug,Placebo,Placebo --factor-b Male,Female,Male,Female 5.2,7.1,3.8,4.5
     HELP
   end
@@ -92,7 +92,7 @@ class Numana::Commands::TwoWayAnovaCommand < Numana::Commands::BaseCommand
 
     raise ArgumentError, <<~ERROR
       エラー: --factor-a と --factor-b オプションが必要です。
-      使用例: bundle exec number_analyzer two-way-anova --factor-a A1,A1,A2,A2 --factor-b B1,B2,B1,B2 10,15,20,25
+      使用例: bundle exec numana two-way-anova --factor-a A1,A1,A2,A2 --factor-b B1,B2,B1,B2 10,15,20,25
     ERROR
   end
 

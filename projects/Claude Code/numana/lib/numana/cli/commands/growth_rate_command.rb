@@ -43,7 +43,7 @@ class Numana::Commands::GrowthRateCommand < Numana::Commands::BaseCommand
     puts <<~HELP
       growth-rate - #{self.class.description}
 
-      Usage: number_analyzer growth-rate [OPTIONS] [NUMBERS...]
+      Usage: numana growth-rate [OPTIONS] [NUMBERS...]
 
       Options:
         --help                Show this help message
@@ -54,16 +54,16 @@ class Numana::Commands::GrowthRateCommand < Numana::Commands::BaseCommand
 
       Examples:
         # Basic growth rate analysis
-        number_analyzer growth-rate 100 110 121 133
+        numana growth-rate 100 110 121 133
 
         # From file with JSON output
-        number_analyzer growth-rate --format=json --file sales.csv
+        numana growth-rate --format=json --file sales.csv
 
         # Custom precision
-        number_analyzer growth-rate --precision=1 50 55 60 62
+        numana growth-rate --precision=1 50 55 60 62
 
         # Quiet mode (CAGR only)
-        number_analyzer growth-rate --quiet 100 120 144
+        numana growth-rate --quiet 100 120 144
     HELP
   end
 end

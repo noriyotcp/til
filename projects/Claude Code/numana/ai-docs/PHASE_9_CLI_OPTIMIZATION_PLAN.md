@@ -2,7 +2,7 @@
 
 ## Executive Summary
 
-This document outlines the comprehensive plan for Phase 9 of the NumberAnalyzer project, focusing on the final optimization of `lib/number_analyzer/cli.rb`. The goal is to reduce the CLI orchestrator from its current 138 lines to under 100 lines while simultaneously adding advanced features through modular architecture.
+This document outlines the comprehensive plan for Phase 9 of the NumberAnalyzer project, focusing on the final optimization of `lib/numana/cli.rb`. The goal is to reduce the CLI orchestrator from its current 138 lines to under 100 lines while simultaneously adding advanced features through modular architecture.
 
 **Current State**: CLI.rb has been successfully reduced from 2094 lines to 138 lines (93% reduction) through Phase 1 modularization.
 
@@ -49,7 +49,7 @@ Phase 3: Developer Experience (Week 5)
 
 ### 1.1 Error Handler Module
 
-**File**: `lib/number_analyzer/cli/error_handler.rb`
+**File**: `lib/numana/cli/error_handler.rb`
 
 **Responsibilities**:
 - Contextual error messages with command and suggestion information
@@ -97,7 +97,7 @@ module NumberAnalyzer::CLI::ErrorHandler
       raise CLIError.new(
         "Unknown command: #{command}",
         command: command,
-        context: "Run 'number_analyzer help' for available commands",
+        context: "Run 'numana help' for available commands",
         code: :unknown_command
       )
     end
@@ -121,7 +121,7 @@ end
 
 ### 1.2 Command Cache Module
 
-**File**: `lib/number_analyzer/cli/command_cache.rb`
+**File**: `lib/numana/cli/command_cache.rb`
 
 **Responsibilities**:
 - Cache command list with 60-second TTL
@@ -182,7 +182,7 @@ end
 
 ### 1.3 Plugin Router Module
 
-**File**: `lib/number_analyzer/cli/plugin_router.rb`
+**File**: `lib/numana/cli/plugin_router.rb`
 
 **Responsibilities**:
 - Smart command routing with conflict resolution
@@ -236,10 +236,10 @@ end
 
 ### 2.1 Debug Module
 
-**File**: `lib/number_analyzer/cli/debug.rb`
+**File**: `lib/numana/cli/debug.rb`
 
 **Features**:
-- Environment-based debug mode (`NUMBER_ANALYZER_DEBUG=true`)
+- Environment-based debug mode (`NUMANA_DEBUG=true`)
 - Command execution tracing
 - Performance metrics
 - Structured logging
@@ -250,7 +250,7 @@ module NumberAnalyzer::CLI::Debug
   extend self
   
   def enabled?
-    ENV['NUMBER_ANALYZER_DEBUG'] == 'true'
+    ENV['NUMANA_DEBUG'] == 'true'
   end
   
   def log(message, level = :info)
@@ -286,7 +286,7 @@ end
 
 ### 2.2 Interactive Recovery Module
 
-**File**: `lib/number_analyzer/cli/interactive_recovery.rb`
+**File**: `lib/numana/cli/interactive_recovery.rb`
 
 **Features**:
 - Typo correction with user prompts
@@ -331,7 +331,7 @@ module NumberAnalyzer::CLI::InteractiveRecovery
   end
   
   def interactive_mode?
-    $stdin.tty? && !ENV['NUMBER_ANALYZER_NON_INTERACTIVE']
+    $stdin.tty? && !ENV['NUMANA_NON_INTERACTIVE']
   end
 end
 ```
@@ -349,7 +349,7 @@ Building on existing `PluginPriority` class:
 
 ### 3.1 Shell Completion Module
 
-**File**: `lib/number_analyzer/cli/completion.rb`
+**File**: `lib/numana/cli/completion.rb`
 
 **Features**:
 - Bash completion script generation
@@ -363,7 +363,7 @@ module NumberAnalyzer::CLI::Completion
   
   def generate_bash_completion
     <<~BASH
-      _number_analyzer_completion() {
+      _numana_completion() {
         local cur prev commands
         COMPREPLY=()
         cur="${COMP_WORDS[COMP_CWORD]}"
@@ -388,7 +388,7 @@ module NumberAnalyzer::CLI::Completion
         esac
       }
       
-      complete -F _number_analyzer_completion number_analyzer
+      complete -F _numana_completion numana
     BASH
   end
   
@@ -408,7 +408,7 @@ end
 
 ### 3.2 Plugin Hooks Module
 
-**File**: `lib/number_analyzer/cli/hooks.rb`
+**File**: `lib/numana/cli/hooks.rb`
 
 **Features**:
 - Lifecycle hooks for plugins
@@ -424,7 +424,7 @@ end
 
 ### 3.3 Configuration Module
 
-**File**: `lib/number_analyzer/cli/configuration.rb`
+**File**: `lib/numana/cli/configuration.rb`
 
 **Features**:
 - YAML configuration file support
@@ -434,8 +434,8 @@ end
 **Configuration Hierarchy**:
 1. Command-line arguments (highest priority)
 2. Environment variables
-3. User config file (~/.number_analyzer/config.yml)
-4. System config file (/etc/number_analyzer/config.yml)
+3. User config file (~/.numana/config.yml)
+4. System config file (/etc/numana/config.yml)
 5. Built-in defaults (lowest priority)
 
 ## Expected Outcomes

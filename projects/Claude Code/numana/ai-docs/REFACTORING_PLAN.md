@@ -1,7 +1,7 @@
 # Phase 7.7: 基盤リファクタリング詳細計画
 
 ## 目標
-Plugin System Architecture (Phase 8.0) への移行準備として、元々1,727行のモノリシックファイル `lib/number_analyzer.rb` を段階的にモジュール分割し、保守性・拡張性を向上させる。現在307行まで削減済み（1,420行・82.2%削減達成）。
+Plugin System Architecture (Phase 8.0) への移行準備として、元々1,727行のモノリシックファイル `lib/numana.rb` を段階的にモジュール分割し、保守性・拡張性を向上させる。現在307行まで削減済み（1,420行・82.2%削減達成）。
 
 ## 現在の課題
 
@@ -28,7 +28,7 @@ Plugin System Architecture (Phase 8.0) への移行準備として、元々1,727
 
 #### 対象メソッド
 ```ruby
-# lib/number_analyzer/statistics/basic_stats.rb
+# lib/numana/statistics/basic_stats.rb
 module NumberAnalyzer
   module Statistics
     module BasicStats
@@ -63,7 +63,7 @@ end
 
 #### 統合方法
 ```ruby
-# lib/number_analyzer.rb (メインクラス)
+# lib/numana.rb (メインクラス)
 class NumberAnalyzer
   include Statistics::BasicStats
   
@@ -80,7 +80,7 @@ end
 
 #### 共通数学関数の抽出
 ```ruby
-# lib/number_analyzer/math_utils.rb
+# lib/numana/math_utils.rb
 module NumberAnalyzer
   module MathUtils
     def self.standard_normal_cdf(z)
@@ -110,7 +110,7 @@ end
 
 #### 実装完了内容
 ```ruby
-# lib/number_analyzer/statistics/advanced_stats.rb (65行)
+# lib/numana/statistics/advanced_stats.rb (65行)
 module AdvancedStats
   def percentile(percentile_value)
     # パーセンタイル計算（線形補間法）
@@ -137,7 +137,7 @@ end
 #### Step 3 達成項目
 - **59行削減**: 1,615行 → 1,556行
 - **5メソッド抽出**: percentile, quartiles, interquartile_range, outliers, deviation_scores
-- **26ユニットテスト追加**: spec/number_analyzer/statistics/advanced_stats_spec.rb
+- **26ユニットテスト追加**: spec/numana/statistics/advanced_stats_spec.rb
 - **API完全互換**: 164テスト全通過（106統合 + 58ユニット）
 - **RuboCop準拠**: ゼロ違反維持
 
@@ -145,7 +145,7 @@ end
 
 #### 実装完了内容
 ```ruby
-# lib/number_analyzer/statistics/correlation_stats.rb (54行)
+# lib/numana/statistics/correlation_stats.rb (54行)
 module CorrelationStats
   def correlation(other_dataset)
     # ピアソン相関係数計算
@@ -160,7 +160,7 @@ end
 #### Step 4 達成項目
 - **28行削減**: 1,556行 → 1,528行
 - **2メソッド抽出**: correlation, interpret_correlation
-- **32ユニットテスト追加**: spec/number_analyzer/statistics/correlation_stats_spec.rb
+- **32ユニットテスト追加**: spec/numana/statistics/correlation_stats_spec.rb
 - **API完全互換**: 192テスト全通過（106統合 + 86ユニット）
 - **RuboCop準拠**: ゼロ違反維持
 
@@ -168,7 +168,7 @@ end
 
 #### 実装完了内容
 ```ruby
-# lib/number_analyzer/statistics/time_series_stats.rb (279行)
+# lib/numana/statistics/time_series_stats.rb (279行)
 module TimeSeriesStats
   def linear_trend
     # 線形トレンド分析（slope, intercept, R², direction）
@@ -209,7 +209,7 @@ end
 #### Step 5 達成項目
 - **257行削減**: 1,528行 → 1,271行
 - **9メソッド抽出**: linear_trend, moving_average, growth_rates, compound_annual_growth_rate, average_growth_rate, seasonal_decomposition, detect_seasonal_period, seasonal_strength + 10個のプライベートヘルパーメソッド
-- **38ユニットテスト追加**: spec/number_analyzer/statistics/time_series_stats_spec.rb
+- **38ユニットテスト追加**: spec/numana/statistics/time_series_stats_spec.rb
 - **API完全互換**: 230テスト全通過（106統合 + 124ユニット）
 - **RuboCop準拠**: ゼロ違反維持
 
@@ -217,7 +217,7 @@ end
 
 #### 実装完了内容
 ```ruby
-# lib/number_analyzer/statistics/hypothesis_testing.rb (480行)
+# lib/numana/statistics/hypothesis_testing.rb (480行)
 module HypothesisTesting
   def t_test(other_data, type: :independent, population_mean: nil)
     # 独立サンプル・対応サンプル・一標本t検定（Welchの式）
@@ -239,7 +239,7 @@ end
 #### Step 6 達成項目
 - **410行削減**: 1,271行 → 861行
 - **3メソッド抽出**: t_test, confidence_interval, chi_square_test + 30個以上のプライベートヘルパーメソッド
-- **32ユニットテスト追加**: spec/number_analyzer/statistics/hypothesis_testing_spec.rb
+- **32ユニットテスト追加**: spec/numana/statistics/hypothesis_testing_spec.rb
 - **API完全互換**: 106テスト全通過（統合テスト）
 - **RuboCop準拠**: ゼロ違反維持（統計モジュール除外設定追加）
 - **数学的正確性**: Welchのt検定、t分布信頼区間、カイ二乗分布p値計算
@@ -248,7 +248,7 @@ end
 
 #### 実装完了内容
 ```ruby
-# lib/number_analyzer/statistics/anova_stats.rb (902→17行, 3モジュール分割完了)
+# lib/numana/statistics/anova_stats.rb (902→17行, 3モジュール分割完了)
 module ANOVAStats
   def one_way_anova(*groups)
     # 一元配置分散分析（F統計量、効果サイズ測定）
@@ -274,7 +274,7 @@ end
 #### Step 7 達成項目
 - **554行削減**: 861行 → 307行
 - **4メソッド抽出**: one_way_anova, post_hoc_analysis, levene_test, bartlett_test + 25個以上のプライベートヘルパーメソッド
-- **38ユニットテスト追加**: spec/number_analyzer/statistics/anova_stats_spec.rb
+- **38ユニットテスト追加**: spec/numana/statistics/anova_stats_spec.rb
 - **API完全互換**: 106テスト全通過（統合テスト）
 - **RuboCop準拠**: ゼロ違反維持
 - **分散分析完全統合**: ANOVA + 事後検定 + 分散等質性検定の専門モジュール化
@@ -283,7 +283,7 @@ end
 
 #### 実装完了内容
 ```ruby
-# lib/number_analyzer/statistics/non_parametric_stats.rb (246行)
+# lib/numana/statistics/non_parametric_stats.rb (246行)
 module NonParametricStats
   def kruskal_wallis_test(*groups)
     # Kruskal-Wallis H検定（ノンパラメトリックANOVA）
@@ -301,7 +301,7 @@ end
 #### Step 8 達成項目
 - **234行削減**: 302行 → 68行
 - **2メソッド抽出**: kruskal_wallis_test, mann_whitney_u_test + 3個のプライベートヘルパーメソッド
-- **26ユニットテスト追加**: spec/number_analyzer/statistics/non_parametric_stats_spec.rb
+- **26ユニットテスト追加**: spec/numana/statistics/non_parametric_stats_spec.rb
 - **API完全互換**: 106テスト全通過確認（統合テスト）
 - **RuboCop準拠**: ゼロ違反維持
 - **ノンパラメトリック検定完全統合**: Kruskal-Wallis + Mann-Whitney U検定の専門モジュール化
@@ -318,29 +318,29 @@ end
 
 #### 各モジュールの責任範囲
 ```ruby
-# lib/number_analyzer/statistics/advanced_stats.rb ✅ 完了
+# lib/numana/statistics/advanced_stats.rb ✅ 完了
 module AdvancedStats
   # percentile, quartiles, interquartile_range
   # outliers, deviation_scores
 end
 
-# lib/number_analyzer/statistics/correlation_stats.rb ✅ 完了
+# lib/numana/statistics/correlation_stats.rb ✅ 完了
 module CorrelationStats
   # correlation, interpret_correlation
 end
 
-# lib/number_analyzer/statistics/time_series_stats.rb ✅ 完了
+# lib/numana/statistics/time_series_stats.rb ✅ 完了
 module TimeSeriesStats
   # linear_trend, moving_average, growth_rates, compound_annual_growth_rate
   # average_growth_rate, seasonal_decomposition, detect_seasonal_period, seasonal_strength
 end
 
-# lib/number_analyzer/statistics/hypothesis_testing.rb ✅ 完了
+# lib/numana/statistics/hypothesis_testing.rb ✅ 完了
 module HypothesisTesting
   # t_test, confidence_interval, chi_square_test
 end
 
-# lib/number_analyzer/statistics/anova_stats.rb ✅ 完了
+# lib/numana/statistics/anova_stats.rb ✅ 完了
 module ANOVAStats
   # one_way_anova, post_hoc_analysis, levene_test, bartlett_test
 end
@@ -366,7 +366,7 @@ end
 ## 実装手順
 
 ### Step 1 実装詳細
-1. **ディレクトリ作成**: `lib/number_analyzer/statistics/` 作成
+1. **ディレクトリ作成**: `lib/numana/statistics/` 作成
 2. **BasicStats作成**: basic_stats.rb 作成、対象メソッド移動
 3. **include追加**: NumberAnalyzer に `include Statistics::BasicStats` 追加
 4. **テスト実行**: `bundle exec rspec` で106テスト全通過確認

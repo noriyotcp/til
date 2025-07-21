@@ -25,8 +25,8 @@ class Numana::Commands::WilcoxonCommand < Numana::Commands::BaseCommand
     if @groups.nil? || @groups.empty? || @groups.length != 2
       raise ArgumentError, <<~ERROR
         Wilcoxon符号順位検定には正確に2つのグループ（対応のあるデータ）が必要です。
-        使用例: bundle exec number_analyzer wilcoxon 10 12 14 -- 15 18 16
-                bundle exec number_analyzer wilcoxon before.csv after.csv
+        使用例: bundle exec numana wilcoxon 10 12 14 -- 15 18 16
+                bundle exec numana wilcoxon before.csv after.csv
       ERROR
     end
 
@@ -57,8 +57,8 @@ class Numana::Commands::WilcoxonCommand < Numana::Commands::BaseCommand
 
   def show_help
     puts <<~HELP
-      Usage: bundle exec number_analyzer wilcoxon [options] 10 12 14 -- 15 18 16
-             bundle exec number_analyzer wilcoxon [options] before.csv after.csv
+      Usage: bundle exec numana wilcoxon [options] 10 12 14 -- 15 18 16
+             bundle exec numana wilcoxon [options] before.csv after.csv
 
       Non-parametric test for comparing paired samples (Wilcoxon signed-rank test).
       This is the non-parametric alternative to paired samples t-test when normality
@@ -72,10 +72,10 @@ class Numana::Commands::WilcoxonCommand < Numana::Commands::BaseCommand
         -h, --help             Show this help
 
       Examples:
-        bundle exec number_analyzer wilcoxon 10 12 14 -- 15 18 16
-        bundle exec number_analyzer wilcoxon before.csv after.csv
-        bundle exec number_analyzer wilcoxon --format=json --precision=3 1 2 3 -- 4 5 6
-        bundle exec number_analyzer wilcoxon --quiet 10 20 30 -- 15 25 35
+        bundle exec numana wilcoxon 10 12 14 -- 15 18 16
+        bundle exec numana wilcoxon before.csv after.csv
+        bundle exec numana wilcoxon --format=json --precision=3 1 2 3 -- 4 5 6
+        bundle exec numana wilcoxon --quiet 10 20 30 -- 15 25 35
     HELP
   end
 

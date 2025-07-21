@@ -19,7 +19,7 @@ class Numana::PluginPriority
   DEFAULT_PRIORITIES = {
     development: 100,     # 開発・テスト用 - 最高優先度（何でも上書き）
     core_plugins: 90,     # 既存8モジュール - 高優先度（保護対象）
-    official_gems: 70,    # number_analyzer-* gems - 信頼できるgem
+    official_gems: 70,    # numana-* gems - 信頼できるgem
     third_party_gems: 50, # 外部gem - 一般的なサードパーティ
     local_plugins: 30     # プロジェクト内 - 最低優先度
   }.freeze

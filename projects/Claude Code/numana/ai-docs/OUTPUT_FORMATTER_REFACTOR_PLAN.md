@@ -2,7 +2,7 @@
 
 ## 1. 目的
 
-現在 `lib/number_analyzer/output_formatter.rb` に混在している多数の統計手法の表示ロジックを、`Presenter` パターンに移行する。
+現在 `lib/numana/output_formatter.rb` に混在している多数の統計手法の表示ロジックを、`Presenter` パターンに移行する。
 これにより、以下の改善を目指す。
 
 - **設計の一貫性:** 出力フォーマットの責務を Presenter に統一し、コードベースの予測可能性を高める。
@@ -11,10 +11,10 @@
 
 ## 2. 基本方針
 
-1.  `OutputFormatter` 内の各 `format_...` メソッドに対応する新しい `Presenter` クラスを `lib/number_analyzer/presenters/` 配下に作成する。
+1.  `OutputFormatter` 内の各 `format_...` メソッドに対応する新しい `Presenter` クラスを `lib/numana/presenters/` 配下に作成する。
 2.  各 `Presenter` は `BaseStatisticalPresenter` を継承し、`format_verbose`, `format_json`, `format_quiet` の各メソッドを実装する。
 3.  ロジックとテストを `OutputFormatter` から新しい `Presenter` に移行する。
-4.  `Presenter` の準備ができた各コマンドクラス（`lib/number_analyzer/cli/commands/`）を修正し、`OutputFormatter` の代わりに新しい `Presenter` を使用するように変更する。
+4.  `Presenter` の準備ができた各コマンドクラス（`lib/numana/cli/commands/`）を修正し、`OutputFormatter` の代わりに新しい `Presenter` を使用するように変更する。
 5.  全てのロジックの移行が完了した後、`OutputFormatter` クラスを安全に削除する。
 
 ## 3. 移行対象と新しいPresenterのマッピング
@@ -47,7 +47,7 @@
 移行対象の各メソッドについて、以下の手順を繰り返す。(`t_test` を例とする)
 
 1.  **Presenter ファイルの作成:**
-    - `lib/number_analyzer/presenters/t_test_presenter.rb` を作成する。
+    - `lib/numana/presenters/t_test_presenter.rb` を作成する。
 
 2.  **クラスの定義:**
     - `BaseStatisticalPresenter` を継承した `TTestPresenter` クラスを定義する。
@@ -57,7 +57,7 @@
     - `apply_precision` などの共通ヘルパーは `BaseStatisticalPresenter` のメソッドを利用する。
 
 4.  **テストの移行:**
-    - `spec/number_analyzer/presenters/t_test_presenter_spec.rb` を作成する。
+    - `spec/numana/presenters/t_test_presenter_spec.rb` を作成する。
     - `output_formatter_spec.rb` から関連するテストケースを移植し、新しい Presenter が正しく動作することを確認する。
 
 ### フェーズ 2: コマンドクラスの更新
@@ -65,7 +65,7 @@
 Presenter の準備ができ次第、対応するコマンドクラスを更新する。
 
 1.  **コマンドファイルの特定:**
-    - `lib/number_analyzer/cli/commands/t_test_command.rb` を特定する。
+    - `lib/numana/cli/commands/t_test_command.rb` を特定する。
 
 2.  **呼び出し部分の修正:**
     - `OutputFormatter.format_t_test(...)` の呼び出しを、`NumberAnalyzer::Presenters::TTestPresenter.new(result, options).format` に置き換える。
@@ -75,7 +75,7 @@ Presenter の準備ができ次第、対応するコマンドクラスを更新�
 `format_value` や `format_array` のような、特定の統計手法に依存しない汎用メソッドは、最終的に `OutputFormatter` から新しいユーティリティモジュールに移動させる。
 
 1.  **新ユーティリティの作成:**
-    - `lib/number_analyzer/formatting_utils.rb` のような新しいファイルを作成する。
+    - `lib/numana/formatting_utils.rb` のような新しいファイルを作成する。
 2.  **メソッドの移動:**
     - `format_value`, `format_array` などを新しいモジュールに移動する。
 3.  **呼び出し元の更新:**
@@ -85,20 +85,20 @@ Presenter の準備ができ次第、対応するコマンドクラスを更新�
 
 全ての `format_...` メソッドの移行が完了したら、以下の作業を行う。
 
-1.  `lib/number_analyzer/output_formatter.rb` ファイルを削除する。
-2.  `spec/number_analyzer/output_formatter_spec.rb` ファイルを削除する。
+1.  `lib/numana/output_formatter.rb` ファイルを削除する。
+2.  `spec/numana/output_formatter_spec.rb` ファイルを削除する。
 3.  プロジェクト全体で `OutputFormatter` への参照が残っていないことを確認する。
 
 ## 5. 影響範囲
 
 このリファクタリングは主に以下のディレクトリに影響を与える。
 
-- `lib/number_analyzer/presenters/` (ファイルの新規作成)
-- `lib/number_analyzer/cli/commands/` (既存ファイルの修正)
-- `spec/number_analyzer/presenters/` (テストの新規作成)
-- `spec/number_analyzer/cli/commands/` (テストの修正)
-- `lib/number_analyzer/output_formatter.rb` (最終的に削除)
-- `spec/number_analyzer/output_formatter_spec.rb` (最終的に削除)
+- `lib/numana/presenters/` (ファイルの新規作成)
+- `lib/numana/cli/commands/` (既存ファイルの修正)
+- `spec/numana/presenters/` (テストの新規作成)
+- `spec/numana/cli/commands/` (テストの修正)
+- `lib/numana/output_formatter.rb` (最終的に削除)
+- `spec/numana/output_formatter_spec.rb` (最終的に削除)
 
 ## 6. 完了の定義
 

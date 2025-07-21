@@ -13,9 +13,9 @@ Numana is a comprehensive statistical analysis tool built in Ruby. Originally st
 **Essential CLI Patterns**:
 ```bash
 # Basic execution
-bundle exec number_analyzer                    # Show help
-bundle exec number_analyzer <command> <data>   # Run analysis
-bundle exec number_analyzer <command> --file data.csv  # File input
+bundle exec numana                    # Show help
+bundle exec numana <command> <data>   # Run analysis
+bundle exec numana <command> --file data.csv  # File input
 
 # Common options (available for all commands)
 --format=json     # JSON output
@@ -32,18 +32,18 @@ bundle exec number_analyzer <command> --file data.csv  # File input
 
 ## CLI Entry Points
 
-**Production Entry Point** (`bin/number_analyzer`):
+**Production Entry Point** (`bin/numana`):
 - **Purpose**: Main CLI command for production and distribution use
-- **Usage**: `bundle exec number_analyzer [command] [args]`
+- **Usage**: `bundle exec numana [command] [args]`
 - **Characteristics**: 
   - Contains shebang (`#!/usr/bin/env ruby`) for direct execution
   - Always executes CLI when invoked
   - Official entry point for gem users
-  - Used by bundler when running `bundle exec number_analyzer`
+  - Used by bundler when running `bundle exec numana`
 
-**Development Entry Point** (`lib/number_analyzer/cli.rb`):
+**Development Entry Point** (`lib/numana/cli.rb`):
 - **Purpose**: Development and testing convenience
-- **Usage**: `ruby lib/number_analyzer/cli.rb [command] [args]`
+- **Usage**: `ruby lib/numana/cli.rb [command] [args]`
 - **Characteristics**:
   - Conditional execution with `if __FILE__ == $PROGRAM_NAME`
   - Only executes when run directly, not when required as library
@@ -63,8 +63,8 @@ bundle exec number_analyzer <command> --file data.csv  # File input
 
 **Plugin Commands**:
 ```bash
-bundle exec number_analyzer plugins list       # List all plugins
-bundle exec number_analyzer plugins conflicts  # Show conflicts
+bundle exec numana plugins list       # List all plugins
+bundle exec numana plugins conflicts  # Show conflicts
 ```
 
 **Security Testing** (Phase 14.2):
@@ -78,8 +78,8 @@ bundle exec rake security:audit                    # 総合セキュリティ監
 bundle exec rake security:scan_plugins             # プラグインセキュリティスキャン
 
 # サンドボックス動作確認
-NUMBER_ANALYZER_SANDBOX=strict bundle exec rspec   # 厳格サンドボックスモード
-NUMBER_ANALYZER_DEBUG=true bundle exec number_analyzer  # デバッグモード
+NUMANA_SANDBOX=strict bundle exec rspec   # 厳格サンドボックスモード
+NUMANA_DEBUG=true bundle exec numana  # デバッグモード
 ```
 
 **Git Command Usage**:
@@ -93,8 +93,8 @@ NUMBER_ANALYZER_DEBUG=true bundle exec number_analyzer  # デバッグモード
 
 ```
 lib/
-├── number_analyzer.rb              # Core integration
-└── number_analyzer/
+├── numana.rb              # Core integration
+└── numana/
     ├── cli.rb                      # CLI orchestrator
     ├── cli/                        # CLI modules
     │   ├── options.rb              # Option parsing
@@ -280,10 +280,10 @@ See `ai-docs/CLI_REFACTORING_GUIDE.md` for detailed troubleshooting.
 8. Final verification
 
 ### File Organization
-- **Core logic**: `lib/number_analyzer.rb`
-- **CLI changes**: `lib/number_analyzer/cli.rb`
-- **New input formats**: `lib/number_analyzer/file_reader.rb`
-- **Output changes**: `lib/number_analyzer/statistics_presenter.rb`
+- **Core logic**: `lib/numana.rb`
+- **CLI changes**: `lib/numana/cli.rb`
+- **New input formats**: `lib/numana/file_reader.rb`
+- **Output changes**: `lib/numana/statistics_presenter.rb`
 - **Tests**: Mirror structure in `spec/`
 
 ### Testing Strategy

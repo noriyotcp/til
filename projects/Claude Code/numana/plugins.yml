@@ -1,4 +1,4 @@
-# NumberAnalyzer Plugin Configuration
+# Numana Plugin Configuration
 # This file controls which plugins are loaded and their configuration
 
 plugins:
@@ -10,14 +10,14 @@ plugins:
   # Plugin discovery paths (directories to search for plugins)
   paths:
     - './plugins'
-    - './lib/number_analyzer/plugins'
-    - '~/.number_analyzer/plugins'
+    - './lib/numana/plugins'
+    - '~/.numana/plugins'
 
   # Plugin repositories (for future plugin installation)
   # Note: These are placeholder URLs for when official repositories are established
   repositories:
-    official: 'https://github.com/number-analyzer/plugins' # Placeholder for official plugin repository
-    community: 'https://github.com/number-analyzer/community-plugins' # Placeholder for community plugin repository
+    official: 'https://github.com/numana/plugins' # Placeholder for official plugin repository
+    community: 'https://github.com/numana/community-plugins' # Placeholder for community plugin repository
 
 # Plugin-specific configuration
 plugin_config:

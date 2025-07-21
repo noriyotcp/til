@@ -42,7 +42,7 @@ module Numana::CLI::ErrorHandler
       raise CLIError.new(
         "Unknown command: #{command}",
         command: command,
-        context: "Use 'bundle exec number_analyzer help' for available commands.",
+        context: "Use 'bundle exec numana help' for available commands.",
         code: :unknown_command
       )
     end

@@ -61,7 +61,7 @@ class Numana::Commands::SeasonalCommand < Numana::Commands::BaseCommand
     puts <<~HELP
       seasonal - #{self.class.description}
 
-      Usage: number_analyzer seasonal [OPTIONS] [NUMBERS...]
+      Usage: numana seasonal [OPTIONS] [NUMBERS...]
 
       Options:
         --help                Show this help message
@@ -73,16 +73,16 @@ class Numana::Commands::SeasonalCommand < Numana::Commands::BaseCommand
 
       Examples:
         # Auto-detect seasonal period
-        number_analyzer seasonal 10 20 15 25 12 22 17 27
+        numana seasonal 10 20 15 25 12 22 17 27
 
         # Specify quarterly data (period=4)
-        number_analyzer seasonal --period=4 100 120 110 130 105 125 115 135
+        numana seasonal --period=4 100 120 110 130 105 125 115 135
 
         # From file with JSON output
-        number_analyzer seasonal --format=json --file quarterly.csv
+        numana seasonal --format=json --file quarterly.csv
 
         # Custom precision
-        number_analyzer seasonal --period=4 --precision=2 sales_data.csv
+        numana seasonal --period=4 --precision=2 sales_data.csv
     HELP
   end
 

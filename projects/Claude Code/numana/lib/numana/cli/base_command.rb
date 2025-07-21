@@ -33,7 +33,7 @@ class Numana::Commands::BaseCommand
     puts <<~HELP
       #{@name} - #{@description}
 
-      Usage: number_analyzer #{@name} [OPTIONS] [NUMBERS...]
+      Usage: numana #{@name} [OPTIONS] [NUMBERS...]
 
       Options:
         --help                Show this help message

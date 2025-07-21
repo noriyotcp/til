@@ -25,8 +25,8 @@ class Numana::Commands::FriedmanCommand < Numana::Commands::BaseCommand
     if @groups.nil? || @groups.empty? || @groups.length < 3
       raise ArgumentError, <<~ERROR
         Friedman検定には少なくとも3つのグループ（条件）が必要です。
-        使用例: bundle exec number_analyzer friedman 1 2 3 -- 4 5 6 -- 7 8 9
-                bundle exec number_analyzer friedman condition1.csv condition2.csv condition3.csv
+        使用例: bundle exec numana friedman 1 2 3 -- 4 5 6 -- 7 8 9
+                bundle exec numana friedman condition1.csv condition2.csv condition3.csv
       ERROR
     end
 
@@ -58,8 +58,8 @@ class Numana::Commands::FriedmanCommand < Numana::Commands::BaseCommand
 
   def show_help
     puts <<~HELP
-      Usage: bundle exec number_analyzer friedman [options] 1 2 3 -- 4 5 6 -- 7 8 9
-             bundle exec number_analyzer friedman [options] condition1.csv condition2.csv condition3.csv
+      Usage: bundle exec numana friedman [options] 1 2 3 -- 4 5 6 -- 7 8 9
+             bundle exec numana friedman [options] condition1.csv condition2.csv condition3.csv
 
       Non-parametric test for repeated measures across multiple conditions (Friedman test).
       This is the non-parametric alternative to repeated measures ANOVA when normality
@@ -73,10 +73,10 @@ class Numana::Commands::FriedmanCommand < Numana::Commands::BaseCommand
         -h, --help             Show this help
 
       Examples:
-        bundle exec number_analyzer friedman 1 2 3 -- 4 5 6 -- 7 8 9
-        bundle exec number_analyzer friedman condition1.csv condition2.csv condition3.csv
-        bundle exec number_analyzer friedman --format=json --precision=3 1 2 3 -- 4 5 6 -- 7 8 9
-        bundle exec number_analyzer friedman --quiet 1 2 3 -- 4 5 6 -- 7 8 9
+        bundle exec numana friedman 1 2 3 -- 4 5 6 -- 7 8 9
+        bundle exec numana friedman condition1.csv condition2.csv condition3.csv
+        bundle exec numana friedman --format=json --precision=3 1 2 3 -- 4 5 6 -- 7 8 9
+        bundle exec numana friedman --quiet 1 2 3 -- 4 5 6 -- 7 8 9
     HELP
   end
 

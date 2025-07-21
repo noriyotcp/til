@@ -25,8 +25,8 @@ class Numana::Commands::KruskalWallisCommand < Numana::Commands::BaseCommand
     if @groups.nil? || @groups.empty? || @groups.length < 2
       raise ArgumentError, <<~ERROR
         Kruskal-Wallis test requires at least 2 groups.
-        Examples: bundle exec number_analyzer kruskal-wallis 1 2 3 -- 4 5 6 -- 7 8 9
-                 bundle exec number_analyzer kruskal-wallis --file group1.csv group2.csv group3.csv
+        Examples: bundle exec numana kruskal-wallis 1 2 3 -- 4 5 6 -- 7 8 9
+                 bundle exec numana kruskal-wallis --file group1.csv group2.csv group3.csv
       ERROR
     end
 
@@ -49,8 +49,8 @@ class Numana::Commands::KruskalWallisCommand < Numana::Commands::BaseCommand
 
   def show_help
     puts <<~HELP
-      Usage: bundle exec number_analyzer kruskal-wallis [options] 1 2 3 -- 4 5 6 -- 7 8 9
-             bundle exec number_analyzer kruskal-wallis [options] --file group1.csv group2.csv group3.csv
+      Usage: bundle exec numana kruskal-wallis [options] 1 2 3 -- 4 5 6 -- 7 8 9
+             bundle exec numana kruskal-wallis [options] --file group1.csv group2.csv group3.csv
 
       Non-parametric test for comparing medians across multiple groups.
       This is the non-parametric alternative to one-way ANOVA when normality
@@ -64,10 +64,10 @@ class Numana::Commands::KruskalWallisCommand < Numana::Commands::BaseCommand
         -h, --help             Show this help
 
       Examples:
-        bundle exec number_analyzer kruskal-wallis 1 2 3 -- 4 5 6 -- 7 8 9
-        bundle exec number_analyzer kruskal-wallis --file group1.csv group2.csv group3.csv
-        bundle exec number_analyzer kruskal-wallis --format=json --precision=3 1 2 3 -- 4 5 6 -- 7 8 9
-        bundle exec number_analyzer kruskal-wallis --quiet 1 2 3 -- 4 5 6 -- 7 8 9
+        bundle exec numana kruskal-wallis 1 2 3 -- 4 5 6 -- 7 8 9
+        bundle exec numana kruskal-wallis --file group1.csv group2.csv group3.csv
+        bundle exec numana kruskal-wallis --format=json --precision=3 1 2 3 -- 4 5 6 -- 7 8 9
+        bundle exec numana kruskal-wallis --quiet 1 2 3 -- 4 5 6 -- 7 8 9
     HELP
   end
 

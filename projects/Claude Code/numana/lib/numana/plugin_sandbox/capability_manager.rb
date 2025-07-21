@@ -25,7 +25,7 @@ class Numana::PluginSandbox::CapabilityManager
       risk_level: :medium,
       requires_approval: true,
       auto_grant: false,
-      restricted_paths: %w[./data ./input ./tmp /tmp/number_analyzer],
+      restricted_paths: %w[./data ./input ./tmp /tmp/numana],
       blocked_paths: %w[/etc /usr /bin /sbin ~/.ssh ~/.aws]
     },
 
@@ -34,7 +34,7 @@ class Numana::PluginSandbox::CapabilityManager
       risk_level: :medium,
       requires_approval: true,
       auto_grant: false,
-      restricted_paths: %w[./output ./tmp /tmp/number_analyzer],
+      restricted_paths: %w[./output ./tmp /tmp/numana],
       blocked_paths: %w[/etc /usr /bin /sbin ~ ~/.ssh ~/.aws]
     },
 

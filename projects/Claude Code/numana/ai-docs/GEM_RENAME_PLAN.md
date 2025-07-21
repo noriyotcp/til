@@ -1,4 +1,4 @@
-# Gem Rename Plan: number_analyzer → numana
+# Gem Rename Plan: numana → numana
 
 **Project**: ✅ NumberAnalyzer → Numana  
 **Date**: 2025-07-20  
@@ -7,7 +7,7 @@
 
 ## Overview
 
-Complete gem rename from `number_analyzer` to `numana` affecting entire codebase infrastructure, namespace, and documentation.
+Complete gem rename from `numana` to `numana` affecting entire codebase infrastructure, namespace, and documentation.
 
 ## Name Analysis: numana
 
@@ -34,7 +34,7 @@ Complete gem rename from `number_analyzer` to `numana` affecting entire codebase
 
 ### Files Requiring Changes
 - **Gemspec**: 1 file (rename + content update)
-- **Binary files**: 1 file (`bin/number_analyzer` → `bin/numana`)
+- **Binary files**: 1 file (`bin/numana` → `bin/numana`)
 - **Ruby modules**: 100+ files (namespace changes)
 - **Test files**: 50+ spec files
 - **Documentation**: 18+ markdown files
@@ -50,12 +50,12 @@ Complete gem rename from `number_analyzer` to `numana` affecting entire codebase
 
 ### Phase 1: Core Infrastructure (High Priority)
 1. **Rename gemspec file**
-   - `number_analyzer.gemspec` → `numana.gemspec`
+   - `numana.gemspec` → `numana.gemspec`
    - Update gem name, description, homepage URLs
    - Update executable name reference
 
 2. **Update binary command**
-   - `bin/number_analyzer` → `bin/numana`
+   - `bin/numana` → `bin/numana`
    - Update shebang and require paths
 
 3. **Rename main module**
@@ -64,11 +64,11 @@ Complete gem rename from `number_analyzer` to `numana` affecting entire codebase
 
 ### Phase 2: Directory Restructure (High Priority)
 4. **Move library structure**
-   - `lib/number_analyzer/` → `lib/numana/`
-   - Update main entry point: `lib/number_analyzer.rb` → `lib/numana.rb`
+   - `lib/numana/` → `lib/numana/`
+   - Update main entry point: `lib/numana.rb` → `lib/numana.rb`
 
 5. **Move test structure**
-   - `spec/number_analyzer/` → `spec/numana/`
+   - `spec/numana/` → `spec/numana/`
    - Update all require_relative paths
 
 6. **Update require statements**
@@ -150,10 +150,10 @@ Complete gem rename from `number_analyzer` to `numana` affecting entire codebase
 ## Breaking Changes Notice
 
 This rename constitutes a **major breaking change**:
-- All external references to `number_analyzer` must be updated
-- Import statements change from `require 'number_analyzer'` to `require 'numana'`
-- CLI command changes from `number_analyzer` to `numana`
-- Gem installation changes from `gem install number_analyzer` to `gem install numana`
+- All external references to `numana` must be updated
+- Import statements change from `require 'numana'` to `require 'numana'`
+- CLI command changes from `numana` to `numana`
+- Gem installation changes from `gem install numana` to `gem install numana`
 
 ## Success Criteria
 
@@ -173,7 +173,7 @@ This rename constitutes a **major breaking change**:
 ## Post-Rename Actions
 
 1. **Gem publishing**: Publish new `numana` gem to RubyGems.org
-2. **Deprecation notice**: Add deprecation notice to old `number_analyzer` gem
+2. **Deprecation notice**: Add deprecation notice to old `numana` gem
 3. **Documentation updates**: Update any external references or tutorials
 4. **Community notification**: Inform users of the rename and migration path
 

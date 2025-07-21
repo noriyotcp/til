@@ -13,8 +13,8 @@ class Numana::CLI::ChiSquareValidator
 
     raise ArgumentError, <<~ERROR
       Error: Please specify the type of chi-square test.
-      Example: number_analyzer chi-square --independence contingency.csv
-             number_analyzer chi-square --goodness-of-fit observed.csv expected.csv
+      Example: numana chi-square --independence contingency.csv
+             numana chi-square --goodness-of-fit observed.csv expected.csv
     ERROR
   end
 
@@ -31,7 +31,7 @@ class Numana::CLI::ChiSquareValidator
 
     raise ArgumentError, <<~ERROR
       Error: Could not create valid contingency table.
-      Example: number_analyzer chi-square --independence 30 20 -- 15 35
+      Example: numana chi-square --independence 30 20 -- 15 35
     ERROR
   end
 
@@ -40,7 +40,7 @@ class Numana::CLI::ChiSquareValidator
 
     raise ArgumentError, <<~ERROR
       Error: Independence test requires at least a 2x2 contingency table.
-      Example: number_analyzer chi-square --independence 30 20 -- 15 35
+      Example: numana chi-square --independence 30 20 -- 15 35
     ERROR
   end
 

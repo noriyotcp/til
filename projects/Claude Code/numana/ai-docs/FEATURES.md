@@ -78,15 +78,15 @@ NumberAnalyzer provides comprehensive statistical analysis capabilities with ent
 
 ### Usage
 ```bash
-bundle exec number_analyzer --file data.csv
-bundle exec number_analyzer -f numbers.json
+bundle exec numana --file data.csv
+bundle exec numana -f numbers.json
 ```
 
 ## Command Line Interface
 
 ### Input Methods
-- **Direct Arguments**: `bundle exec number_analyzer 1 2 3 4 5`
-- **File Input**: `bundle exec number_analyzer --file data.csv`
+- **Direct Arguments**: `bundle exec numana 1 2 3 4 5`
+- **File Input**: `bundle exec numana --file data.csv`
 - **Default Dataset**: Fallback to predefined sample data
 
 ### Output Format

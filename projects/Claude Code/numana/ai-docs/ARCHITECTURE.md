@@ -4,18 +4,18 @@
 
 ### Directory Layout
 ```
-number_analyzer/
+numana/
 ├── lib/                           # Core library code
-│   ├── number_analyzer.rb         # Main statistical analysis class
-│   └── number_analyzer/           # Namespace modules
+│   ├── numana.rb         # Main statistical analysis class
+│   └── numana/           # Namespace modules
 │       ├── cli.rb                 # Command-line interface
 │       ├── file_reader.rb         # File input handling
 │       └── statistics_presenter.rb # Output formatting
 ├── bin/                           # Executable files
-│   └── number_analyzer            # CLI entry point
+│   └── numana            # CLI entry point
 ├── spec/                          # Test suite
-│   ├── number_analyzer_spec.rb    # Core functionality tests (69 cases)
-│   └── number_analyzer/           # Module tests
+│   ├── numana_spec.rb    # Core functionality tests (69 cases)
+│   └── numana/           # Module tests
 │       ├── cli_spec.rb            # CLI tests (15 cases)
 │       ├── file_reader_spec.rb    # File reader tests (27 cases)
 │       └── statistics_presenter_spec.rb # Presenter tests (13 cases)
@@ -29,7 +29,7 @@ number_analyzer/
 │   └── sample_data.txt
 ├── .claude/commands/              # Claude Code integration
 ├── Gemfile                        # Dependency management
-├── number_analyzer.gemspec        # Gem specification
+├── numana.gemspec        # Gem specification
 ├── .rubocop.yml                   # Code style configuration
 └── README.md                      # User documentation
 ```
@@ -39,7 +39,7 @@ number_analyzer/
 ### Core Components
 
 #### 1. NumberAnalyzer (Core Domain Logic)
-**Location**: `lib/number_analyzer.rb`  
+**Location**: `lib/numana.rb`  
 **Responsibility**: Pure statistical calculations  
 **Dependencies**: None (Pure Ruby)
 
@@ -77,7 +77,7 @@ end
 - **Edge Case Handling**: Robust handling of empty/single values
 
 #### 2. NumberAnalyzer::CLI (Interface Layer)
-**Location**: `lib/number_analyzer/cli.rb`  
+**Location**: `lib/numana/cli.rb`  
 **Responsibility**: Command-line argument processing  
 **Dependencies**: NumberAnalyzer, FileReader
 
@@ -100,7 +100,7 @@ end
 - **File Integration**: Seamless FileReader integration
 
 #### 3. NumberAnalyzer::FileReader (Input Layer)
-**Location**: `lib/number_analyzer/file_reader.rb`  
+**Location**: `lib/numana/file_reader.rb`  
 **Responsibility**: Multi-format file input handling  
 **Dependencies**: CSV, JSON (Ruby standard library)
 
@@ -130,7 +130,7 @@ end
 - **Ruby Idioms**: `Float(exception: false)` for safe parsing
 
 #### 4. NumberAnalyzer::StatisticsPresenter (Presentation Layer)
-**Location**: `lib/number_analyzer/statistics_presenter.rb`  
+**Location**: `lib/numana/statistics_presenter.rb`  
 **Responsibility**: Output formatting and display  
 **Dependencies**: None
 
@@ -156,7 +156,7 @@ end
 
 ### Clean Dependency Flow
 ```
-bin/number_analyzer
+bin/numana
  ↓ requires
 NumberAnalyzer::CLI
  ↓ requires

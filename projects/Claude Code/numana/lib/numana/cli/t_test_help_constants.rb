@@ -5,7 +5,7 @@ module Numana::CLI::TTestHelpConstants
   HELP_TEXT = <<~HELP.freeze
     t-test - Perform statistical t-test analysis
 
-    Usage: number_analyzer t-test [OPTIONS] [DATA...]
+    Usage: numana t-test [OPTIONS] [DATA...]
 
     Test Types:
       Independent samples (default): Compare two independent groups
@@ -24,18 +24,18 @@ module Numana::CLI::TTestHelpConstants
 
     Examples:
       # Independent samples t-test
-      number_analyzer t-test 1 2 3 -- 4 5 6
-      number_analyzer t-test group1.csv group2.csv
+      numana t-test 1 2 3 -- 4 5 6
+      numana t-test group1.csv group2.csv
 
       # Paired samples t-test
-      number_analyzer t-test --paired before.csv after.csv
-      number_analyzer t-test --paired 10 12 14 -- 15 18 20
+      numana t-test --paired before.csv after.csv
+      numana t-test --paired 10 12 14 -- 15 18 20
 
       # One-sample t-test
-      number_analyzer t-test --one-sample --population-mean=100 --file data.csv
-      number_analyzer t-test --one-sample --mu=50 45 48 52 49
+      numana t-test --one-sample --population-mean=100 --file data.csv
+      numana t-test --one-sample --mu=50 45 48 52 49
 
       # JSON output with precision
-      number_analyzer t-test --format=json --precision=3 group1.csv group2.csv
+      numana t-test --format=json --precision=3 group1.csv group2.csv
   HELP
 end

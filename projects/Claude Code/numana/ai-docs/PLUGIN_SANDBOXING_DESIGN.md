@@ -65,7 +65,7 @@
 #### **1. PluginSandbox (メインコントローラー)**
 
 ```ruby
-# lib/number_analyzer/plugin_sandbox.rb
+# lib/numana/plugin_sandbox.rb
 class NumberAnalyzer::PluginSandbox
   attr_reader :config, :interceptor, :resource_monitor, :capability_manager
 

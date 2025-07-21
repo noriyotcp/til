@@ -20,7 +20,7 @@ Unknown command: correlation
 `CLI.rb` の `commands` メソッドが、CommandRegistry に登録されたコマンドを認識していないため。
 
 #### 解決策
-`lib/number_analyzer/cli.rb` の `commands` メソッドを以下のように修正：
+`lib/numana/cli.rb` の `commands` メソッドを以下のように修正：
 
 ```ruby
 # Get all available commands (core + plugin + command registry)
@@ -80,7 +80,7 @@ end
 #### "Unknown command" エラー
 1. CommandRegistry に登録されているか確認：
    ```ruby
-   bundle exec ruby -e "require_relative 'lib/number_analyzer/cli'; puts NumberAnalyzer::Commands::CommandRegistry.all.inspect"
+   bundle exec ruby -e "require_relative 'lib/numana/cli'; puts NumberAnalyzer::Commands::CommandRegistry.all.inspect"
    ```
 
 2. CLI.rb の commands メソッドが CommandRegistry を含んでいるか確認
@@ -93,7 +93,7 @@ end
 1. 統合テストを追加：
    ```ruby
    it "works via CLI" do
-     output = `bundle exec number_analyzer #{command} #{args}`
+     output = `bundle exec numana #{command} #{args}`
      expect($?.success?).to be true
    end
    ```
@@ -182,6 +182,6 @@ end
 
 ## 参考資料
 
-- Phase 1 実装済みコマンド: `lib/number_analyzer/cli/commands/` ディレクトリ
-- BaseCommand 実装: `lib/number_analyzer/cli/base_command.rb`
-- CommandRegistry: `lib/number_analyzer/cli/command_registry.rb`
+- Phase 1 実装済みコマンド: `lib/numana/cli/commands/` ディレクトリ
+- BaseCommand 実装: `lib/numana/cli/base_command.rb`
+- CommandRegistry: `lib/numana/cli/command_registry.rb`

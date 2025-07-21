@@ -53,7 +53,7 @@ RSpec.describe 'Plugins CLI Commands' do
 
   describe 'plugins help' do
     it 'shows help when no subcommand is provided' do
-      expect { Numana::CLI.run(['plugins']) }.to output(/Usage: bundle exec number_analyzer plugins/).to_stdout
+      expect { Numana::CLI.run(['plugins']) }.to output(/Usage: bundle exec numana plugins/).to_stdout
     end
 
     it 'shows help with --help flag' do

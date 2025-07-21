@@ -17,11 +17,11 @@ module Numana::PluginConfiguration
     'plugins' => {
       'enabled' => [],
       'disabled' => [],
-      'paths' => ['./plugins', './lib/number_analyzer/plugins'],
+      'paths' => ['./plugins', './lib/numana/plugins'],
       'auto_discovery' => true,
       'repositories' => {
-        'official' => 'https://github.com/number-analyzer/plugins',
-        'community' => 'https://github.com/number-analyzer/community-plugins'
+        'official' => 'https://github.com/numana/plugins',
+        'community' => 'https://github.com/numana/community-plugins'
       }
     },
     'plugin_config' => {},
@@ -48,9 +48,9 @@ module Numana::PluginConfiguration
   # Get default configuration paths
   def self.default_config_paths
     [
-      './config/number_analyzer.yml',
-      File.expand_path('~/.config/number_analyzer/config.yml'),
-      '/etc/number_analyzer/config.yml'
+      './config/numana.yml',
+      File.expand_path('~/.config/numana/config.yml'),
+      '/etc/numana/config.yml'
     ]
   end
 

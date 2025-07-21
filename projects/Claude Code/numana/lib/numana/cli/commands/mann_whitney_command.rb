@@ -25,8 +25,8 @@ class Numana::Commands::MannWhitneyCommand < Numana::Commands::BaseCommand
     if @groups.nil? || @groups.empty? || @groups.length != 2
       raise ArgumentError, <<~ERROR
         Mann-Whitney検定には正確に2つのグループが必要です。
-        使用例: bundle exec number_analyzer mann-whitney 1 2 3 -- 4 5 6
-                bundle exec number_analyzer mann-whitney group1.csv group2.csv
+        使用例: bundle exec numana mann-whitney 1 2 3 -- 4 5 6
+                bundle exec numana mann-whitney group1.csv group2.csv
       ERROR
     end
 
@@ -49,8 +49,8 @@ class Numana::Commands::MannWhitneyCommand < Numana::Commands::BaseCommand
 
   def show_help
     puts <<~HELP
-      Usage: bundle exec number_analyzer mann-whitney [options] 1 2 3 -- 4 5 6
-             bundle exec number_analyzer mann-whitney [options] group1.csv group2.csv
+      Usage: bundle exec numana mann-whitney [options] 1 2 3 -- 4 5 6
+             bundle exec numana mann-whitney [options] group1.csv group2.csv
 
       Non-parametric test for comparing two independent groups (also known as
       Wilcoxon rank-sum test). This is the non-parametric alternative to
@@ -64,10 +64,10 @@ class Numana::Commands::MannWhitneyCommand < Numana::Commands::BaseCommand
         -h, --help             Show this help
 
       Examples:
-        bundle exec number_analyzer mann-whitney 1 2 3 -- 4 5 6
-        bundle exec number_analyzer mann-whitney group1.csv group2.csv
-        bundle exec number_analyzer mann-whitney --format=json --precision=3 1 2 3 -- 6 7 8
-        bundle exec number_analyzer mann-whitney --quiet 10 20 30 -- 40 50 60
+        bundle exec numana mann-whitney 1 2 3 -- 4 5 6
+        bundle exec numana mann-whitney group1.csv group2.csv
+        bundle exec numana mann-whitney --format=json --precision=3 1 2 3 -- 6 7 8
+        bundle exec numana mann-whitney --quiet 10 20 30 -- 40 50 60
     HELP
   end
 

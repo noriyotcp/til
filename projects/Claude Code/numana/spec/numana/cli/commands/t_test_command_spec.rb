@@ -13,7 +13,7 @@ RSpec.describe Numana::Commands::TTestCommand do
       end
 
       expect(output).to include('t-test - Perform statistical t-test analysis')
-      expect(output).to include('Usage: number_analyzer t-test')
+      expect(output).to include('Usage: numana t-test')
       expect(output).to include('Test Types:')
       expect(output).to include('Independent samples')
       expect(output).to include('Paired samples')

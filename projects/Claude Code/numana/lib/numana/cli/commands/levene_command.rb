@@ -25,8 +25,8 @@ class Numana::Commands::LeveneCommand < Numana::Commands::BaseCommand
     if @groups.nil? || @groups.empty? || @groups.length < 2
       raise ArgumentError, <<~ERROR
         Levene test requires at least 2 groups.
-        Examples: bundle exec number_analyzer levene 1 2 3 -- 4 5 6 -- 7 8 9
-                 bundle exec number_analyzer levene --file group1.csv group2.csv group3.csv
+        Examples: bundle exec numana levene 1 2 3 -- 4 5 6 -- 7 8 9
+                 bundle exec numana levene --file group1.csv group2.csv group3.csv
       ERROR
     end
 
@@ -49,8 +49,8 @@ class Numana::Commands::LeveneCommand < Numana::Commands::BaseCommand
 
   def show_help
     puts <<~HELP
-      Usage: bundle exec number_analyzer levene [options] 1 2 3 -- 4 5 6 -- 7 8 9
-             bundle exec number_analyzer levene [options] --file group1.csv group2.csv group3.csv
+      Usage: bundle exec numana levene [options] 1 2 3 -- 4 5 6 -- 7 8 9
+             bundle exec numana levene [options] --file group1.csv group2.csv group3.csv
 
       Test for variance homogeneity using Levene test (Brown-Forsythe modification).
       This test is used to assess whether groups have equal variances, which is a
@@ -64,10 +64,10 @@ class Numana::Commands::LeveneCommand < Numana::Commands::BaseCommand
         -h, --help             Show this help
 
       Examples:
-        bundle exec number_analyzer levene 1 2 3 -- 4 5 6 -- 7 8 9
-        bundle exec number_analyzer levene --file group1.csv group2.csv group3.csv
-        bundle exec number_analyzer levene --format=json --precision=3 1 2 3 -- 4 5 6 -- 7 8 9
-        bundle exec number_analyzer levene --quiet 1 2 3 -- 4 5 6 -- 7 8 9
+        bundle exec numana levene 1 2 3 -- 4 5 6 -- 7 8 9
+        bundle exec numana levene --file group1.csv group2.csv group3.csv
+        bundle exec numana levene --format=json --precision=3 1 2 3 -- 4 5 6 -- 7 8 9
+        bundle exec numana levene --quiet 1 2 3 -- 4 5 6 -- 7 8 9
     HELP
   end
 

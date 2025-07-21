@@ -4,7 +4,7 @@
 
 **Status: Phase 1 COMPLETED** ✅ | **Phase 9 Planning COMPLETED** ✅
 
-This document outlined comprehensive improvement proposals for `lib/number_analyzer/cli.rb`. **Phase 1 modularization has been successfully completed**, achieving a reduction from 385 lines to **138 lines (93% reduction from original 2094 lines)**. The focus now shifts to **Phase 2 & 3 enhancements** while maintaining the current clean modular architecture.
+This document outlined comprehensive improvement proposals for `lib/numana/cli.rb`. **Phase 1 modularization has been successfully completed**, achieving a reduction from 385 lines to **138 lines (93% reduction from original 2094 lines)**. The focus now shifts to **Phase 2 & 3 enhancements** while maintaining the current clean modular architecture.
 
 **Update**: A detailed implementation plan for Phase 9 (CLI Ultimate Optimization) has been created. See [PHASE_9_CLI_OPTIMIZATION_PLAN.md](PHASE_9_CLI_OPTIMIZATION_PLAN.md) for comprehensive specifications.
 
@@ -285,7 +285,7 @@ module NumberAnalyzer::CLI::InteractiveRecovery
   end
   
   def interactive_mode?
-    $stdin.tty? && !ENV['NUMBER_ANALYZER_NON_INTERACTIVE']
+    $stdin.tty? && !ENV['NUMANA_NON_INTERACTIVE']
   end
 end
 ```
@@ -376,7 +376,7 @@ module NumberAnalyzer::CLI::Debug
   extend self
   
   def enabled?
-    ENV['NUMBER_ANALYZER_DEBUG'] == 'true'
+    ENV['NUMANA_DEBUG'] == 'true'
   end
   
   def log(message, level = :info)
@@ -417,7 +417,7 @@ module NumberAnalyzer::CLI::Completion
   
   def generate_bash_completion
     <<~BASH
-      _number_analyzer_completion() {
+      _numana_completion() {
         local cur prev commands
         COMPREPLY=()
         cur="${COMP_WORDS[COMP_CWORD]}"
@@ -442,7 +442,7 @@ module NumberAnalyzer::CLI::Completion
         esac
       }
       
-      complete -F _number_analyzer_completion number_analyzer
+      complete -F _numana_completion numana
     BASH
   end
   
@@ -527,9 +527,9 @@ module NumberAnalyzer::CLI::Configuration
   extend self
   
   CONFIG_PATHS = [
-    './.number_analyzer.yml',
-    '~/.number_analyzer/config.yml',
-    '/etc/number_analyzer/config.yml'
+    './.numana.yml',
+    '~/.numana/config.yml',
+    '/etc/numana/config.yml'
   ].freeze
   
   def load
@@ -557,9 +557,9 @@ module NumberAnalyzer::CLI::Configuration
   def merge_with_env(config)
     # Environment variables override config file
     ENV.each do |key, value|
-      next unless key.start_with?('NUMBER_ANALYZER_')
+      next unless key.start_with?('NUMANA_')
       
-      config_key = key.sub('NUMBER_ANALYZER_', '').downcase
+      config_key = key.sub('NUMANA_', '').downcase
       config[config_key] = value
     end
     

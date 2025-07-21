@@ -11,7 +11,7 @@ require 'spec_helper'
 RSpec.describe 'CLI Integration for Command Pattern commands', skip: '統合問題の調査中' do
   describe 'correlation command' do
     it 'works via CLI with numeric input' do
-      output = `bundle exec number_analyzer correlation 1 2 3 -- 4 5 6 2>&1`
+      output = `bundle exec numana correlation 1 2 3 -- 4 5 6 2>&1`
       puts "Command failed with output: #{output}" unless $CHILD_STATUS.success?
       expect($CHILD_STATUS.success?).to be true
       expect(output).to include('相関係数:')
@@ -23,20 +23,20 @@ RSpec.describe 'CLI Integration for Command Pattern commands', skip: '統合問�
       data1_path = File.join(fixture_path, 'correlation_data1.csv')
       data2_path = File.join(fixture_path, 'correlation_data2.csv')
 
-      output = `bundle exec number_analyzer correlation #{data1_path} #{data2_path} 2>&1`
+      output = `bundle exec numana correlation #{data1_path} #{data2_path} 2>&1`
       expect($CHILD_STATUS.success?).to be true
       expect(output).to include('相関係数: 1.0000')
     end
 
     it 'shows help via CLI' do
-      output = `bundle exec number_analyzer correlation --help 2>&1`
+      output = `bundle exec numana correlation --help 2>&1`
       expect($CHILD_STATUS.success?).to be true
       expect(output).to include('correlation -')
       expect(output).to include('Usage:')
     end
 
     it 'handles JSON format via CLI' do
-      output = `bundle exec number_analyzer correlation --format=json 1 2 3 -- 2 4 6 2>&1`
+      output = `bundle exec numana correlation --format=json 1 2 3 -- 2 4 6 2>&1`
       expect($CHILD_STATUS.success?).to be true
 
       json = JSON.parse(output)

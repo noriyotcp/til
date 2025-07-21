@@ -13,7 +13,7 @@ Phase 7.7で達成した完全モジュラー化（96.1%コード削減、8モ�
 
 ```ruby
 # 現在の構造 (理想的なプラグイン基盤)
-# lib/number_analyzer.rb (68行)
+# lib/numana.rb (68行)
 class NumberAnalyzer
   include BasicStats
   include AdvancedStats
@@ -27,7 +27,7 @@ end
 
 ### 🏗️ モジュール構成
 ```
-lib/number_analyzer/statistics/
+lib/numana/statistics/
 ├── basic_stats.rb          # 基本統計 (sum, mean, mode, variance, std_dev)
 ├── math_utils.rb           # 数学関数 (標準正規分布, t分布, F分布, etc.)
 ├── advanced_stats.rb       # 高度統計 (percentiles, quartiles, outliers)
@@ -49,7 +49,7 @@ lib/number_analyzer/statistics/
 **重要**: プラグイン名重複管理の詳細は **[PHASE_8_STEP_5_CONFLICT_RESOLUTION_PLAN.md](PHASE_8_STEP_5_CONFLICT_RESOLUTION_PLAN.md)** を参照
 
 ```ruby
-# lib/number_analyzer/plugin_registry.rb
+# lib/numana/plugin_registry.rb
 class NumberAnalyzer
   class PluginRegistry
     @plugins = {}
@@ -204,7 +204,7 @@ plugins:
 ```
 
 ```ruby
-# lib/number_analyzer/configuration.rb
+# lib/numana/configuration.rb
 class NumberAnalyzer
   class Configuration
     include Singleton
@@ -244,7 +244,7 @@ end
 **動的プラグイン読み込み機能**
 
 ```ruby
-# lib/number_analyzer/plugin_loader.rb
+# lib/numana/plugin_loader.rb
 class NumberAnalyzer
   class PluginLoader
     def self.load_from_config(config_path = nil)
@@ -331,23 +331,23 @@ end
 **プラグインシステム統合のコアクラス改良**
 
 ```ruby
-# lib/number_analyzer.rb (Phase 8.0版)
+# lib/numana.rb (Phase 8.0版)
 # frozen_string_literal: true
 
-require_relative 'number_analyzer/statistics_presenter'
-require_relative 'number_analyzer/plugin_registry'
-require_relative 'number_analyzer/plugin_loader'
-require_relative 'number_analyzer/configuration'
+require_relative 'numana/statistics_presenter'
+require_relative 'numana/plugin_registry'
+require_relative 'numana/plugin_loader'
+require_relative 'numana/configuration'
 
 # 既存モジュールの読み込み（下位互換性のため）
-require_relative 'number_analyzer/statistics/basic_stats'
-require_relative 'number_analyzer/statistics/math_utils'
-require_relative 'number_analyzer/statistics/advanced_stats'
-require_relative 'number_analyzer/statistics/correlation_stats'
-require_relative 'number_analyzer/statistics/time_series_stats'
-require_relative 'number_analyzer/statistics/hypothesis_testing'
-require_relative 'number_analyzer/statistics/anova_stats'
-require_relative 'number_analyzer/statistics/non_parametric_stats'
+require_relative 'numana/statistics/basic_stats'
+require_relative 'numana/statistics/math_utils'
+require_relative 'numana/statistics/advanced_stats'
+require_relative 'numana/statistics/correlation_stats'
+require_relative 'numana/statistics/time_series_stats'
+require_relative 'numana/statistics/hypothesis_testing'
+require_relative 'numana/statistics/anova_stats'
+require_relative 'numana/statistics/non_parametric_stats'
 
 # 数値配列の統計を計算するプログラム
 class NumberAnalyzer
@@ -484,7 +484,7 @@ end
 **サードパーティプラグイン標準API**
 
 ```ruby
-# lib/number_analyzer/plugin_api.rb
+# lib/numana/plugin_api.rb
 module NumberAnalyzer
   module PluginAPI
     def self.included(base)
@@ -551,7 +551,7 @@ module NumberAnalyzer
   end
 end
 
-# lib/number_analyzer/command_registry.rb
+# lib/numana/command_registry.rb
 class NumberAnalyzer
   class CommandRegistry
     @commands = {}
@@ -684,7 +684,7 @@ MachineLearningPlugin.register_plugin!
 **動的コマンド対応CLI**
 
 ```ruby
-# lib/number_analyzer/cli.rb への追加
+# lib/numana/cli.rb への追加
 class NumberAnalyzer::CLI
   def self.run(argv = ARGV)
     return run_full_analysis(argv) if argv.empty?
@@ -757,7 +757,7 @@ result = analyzer.linear_regression
 puts result[:interpretation]  # => "Linear regression analysis complete"
 
 # CLI使用
-# bundle exec number_analyzer linear-regression 1 2 3 4 5
+# bundle exec numana linear-regression 1 2 3 4 5
 ```
 
 ### プラグイン情報確認
@@ -805,19 +805,19 @@ puts info[:commands]     # => ["linear-regression", "clustering", "pca"]
 **期間: 2-3週間（重複管理機能統合により拡張）**
 
 1. **PluginRegistry作成**
-   - `lib/number_analyzer/plugin_registry.rb`
+   - `lib/numana/plugin_registry.rb`
    - プラグイン登録・ロード・依存関係管理
    - **重複検出・解決機能統合**
    - エラークラス定義
 
 2. **Plugin Conflict Resolution System** ⭐ **新機能**
-   - `lib/number_analyzer/plugin_priority.rb` - ハイブリッド優先度システム
-   - `lib/number_analyzer/plugin_conflict_resolver.rb` - 重複解決エンジン
-   - `lib/number_analyzer/plugin_namespace.rb` - 名前空間管理
-   - `lib/number_analyzer/plugin_configuration.rb` - 3層設定システム
+   - `lib/numana/plugin_priority.rb` - ハイブリッド優先度システム
+   - `lib/numana/plugin_conflict_resolver.rb` - 重複解決エンジン
+   - `lib/numana/plugin_namespace.rb` - 名前空間管理
+   - `lib/numana/plugin_configuration.rb` - 3層設定システム
 
 3. **Configuration System**
-   - `lib/number_analyzer/configuration.rb`  
+   - `lib/numana/configuration.rb`  
    - Singleton パターンでの設定管理
    - `config/plugins.yml` 作成
    - **重複管理設定統合**
@@ -838,7 +838,7 @@ puts info[:commands]     # => ["linear-regression", "clustering", "pca"]
 **期間: 2-3週間**
 
 1. **PluginLoader実装**
-   - `lib/number_analyzer/plugin_loader.rb`
+   - `lib/numana/plugin_loader.rb`
    - 動的モジュール読み込み
    - 既存モジュールの自動登録
 
@@ -870,7 +870,7 @@ puts info[:commands]     # => ["linear-regression", "clustering", "pca"]
 **期間: 2-3週間**
 
 1. **PluginAPI作成**
-   - `lib/number_analyzer/plugin_api.rb`
+   - `lib/numana/plugin_api.rb`
    - 標準プラグインインターフェース
 
 2. **サンプルプラグイン作成**
@@ -888,19 +888,19 @@ puts info[:commands]     # => ["linear-regression", "clustering", "pca"]
    - 階層的優先度システム実装 (Development:100 > Core:90 > Official:70 > ThirdParty:50 > Local:30)
    - カスタム優先度設定機能
    - 設定ファイルからの優先度読み込み
-   - `lib/number_analyzer/plugin_priority.rb` 実装
+   - `lib/numana/plugin_priority.rb` 実装
 
 2. **Week 2: PluginConflictResolver System**
    - 6つの解決戦略実装 (strict, warn_override, silent_override, namespace, interactive, auto)
    - 自動解決ロジック
    - ConflictValidator とエラーハンドリング
-   - `lib/number_analyzer/plugin_conflict_resolver.rb` 実装
+   - `lib/numana/plugin_conflict_resolver.rb` 実装
 
 3. **Week 3: PluginNamespace & CLI Integration**
    - 自動名前空間生成 (`na_ml_stats`, `ext_custom_gem_analyzer`)
    - 3層設定システム (defaults → project config → runtime)
    - CLI統合コマンド (`plugins --conflicts`, `plugins resolve`)
-   - `lib/number_analyzer/plugin_namespace.rb` 実装
+   - `lib/numana/plugin_namespace.rb` 実装
 
 **Success Criteria:**
 - 188+ total tests (163 current + 25 new conflict resolution tests)

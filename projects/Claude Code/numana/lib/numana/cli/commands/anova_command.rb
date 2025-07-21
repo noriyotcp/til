@@ -59,8 +59,8 @@ class Numana::Commands::AnovaCommand < Numana::Commands::BaseCommand
 
   def show_help
     puts <<~HELP
-      Usage: bundle exec number_analyzer anova [options] group1.csv group2.csv group3.csv
-             bundle exec number_analyzer anova [options] 1 2 3 -- 4 5 6 -- 7 8 9
+      Usage: bundle exec numana anova [options] group1.csv group2.csv group3.csv
+             bundle exec numana anova [options] 1 2 3 -- 4 5 6 -- 7 8 9
 
       Options:
         --format=FORMAT        Output format (json)
@@ -72,10 +72,10 @@ class Numana::Commands::AnovaCommand < Numana::Commands::BaseCommand
         -h, --help             Show this help
 
       Examples:
-        bundle exec number_analyzer anova 1 2 3 -- 4 5 6 -- 7 8 9
-        bundle exec number_analyzer anova --file group1.csv group2.csv group3.csv
-        bundle exec number_analyzer anova --format=json --precision=3 1 2 3 -- 4 5 6 -- 7 8 9
-        bundle exec number_analyzer anova --post-hoc=tukey 1 2 3 -- 4 5 6 -- 7 8 9
+        bundle exec numana anova 1 2 3 -- 4 5 6 -- 7 8 9
+        bundle exec numana anova --file group1.csv group2.csv group3.csv
+        bundle exec numana anova --format=json --precision=3 1 2 3 -- 4 5 6 -- 7 8 9
+        bundle exec numana anova --post-hoc=tukey 1 2 3 -- 4 5 6 -- 7 8 9
     HELP
   end
 

@@ -34,8 +34,8 @@ class Numana::Commands::TrendCommand < Numana::Commands::BaseCommand
     puts <<~HELP
       trend - #{self.class.description}
 
-      Usage: number_analyzer trend [OPTIONS] NUMBERS...
-             number_analyzer trend [OPTIONS] --file FILE
+      Usage: numana trend [OPTIONS] NUMBERS...
+             numana trend [OPTIONS] --file FILE
 
       Options:
         --help                Show this help message
@@ -46,16 +46,16 @@ class Numana::Commands::TrendCommand < Numana::Commands::BaseCommand
 
       Examples:
         # Ascending trend
-        number_analyzer trend 1 2 3 4 5
+        numana trend 1 2 3 4 5
 
         # File input
-        number_analyzer trend --file data.csv
+        numana trend --file data.csv
 
         # JSON output
-        number_analyzer trend --format=json 1 2 3 4 5
+        numana trend --format=json 1 2 3 4 5
 
         # Quiet mode with precision
-        number_analyzer trend --quiet --precision=2 1.1 2.3 3.2 4.8
+        numana trend --quiet --precision=2 1.1 2.3 3.2 4.8
     HELP
   end
 end

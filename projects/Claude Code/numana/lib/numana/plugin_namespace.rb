@@ -30,7 +30,7 @@ class Numana::PluginNamespace
   PRIORITY_PREFIXES = {
     development: 'dev',         # Development/test plugins
     core_plugins: 'core',       # Core NumberAnalyzer plugins
-    official_gems: 'official',  # Official number_analyzer-* gems
+    official_gems: 'official',  # Official numana-* gems
     third_party_gems: 'third',  # Third-party gems
     local_plugins: 'local'      # Local project plugins
   }.freeze

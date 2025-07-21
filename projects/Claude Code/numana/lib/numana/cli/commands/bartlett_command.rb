@@ -25,8 +25,8 @@ class Numana::Commands::BartlettCommand < Numana::Commands::BaseCommand
     if @groups.nil? || @groups.empty? || @groups.length < 2
       raise ArgumentError, <<~ERROR
         Bartlett test requires at least 2 groups.
-        Examples: bundle exec number_analyzer bartlett 1 2 3 -- 4 5 6 -- 7 8 9
-                 bundle exec number_analyzer bartlett --file group1.csv group2.csv group3.csv
+        Examples: bundle exec numana bartlett 1 2 3 -- 4 5 6 -- 7 8 9
+                 bundle exec numana bartlett --file group1.csv group2.csv group3.csv
       ERROR
     end
 
@@ -49,8 +49,8 @@ class Numana::Commands::BartlettCommand < Numana::Commands::BaseCommand
 
   def show_help
     puts <<~HELP
-      Usage: bundle exec number_analyzer bartlett [options] 1 2 3 -- 4 5 6 -- 7 8 9
-             bundle exec number_analyzer bartlett [options] --file group1.csv group2.csv group3.csv
+      Usage: bundle exec numana bartlett [options] 1 2 3 -- 4 5 6 -- 7 8 9
+             bundle exec numana bartlett [options] --file group1.csv group2.csv group3.csv
 
       Test for variance homogeneity using Bartlett test. This test assumes normality
       and provides high precision for variance equality testing under normal distributions.
@@ -64,10 +64,10 @@ class Numana::Commands::BartlettCommand < Numana::Commands::BaseCommand
         -h, --help             Show this help
 
       Examples:
-        bundle exec number_analyzer bartlett 1 2 3 -- 4 5 6 -- 7 8 9
-        bundle exec number_analyzer bartlett --file group1.csv group2.csv group3.csv
-        bundle exec number_analyzer bartlett --format=json --precision=3 1 2 3 -- 4 5 6 -- 7 8 9
-        bundle exec number_analyzer bartlett --quiet 1 2 3 -- 4 5 6 -- 7 8 9
+        bundle exec numana bartlett 1 2 3 -- 4 5 6 -- 7 8 9
+        bundle exec numana bartlett --file group1.csv group2.csv group3.csv
+        bundle exec numana bartlett --format=json --precision=3 1 2 3 -- 4 5 6 -- 7 8 9
+        bundle exec numana bartlett --quiet 1 2 3 -- 4 5 6 -- 7 8 9
     HELP
   end
 

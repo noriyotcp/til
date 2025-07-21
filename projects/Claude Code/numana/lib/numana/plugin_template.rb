@@ -231,7 +231,7 @@ class Numana::PluginTemplate
       <<~ERB
         # frozen_string_literal: true
 
-        require_relative '../lib/number_analyzer/plugin_interface'
+        require_relative '../lib/numana/plugin_interface'
 
         # <%= config[:module_name] %> - <%= config[:description] %>
         # Generated on <%= config[:timestamp] %>
@@ -292,7 +292,7 @@ class Numana::PluginTemplate
       <<~ERB
         # frozen_string_literal: true
 
-        require_relative '../lib/number_analyzer/plugin_interface'
+        require_relative '../lib/numana/plugin_interface'
 
         # <%= config[:module_name] %> - <%= config[:description] %>
         # Generated on <%= config[:timestamp] %>
@@ -379,7 +379,7 @@ class Numana::PluginTemplate
       <<~ERB
         # frozen_string_literal: true
 
-        require_relative '../lib/number_analyzer/plugin_interface'
+        require_relative '../lib/numana/plugin_interface'
 
         # <%= config[:module_name] %> - <%= config[:description] %>
         # Generated on <%= config[:timestamp] %>
@@ -441,7 +441,7 @@ class Numana::PluginTemplate
       <<~ERB
         # frozen_string_literal: true
 
-        require_relative '../lib/number_analyzer/plugin_interface'
+        require_relative '../lib/numana/plugin_interface'
 
         # <%= config[:module_name] %> - <%= config[:description] %>
         # Generated on <%= config[:timestamp] %>
@@ -509,7 +509,7 @@ class Numana::PluginTemplate
       <<~ERB
         # frozen_string_literal: true
 
-        require_relative '../lib/number_analyzer/plugin_interface'
+        require_relative '../lib/numana/plugin_interface'
 
         # <%= config[:module_name] %> - <%= config[:description] %>
         # Generated on <%= config[:timestamp] %>
@@ -573,7 +573,7 @@ class Numana::PluginTemplate
       <<~ERB
         # frozen_string_literal: true
 
-        require_relative '../lib/number_analyzer/plugin_interface'
+        require_relative '../lib/numana/plugin_interface'
 
         # <%= config[:module_name] %> - <%= config[:description] %>
         # Generated on <%= config[:timestamp] %>
@@ -784,7 +784,7 @@ class Numana::PluginTemplate
 
         **CLI Usage:**
         ```bash
-        bundle exec number_analyzer <%= command.tr('_', '-') %> 1 2 3 4 5
+        bundle exec numana <%= command.tr('_', '-') %> 1 2 3 4 5
         ```
 
         <% end -%>
@@ -795,7 +795,7 @@ class Numana::PluginTemplate
         #### <%= command.tr('_', '-') %>
 
         ```bash
-        bundle exec number_analyzer <%= command.tr('_', '-') %> [options]
+        bundle exec numana <%= command.tr('_', '-') %> [options]
         ```
 
         <% end -%>

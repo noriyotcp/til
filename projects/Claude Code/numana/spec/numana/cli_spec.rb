@@ -649,7 +649,7 @@ RSpec.describe Numana::CLI do
 
       it 'shows help when requested' do
         expect { Numana::CLI.run(%w[moving-average --help]) }
-          .to output(/Usage: bundle exec number_analyzer moving-average/).to_stdout
+          .to output(/Usage: bundle exec numana moving-average/).to_stdout
       end
     end
   end
@@ -728,7 +728,7 @@ RSpec.describe Numana::CLI do
     context 'help option' do
       it 'displays help message and exits' do
         expect { Numana::CLI.run(%w[growth-rate --help]) }
-          .to output(/Usage: bundle exec number_analyzer growth-rate/).to_stdout
+          .to output(/Usage: bundle exec numana growth-rate/).to_stdout
       end
     end
   end
@@ -827,7 +827,7 @@ RSpec.describe Numana::CLI do
     context 'help option' do
       it 'displays help message and exits' do
         expect { Numana::CLI.run(%w[seasonal --help]) }
-          .to output(/Usage: bundle exec number_analyzer seasonal/).to_stdout
+          .to output(/Usage: bundle exec numana seasonal/).to_stdout
       end
     end
   end

@@ -2,7 +2,7 @@
 
 ## 概要
 
-`lib/number_analyzer/cli.rb` の2094行に及ぶ巨大なファイルを、保守性と拡張性の高い構造にリファクタリングした完了報告書。Command Patternを採用し、各コマンドを独立したクラスに分離することで、責任の明確化とテストの容易化を実現した。
+`lib/numana/cli.rb` の2094行に及ぶ巨大なファイルを、保守性と拡張性の高い構造にリファクタリングした完了報告書。Command Patternを採用し、各コマンドを独立したクラスに分離することで、責任の明確化とテストの容易化を実現した。
 
 **✅ プロジェクト完了**: 2094行 → 378行（**81%削減達成**）、全29コマンドのCommand Pattern移行完了、140テスト全通過維持
 
@@ -68,7 +68,7 @@ end
 ### Command Pattern 実装完了 ✅
 
 ```
-lib/number_analyzer/
+lib/numana/
 ├── cli.rb                          # 軽量CLIディスパッチャー（実装結果: 378行、81%削減達成）
 ├── cli/
 │   ├── base_command.rb            # 共通基底クラス ✅ 実装済み
@@ -309,7 +309,7 @@ end
 #### MedianCommand のTDD実装
 
 ```ruby
-# spec/number_analyzer/cli/commands/median_command_spec.rb
+# spec/numana/cli/commands/median_command_spec.rb
 
 RSpec.describe NumberAnalyzer::CLI::Commands::MedianCommand do
   let(:command) { described_class.new }
@@ -486,7 +486,7 @@ end
 
 #### Step 1.1: ディレクトリ構造の作成 ✅ 完了
 ```bash
-mkdir -p lib/number_analyzer/cli/commands/{basic,advanced,analysis,testing,plugin}
+mkdir -p lib/numana/cli/commands/{basic,advanced,analysis,testing,plugin}
 ```
 
 #### Step 1.2: BaseCommand クラスの実装 ✅ 完了

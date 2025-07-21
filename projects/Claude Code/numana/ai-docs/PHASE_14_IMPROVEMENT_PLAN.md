@@ -154,9 +154,9 @@ However, analysis revealed some **minor inconsistencies** and improvement opport
 ## Detailed Analysis Results
 
 ### RuboCop Violations Found ✅ **全て解決済み**
-- ✅ **lib/number_analyzer/cli/error_handler.rb**: ABC complexity violation (levenshtein_distance method) → メソッド分割で解決
-- ✅ **lib/number_analyzer/presenters/anova_presenter.rb**: Multiple format string token issues → annotated format統一で解決
-- ✅ **lib/number_analyzer/presenters/two_way_anova_presenter.rb**: Class length and format issues → 8メソッド分割で解決
+- ✅ **lib/numana/cli/error_handler.rb**: ABC complexity violation (levenshtein_distance method) → メソッド分割で解決
+- ✅ **lib/numana/presenters/anova_presenter.rb**: Multiple format string token issues → annotated format統一で解決
+- ✅ **lib/numana/presenters/two_way_anova_presenter.rb**: Class length and format issues → 8メソッド分割で解決
 
 ### Technical Debt Items
 - **27 TODO comments** across plugin templates and configuration
@@ -164,8 +164,8 @@ However, analysis revealed some **minor inconsistencies** and improvement opport
 - **Placeholder URLs** in plugins.yml need updating
 
 ### Large Files Refactored ✅ **完了**
-- ✅ `lib/number_analyzer/statistics/anova_stats.rb` (902→17 lines) - Split into 3 modules
-- ✅ `lib/number_analyzer/plugin_conflict_resolver.rb` (534→336 lines) - Strategy extraction completed
+- ✅ `lib/numana/statistics/anova_stats.rb` (902→17 lines) - Split into 3 modules
+- ✅ `lib/numana/plugin_conflict_resolver.rb` (534→336 lines) - Strategy extraction completed
 - `plugins/visualization_plugin.rb` (837 lines) - Plugin complexity
 
 ## Expected Outcomes

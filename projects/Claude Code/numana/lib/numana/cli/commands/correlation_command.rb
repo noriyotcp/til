@@ -16,8 +16,8 @@ class Numana::Commands::CorrelationCommand < Numana::Commands::BaseCommand
 
     raise ArgumentError, <<~ERROR
       Error: correlation command requires two datasets.
-      Examples: bundle exec number_analyzer correlation 1 2 3 -- 4 5 6
-               bundle exec number_analyzer correlation data1.csv data2.csv
+      Examples: bundle exec numana correlation 1 2 3 -- 4 5 6
+               bundle exec numana correlation data1.csv data2.csv
     ERROR
   end
 
@@ -30,8 +30,8 @@ class Numana::Commands::CorrelationCommand < Numana::Commands::BaseCommand
     else
       raise ArgumentError, <<~ERROR
         Error: Use "--" to separate two datasets or specify two files.
-        Examples: bundle exec number_analyzer correlation 1 2 3 -- 4 5 6
-                 bundle exec number_analyzer correlation data1.csv data2.csv
+        Examples: bundle exec numana correlation 1 2 3 -- 4 5 6
+                 bundle exec numana correlation data1.csv data2.csv
       ERROR
     end
   end
@@ -129,8 +129,8 @@ class Numana::Commands::CorrelationCommand < Numana::Commands::BaseCommand
     puts <<~HELP
       correlation - #{self.class.description}
 
-      Usage: number_analyzer correlation [OPTIONS] DATA1 -- DATA2
-             number_analyzer correlation [OPTIONS] FILE1 FILE2
+      Usage: numana correlation [OPTIONS] DATA1 -- DATA2
+             numana correlation [OPTIONS] FILE1 FILE2
 
       Options:
         --help                Show this help message
@@ -140,13 +140,13 @@ class Numana::Commands::CorrelationCommand < Numana::Commands::BaseCommand
 
       Examples:
         # Numeric input with separator
-        number_analyzer correlation 1 2 3 -- 2 4 6
+        numana correlation 1 2 3 -- 2 4 6
 
         # File input
-        number_analyzer correlation data1.csv data2.csv
+        numana correlation data1.csv data2.csv
 
         # JSON output
-        number_analyzer correlation --format=json 1 2 3 -- 2 4 6
+        numana correlation --format=json 1 2 3 -- 2 4 6
     HELP
   end
 end

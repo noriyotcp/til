@@ -12,7 +12,7 @@
 - [x] 標準的なGem構造（lib/, bin/, spec/）への移行
 - [x] 名前空間設計（NumberAnalyzer::CLI等）
 - [x] 依存関係管理（gemspec）
-- [x] `bundle exec number_analyzer`実行対応
+- [x] `bundle exec numana`実行対応
 
 ### Phase 3: 統計機能拡張 ✅ 完了
 - [x] 中央値、最頻値、分散、標準偏差
@@ -157,10 +157,10 @@
 
 ### Phase 7.7 Step 1: BasicStats Module Extraction ✅ 完了
 **基盤リファクタリングの第一歩 - モジュラーアーキテクチャへの移行**
-- [x] `lib/number_analyzer/statistics/basic_stats.rb` モジュール作成（51行）
+- [x] `lib/numana/statistics/basic_stats.rb` モジュール作成（51行）
 - [x] 基本統計メソッド抽出: `sum`, `mean`, `mode`, `variance`, `standard_deviation`
 - [x] NumberAnalyzer クラスに `include BasicStats` 統合
-- [x] 32個の包括的ユニットテスト追加: `spec/number_analyzer/statistics/basic_stats_spec.rb`
+- [x] 32個の包括的ユニットテスト追加: `spec/numana/statistics/basic_stats_spec.rb`
 - [x] API完全互換性維持: 既存106テスト + 新規32テスト = 138テスト全通過
 - [x] ファイルサイズ削減: 1,727行 → 1,710行（17行削減）
 - [x] RuboCop準拠: ゼロ違反維持
@@ -173,7 +173,7 @@
 
 ### Phase 7.7 Step 2: MathUtils Module Extraction ✅ 完了
 **数学的ユーティリティ関数のモジュール化 - 成功**
-- [x] `lib/number_analyzer/statistics/math_utils.rb` モジュール作成（102行）
+- [x] `lib/numana/statistics/math_utils.rb` モジュール作成（102行）
 - [x] 数学的ヘルパー関数抽出: `standard_normal_cdf`, `erf`, `approximate_t_distribution_cdf`, `calculate_f_distribution_p_value`
 - [x] 重複コード削除と統合（95行削減: 1,710 → 1,615行）
 - [x] API完全互換性維持: 既存106テスト全通過
@@ -187,20 +187,20 @@
 
 ### Phase 7.7 Step 3: AdvancedStats Module Extraction ✅ 完了
 **高度統計分析関数のモジュール化**
-- [x] `lib/number_analyzer/statistics/advanced_stats.rb` モジュール作成（65行）
+- [x] `lib/numana/statistics/advanced_stats.rb` モジュール作成（65行）
 - [x] 高度統計関数抽出: `percentile`, `quartiles`, `interquartile_range`, `outliers`, `deviation_scores`
 - [x] percentile依存関係の整理とモジュール化
 - [x] 高度統計分析の一元管理
-- [x] 26個の包括的ユニットテスト追加: `spec/number_analyzer/statistics/advanced_stats_spec.rb`
+- [x] 26個の包括的ユニットテスト追加: `spec/numana/statistics/advanced_stats_spec.rb`
 - [x] API完全互換性維持: 164テスト全通過確認（API変更なし）
 - [x] 59行削減 (1,615 → 1,556 lines), RuboCop準拠
 
 ### Phase 7.7 Step 4: CorrelationStats Module Extraction ✅ 完了
 **相関分析機能のモジュール化**
-- [x] `lib/number_analyzer/statistics/correlation_stats.rb` モジュール作成（54行）
+- [x] `lib/numana/statistics/correlation_stats.rb` モジュール作成（54行）
 - [x] 相関分析メソッド抽出: `correlation`, `interpret_correlation`
 - [x] OutputFormatter統合とピアソン相関係数計算の専門化
-- [x] 32個の包括的ユニットテスト追加: `spec/number_analyzer/statistics/correlation_stats_spec.rb`
+- [x] 32個の包括的ユニットテスト追加: `spec/numana/statistics/correlation_stats_spec.rb`
 - [x] API完全互換性維持: 192テスト全通過確認（106統合 + 86ユニット）
 - [x] 28行削減 (1,556 → 1,528 lines), RuboCop準拠
 
@@ -214,10 +214,10 @@
 
 ### Phase 7.7 Step 5: TimeSeriesStats Module Extraction ✅ 完了
 **時系列分析機能のモジュール化**
-- [x] `lib/number_analyzer/statistics/time_series_stats.rb` モジュール作成（279行）
+- [x] `lib/numana/statistics/time_series_stats.rb` モジュール作成（279行）
 - [x] 時系列分析メソッド抽出: `linear_trend`, `moving_average`, `growth_rates`, `compound_annual_growth_rate`, `average_growth_rate`, `seasonal_decomposition`, `detect_seasonal_period`, `seasonal_strength`
 - [x] 時系列統計分析の専門化と10個のプライベートヘルパーメソッド抽出
-- [x] 38個の包括的ユニットテスト追加: `spec/number_analyzer/statistics/time_series_stats_spec.rb`
+- [x] 38個の包括的ユニットテスト追加: `spec/numana/statistics/time_series_stats_spec.rb`
 - [x] API完全互換性維持: 230テスト全通過確認（106統合 + 124ユニット）
 - [x] 257行削減 (1,528 → 1,271 lines), RuboCop準拠
 
@@ -229,10 +229,10 @@
 
 ### Phase 7.7 Step 6: HypothesisTesting Module Extraction ✅ 完了
 **仮説検定機能のモジュール化**
-- [x] `lib/number_analyzer/statistics/hypothesis_testing.rb` モジュール作成（480行）
+- [x] `lib/numana/statistics/hypothesis_testing.rb` モジュール作成（480行）
 - [x] 仮説検定メソッド抽出: `t_test`, `confidence_interval`, `chi_square_test`
 - [x] 統計的検定の専門化と30個以上のプライベートヘルパーメソッド抽出
-- [x] 32個の包括的ユニットテスト追加: `spec/number_analyzer/statistics/hypothesis_testing_spec.rb`
+- [x] 32個の包括的ユニットテスト追加: `spec/numana/statistics/hypothesis_testing_spec.rb`
 - [x] API完全互換性維持: 106テスト全通過確認（統合テスト）
 - [x] 410行削減 (1,271 → 861 lines), RuboCop準拠
 - [x] 数学的正確性: Welchのt検定、t分布信頼区間、カイ二乗分布p値計算
@@ -245,10 +245,10 @@
 
 ### Phase 7.7 Step 7: ANOVAStats Module Extraction ✅ 完了
 **分散分析機能のモジュール化**
-- [x] `lib/number_analyzer/statistics/anova_stats.rb` モジュール作成（566行）
+- [x] `lib/numana/statistics/anova_stats.rb` モジュール作成（566行）
 - [x] 分散分析メソッド抽出: `one_way_anova`, `post_hoc_analysis`, `levene_test`, `bartlett_test`
 - [x] ANOVA統計分析の専門化と25個以上のプライベートヘルパーメソッド抽出
-- [x] 38個の包括的ユニットテスト追加: `spec/number_analyzer/statistics/anova_stats_spec.rb`
+- [x] 38個の包括的ユニットテスト追加: `spec/numana/statistics/anova_stats_spec.rb`
 - [x] API完全互換性維持: 106テスト全通過確認（統合テスト）
 - [x] 554行削減 (861 → 307 lines), RuboCop準拠
 - [x] 分散分析完全統合: ANOVA + 事後検定 + 分散等質性検定の専門モジュール化
@@ -261,10 +261,10 @@
 
 ### Phase 7.7 Step 8: NonParametricStats Module Extraction ✅ 完了
 **ノンパラメトリック統計検定機能のモジュール化 - 基盤リファクタリング完了**
-- [x] `lib/number_analyzer/statistics/non_parametric_stats.rb` モジュール作成（246行）
+- [x] `lib/numana/statistics/non_parametric_stats.rb` モジュール作成（246行）
 - [x] ノンパラメトリック検定メソッド抽出: `kruskal_wallis_test`, `mann_whitney_u_test`
 - [x] ランク計算とタイ補正の専門化と3個のプライベートヘルパーメソッド抽出
-- [x] 26個の包括的ユニットテスト追加: `spec/number_analyzer/statistics/non_parametric_stats_spec.rb`
+- [x] 26個の包括的ユニットテスト追加: `spec/numana/statistics/non_parametric_stats_spec.rb`
 - [x] API完全互換性維持: 106テスト全通過確認（統合テスト）
 - [x] 234行削減 (302 → 68 lines), RuboCop準拠
 - [x] ノンパラメトリック検定完全統合: Kruskal-Wallis + Mann-Whitney U検定の専門モジュール化
@@ -353,11 +353,11 @@
 - [x] **Backward Compatibility** - 既存29コマンド完全互換性保持
 
 **実装ファイル**:
-- `lib/number_analyzer/plugin_system.rb` - コアプラグイン管理
-- `lib/number_analyzer/plugin_interface.rb` - プラグインベースクラス
-- `lib/number_analyzer/plugin_loader.rb` - 発見・自動ロード機能
+- `lib/numana/plugin_system.rb` - コアプラグイン管理
+- `lib/numana/plugin_interface.rb` - プラグインベースクラス
+- `lib/numana/plugin_loader.rb` - 発見・自動ロード機能
 - `plugins.yml` - 設定ファイル
-- CLI統合（`lib/number_analyzer/cli.rb`への動的コマンド対応追加）
+- CLI統合（`lib/numana/cli.rb`への動的コマンド対応追加）
 
 **テスト**:
 - `spec/plugin_system_spec.rb` (14テスト)
@@ -398,9 +398,9 @@
 - [x] **Zero RuboCop Violations** - 全新規ファイル品質基準準拠
 
 **実装ファイル**:
-- `lib/number_analyzer/dependency_resolver.rb` (345行) - 依存関係解決システム
-- `lib/number_analyzer/plugin_error_handler.rb` (260行) - エラー処理システム
-- `lib/number_analyzer/plugin_system.rb` (機能強化) - 統合システム
+- `lib/numana/dependency_resolver.rb` (345行) - 依存関係解決システム
+- `lib/numana/plugin_error_handler.rb` (260行) - エラー処理システム
+- `lib/numana/plugin_system.rb` (機能強化) - 統合システム
 
 **Phase 8.0 Step 3 達成項目**:
 - ✅ **163テスト実行例** - 73新規テスト追加（90基本 + 73高度機能）
@@ -431,7 +431,7 @@
 - [x] **PluginRegistry System** - 集中プラグイン管理システム
   - [x] **プラグイン登録・発見機能** - 名前空間競合検出付き集中管理
   - [x] **メタデータ検証** - プラグイン情報の整合性チェック
-  - [x] **マルチディレクトリ対応** - `./plugins`, `./lib/number_analyzer/plugins`, `~/.number_analyzer/plugins`
+  - [x] **マルチディレクトリ対応** - `./plugins`, `./lib/numana/plugins`, `~/.numana/plugins`
   - [x] **依存関係管理** - プラグイン間依存関係検証とライフサイクル管理
 - [x] **PluginConfiguration System** - 多層設定管理システム
   - [x] **設定階層化** - デフォルト・ファイル・環境変数の3層設定対応
@@ -480,11 +480,11 @@
   - [x] **7個のCLIコマンド**: `histogram`, `boxplot`, `scatter`, `line-chart`, `bar-chart`, `distribution`, `dashboard`
 
 **実装ファイル**:
-- `lib/number_analyzer/plugin_registry.rb` (420行) - 集中プラグイン管理システム
-- `lib/number_analyzer/plugin_configuration.rb` (290行) - 多層設定管理システム
-- `lib/number_analyzer/plugin_validator.rb` (490行) - セキュリティ検証システム
-- `lib/number_analyzer/plugin_template.rb` (380行) - プラグインテンプレート生成
-- `lib/number_analyzer/plugin_loader.rb` (強化版, 385行) - セキュアローダー
+- `lib/numana/plugin_registry.rb` (420行) - 集中プラグイン管理システム
+- `lib/numana/plugin_configuration.rb` (290行) - 多層設定管理システム
+- `lib/numana/plugin_validator.rb` (490行) - セキュリティ検証システム
+- `lib/numana/plugin_template.rb` (380行) - プラグインテンプレート生成
+- `lib/numana/plugin_loader.rb` (強化版, 385行) - セキュアローダー
 - `plugins/machine_learning_plugin.rb` (450行) - 機械学習サンプル
 - `plugins/data_export_plugin.rb` (745行) - データエクスポートサンプル
 - `plugins/visualization_plugin.rb` (830行) - 可視化サンプル
@@ -514,13 +514,13 @@
 ### Step 5: Conflict Resolution System ✅ 完了 (3週間)
 - [x] **重複管理システム（Conflict Resolution）** - プラグインエコシステムの安全性確保
   - **Week 1**: PluginPriority System ✅ **完了** - 階層的優先度システム (Development:100 > Core:90 > Official:70 > ThirdParty:50 > Local:30)
-    - [x] `lib/number_analyzer/plugin_priority.rb` - 5階層優先度システム実装
+    - [x] `lib/numana/plugin_priority.rb` - 5階層優先度システム実装
     - [x] Class-based API: `get()`, `set()`, `can_override()`, `reset_custom_priorities!()`
     - [x] Backward compatibility with existing plugin system
     - [x] `spec/plugin_priority_spec.rb` - 12包括テスト (優先度比較、カスタム設定、重複解決基盤)
     - [x] Full API documentation and RuboCop compliance
   - **Week 2**: PluginNamespace System ✅ **完了** - 自動名前空間生成システム
-    - [x] `lib/number_analyzer/plugin_namespace.rb` - 包括的名前空間管理システム (282行)
+    - [x] `lib/numana/plugin_namespace.rb` - 包括的名前空間管理システム (282行)
     - [x] 5つの優先度プレフィックス: development(de_), core(co_), official(of_), third_party(th_), local(lo_)
     - [x] Levenshtein距離ベース類似度検出 (閾値0.7) - 自動重複検出
     - [x] Priority-aware namespace generation - 優先度に応じた名前空間生成
@@ -529,7 +529,7 @@
     - [x] ConflictResolver統合強化 - 43テスト維持、統合API完成
     - [x] RuboCop準拠 (ABC size最適化、メソッド分解)
   - **Week 3**: CLI Integration ✅ **完了** - pluginsサブコマンドとインタラクティブ解決
-    - [x] `lib/number_analyzer/cli.rb` - pluginsサブコマンド追加 (30個目のコアコマンド)
+    - [x] `lib/numana/cli.rb` - pluginsサブコマンド追加 (30個目のコアコマンド)
     - [x] `plugins list [--show-conflicts]` - プラグイン一覧表示機能
     - [x] `plugins conflicts` - 重複検出専用コマンド
     - [x] `plugins resolve <plugin>` - 対話的/自動重複解決
@@ -538,14 +538,14 @@
     - [x] README.md更新 - Plugin Management Commands セクション追加
 
 **実装ファイル**:
-- `lib/number_analyzer/plugin_priority.rb` - 階層的優先度管理
-- `lib/number_analyzer/plugin_conflict_resolver.rb` - 重複解決エンジン
-- `lib/number_analyzer/plugin_namespace.rb` - 名前空間管理
-- `lib/number_analyzer/plugin_configuration.rb` - 3層設定システム強化
+- `lib/numana/plugin_priority.rb` - 階層的優先度管理
+- `lib/numana/plugin_conflict_resolver.rb` - 重複解決エンジン
+- `lib/numana/plugin_namespace.rb` - 名前空間管理
+- `lib/numana/plugin_configuration.rb` - 3層設定システム強化
 
 **CLI Integration**:
-- `bundle exec number_analyzer plugins --conflicts` - 重複確認コマンド
-- `bundle exec number_analyzer plugins resolve <plugin> --strategy=interactive` - インタラクティブ解決
+- `bundle exec numana plugins --conflicts` - 重複確認コマンド
+- `bundle exec numana plugins resolve <plugin> --strategy=interactive` - インタラクティブ解決
 - 自動名前空間: `na_ml_stats`, `ext_custom_gem_analyzer` パターン
 
 **Success Criteria**:
@@ -697,10 +697,10 @@
 
 - ✅ **デフォルトデータの廃止**: 引数なし実行時のデフォルト配列`[1,2,3,4,5,6,7,8,9,10]`を廃止し、モダンCLIの標準的なヘルプ表示に変更
 - ✅ **包括的ヘルプシステム実装**: 
-  - `bundle exec number_analyzer` → 全コマンド一覧とカテゴリ別ヘルプ表示
-  - `bundle exec number_analyzer --help` → トップレベルヘルプオプション対応
-  - `bundle exec number_analyzer help` → 専用ヘルプコマンド実装
-  - `bundle exec number_analyzer help <command>` → 個別コマンド詳細ヘルプ
+  - `bundle exec numana` → 全コマンド一覧とカテゴリ別ヘルプ表示
+  - `bundle exec numana --help` → トップレベルヘルプオプション対応
+  - `bundle exec numana help` → 専用ヘルプコマンド実装
+  - `bundle exec numana help <command>` → 個別コマンド詳細ヘルプ
 - ✅ **エラーメッセージ改善**: 不明なコマンド実行時にヘルプへの誘導メッセージ追加
 - ✅ **HelpCommand実装**: Command Pattern準拠の30個目のコアコマンドとして実装
   - BaseCommand継承による一貫したアーキテクチャ
@@ -765,10 +765,10 @@
 - **テスト品質**: 38新規テスト追加、全テスト成功維持
 
 **実装ファイル**:
-- `lib/number_analyzer/cli/error_handler.rb` (124行) - 智能エラー処理システム
-- `lib/number_analyzer/cli/command_cache.rb` (73行) - パフォーマンス最適化キャッシング
-- `lib/number_analyzer/cli/plugin_router.rb` (112行) - 統合コマンドルーティング
-- `lib/number_analyzer/cli.rb` (102行) - 軽量化されたCLIオーケストレーター
+- `lib/numana/cli/error_handler.rb` (124行) - 智能エラー処理システム
+- `lib/numana/cli/command_cache.rb` (73行) - パフォーマンス最適化キャッシング
+- `lib/numana/cli/plugin_router.rb` (112行) - 統合コマンドルーティング
+- `lib/numana/cli.rb` (102行) - 軽量化されたCLIオーケストレーター
 
 **Phase 9 達成項目**:
 - ✅ **CLI.rb 100行以下達成**: 138→102行（**目標達成**）

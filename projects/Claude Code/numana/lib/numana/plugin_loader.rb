@@ -22,8 +22,8 @@ class Numana::PluginLoader
 
     default_paths = [
       './plugins',
-      './lib/number_analyzer/plugins',
-      File.expand_path('~/.number_analyzer/plugins')
+      './lib/numana/plugins',
+      File.expand_path('~/.numana/plugins')
     ]
 
     all_paths = (search_paths + default_paths).uniq
@@ -292,7 +292,7 @@ class Numana::PluginLoader
 
   # Set up plugin sandbox with security configuration
   def self.setup_plugin_sandbox(options)
-    security_level = options[:security_level] || ENV['NUMBER_ANALYZER_SECURITY'] || :production
+    security_level = options[:security_level] || ENV['NUMANA_SECURITY'] || :production
     trusted_plugins = options[:trusted_plugins] || []
 
     Numana::PluginSandbox.new(

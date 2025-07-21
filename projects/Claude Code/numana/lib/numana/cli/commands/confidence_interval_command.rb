@@ -93,8 +93,8 @@ class Numana::Commands::ConfidenceIntervalCommand < Numana::Commands::BaseComman
     puts <<~HELP
       confidence-interval - #{self.class.description}
 
-      Usage: number_analyzer confidence-interval [OPTIONS] [LEVEL] [NUMBERS...]
-             number_analyzer confidence-interval [OPTIONS] [LEVEL] --file DATA.csv
+      Usage: numana confidence-interval [OPTIONS] [LEVEL] [NUMBERS...]
+             numana confidence-interval [OPTIONS] [LEVEL] --file DATA.csv
 
       Options:
         --help                Show this help message
@@ -106,19 +106,19 @@ class Numana::Commands::ConfidenceIntervalCommand < Numana::Commands::BaseComman
 
       Examples:
         # 95% confidence interval (default)
-        number_analyzer confidence-interval 1 2 3 4 5
+        numana confidence-interval 1 2 3 4 5
 
         # 90% confidence interval#{' '}
-        number_analyzer confidence-interval 90 1 2 3 4 5
+        numana confidence-interval 90 1 2 3 4 5
 
         # Using --level option
-        number_analyzer confidence-interval --level=99 --file data.csv
+        numana confidence-interval --level=99 --file data.csv
 
         # JSON output with precision
-        number_analyzer confidence-interval --format=json --precision=2 data.csv
+        numana confidence-interval --format=json --precision=2 data.csv
 
         # Quiet mode (bounds only)
-        number_analyzer confidence-interval --quiet 95 1.2 1.5 1.8 2.1
+        numana confidence-interval --quiet 95 1.2 1.5 1.8 2.1
     HELP
   end
 

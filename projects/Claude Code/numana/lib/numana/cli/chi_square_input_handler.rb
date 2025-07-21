@@ -72,7 +72,7 @@ class Numana::CLI::ChiSquareInputHandler
   rescue StandardError
     raise ArgumentError, <<~ERROR
       Error: Invalid numbers found.
-      Example: number_analyzer chi-square --independence 30 20 -- 15 35
+      Example: numana chi-square --independence 30 20 -- 15 35
     ERROR
   end
 

@@ -4,7 +4,7 @@ require 'spec_helper'
 require 'numana/cli/commands/correlation_command'
 
 # NOTE: これは単体テストです。実際のCLI経由での動作も必ず確認してください！
-# 例: bundle exec number_analyzer correlation 1 2 3 -- 4 5 6
+# 例: bundle exec numana correlation 1 2 3 -- 4 5 6
 #
 # CLI統合で問題が発生した場合は ai-docs/CLI_REFACTORING_GUIDE.md を参照
 

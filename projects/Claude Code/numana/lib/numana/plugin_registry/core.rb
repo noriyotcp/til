@@ -112,8 +112,8 @@ class Numana::PluginRegistry::Core
     def default_plugin_directories
       [
         File.join(Dir.pwd, 'plugins'),
-        File.join(Dir.pwd, 'lib', 'number_analyzer', 'plugins'),
-        File.expand_path('~/.number_analyzer/plugins')
+        File.join(Dir.pwd, 'lib', 'numana', 'plugins'),
+        File.expand_path('~/.numana/plugins')
       ].select { |dir| Dir.exist?(dir) }
     end
 

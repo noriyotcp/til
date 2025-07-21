@@ -2,7 +2,7 @@
 
 ## Overview
 
-This document outlines the refactoring plan for `lib/number_analyzer/statistics_presenter.rb`, which has grown to 593 lines and violates the Single Responsibility Principle.
+This document outlines the refactoring plan for `lib/numana/statistics_presenter.rb`, which has grown to 593 lines and violates the Single Responsibility Principle.
 
 ## Current State Analysis
 
@@ -39,7 +39,7 @@ Using the **Template Method Pattern** to create a hierarchy of presenters with s
 
 ### Directory Structure
 ```
-lib/number_analyzer/
+lib/numana/
 ├── presenters/
 │   ├── base_statistical_presenter.rb      # Abstract base class
 │   ├── levene_test_presenter.rb          # ~60 lines
@@ -54,7 +54,7 @@ lib/number_analyzer/
 ### Base Class Design
 
 ```ruby
-# lib/number_analyzer/presenters/base_statistical_presenter.rb
+# lib/numana/presenters/base_statistical_presenter.rb
 module NumberAnalyzer
   module Presenters
     class BaseStatisticalPresenter
@@ -109,7 +109,7 @@ end
 ### Example Presenter Implementation
 
 ```ruby
-# lib/number_analyzer/presenters/levene_test_presenter.rb
+# lib/numana/presenters/levene_test_presenter.rb
 module NumberAnalyzer
   module Presenters
     class LeveneTestPresenter < BaseStatisticalPresenter

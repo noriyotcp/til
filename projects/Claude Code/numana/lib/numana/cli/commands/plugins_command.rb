@@ -96,7 +96,7 @@ class Numana::Commands::PluginsCommand < Numana::Commands::BaseCommand
 
   def show_help
     puts <<~HELP
-      Usage: bundle exec number_analyzer plugins [subcommand] [options]
+      Usage: bundle exec numana plugins [subcommand] [options]
 
       Subcommands:
         list [--show-conflicts]     List plugins and detect conflicts
@@ -108,10 +108,10 @@ class Numana::Commands::PluginsCommand < Numana::Commands::BaseCommand
         --force             Execute without confirmation
 
       Examples:
-        bundle exec number_analyzer plugins list
-        bundle exec number_analyzer plugins list --show-conflicts
-        bundle exec number_analyzer plugins resolve my_plugin --strategy=namespace
-        bundle exec number_analyzer plugins --conflicts
+        bundle exec numana plugins list
+        bundle exec numana plugins list --show-conflicts
+        bundle exec numana plugins resolve my_plugin --strategy=namespace
+        bundle exec numana plugins --conflicts
     HELP
   end
 
@@ -190,7 +190,7 @@ class Numana::Commands::PluginsCommand < Numana::Commands::BaseCommand
   def parse_resolve_arguments(args)
     if args.empty?
       puts 'Error: Please specify the plugin name to resolve.'
-      puts '使用例: bundle exec number_analyzer plugins resolve my_plugin --strategy=namespace'
+      puts '使用例: bundle exec numana plugins resolve my_plugin --strategy=namespace'
       exit 1
     end
 

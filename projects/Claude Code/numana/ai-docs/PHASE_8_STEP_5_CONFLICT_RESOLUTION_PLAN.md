@@ -39,7 +39,7 @@ NumberAnalyzer Plugin System の最終ステップとして、安全で持続可
 
 ### 🏗️ 既存Plugin Infrastructure
 ```
-lib/number_analyzer/
+lib/numana/
 ├── plugin_system.rb         # Core plugin management
 ├── plugin_interface.rb      # Plugin base classes & interfaces
 ├── plugin_loader.rb         # Plugin discovery & auto-loading (385行)
@@ -59,7 +59,7 @@ lib/number_analyzer/
 
 ### PluginPriority System (階層的優先度システム)
 
-**実装ファイル**: `lib/number_analyzer/plugin_priority.rb`
+**実装ファイル**: `lib/numana/plugin_priority.rb`
 
 ```ruby
 # 階層的優先度システム実装
@@ -69,7 +69,7 @@ class NumberAnalyzer
     DEFAULT_PRIORITIES = {
       development: 100,     # 開発・テスト用 - 最高優先度（何でも上書き）
       core_plugins: 90,     # 既存8モジュール - 高優先度（保護対象）
-      official_gems: 70,    # number_analyzer-* gems - 信頼できるgem
+      official_gems: 70,    # numana-* gems - 信頼できるgem
       third_party_gems: 50, # 外部gem - 一般的なサードパーティ
       local_plugins: 30     # プロジェクト内 - 最低優先度
     }.freeze
@@ -113,7 +113,7 @@ class NumberAnalyzer
     private
     
     def self.notify_priority_change(plugin_type, priority)
-      if ENV['NUMBER_ANALYZER_DEBUG']
+      if ENV['NUMANA_DEBUG']
         puts "Priority updated: #{plugin_type} = #{priority}"
       end
     end
@@ -123,7 +123,7 @@ end
 
 ### ConflictResolver System (重複解決エンジン)
 
-**実装ファイル**: `lib/number_analyzer/plugin_conflict_resolver.rb`
+**実装ファイル**: `lib/numana/plugin_conflict_resolver.rb`
 
 ```ruby
 class NumberAnalyzer
@@ -309,7 +309,7 @@ end
 
 ### PluginNamespace System (名前空間管理)
 
-**実装ファイル**: `lib/number_analyzer/plugin_namespace.rb`
+**実装ファイル**: `lib/numana/plugin_namespace.rb`
 
 ```ruby
 class NumberAnalyzer
@@ -317,7 +317,7 @@ class NumberAnalyzer
     NAMESPACE_PATTERNS = {
       gem: ->(plugin_name, source_gem) {
         case source_gem
-        when /^number_analyzer-(.+)/
+        when /^numana-(.+)/
           "na_#{$1.tr('-', '_')}_#{plugin_name}"
         else
           "ext_#{source_gem.tr('-', '_')}_#{plugin_name}"
@@ -397,7 +397,7 @@ end
 
 ### 3-Layer Configuration System (3層設定システム)
 
-**実装ファイル**: `lib/number_analyzer/plugin_configuration.rb`
+**実装ファイル**: `lib/numana/plugin_configuration.rb`
 
 ```ruby
 class NumberAnalyzer
@@ -446,10 +446,10 @@ class NumberAnalyzer
     end
     
     def development_mode?
-      @development_mode || ENV['NUMBER_ANALYZER_PLUGIN_MODE'] == 'development'
+      @development_mode || ENV['NUMANA_PLUGIN_MODE'] == 'development'
     end
     
-    def load_from_file(config_path = 'config/number_analyzer.yml')
+    def load_from_file(config_path = 'config/numana.yml')
       return unless File.exist?(config_path)
       
       config = YAML.load_file(config_path)
@@ -463,8 +463,8 @@ class NumberAnalyzer
     private
     
     def load_from_env
-      @conflict_strategy = ENV['NUMBER_ANALYZER_CONFLICT_STRATEGY']&.to_sym || @conflict_strategy
-      @development_mode = ENV['NUMBER_ANALYZER_PLUGIN_MODE'] == 'development'
+      @conflict_strategy = ENV['NUMANA_CONFLICT_STRATEGY']&.to_sym || @conflict_strategy
+      @development_mode = ENV['NUMANA_PLUGIN_MODE'] == 'development'
     end
     
     def load_priorities(priorities_config)
@@ -492,7 +492,7 @@ end
 
 ### 1.1 Core Priority Infrastructure
 
-**実装ファイル**: `lib/number_analyzer/plugin_priority.rb` (上記詳細設計参照)
+**実装ファイル**: `lib/numana/plugin_priority.rb` (上記詳細設計参照)
 
 ### 1.2 Testing Implementation (Week 1)
 
@@ -540,7 +540,7 @@ end
 
 ### 2.1 Conflict Resolution Engine
 
-**実装ファイル**: `lib/number_analyzer/plugin_conflict_resolver.rb`
+**実装ファイル**: `lib/numana/plugin_conflict_resolver.rb`
 
 ```ruby
 class NumberAnalyzer
@@ -638,7 +638,7 @@ end
 
 ### 3.1 Namespace Management System
 
-**実装ファイル**: `lib/number_analyzer/plugin_namespace.rb`
+**実装ファイル**: `lib/numana/plugin_namespace.rb`
 
 ```ruby
 class NumberAnalyzer
@@ -646,7 +646,7 @@ class NumberAnalyzer
     NAMESPACE_PATTERNS = {
       gem: ->(plugin_name, source_gem) {
         case source_gem
-        when /^number_analyzer-(.+)/
+        when /^numana-(.+)/
           "na_#{$1.tr('-', '_')}_#{plugin_name}"
         else
           "ext_#{source_gem.tr('-', '_')}_#{plugin_name}"
@@ -684,7 +684,7 @@ end
 
 ### 3.2 Enhanced Configuration System
 
-**ファイル強化**: `lib/number_analyzer/plugin_configuration.rb`
+**ファイル強化**: `lib/numana/plugin_configuration.rb`
 
 ```ruby
 # 3層設定システムの強化
@@ -723,7 +723,7 @@ end
 
 ### 3.3 CLI Integration
 
-**ファイル強化**: `lib/number_analyzer/cli.rb`
+**ファイル強化**: `lib/numana/cli.rb`
 
 ```ruby
 # CLI新機能追加
@@ -785,17 +785,17 @@ end
 
 ### CLI Integration with Conflict Resolution Commands
 
-**ファイル強化**: `lib/number_analyzer/cli.rb`
+**ファイル強化**: `lib/numana/cli.rb`
 
 ```bash
 # 重複確認・解決コマンド例
-bundle exec number_analyzer plugins --conflicts
+bundle exec numana plugins --conflicts
 # Plugin Conflicts Detected:
 #   basic_stats: core_plugins vs third_party_gems (my-stats-gem)
 #   mean: builtin vs plugin (advanced-stats-plugin)
 
 # 特定の重複解決
-bundle exec number_analyzer plugins resolve basic_stats --strategy=interactive
+bundle exec numana plugins resolve basic_stats --strategy=interactive
 # Plugin Conflict: basic_stats
 #   1) Override existing (core_plugins) with new (third_party_gems)
 #   2) Use namespace for new plugin
@@ -804,15 +804,15 @@ bundle exec number_analyzer plugins resolve basic_stats --strategy=interactive
 # Plugin registered as: ext_my_stats_gem_basic_stats
 
 # 開発モード（全上書き許可）
-bundle exec number_analyzer --dev-mode mean 1 2 3
+bundle exec numana --dev-mode mean 1 2 3
 # Warning: Development mode - all plugin overrides allowed
 
 # 名前空間付きコマンド実行
-bundle exec number_analyzer ml::linear-regression data.csv
-bundle exec number_analyzer ext_advanced_stats_mean 1 2 3
+bundle exec numana ml::linear-regression data.csv
+bundle exec numana ext_advanced_stats_mean 1 2 3
 
 # プラグイン一覧（重複も表示）
-bundle exec number_analyzer plugins list --show-conflicts
+bundle exec numana plugins list --show-conflicts
 # Available Plugins:
 #   basic_stats (core_plugins, priority: 90)
 #   ext_my_stats_gem_basic_stats (third_party_gems, priority: 50) [NAMESPACED]
@@ -822,7 +822,7 @@ bundle exec number_analyzer plugins list --show-conflicts
 
 ### Configuration File Template
 
-**新規ファイル**: `config/number_analyzer.yml.example`
+**新規ファイル**: `config/numana.yml.example`
 
 ```yaml
 # NumberAnalyzer Plugin Configuration
@@ -920,7 +920,7 @@ end
 
 ```ruby
 RSpec.describe NumberAnalyzer::PluginConflictResolver do
-  let(:core_plugin) { double(:plugin, name: 'basic_stats', type: :core_plugins, source_gem: 'number_analyzer') }
+  let(:core_plugin) { double(:plugin, name: 'basic_stats', type: :core_plugins, source_gem: 'numana') }
   let(:third_party_plugin) { double(:plugin, name: 'basic_stats', type: :third_party_gems, source_gem: 'my-stats-gem') }
   let(:development_plugin) { double(:plugin, name: 'basic_stats', type: :development, source_gem: 'local') }
   
@@ -960,8 +960,8 @@ end
 ```ruby
 RSpec.describe NumberAnalyzer::PluginNamespace do
   describe '.auto_namespace' do
-    it 'generates namespace for number_analyzer gems' do
-      result = described_class.auto_namespace('stats', 'number_analyzer-ml')
+    it 'generates namespace for numana gems' do
+      result = described_class.auto_namespace('stats', 'numana-ml')
       expect(result).to eq('na_ml_stats')
     end
     

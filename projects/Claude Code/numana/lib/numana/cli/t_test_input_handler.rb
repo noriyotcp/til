@@ -49,7 +49,7 @@ class Numana::CLI::TTestInputHandler
 
     raise ArgumentError, <<~ERROR
       Error: One-sample t-test requires population mean.
-      Example: number_analyzer t-test --one-sample --population-mean=100 data.csv
+      Example: numana t-test --one-sample --population-mean=100 data.csv
     ERROR
   end
 
@@ -60,8 +60,8 @@ class Numana::CLI::TTestInputHandler
 
     raise ArgumentError, <<~ERROR
       Error: Two datasets required.
-      Examples: number_analyzer t-test 1 2 3 -- 4 5 6
-               number_analyzer t-test group1.csv group2.csv
+      Examples: numana t-test 1 2 3 -- 4 5 6
+               numana t-test group1.csv group2.csv
     ERROR
   end
 
@@ -77,8 +77,8 @@ class Numana::CLI::TTestInputHandler
     else
       raise ArgumentError, <<~ERROR
         Error: Use "--" to separate two datasets or specify two files.
-        Examples: number_analyzer t-test 1 2 3 -- 4 5 6
-                 number_analyzer t-test group1.csv group2.csv
+        Examples: numana t-test 1 2 3 -- 4 5 6
+                 numana t-test group1.csv group2.csv
       ERROR
     end
   end

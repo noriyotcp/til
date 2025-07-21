@@ -80,7 +80,7 @@ class Numana::Commands::ChiSquareCommand < Numana::Commands::BaseCommand
     puts <<~HELP
       chi-square - #{self.class.description}
 
-      Usage: number_analyzer chi-square [OPTIONS] [DATA...]
+      Usage: numana chi-square [OPTIONS] [DATA...]
 
       Test Types:
         Independence:     Test association between categorical variables
@@ -98,18 +98,18 @@ class Numana::Commands::ChiSquareCommand < Numana::Commands::BaseCommand
 
       Examples:
         # Independence test with contingency table
-        number_analyzer chi-square --independence 30 20 -- 15 35
-        number_analyzer chi-square --independence --file contingency.csv
+        numana chi-square --independence 30 20 -- 15 35
+        numana chi-square --independence --file contingency.csv
 
         # Goodness-of-fit test with observed and expected
-        number_analyzer chi-square --goodness-of-fit observed.csv expected.csv
-        number_analyzer chi-square --goodness-of-fit 8 12 10 15 9 6 10 10 10 10 10 10
+        numana chi-square --goodness-of-fit observed.csv expected.csv
+        numana chi-square --goodness-of-fit 8 12 10 15 9 6 10 10 10 10 10 10
 
         # Test against uniform distribution
-        number_analyzer chi-square --uniform 8 12 10 15 9 6
+        numana chi-square --uniform 8 12 10 15 9 6
 
         # JSON output with precision
-        number_analyzer chi-square --format=json --precision=3 --independence 30 20 -- 15 35
+        numana chi-square --format=json --precision=3 --independence 30 20 -- 15 35
     HELP
   end
 
