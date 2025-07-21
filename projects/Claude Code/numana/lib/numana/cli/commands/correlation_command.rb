@@ -119,10 +119,10 @@ class Numana::Commands::CorrelationCommand < Numana::Commands::BaseCommand
                               format('%.4f', correlation)
                             end
 
-    puts "相関係数: #{formatted_correlation}"
-    puts "解釈: #{result[:interpretation]}"
-    puts "データセット1のサイズ: #{result[:dataset1_size]}"
-    puts "データセット2のサイズ: #{result[:dataset2_size]}"
+    puts "Correlation coefficient: #{formatted_correlation}"
+    puts "Interpretation: #{result[:interpretation]}"
+    puts "Dataset 1 size: #{result[:dataset1_size]}"
+    puts "Dataset 2 size: #{result[:dataset2_size]}"
   end
 
   def show_help

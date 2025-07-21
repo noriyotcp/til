@@ -182,11 +182,11 @@ module TimeSeriesStats
   # Determines trend direction from slope
   def determine_trend_direction(slope)
     if slope > 0.01
-      '上昇トレンド'
+      'Upward trend'
     elsif slope < -0.01
-      '下降トレンド'
+      'Downward trend'
     else
-      '横ばい'
+      'Flat trend'
     end
   end
 

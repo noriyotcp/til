@@ -473,7 +473,7 @@ puts outlier_data.outliers  # => [100.0]
 
 # Histogram display (automatically included in calculate_statistics output)
 scores.display_histogram
-# => 度数分布ヒストグラム:
+# => Frequency Distribution Histogram:
 # => 85: ■■■ (3)
 # => 88: ■ (1)
 # => 90: ■■ (2)
@@ -533,7 +533,7 @@ plugin_config:
 外れ値: なし
 偏差値: 34.33, 37.81, 41.3, 44.78, 48.26, 51.74, 55.22, 58.7, 62.19, 65.67
 
-度数分布ヒストグラム:
+Frequency Distribution Histogram:
 1: ■ (1)
 2: ■ (1)
 3: ■ (1)
@@ -556,7 +556,7 @@ bundle exec numana histogram 1 2 2 3 3 3 4 5
 
 Output includes:
 ```
-度数分布ヒストグラム:
+Frequency Distribution Histogram:
 1.0: ■ (1)
 2.0: ■■ (2)
 3.0: ■■■ (3)

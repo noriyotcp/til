@@ -94,9 +94,9 @@ describe Numana::Presenters::ModePresenter do
     let(:presenter) { described_class.new(mode_result, options) }
 
     describe '#format_verbose' do
-      it 'returns Japanese "no mode" message' do
+      it 'returns English "no mode" message' do
         output = presenter.format_verbose
-        expect(output).to eq('モードなし')
+        expect(output).to eq('No mode')
       end
     end
 
@@ -122,9 +122,9 @@ describe Numana::Presenters::ModePresenter do
     let(:presenter) { described_class.new(mode_result, options) }
 
     describe '#format_verbose' do
-      it 'returns Japanese "no mode" message' do
+      it 'returns English "no mode" message' do
         output = presenter.format_verbose
-        expect(output).to eq('モードなし')
+        expect(output).to eq('No mode')
       end
     end
 

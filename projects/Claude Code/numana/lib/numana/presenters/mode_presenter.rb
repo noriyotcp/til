@@ -15,7 +15,7 @@ require_relative 'base_statistical_presenter'
 # Supports all output modes with dataset metadata integration.
 class Numana::Presenters::ModePresenter < Numana::Presenters::BaseStatisticalPresenter
   def format_verbose
-    return 'モードなし' if mode_empty?
+    return 'No mode' if mode_empty?
 
     @result.join(', ')
   end

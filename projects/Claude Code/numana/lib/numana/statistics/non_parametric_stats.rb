@@ -62,9 +62,9 @@ module NonParametricStats
     # Determine significance and interpretation
     significant = p_value < 0.05
     interpretation = if significant
-                       'グループ間に統計的有意差が認められる（中央値が等しくない）'
+                       'Statistically significant difference found between groups (medians are not equal)'
                      else
-                       'グループ間に統計的有意差は認められない（中央値が等しいと考えられる）'
+                       'No statistically significant difference found between groups (medians are considered equal)'
                      end
 
     {
@@ -148,9 +148,9 @@ module NonParametricStats
     # Determine significance and interpretation
     significant = p_value < 0.05
     interpretation = if significant
-                       'グループ間に統計的有意差が認められる（分布に違いがある）'
+                       'Statistically significant difference found between groups (distributions differ)'
                      else
-                       'グループ間に統計的有意差は認められない（分布に違いはないと考えられる）'
+                       'No statistically significant difference found between groups (no difference in distributions)'
                      end
 
     {
@@ -230,9 +230,9 @@ module NonParametricStats
     # Determine significance and interpretation
     significant = p_value < 0.05
     interpretation = if significant
-                       '条件間に統計的有意差が認められる（反復測定での条件効果あり）'
+                       'Statistically significant difference found between conditions (condition effect in repeated measures)'
                      else
-                       '条件間に統計的有意差は認められない（反復測定での条件効果なし）'
+                       'No statistically significant difference found between conditions (no condition effect in repeated measures)'
                      end
 
     {
@@ -275,7 +275,7 @@ module NonParametricStats
         z_statistic: 0,
         p_value: 1.0,
         significant: false,
-        interpretation: '全ての差がゼロのため、有意差は認められない',
+        interpretation: 'No significant difference found as all differences are zero',
         n_pairs: n,
         n_effective: 0,
         n_zeros: n
@@ -322,9 +322,9 @@ module NonParametricStats
     # Determine significance and interpretation
     significant = p_value < 0.05
     interpretation = if significant
-                       '対応のあるデータ間に統計的有意差が認められる'
+                       'Statistically significant difference found between paired data'
                      else
-                       '対応のあるデータ間に統計的有意差は認められない'
+                       'No statistically significant difference found between paired data'
                      end
 
     {

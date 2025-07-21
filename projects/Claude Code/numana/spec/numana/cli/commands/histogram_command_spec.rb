@@ -11,17 +11,17 @@ RSpec.describe Numana::Commands::HistogramCommand do
     context 'コマンドライン引数での正常実行' do
       it 'displays histogram for simple dataset' do
         expect { command.execute(%w[1 2 2 3 3 3]) }
-          .to output(/度数分布/).to_stdout
+          .to output(/Frequency Distribution/).to_stdout
       end
 
       it 'handles single value dataset' do
         expect { command.execute(%w[42]) }
-          .to output(/度数分布/).to_stdout
+          .to output(/Frequency Distribution/).to_stdout
       end
 
       it 'handles floating point numbers' do
         expect { command.execute(['1.5', '2.7', '3.14']) }
-          .to output(/度数分布/).to_stdout
+          .to output(/Frequency Distribution/).to_stdout
       end
 
       it 'shows help with --help option' do
@@ -52,13 +52,13 @@ RSpec.describe Numana::Commands::HistogramCommand do
     context 'エラーハンドリング' do
       it 'handles invalid arguments gracefully' do
         expect { command.execute(%w[1 invalid 3]) }
-          .to output(/エラー/).to_stdout
+          .to output(/Error/).to_stdout
           .and raise_error(SystemExit)
       end
 
       it 'handles empty arguments gracefully' do
         expect { command.execute([]) }
-          .to output(/エラー/).to_stdout
+          .to output(/Error/).to_stdout
           .and raise_error(SystemExit)
       end
     end
@@ -77,7 +77,7 @@ RSpec.describe Numana::Commands::HistogramCommand do
 
       it 'reads data from file' do
         expect { command.execute([], file: test_file) }
-          .to output(/度数分布/).to_stdout
+          .to output(/Frequency Distribution/).to_stdout
       end
 
       it 'outputs JSON format from file data' do

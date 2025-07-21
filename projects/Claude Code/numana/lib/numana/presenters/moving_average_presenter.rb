@@ -19,7 +19,7 @@ require_relative 'base_statistical_presenter'
 #   puts presenter.format
 class Numana::Presenters::MovingAveragePresenter < Numana::Presenters::BaseStatisticalPresenter
   def format_verbose
-    return 'エラー: データが不十分です（ウィンドウサイズがデータ長を超えています）' if moving_average_invalid?
+    return 'Error: Insufficient data (window size exceeds data length)' if moving_average_invalid?
 
     moving_average = @result[:moving_average]
     window_size = @result[:window_size]
@@ -28,9 +28,9 @@ class Numana::Presenters::MovingAveragePresenter < Numana::Presenters::BaseStati
     # Format the values with precision
     formatted_values = moving_average.map { |value| format_value(value) }
 
-    result = "移動平均 (ウィンドウサイズ: #{window_size}):\n"
+    result = "Moving Average (Window Size: #{window_size}):\n"
     result += formatted_values.join(', ')
-    result += "\n元データサイズ: #{dataset_size}, 移動平均数: #{moving_average.length}"
+    result += "\nOriginal data size: #{dataset_size}, Moving average count: #{moving_average.length}"
     result
   end
 
@@ -43,7 +43,7 @@ class Numana::Presenters::MovingAveragePresenter < Numana::Presenters::BaseStati
   end
 
   def json_fields
-    return { moving_average: nil, error: 'データが不十分です' }.merge(dataset_metadata) if moving_average_invalid?
+    return { moving_average: nil, error: 'Insufficient data' }.merge(dataset_metadata) if moving_average_invalid?
 
     {
       moving_average: @result[:moving_average].map { |value| apply_precision(value, @precision) },

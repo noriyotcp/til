@@ -31,9 +31,9 @@ RSpec.describe Numana::Presenters::MovingAveragePresenter do
           presenter = described_class.new(valid_moving_average_data, default_options)
           result = presenter.format
 
-          expect(result).to include('移動平均 (ウィンドウサイズ: 3):')
+          expect(result).to include('Moving Average (Window Size: 3):')
           expect(result).to include('1.666667, 2.666667, 3.666667, 4.666667, 5.666667')
-          expect(result).to include('元データサイズ: 7, 移動平均数: 5')
+          expect(result).to include('Original data size: 7, Moving average count: 5')
         end
 
         it 'applies precision formatting when specified' do
@@ -48,7 +48,7 @@ RSpec.describe Numana::Presenters::MovingAveragePresenter do
           presenter = described_class.new(data_with_window_five, default_options)
           result = presenter.format
 
-          expect(result).to include('移動平均 (ウィンドウサイズ: 5):')
+          expect(result).to include('Moving Average (Window Size: 5):')
         end
       end
 
@@ -57,14 +57,14 @@ RSpec.describe Numana::Presenters::MovingAveragePresenter do
           presenter = described_class.new(nil_moving_average_data, default_options)
           result = presenter.format
 
-          expect(result).to eq('エラー: データが不十分です（ウィンドウサイズがデータ長を超えています）')
+          expect(result).to eq('Error: Insufficient data (window size exceeds data length)')
         end
 
         it 'returns error message for empty moving average' do
           presenter = described_class.new(empty_moving_average_data, default_options)
           result = presenter.format
 
-          expect(result).to eq('エラー: データが不十分です（ウィンドウサイズがデータ長を超えています）')
+          expect(result).to eq('Error: Insufficient data (window size exceeds data length)')
         end
       end
     end
@@ -112,7 +112,7 @@ RSpec.describe Numana::Presenters::MovingAveragePresenter do
           expect(parsed_result).to have_key('moving_average')
           expect(parsed_result['moving_average']).to be_nil
           expect(parsed_result).to have_key('error')
-          expect(parsed_result['error']).to eq('データが不十分です')
+          expect(parsed_result['error']).to eq('Insufficient data')
         end
 
         it 'returns JSON with error for empty moving average' do
@@ -172,9 +172,9 @@ RSpec.describe Numana::Presenters::MovingAveragePresenter do
       presenter = described_class.new(single_value_data, default_options)
       result = presenter.format
 
-      expect(result).to include('移動平均 (ウィンドウサイズ: 1):')
+      expect(result).to include('Moving Average (Window Size: 1):')
       expect(result).to include('5.0')
-      expect(result).to include('元データサイズ: 1, 移動平均数: 1')
+      expect(result).to include('Original data size: 1, Moving average count: 1')
     end
 
     it 'handles very small numbers with high precision' do
@@ -210,8 +210,8 @@ RSpec.describe Numana::Presenters::MovingAveragePresenter do
       presenter = described_class.new(large_data, default_options)
       result = presenter.format
 
-      expect(result).to include('移動平均 (ウィンドウサイズ: 10):')
-      expect(result).to include('元データサイズ: 109, 移動平均数: 100')
+      expect(result).to include('Moving Average (Window Size: 10):')
+      expect(result).to include('Original data size: 109, Moving average count: 100')
     end
   end
 
@@ -228,7 +228,7 @@ RSpec.describe Numana::Presenters::MovingAveragePresenter do
 
       # Test that format method delegates to format_verbose
       expect(presenter).to respond_to(:format)
-      expect(presenter.format).to include('移動平均')
+      expect(presenter.format).to include('Moving Average')
     end
 
     it 'properly handles dataset metadata' do

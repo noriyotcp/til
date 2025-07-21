@@ -190,7 +190,7 @@ class Numana::Commands::PluginsCommand < Numana::Commands::BaseCommand
   def parse_resolve_arguments(args)
     if args.empty?
       puts 'Error: Please specify the plugin name to resolve.'
-      puts '使用例: bundle exec numana plugins resolve my_plugin --strategy=namespace'
+      puts 'Usage example: bundle exec numana plugins resolve my_plugin --strategy=namespace'
       exit 1
     end
 

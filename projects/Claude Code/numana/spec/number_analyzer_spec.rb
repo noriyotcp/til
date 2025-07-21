@@ -64,7 +64,7 @@ RSpec.describe Numana do
         expect(result[:slope]).to be_within(0.001).of(1.0)
         expect(result[:intercept]).to be_within(0.001).of(1.0)
         expect(result[:r_squared]).to be_within(0.001).of(1.0)
-        expect(result[:direction]).to eq('上昇トレンド')
+        expect(result[:direction]).to eq('Upward trend')
       end
     end
 
@@ -75,7 +75,7 @@ RSpec.describe Numana do
         result = downward_analyzer.linear_trend
 
         expect(result[:slope]).to be_within(0.001).of(-1.0)
-        expect(result[:direction]).to eq('下降トレンド')
+        expect(result[:direction]).to eq('Downward trend')
       end
     end
 
@@ -86,7 +86,7 @@ RSpec.describe Numana do
         result = flat_analyzer.linear_trend
 
         expect(result[:slope]).to be_within(0.001).of(0.0)
-        expect(result[:direction]).to eq('横ばい')
+        expect(result[:direction]).to eq('Flat trend')
       end
     end
 
@@ -640,7 +640,7 @@ RSpec.describe Numana do
 
       it 'displays histogram with ASCII art bars' do
         expected_output = <<~OUTPUT
-          度数分布ヒストグラム:
+          Frequency Distribution Histogram:
           1: ■ (1)
           2: ■■ (2)
           3: ■■■ (3)
@@ -655,7 +655,7 @@ RSpec.describe Numana do
 
       it 'displays single bar histogram' do
         expected_output = <<~OUTPUT
-          度数分布ヒストグラム:
+          Frequency Distribution Histogram:
           42: ■ (1)
         OUTPUT
 
@@ -667,7 +667,7 @@ RSpec.describe Numana do
       let(:empty_analyzer) { Numana.new([]) }
 
       it 'displays empty histogram message' do
-        expected_output = "度数分布ヒストグラム:\n(データが空です)\n"
+        expected_output = "Frequency Distribution Histogram:\n(No data available)\n"
 
         expect { empty_analyzer.display_histogram }.to output(expected_output).to_stdout
       end
@@ -679,7 +679,7 @@ RSpec.describe Numana do
 
       it 'scales bars correctly based on frequency' do
         expected_output = <<~OUTPUT
-          度数分布ヒストグラム:
+          Frequency Distribution Histogram:
           1: ■ (1)
           2: ■■■■■ (5)
         OUTPUT
@@ -693,7 +693,7 @@ RSpec.describe Numana do
 
       it 'handles decimal values correctly' do
         expected_output = <<~OUTPUT
-          度数分布ヒストグラム:
+          Frequency Distribution Histogram:
           1.5: ■■ (2)
           2.0: ■ (1)
           2.5: ■ (1)

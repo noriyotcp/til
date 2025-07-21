@@ -47,12 +47,12 @@ class Numana
   def frequency_distribution = @numbers.tally
 
   def display_histogram
-    puts '度数分布ヒストグラム:'
+    puts 'Frequency Distribution Histogram:'
 
     freq_dist = frequency_distribution
 
     if freq_dist.empty?
-      puts '(データが空です)'
+      puts '(No data available)'
       return
     end
 
