@@ -1,5 +1,14 @@
 # frozen_string_literal: true
 
+# Define the top-level class and namespace first to prevent load order errors.
+# rubocop:disable Style/ClassAndModuleChildren
+class Numana
+  # Namespace for statistical calculation modules and classes
+  module Statistics
+  end
+end
+# rubocop:enable Style/ClassAndModuleChildren
+
 require_relative 'numana/statistics/basic_stats'
 require_relative 'numana/statistics/math_utils'
 require_relative 'numana/statistics/advanced_stats'
@@ -9,7 +18,7 @@ require_relative 'numana/statistics/hypothesis_testing'
 require_relative 'numana/statistics/anova_stats'
 require_relative 'numana/statistics/non_parametric_stats'
 
-# 数値配列の統計を計算するプログラム
+# Reopen the class to add its implementation
 class Numana
   include BasicStats
   include AdvancedStats
