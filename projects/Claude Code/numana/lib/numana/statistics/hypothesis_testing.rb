@@ -128,51 +128,16 @@ module HypothesisTesting
 
   # Performs chi-square test for independence
   def chi_square_independence_test(contingency_table)
-    return nil unless contingency_table.is_a?(Array) && contingency_table.first.is_a?(Array)
+    observed = validate_contingency_table(contingency_table)
+    return nil unless observed
 
-    observed = contingency_table
-    rows = observed.length
-    cols = observed.first.length
+    totals = calculate_contingency_totals(observed)
+    return nil if totals[:grand_total].zero?
 
-    # Calculate row and column totals
-    row_totals = observed.map(&:sum)
-    col_totals = (0...cols).map { |j| observed.sum { |row| row[j] } }
-    grand_total = row_totals.sum
+    expected = calculate_expected_frequencies_for_independence(totals)
+    results = calculate_independence_test_results(observed, expected, totals)
 
-    return nil if grand_total.zero?
-
-    # Calculate expected frequencies
-    expected = Array.new(rows) do |i|
-      Array.new(cols) do |j|
-        (row_totals[i] * col_totals[j]).to_f / grand_total
-      end
-    end
-
-    # Validate expected frequency conditions
-    expected_frequencies_valid = validate_expected_frequencies?(expected.flatten)
-    warning = expected_frequencies_valid ? nil : 'Warning: Some cells have expected frequencies below 5. Results may be unreliable.'
-
-    # Calculate chi-square statistic
-    chi_square = calculate_chi_square_statistic(observed.flatten, expected.flatten)
-    degrees_of_freedom = (rows - 1) * (cols - 1)
-    p_value = calculate_chi_square_p_value(chi_square, degrees_of_freedom)
-
-    # Calculate Cramér's V (effect size)
-    min_dimension = [rows - 1, cols - 1].min
-    cramers_v = min_dimension.positive? ? Math.sqrt(chi_square / (grand_total * min_dimension)) : 0.0
-
-    {
-      test_type: 'independence',
-      chi_square_statistic: chi_square.round(10),
-      degrees_of_freedom: degrees_of_freedom,
-      p_value: p_value.round(10),
-      significant: p_value < 0.05,
-      cramers_v: cramers_v.round(10),
-      observed_frequencies: observed,
-      expected_frequencies: expected.map { |row| row.map { |val| val.round(10) } },
-      expected_frequencies_valid: expected_frequencies_valid,
-      warning: warning
-    }
+    format_independence_test_result(observed, expected, results)
   end
 
   # Performs chi-square goodness-of-fit test
@@ -238,23 +203,8 @@ module HypothesisTesting
     standard_error = Math.sqrt((stats1[:variance] / stats1[:n]) + (stats2[:variance] / stats2[:n]))
     return nil if standard_error.zero?
 
-    t_statistic = (stats1[:mean] - stats2[:mean]) / standard_error
-    df = welch_degrees_of_freedom(stats1[:variance], stats1[:n], stats2[:variance], stats2[:n])
-    p_value = calculate_two_tailed_p_value(t_statistic, df)
-
-    {
-      test_type: 'independent',
-      t_statistic: t_statistic.round(10),
-      degrees_of_freedom: df.round(10),
-      p_value: p_value.round(10),
-      group1_mean: stats1[:mean].round(10),
-      group2_mean: stats2[:mean].round(10),
-      mean_difference: (stats1[:mean] - stats2[:mean]).round(10),
-      standard_error: standard_error.round(10),
-      n1: stats1[:n],
-      n2: stats2[:n],
-      significant: p_value < 0.05
-    }
+    test_stats = calculate_welch_test_statistics(stats1, stats2, standard_error)
+    format_welch_test_result(stats1, stats2, test_stats, standard_error)
   end
 
   def paired_test_result(differences)
@@ -276,6 +226,30 @@ module HypothesisTesting
       p_value: p_value.round(10),
       mean_difference: mean_diff.round(10),
       n: n,
+      significant: p_value < 0.05
+    }
+  end
+
+  def calculate_welch_test_statistics(stats1, stats2, standard_error)
+    t_statistic = (stats1[:mean] - stats2[:mean]) / standard_error
+    df = welch_degrees_of_freedom(stats1[:variance], stats1[:n], stats2[:variance], stats2[:n])
+    p_value = calculate_two_tailed_p_value(t_statistic, df)
+    { t_statistic: t_statistic, df: df, p_value: p_value }
+  end
+
+  def format_welch_test_result(stats1, stats2, test_stats, standard_error)
+    p_value = test_stats[:p_value]
+    {
+      test_type: 'independent',
+      t_statistic: test_stats[:t_statistic].round(10),
+      degrees_of_freedom: test_stats[:df].round(10),
+      p_value: p_value.round(10),
+      group1_mean: stats1[:mean].round(10),
+      group2_mean: stats2[:mean].round(10),
+      mean_difference: (stats1[:mean] - stats2[:mean]).round(10),
+      standard_error: standard_error.round(10),
+      n1: stats1[:n],
+      n2: stats2[:n],
       significant: p_value < 0.05
     }
   end
@@ -365,6 +339,10 @@ module HypothesisTesting
     # Use symmetry for probability > 0.5
     return -inverse_normal_cdf(1 - probability) if probability > 0.5
 
+    approximate_inverse_normal_cdf(probability)
+  end
+
+  def approximate_inverse_normal_cdf(probability)
     # Approximation for 0 < probability < 0.5
     t = Math.sqrt(-2 * Math.log(probability))
 
@@ -383,6 +361,56 @@ module HypothesisTesting
   end
 
   # Helper methods for chi-square tests
+  def validate_contingency_table(table)
+    return nil unless table.is_a?(Array) && table.first.is_a?(Array) && !table.empty?
+
+    table
+  end
+
+  def calculate_contingency_totals(observed)
+    rows = observed.length
+    cols = observed.first.length
+    row_totals = observed.map(&:sum)
+    col_totals = (0...cols).map { |j| observed.sum { |row| row[j] } }
+    grand_total = row_totals.sum
+    { rows: rows, cols: cols, row_totals: row_totals, col_totals: col_totals, grand_total: grand_total }
+  end
+
+  def calculate_expected_frequencies_for_independence(totals)
+    Array.new(totals[:rows]) do |i|
+      Array.new(totals[:cols]) do |j|
+        (totals[:row_totals][i] * totals[:col_totals][j]).to_f / totals[:grand_total]
+      end
+    end
+  end
+
+  def calculate_independence_test_results(observed, expected, totals)
+    chi_square = calculate_chi_square_statistic(observed.flatten, expected.flatten)
+    df = (totals[:rows] - 1) * (totals[:cols] - 1)
+    p_value = calculate_chi_square_p_value(chi_square, df)
+    min_dim = [totals[:rows] - 1, totals[:cols] - 1].min
+    cramers_v = min_dim.positive? ? Math.sqrt(chi_square / (totals[:grand_total] * min_dim)) : 0.0
+    { chi_square: chi_square, df: df, p_value: p_value, cramers_v: cramers_v }
+  end
+
+  def format_independence_test_result(observed, expected, results)
+    expected_valid = validate_expected_frequencies?(expected.flatten)
+    warning = expected_valid ? nil : 'Warning: Some cells have expected frequencies below 5. Results may be unreliable.'
+
+    {
+      test_type: 'independence',
+      chi_square_statistic: results[:chi_square].round(10),
+      degrees_of_freedom: results[:df],
+      p_value: results[:p_value].round(10),
+      significant: results[:p_value] < 0.05,
+      cramers_v: results[:cramers_v].round(10),
+      observed_frequencies: observed,
+      expected_frequencies: expected.map { |row| row.map { |val| val.round(10) } },
+      expected_frequencies_valid: expected_valid,
+      warning: warning
+    }
+  end
+
   def calculate_chi_square_statistic(observed, expected)
     observed.zip(expected).sum do |obs, exp|
       next 0.0 if exp.zero?
@@ -417,31 +445,18 @@ module HypothesisTesting
 
   def calculate_chi_square_p_value_table(chi_square, degrees_freedom)
     # Pre-calculated critical values for common significance levels
-    # Using interpolation for p-value estimation
     critical_values = chi_square_critical_values[degrees_freedom] || {}
-
     return 1.0 if chi_square <= 0
 
-    # For a more accurate estimation, find where chi_square falls
-    # Critical values are stored as alpha => critical_value
-    # We need to find which alpha level corresponds to our chi_square value
+    # p-value thresholds, from highest p-value to lowest
+    p_value_levels = [0.99, 0.95, 0.90, 0.80, 0.70, 0.60, 0.50, 0.40, 0.30, 0.20, 0.10, 0.05, 0.01]
 
-    # Simple p-value estimation based on critical value comparison
-    return 0.99 if chi_square <= (critical_values[0.99] || 0)
-    return 0.95 if chi_square <= (critical_values[0.95] || 0)
-    return 0.90 if chi_square <= (critical_values[0.90] || 0)
-    return 0.80 if chi_square <= (critical_values[0.80] || 0)
-    return 0.70 if chi_square <= (critical_values[0.70] || 0)
-    return 0.60 if chi_square <= (critical_values[0.60] || 0)
-    return 0.50 if chi_square <= (critical_values[0.50] || 0)
-    return 0.40 if chi_square <= (critical_values[0.40] || 0)
-    return 0.30 if chi_square <= (critical_values[0.30] || 0)
-    return 0.20 if chi_square <= (critical_values[0.20] || 0)
-    return 0.10 if chi_square <= (critical_values[0.10] || 0)
-    return 0.05 if chi_square <= (critical_values[0.05] || 0)
-    return 0.01 if chi_square <= (critical_values[0.01] || 0)
+    p_value_levels.each do |p_level|
+      critical_value = critical_values[p_level]
+      return p_level if critical_value && chi_square <= critical_value
+    end
 
-    0.001
+    0.001 # Default for very small p-values (highly significant)
   end
 
   def calculate_chi_square_p_value_normal_approximation(chi_square, degrees_of_freedom)

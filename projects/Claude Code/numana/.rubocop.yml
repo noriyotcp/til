@@ -17,9 +17,9 @@ Metrics/MethodLength:
   Exclude:
     
     
-    - 'lib/numana/statistics/anova_stats.rb'
     
-    - 'lib/numana/statistics/hypothesis_testing.rb'
+    
+    
     - 'lib/numana/statistics/non_parametric_stats.rb'
     - 'lib/numana/statistics/one_way_anova.rb'
     - 'lib/numana/statistics/two_way_anova.rb'
@@ -32,9 +32,9 @@ Metrics/CyclomaticComplexity:
   Exclude:
     
     
-    - 'lib/numana/statistics/anova_stats.rb'
     
-    - 'lib/numana/statistics/hypothesis_testing.rb'
+    
+    
     - 'lib/numana/statistics/non_parametric_stats.rb'
     - 'lib/numana/statistics/one_way_anova.rb'
     - 'lib/numana/statistics/two_way_anova.rb'
@@ -49,9 +49,9 @@ Metrics/PerceivedComplexity:
   Exclude:
     
     
-    - 'lib/numana/statistics/anova_stats.rb'
     
-    - 'lib/numana/statistics/hypothesis_testing.rb'
+    
+    
     - 'lib/numana/statistics/non_parametric_stats.rb'
     - 'lib/numana/statistics/one_way_anova.rb'
     - 'lib/numana/statistics/two_way_anova.rb'
@@ -85,9 +85,9 @@ Metrics/ModuleLength:
   Exclude:
     
     
-    - 'lib/numana/statistics/anova_stats.rb'
     
-    - 'lib/numana/statistics/hypothesis_testing.rb'
+    
+    
     - 'lib/numana/statistics/non_parametric_stats.rb'
     - 'lib/numana/statistics/one_way_anova.rb'
     - 'lib/numana/statistics/two_way_anova.rb'
@@ -100,9 +100,9 @@ Metrics/AbcSize:
     - 'lib/numana/presenters/two_way_anova_presenter.rb'
     
     
-    - 'lib/numana/statistics/anova_stats.rb'
     
-    - 'lib/numana/statistics/hypothesis_testing.rb'
+    
+    
     - 'lib/numana/statistics/non_parametric_stats.rb'
     - 'lib/numana/statistics/one_way_anova.rb'
     - 'lib/numana/statistics/two_way_anova.rb'
@@ -132,9 +132,9 @@ Naming/MethodParameterName:
   Exclude:
     
     
-    - 'lib/numana/statistics/anova_stats.rb'
     
-    - 'lib/numana/statistics/hypothesis_testing.rb'
+    
+    
     - 'lib/numana/statistics/non_parametric_stats.rb'
     - 'lib/numana/statistics/one_way_anova.rb'
     - 'lib/numana/statistics/two_way_anova.rb'
