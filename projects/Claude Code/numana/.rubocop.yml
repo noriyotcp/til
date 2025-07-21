@@ -15,102 +15,42 @@ Metrics/BlockLength:
 Metrics/MethodLength:
   Max: 35  # Increased for plugin system complexity
   Exclude:
-    
-    
-    
-    
-    
-    
-    
-    
-    
     - 'lib/numana/plugin_configuration/**/*'
     - 'plugins/**/*'
 
 Metrics/CyclomaticComplexity:
   Max: 10  # Increased for plugin system complexity
   Exclude:
-    
-    
-    
-    
-    
-    
-    
-    
     - 'lib/numana/plugin_configuration/**/*'
-    
-    
-    
     - 'plugins/**/*'
 
 Metrics/PerceivedComplexity:
   Max: 12  # Increased for plugin system complexity
   Exclude:
-    
-    
-    
-    
-    
-    
-    
-    
     - 'lib/numana/plugin_configuration/**/*'
-    
-    
-    
     - 'plugins/**/*'
 
 Metrics/ClassLength:
   Max: 150  # Increased for plugin system complexity
   Exclude:
-    
-    
-    
-    
-    
-    
     - 'lib/numana/plugin_configuration/**/*'
-    
     - 'lib/numana/plugin_sandbox/capability_manager.rb'
     - 'lib/numana/plugin_sandbox/method_interceptor.rb'
     - 'lib/numana/plugin_loader.rb'
     - 'lib/numana/plugin_template.rb'
-    
     - 'lib/numana/plugin_error_handler.rb'
     - 'plugins/**/*'
     - 'spec/**/*'
 
 Metrics/ModuleLength:
   Exclude:
-    
-    
-    
-    
-    
-    
-    
-    
     - 'spec/**/*'
 
 Metrics/AbcSize:
   Max: 25  # Increased for plugin system complexity
   Exclude:
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
     - 'lib/numana/plugin_configuration/**/*'
-    
-    
     - 'lib/numana/plugin_error_handler.rb'
-    
     - 'plugins/**/*'
     - 'spec/numana/statistics/**/*'
 
@@ -130,14 +70,6 @@ Metrics/ParameterLists:
 
 Naming/MethodParameterName:
   Exclude:
-    
-    
-    
-    
-    
-    
-    
-    
     - 'spec/numana/statistics/**/*'
     - 'plugins/**/*'
 
@@ -150,7 +82,3 @@ Naming/PredicateMethod:
 
 Style/ClassAndModuleChildren:
   EnforcedStyle: compact
-
-Lint/EmptyClass:
-  Exclude:
-    
