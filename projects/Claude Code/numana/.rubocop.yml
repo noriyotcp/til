@@ -21,7 +21,7 @@ Metrics/MethodLength:
     
     
     
-    - 'lib/numana/statistics/one_way_anova.rb'
+    
     - 'lib/numana/statistics/two_way_anova.rb'
     - 'lib/numana/plugin_configuration.rb'
     - 'lib/numana/plugin_configuration/**/*'
@@ -36,7 +36,7 @@ Metrics/CyclomaticComplexity:
     
     
     
-    - 'lib/numana/statistics/one_way_anova.rb'
+    
     - 'lib/numana/statistics/two_way_anova.rb'
     - 'lib/numana/plugin_configuration/**/*'
     - 'lib/numana/dependency_resolver.rb'
@@ -53,7 +53,7 @@ Metrics/PerceivedComplexity:
     
     
     
-    - 'lib/numana/statistics/one_way_anova.rb'
+    
     - 'lib/numana/statistics/two_way_anova.rb'
     - 'lib/numana/plugin_configuration/**/*'
     - 'lib/numana/dependency_resolver.rb'
@@ -89,7 +89,7 @@ Metrics/ModuleLength:
     
     
     
-    - 'lib/numana/statistics/one_way_anova.rb'
+    
     - 'lib/numana/statistics/two_way_anova.rb'
     - 'spec/**/*'
 
@@ -104,7 +104,7 @@ Metrics/AbcSize:
     
     
     
-    - 'lib/numana/statistics/one_way_anova.rb'
+    
     - 'lib/numana/statistics/two_way_anova.rb'
     - 'lib/numana/plugin_configuration/**/*'
     - 'lib/numana/dependency_resolver.rb'
@@ -136,7 +136,7 @@ Naming/MethodParameterName:
     
     
     
-    - 'lib/numana/statistics/one_way_anova.rb'
+    
     - 'lib/numana/statistics/two_way_anova.rb'
     - 'spec/numana/statistics/**/*'
     - 'plugins/**/*'
