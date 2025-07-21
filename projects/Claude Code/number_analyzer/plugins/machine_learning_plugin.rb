@@ -293,11 +293,15 @@ module MachineLearningPlugin
             end
 
         # Calculate average distance to nearest other cluster
-        other_clusters_min_dist = clusters.each_with_index.reject do |_, idx|
+        other_clusters = clusters.each_with_index.reject do |_, idx|
           idx == cluster_idx
-        end.map do |other_cluster, _|
+        end
+
+        other_cluster_distances = other_clusters.map do |other_cluster, _|
           other_cluster.map { |p| (point - p).abs }.sum / other_cluster.length
-        end.min || 0
+        end
+
+        other_clusters_min_dist = other_cluster_distances.min || 0
 
         b = other_clusters_min_dist
         silhouette = b.zero? ? 0 : (b - a) / [a, b].max

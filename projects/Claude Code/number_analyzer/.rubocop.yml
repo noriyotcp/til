@@ -11,38 +11,40 @@ AllCops:
 Metrics/BlockLength:
   Exclude:
     - 'spec/**/*'
-    - 'lib/number_analyzer/cli.rb'  # Complex argument parsing for ANOVA and chi-square commands requires longer blocks
+    - 'lib/numana/cli.rb'  # Complex argument parsing for ANOVA and chi-square commands requires longer blocks
 
 Metrics/MethodLength:
   Max: 35  # Increased for plugin system complexity
   Exclude:
-    - 'lib/number_analyzer.rb'  # Chi-square and other statistical methods require comprehensive calculations
-    - 'lib/number_analyzer/cli.rb'  # CLI methods for chi-square parsing and subcommand handling
-    - 'lib/number_analyzer/statistics/**/*'  # Statistical modules contain complex mathematical algorithms
-    - 'lib/number_analyzer/plugin_configuration.rb'  # Plugin configuration methods require complex setup
-    - 'lib/number_analyzer/plugin_configuration/**/*'  # Plugin configuration modules
+    - 'lib/numana.rb'  # Chi-square and other statistical methods require comprehensive calculations
+    - 'lib/numana/cli.rb'  # CLI methods for chi-square parsing and subcommand handling
+    - 'lib/numana/statistics/**/*'  # Statistical modules contain complex mathematical algorithms
+    - 'lib/numana/plugin_configuration.rb'  # Plugin configuration methods require complex setup
+    - 'lib/numana/plugin_configuration/**/*'  # Plugin configuration modules
     - 'plugins/**/*'  # Plugin implementations with complex visualization algorithms
 
 Metrics/CyclomaticComplexity:
   Max: 10  # Increased for plugin system complexity
   Exclude:
-    - 'lib/number_analyzer.rb'  # Chi-square statistical methods have inherent mathematical complexity
-    - 'lib/number_analyzer/cli.rb'  # CLI argument parsing and chi-square special handling
-    - 'lib/number_analyzer/statistics/**/*'  # Statistical algorithms require complex conditional logic
-    - 'lib/number_analyzer/plugin_configuration/**/*'  # Plugin configuration validation requires complex logic
-    - 'lib/number_analyzer/dependency_resolver.rb'  # Dependency resolution requires complex graph algorithms
-    - 'lib/number_analyzer/plugin_conflict_resolver.rb'  # Conflict resolution requires complex decision trees
+    - 'lib/numana.rb'  # Chi-square statistical methods have inherent mathematical complexity
+    - 'lib/numana/cli.rb'  # CLI argument parsing and chi-square special handling
+    - 'lib/numana/statistics/**/*'  # Statistical algorithms require complex conditional logic
+    - 'lib/numana/plugin_configuration/**/*'  # Plugin configuration validation requires complex logic
+    - 'lib/numana/dependency_resolver.rb'  # Dependency resolution requires complex graph algorithms
+    - 'lib/numana/plugin_conflict_resolver.rb'  # Conflict resolution requires complex decision trees
+    - 'lib/numana/plugin_validator.rb'  # Plugin validation requires comprehensive metadata and security checks
     - 'plugins/**/*'  # Plugin implementations with complex algorithmic logic
 
 Metrics/PerceivedComplexity:
   Max: 12  # Increased for plugin system complexity
   Exclude:
-    - 'lib/number_analyzer.rb'  # Chi-square and statistical calculation methods require complex logic
-    - 'lib/number_analyzer/cli.rb'  # CLI methods for chi-square parsing and option handling
-    - 'lib/number_analyzer/statistics/**/*'  # Statistical algorithms require complex mathematical logic
-    - 'lib/number_analyzer/plugin_configuration/**/*'  # Plugin configuration validation requires complex logic
-    - 'lib/number_analyzer/dependency_resolver.rb'  # Dependency resolution requires complex graph algorithms
-    - 'lib/number_analyzer/plugin_conflict_resolver.rb'  # Conflict resolution requires complex decision trees
+    - 'lib/numana.rb'  # Chi-square and statistical calculation methods require complex logic
+    - 'lib/numana/cli.rb'  # CLI methods for chi-square parsing and option handling
+    - 'lib/numana/statistics/**/*'  # Statistical algorithms require complex mathematical logic
+    - 'lib/numana/plugin_configuration/**/*'  # Plugin configuration validation requires complex logic
+    - 'lib/numana/dependency_resolver.rb'  # Dependency resolution requires complex graph algorithms
+    - 'lib/numana/plugin_conflict_resolver.rb'  # Conflict resolution requires complex decision trees
+    - 'lib/numana/plugin_validator.rb'  # Plugin validation requires comprehensive metadata and security checks
     - 'plugins/**/*'  # Plugin implementations with complex algorithmic logic
 
 Metrics/ClassLength:
@@ -69,27 +71,29 @@ Metrics/ClassLength:
 
 Metrics/ModuleLength:
   Exclude:
-    - 'lib/number_analyzer/statistics/**/*'  # Statistical modules contain comprehensive mathematical implementations
+    - 'lib/numana/statistics/**/*'  # Statistical modules contain comprehensive mathematical implementations
     - 'spec/**/*'  # Test modules require comprehensive test coverage and naturally become longer
 
 Metrics/AbcSize:
   Max: 25  # Increased for plugin system complexity
   Exclude:
-    - 'lib/number_analyzer.rb'  # Statistical calculation methods have inherent complexity
-    - 'lib/number_analyzer/statistics_presenter.rb'  # Display methods need to format 11+ statistical values
-    - 'lib/number_analyzer/cli.rb'  # CLI argument parsing has inherent complexity
-    - 'lib/number_analyzer/presenters/two_way_anova_presenter.rb'  # Two-way ANOVA presentation requires complex output formatting
-    - 'lib/number_analyzer/statistics/**/*'  # Statistical modules have high assignment/branch/condition complexity
-    - 'lib/number_analyzer/plugin_configuration/**/*'  # Plugin configuration validation has high ABC complexity
-    - 'lib/number_analyzer/dependency_resolver.rb'  # Dependency resolution has high assignment/branch complexity
-    - 'lib/number_analyzer/plugin_conflict_resolver.rb'  # Conflict resolution has complex branching logic
+    - 'lib/numana.rb'  # Statistical calculation methods have inherent complexity
+    - 'lib/numana/statistics_presenter.rb'  # Display methods need to format 11+ statistical values
+    - 'lib/numana/cli.rb'  # CLI argument parsing has inherent complexity
+    - 'lib/numana/presenters/two_way_anova_presenter.rb'  # Two-way ANOVA presentation requires complex output formatting
+    - 'lib/numana/statistics/**/*'  # Statistical modules have high assignment/branch/condition complexity
+    - 'lib/numana/plugin_configuration/**/*'  # Plugin configuration validation has high ABC complexity
+    - 'lib/numana/dependency_resolver.rb'  # Dependency resolution has high assignment/branch complexity
+    - 'lib/numana/plugin_conflict_resolver.rb'  # Conflict resolution has complex branching logic
+    - 'lib/numana/plugin_error_handler.rb'  # Error handling report generation has high complexity
+    - 'lib/numana/plugin_validator.rb'  # Plugin validation has complex security and metadata checks
     - 'plugins/**/*'  # Plugin implementations with complex calculation and visualization logic
-    - 'spec/number_analyzer/statistics/**/*'  # Test helper methods for statistical calculations
+    - 'spec/numana/statistics/**/*'  # Test helper methods for statistical calculations
 
 Layout/LineLength:
   Max: 150
   Exclude:
-    - 'number_analyzer.gemspec'  # Gemspec descriptions often exceed line length limits
+    - 'numana.gemspec'  # Gemspec descriptions often exceed line length limits
     - 'spec/**/*'               # Test files often have long expectation strings
 
 Style/EndlessMethod:
@@ -102,9 +106,9 @@ Metrics/ParameterLists:
 
 Naming/MethodParameterName:
   Exclude:
-    - 'lib/number_analyzer.rb'  # Mathematical variables (z, t, f) follow standard statistical notation
-    - 'lib/number_analyzer/statistics/**/*'  # Statistical modules use standard mathematical parameter names (z, t, f, p)
-    - 'spec/number_analyzer/statistics/**/*'  # Test helper methods use mathematical notation
+    - 'lib/numana.rb'  # Mathematical variables (z, t, f) follow standard statistical notation
+    - 'lib/numana/statistics/**/*'  # Statistical modules use standard mathematical parameter names (z, t, f, p)
+    - 'spec/numana/statistics/**/*'  # Test helper methods use mathematical notation
     - 'plugins/**/*'  # Plugin modules use standard mathematical parameter names (k, x, y, z, p, t)
 
 Naming/PredicateMethod:
