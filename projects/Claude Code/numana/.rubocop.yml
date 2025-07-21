@@ -64,7 +64,7 @@ Metrics/PerceivedComplexity:
 Metrics/ClassLength:
   Max: 150  # Increased for plugin system complexity
   Exclude:
-    - 'lib/numana/file_reader.rb'
+    
     - 'lib/numana/cli/commands/plugins_command.rb'
     - 'lib/numana/statistics_presenter.rb'
     - 'lib/numana/presenters/two_way_anova_presenter.rb'
