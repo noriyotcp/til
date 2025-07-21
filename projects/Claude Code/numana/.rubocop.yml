@@ -15,100 +15,142 @@ Metrics/BlockLength:
 Metrics/MethodLength:
   Max: 35  # Increased for plugin system complexity
   Exclude:
-    - 'lib/numana/statistics/**/*'  # Statistical modules contain complex mathematical algorithms
-    - 'lib/numana/plugin_configuration.rb'  # Plugin configuration methods require complex setup
-    - 'lib/numana/plugin_configuration/**/*'  # Plugin configuration modules
-    - 'plugins/**/*'  # Plugin implementations with complex visualization algorithms
+    - 'lib/numana/statistics/advanced_stats.rb'
+    - 'lib/numana/statistics/anova_helpers.rb'
+    - 'lib/numana/statistics/anova_stats.rb'
+    
+    - 'lib/numana/statistics/hypothesis_testing.rb'
+    - 'lib/numana/statistics/non_parametric_stats.rb'
+    - 'lib/numana/statistics/one_way_anova.rb'
+    - 'lib/numana/statistics/two_way_anova.rb'
+    - 'lib/numana/plugin_configuration.rb'
+    - 'lib/numana/plugin_configuration/**/*'
+    - 'plugins/**/*'
 
 Metrics/CyclomaticComplexity:
   Max: 10  # Increased for plugin system complexity
   Exclude:
-    - 'lib/numana/statistics/**/*'  # Statistical algorithms require complex conditional logic
-    - 'lib/numana/plugin_configuration/**/*'  # Plugin configuration validation requires complex logic
-    - 'lib/numana/dependency_resolver.rb'  # Dependency resolution requires complex graph algorithms
-    - 'lib/numana/plugin_conflict_resolver.rb'  # Conflict resolution requires complex decision trees
-    - 'lib/numana/plugin_validator.rb'  # Plugin validation requires comprehensive metadata and security checks
-    - 'plugins/**/*'  # Plugin implementations with complex algorithmic logic
+    - 'lib/numana/statistics/advanced_stats.rb'
+    - 'lib/numana/statistics/anova_helpers.rb'
+    - 'lib/numana/statistics/anova_stats.rb'
+    
+    - 'lib/numana/statistics/hypothesis_testing.rb'
+    - 'lib/numana/statistics/non_parametric_stats.rb'
+    - 'lib/numana/statistics/one_way_anova.rb'
+    - 'lib/numana/statistics/two_way_anova.rb'
+    - 'lib/numana/plugin_configuration/**/*'
+    - 'lib/numana/dependency_resolver.rb'
+    - 'lib/numana/plugin_conflict_resolver.rb'
+    - 'lib/numana/plugin_validator.rb'
+    - 'plugins/**/*'
 
 Metrics/PerceivedComplexity:
   Max: 12  # Increased for plugin system complexity
   Exclude:
-    - 'lib/numana/statistics/**/*'  # Statistical algorithms require complex mathematical logic
-    - 'lib/numana/plugin_configuration/**/*'  # Plugin configuration validation requires complex logic
-    - 'lib/numana/dependency_resolver.rb'  # Dependency resolution requires complex graph algorithms
-    - 'lib/numana/plugin_conflict_resolver.rb'  # Conflict resolution requires complex decision trees
-    - 'lib/numana/plugin_validator.rb'  # Plugin validation requires comprehensive metadata and security checks
-    - 'plugins/**/*'  # Plugin implementations with complex algorithmic logic
+    - 'lib/numana/statistics/advanced_stats.rb'
+    - 'lib/numana/statistics/anova_helpers.rb'
+    - 'lib/numana/statistics/anova_stats.rb'
+    
+    - 'lib/numana/statistics/hypothesis_testing.rb'
+    - 'lib/numana/statistics/non_parametric_stats.rb'
+    - 'lib/numana/statistics/one_way_anova.rb'
+    - 'lib/numana/statistics/two_way_anova.rb'
+    - 'lib/numana/plugin_configuration/**/*'
+    - 'lib/numana/dependency_resolver.rb'
+    - 'lib/numana/plugin_conflict_resolver.rb'
+    - 'lib/numana/plugin_validator.rb'
+    - 'plugins/**/*'
 
 Metrics/ClassLength:
   Max: 150  # Increased for plugin system complexity
   Exclude:
-    - 'lib/numana/file_reader.rb'  # Multi-format file reader (CSV/JSON/TXT) requires comprehensive methods
-    - 'lib/numana/cli/commands/plugins_command.rb'  # Complex plugin management CLI with comprehensive subcommands
-    - 'lib/numana/statistics_presenter.rb'  # Statistical test formatting (Levene, Bartlett, etc.) requires multiple display methods
-    - 'lib/numana/presenters/two_way_anova_presenter.rb'  # Complex factorial ANOVA presentation requires comprehensive formatting methods
-    - 'lib/numana/dependency_resolver.rb'  # Dependency resolution requires comprehensive graph algorithms (258 lines)
-    - 'lib/numana/plugin_configuration.rb'  # Plugin configuration management requires extensive validation
-    - 'lib/numana/plugin_configuration/**/*'  # Plugin configuration modules
-    - 'lib/numana/plugin_conflict_resolver.rb'  # Conflict resolution requires comprehensive strategy implementation
-    - 'lib/numana/plugin_sandbox/capability_manager.rb'  # Security capability management requires comprehensive permission matrix
-    - 'lib/numana/plugin_sandbox/method_interceptor.rb'  # Security method interception requires comprehensive whitelist/blacklist definitions
-    - 'lib/numana/plugin_loader.rb'  # Plugin loading system requires comprehensive security and validation features
-    - 'lib/numana/plugin_template.rb'  # Plugin template generator requires comprehensive scaffolding features
-    - 'lib/numana/plugin_validator.rb'  # Plugin validation requires comprehensive security and compatibility checks
-    - 'lib/numana/plugin_error_handler.rb'  # Error handling requires comprehensive error tracking and reporting
-    - 'plugins/**/*'  # Plugin implementations with comprehensive visualization and analysis features
-    - 'spec/**/*'  # Test classes require comprehensive test coverage and naturally become longer
+    - 'lib/numana/file_reader.rb'
+    - 'lib/numana/cli/commands/plugins_command.rb'
+    - 'lib/numana/statistics_presenter.rb'
+    - 'lib/numana/presenters/two_way_anova_presenter.rb'
+    - 'lib/numana/dependency_resolver.rb'
+    - 'lib/numana/plugin_configuration.rb'
+    - 'lib/numana/plugin_configuration/**/*'
+    - 'lib/numana/plugin_conflict_resolver.rb'
+    - 'lib/numana/plugin_sandbox/capability_manager.rb'
+    - 'lib/numana/plugin_sandbox/method_interceptor.rb'
+    - 'lib/numana/plugin_loader.rb'
+    - 'lib/numana/plugin_template.rb'
+    - 'lib/numana/plugin_validator.rb'
+    - 'lib/numana/plugin_error_handler.rb'
+    - 'plugins/**/*'
+    - 'spec/**/*'
 
 Metrics/ModuleLength:
   Exclude:
-    - 'lib/numana/statistics/**/*'  # Statistical modules contain comprehensive mathematical implementations
-    - 'spec/**/*'  # Test modules require comprehensive test coverage and naturally become longer
+    - 'lib/numana/statistics/advanced_stats.rb'
+    - 'lib/numana/statistics/anova_helpers.rb'
+    - 'lib/numana/statistics/anova_stats.rb'
+    
+    - 'lib/numana/statistics/hypothesis_testing.rb'
+    - 'lib/numana/statistics/non_parametric_stats.rb'
+    - 'lib/numana/statistics/one_way_anova.rb'
+    - 'lib/numana/statistics/two_way_anova.rb'
+    - 'spec/**/*'
 
 Metrics/AbcSize:
   Max: 25  # Increased for plugin system complexity
   Exclude:
-    - 'lib/numana/statistics_presenter.rb'  # Display methods need to format 11+ statistical values
-    - 'lib/numana/presenters/two_way_anova_presenter.rb'  # Two-way ANOVA presentation requires complex output formatting
-    - 'lib/numana/statistics/**/*'  # Statistical modules have high assignment/branch/condition complexity
-    - 'lib/numana/plugin_configuration/**/*'  # Plugin configuration validation has high ABC complexity
-    - 'lib/numana/dependency_resolver.rb'  # Dependency resolution has high assignment/branch complexity
-    - 'lib/numana/plugin_conflict_resolver.rb'  # Conflict resolution has complex branching logic
-    - 'lib/numana/plugin_error_handler.rb'  # Error handling report generation has high complexity
-    - 'lib/numana/plugin_validator.rb'  # Plugin validation has complex security and metadata checks
-    - 'plugins/**/*'  # Plugin implementations with complex calculation and visualization logic
-    - 'spec/numana/statistics/**/*'  # Test helper methods for statistical calculations
+    - 'lib/numana/statistics_presenter.rb'
+    - 'lib/numana/presenters/two_way_anova_presenter.rb'
+    - 'lib/numana/statistics/advanced_stats.rb'
+    - 'lib/numana/statistics/anova_helpers.rb'
+    - 'lib/numana/statistics/anova_stats.rb'
+    
+    - 'lib/numana/statistics/hypothesis_testing.rb'
+    - 'lib/numana/statistics/non_parametric_stats.rb'
+    - 'lib/numana/statistics/one_way_anova.rb'
+    - 'lib/numana/statistics/two_way_anova.rb'
+    - 'lib/numana/plugin_configuration/**/*'
+    - 'lib/numana/dependency_resolver.rb'
+    - 'lib/numana/plugin_conflict_resolver.rb'
+    - 'lib/numana/plugin_error_handler.rb'
+    - 'lib/numana/plugin_validator.rb'
+    - 'plugins/**/*'
+    - 'spec/numana/statistics/**/*'
 
 Layout/LineLength:
   Max: 150
   Exclude:
-    - 'numana.gemspec'  # Gemspec descriptions often exceed line length limits
-    - 'spec/**/*'               # Test files often have long expectation strings
+    - 'numana.gemspec'
+    - 'spec/**/*'
 
 Style/EndlessMethod:
   EnforcedStyle: allow_single_line
 
 Metrics/ParameterLists:
-  Max: 7  # Increased for complex plugin and visualization method signatures
+  Max: 7
   Exclude:
-    - 'plugins/**/*'  # Plugin methods for visualization often require multiple coordinate parameters
+    - 'plugins/**/*'
 
 Naming/MethodParameterName:
   Exclude:
-    - 'lib/numana/statistics/**/*'  # Statistical modules use standard mathematical parameter names (z, t, f, p)
-    - 'spec/numana/statistics/**/*'  # Test helper methods use mathematical notation
-    - 'plugins/**/*'  # Plugin modules use standard mathematical parameter names (k, x, y, z, p, t)
+    - 'lib/numana/statistics/advanced_stats.rb'
+    - 'lib/numana/statistics/anova_helpers.rb'
+    - 'lib/numana/statistics/anova_stats.rb'
+    
+    - 'lib/numana/statistics/hypothesis_testing.rb'
+    - 'lib/numana/statistics/non_parametric_stats.rb'
+    - 'lib/numana/statistics/one_way_anova.rb'
+    - 'lib/numana/statistics/two_way_anova.rb'
+    - 'spec/numana/statistics/**/*'
+    - 'plugins/**/*'
 
 Naming/PredicateMethod:
   Exclude:
-    - 'lib/numana/plugin_configuration/**/*'  # Plugin configuration validation methods use validate_ prefix for clarity
-    - 'lib/numana/plugin_sandbox/capability_manager.rb'  # Security validation methods use validate_/verify_ prefix for clarity and consistency
-    - 'lib/numana/plugin_loader.rb'  # Plugin loader methods use check_ prefix for clarity
-    - 'lib/numana/plugin_template.rb'  # Plugin template methods use validate_ prefix for clarity
+    - 'lib/numana/plugin_configuration/**/*'
+    - 'lib/numana/plugin_sandbox/capability_manager.rb'
+    - 'lib/numana/plugin_loader.rb'
+    - 'lib/numana/plugin_template.rb'
 
 Style/ClassAndModuleChildren:
   EnforcedStyle: compact
 
 Lint/EmptyClass:
   Exclude:
-    - 'lib/numana/plugin_system.rb'  # Forward declaration needed to resolve circular dependencies
+    - 'lib/numana/plugin_system.rb'

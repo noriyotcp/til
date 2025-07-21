@@ -148,6 +148,7 @@ module TimeSeriesStats
   private
 
   # Calculates trend line using least squares method
+  # rubocop:disable Metrics/AbcSize
   def calculate_trend_line(x_values)
     return [nil, nil] if x_values.length != @numbers.length
 
@@ -165,6 +166,7 @@ module TimeSeriesStats
 
     [slope, intercept]
   end
+  # rubocop:enable Metrics/AbcSize
 
   # Calculates coefficient of determination (R-squared)
   def calculate_r_squared(x_values, slope, intercept)
