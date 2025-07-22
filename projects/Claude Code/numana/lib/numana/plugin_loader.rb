@@ -463,6 +463,4 @@ class Numana::PluginLoader
     # Default to not analyzing (performance optimization)
     false
   end
-
-  
 end
