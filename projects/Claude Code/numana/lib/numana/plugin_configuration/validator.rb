@@ -81,21 +81,28 @@ class Numana::PluginConfiguration::Validator
     def validate_plugins_config(plugins_config, errors)
       return unless plugins_config.is_a?(Hash)
 
-      # Validate enabled/disabled arrays
+      validate_plugin_enabled_disabled(plugins_config, errors)
+      validate_plugin_paths(plugins_config, errors)
+      validate_plugin_auto_discovery(plugins_config, errors)
+    end
+
+    def validate_plugin_enabled_disabled(plugins_config, errors)
       %w[enabled disabled].each do |key|
         next unless plugins_config.key?(key)
 
         value = plugins_config[key]
         errors << "plugins.#{key} must be an array of strings" unless value.is_a?(Array) && value.all? { |item| item.is_a?(String) }
       end
+    end
 
-      # Validate paths
-      if plugins_config.key?('paths')
-        paths = plugins_config['paths']
-        errors << 'plugins.paths must be an array of strings' unless paths.is_a?(Array) && paths.all? { |path| path.is_a?(String) }
-      end
+    def validate_plugin_paths(plugins_config, errors)
+      return unless plugins_config.key?('paths')
 
-      # Validate auto_discovery
+      paths = plugins_config['paths']
+      errors << 'plugins.paths must be an array of strings' unless paths.is_a?(Array) && paths.all? { |path| path.is_a?(String) }
+    end
+
+    def validate_plugin_auto_discovery(plugins_config, errors)
       return unless plugins_config.key?('auto_discovery')
 
       value = plugins_config['auto_discovery']

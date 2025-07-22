@@ -15,13 +15,11 @@ Metrics/BlockLength:
 Metrics/MethodLength:
   Max: 35  # Increased for plugin system complexity
   Exclude:
-    - 'lib/numana/plugin_configuration/**/*'
     - 'plugins/**/*'
 
 Metrics/CyclomaticComplexity:
   Max: 10  # Increased for plugin system complexity
   Exclude:
-    - 'lib/numana/plugin_configuration/**/*'
     - 'plugins/**/*'
 
 Metrics/PerceivedComplexity:

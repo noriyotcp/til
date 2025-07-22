@@ -33,7 +33,8 @@ class Numana::PluginValidator::MetadataValidator
   end
 
   def validate_author
-    @warnings << 'Author field is empty' if @metadata['author']&.to_s&.strip&.empty?
+    author = @metadata['author']
+    @warnings << 'Author field is empty' if author.to_s.strip.empty?
   end
 
   def validate_dependencies
