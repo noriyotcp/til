@@ -35,7 +35,6 @@ Metrics/ClassLength:
     - 'lib/numana/plugin_loader.rb'
     - 'lib/numana/plugin_template.rb'
     - 'lib/numana/plugin_error_handler.rb'
-    - 'plugins/**/*'
     - 'spec/**/*'
 
 Metrics/ModuleLength:
@@ -61,8 +60,7 @@ Style/EndlessMethod:
 
 Metrics/ParameterLists:
   Max: 7
-  Exclude:
-    - 'plugins/**/*'
+  Exclude: []
 
 Naming/MethodParameterName:
   Exclude:
