@@ -69,22 +69,27 @@ module Numana::PluginConfiguration
 
   # Normalize configuration values
   def self.normalize_configuration(config)
-    # Ensure arrays exist
-    config['plugins']['enabled'] ||= []
-    config['plugins']['disabled'] ||= []
-    config['plugins']['paths'] ||= DEFAULT_CONFIG['plugins']['paths']
-
-    # Normalize string arrays
-    config['plugins']['enabled'] = config['plugins']['enabled'].map(&:to_s)
-    config['plugins']['disabled'] = config['plugins']['disabled'].map(&:to_s)
-
-    # Ensure numeric values
-    if config['performance']
-      config['performance']['max_memory_per_plugin'] = config['performance']['max_memory_per_plugin'].to_i
-      config['performance']['max_execution_time'] = config['performance']['max_execution_time'].to_i
-    end
-
+    normalize_plugin_settings(config['plugins'])
+    normalize_performance_settings(config['performance'])
     config
+  end
+
+  def self.normalize_plugin_settings(plugins_config)
+    return unless plugins_config
+
+    plugins_config['enabled'] ||= []
+    plugins_config['disabled'] ||= []
+    plugins_config['paths'] ||= DEFAULT_CONFIG.dig('plugins', 'paths')
+
+    plugins_config['enabled'] = plugins_config['enabled'].map(&:to_s)
+    plugins_config['disabled'] = plugins_config['disabled'].map(&:to_s)
+  end
+
+  def self.normalize_performance_settings(performance_config)
+    return unless performance_config
+
+    performance_config['max_memory_per_plugin'] = performance_config['max_memory_per_plugin'].to_i
+    performance_config['max_execution_time'] = performance_config['max_execution_time'].to_i
   end
 
   # Default plugin configuration

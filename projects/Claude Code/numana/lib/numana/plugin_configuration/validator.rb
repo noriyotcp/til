@@ -6,6 +6,7 @@ require_relative 'base'
 # Validates configuration data
 class Numana::PluginConfiguration::Validator
   class << self
+    # rubocop:disable Naming/PredicateMethod
     # Validate the entire configuration
     def validate_configuration!(config)
       errors = []
@@ -30,7 +31,9 @@ class Numana::PluginConfiguration::Validator
 
       true
     end
+    # rubocop:enable Naming/PredicateMethod
 
+    # rubocop:disable Naming/PredicateMethod
     # Validate plugin-specific configuration
     def validate_plugin_configuration(plugin_name, plugin_config)
       errors = []
@@ -68,6 +71,7 @@ class Numana::PluginConfiguration::Validator
 
       true
     end
+    # rubocop:enable Naming/PredicateMethod
 
     private
 
