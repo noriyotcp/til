@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require_relative '../lib/numana/plugin_interface'
+require_relative '../lib/numana/presenters/summary_report_presenter'
 require 'csv'
 require 'json'
 
@@ -184,7 +185,7 @@ module DataExportPlugin
     filename ||= "statistical_summary_#{timestamp}.txt"
     stats = calculate_comprehensive_statistics
 
-    report_content = generate_summary_report_content(stats, options)
+    report_content = Numana::Presenters::SummaryReportPresenter.new(stats, @numbers, options).generate
 
     if options[:return_content]
       report_content
@@ -520,61 +521,77 @@ module DataExportPlugin
     lines.join("\n")
   end
 
-  def generate_summary_report_content(stats, options = {})
-    report = []
-    report << 'STATISTICAL ANALYSIS SUMMARY REPORT'
-    report << ('=' * 50)
-    report << ''
-    report << "Generated: #{Time.now.strftime('%Y-%m-%d %H:%M:%S')}"
-    report << 'Plugin: DataExportPlugin v1.0.0'
-    report << "Dataset Size: #{@numbers.length} observations"
-    report << ''
+  def generate_report_header
+    [
+      'STATISTICAL ANALYSIS SUMMARY REPORT',
+      '=' * 50,
+      '',
+      "Generated: #{Time.now.strftime('%Y-%m-%d %H:%M:%S')}",
+      'Plugin: DataExportPlugin v1.0.0',
+      "Dataset Size: #{@numbers.length} observations",
+      ''
+    ]
+  end
 
-    report << 'DESCRIPTIVE STATISTICS'
-    report << ('-' * 30)
-    report << format('%<label>-20s: %<value>15.6f', label: 'Mean', value: stats[:mean])
-    report << format('%<label>-20s: %<value>15.6f', label: 'Median', value: stats[:median])
-    report << format('%<label>-20s: %<value>15s', label: 'Mode',
-                                                  value: stats[:mode].empty? ? 'No mode' : stats[:mode].join(', '))
-    report << format('%<label>-20s: %<value>15.6f', label: 'Standard Deviation', value: stats[:standard_deviation])
-    report << format('%<label>-20s: %<value>15.6f', label: 'Variance', value: stats[:variance])
-    report << format('%<label>-20s: %<value>15.2f%%', label: 'Coeff. of Variation',
-                                                      value: stats[:coefficient_of_variation])
-    report << ''
+  def generate_descriptive_stats_section(stats)
+    [
+      'DESCRIPTIVE STATISTICS',
+      '-' * 30,
+      format('%<label>-20s: %<value>15.6f', label: 'Mean', value: stats[:mean]),
+      format('%<label>-20s: %<value>15.6f', label: 'Median', value: stats[:median]),
+      format('%<label>-20s: %<value>15s', label: 'Mode', value: stats[:mode].empty? ? 'No mode' : stats[:mode].join(', ')),
+      format('%<label>-20s: %<value>15.6f', label: 'Standard Deviation', value: stats[:standard_deviation]),
+      format('%<label>-20s: %<value>15.6f', label: 'Variance', value: stats[:variance]),
+      format('%<label>-20s: %<value>15.2f%%', label: 'Coeff. of Variation', value: stats[:coefficient_of_variation]),
+      ''
+    ]
+  end
 
-    report << 'DATA RANGE'
-    report << ('-' * 30)
-    report << format('%<label>-20s: %<value>15.6f', label: 'Minimum', value: stats[:min])
-    report << format('%<label>-20s: %<value>15.6f', label: 'Maximum', value: stats[:max])
-    report << format('%<label>-20s: %<value>15.6f', label: 'Range', value: stats[:range])
-    report << format('%<label>-20s: %<value>15.6f', label: 'Q1 (25th percentile)', value: stats[:quartiles][0])
-    report << format('%<label>-20s: %<value>15.6f', label: 'Q3 (75th percentile)', value: stats[:quartiles][2])
-    report << format('%<label>-20s: %<value>15.6f', label: 'IQR', value: stats[:iqr])
-    report << ''
+  def generate_data_range_section(stats)
+    [
+      'DATA RANGE',
+      '-' * 30,
+      format('%<label>-20s: %<value>15.6f', label: 'Minimum', value: stats[:min]),
+      format('%<label>-20s: %<value>15.6f', label: 'Maximum', value: stats[:max]),
+      format('%<label>-20s: %<value>15.6f', label: 'Range', value: stats[:range]),
+      format('%<label>-20s: %<value>15.6f', label: 'Q1 (25th percentile)', value: stats[:quartiles][0]),
+      format('%<label>-20s: %<value>15.6f', label: 'Q3 (75th percentile)', value: stats[:quartiles][2]),
+      format('%<label>-20s: %<value>15.6f', label: 'IQR', value: stats[:iqr]),
+      ''
+    ]
+  end
 
-    report << 'DISTRIBUTION CHARACTERISTICS'
-    report << ('-' * 30)
-    report << format('%<label>-20s: %<value>15.6f', label: 'Skewness', value: stats[:skewness])
-    report << format('%<label>-20s: %<value>15.6f', label: 'Kurtosis', value: stats[:kurtosis])
-    report << format('%<label>-20s: %<value>15d', label: 'Outliers', value: stats[:outliers])
-    report << ''
+  def generate_distribution_section(stats)
+    [
+      'DISTRIBUTION CHARACTERISTICS',
+      '-' * 30,
+      format('%<label>-20s: %<value>15.6f', label: 'Skewness', value: stats[:skewness]),
+      format('%<label>-20s: %<value>15.6f', label: 'Kurtosis', value: stats[:kurtosis]),
+      format('%<label>-20s: %<value>15d', label: 'Outliers', value: stats[:outliers]),
+      ''
+    ]
+  end
 
+  def generate_interpretation_section(stats)
     summary = generate_data_summary(stats)
-    report << 'INTERPRETATION'
-    report << ('-' * 30)
-    summary.each { |key, value| report << "#{key.to_s.capitalize.tr('_', ' ')}: #{value}" }
-    report << ''
+    [
+      'INTERPRETATION',
+      '-' * 30,
+      *summary.map { |key, value| "#{key.to_s.capitalize.tr('_', ' ')}: #{value}" },
+      ''
+    ]
+  end
 
-    if options[:include_raw_data]
-      report << 'RAW DATA'
-      report << ('-' * 30)
-      @numbers.each_slice(10).with_index do |slice, index|
-        start_index = (index * 10) + 1
-        report << "#{start_index}-#{start_index + slice.length - 1}: #{slice.join(', ')}"
-      end
+  def generate_raw_data_section(_options)
+    report = [
+      'RAW DATA',
+      '-' * 30
+    ]
+    @numbers.each_slice(10).with_index do |slice, index|
+      start_index = (index * 10) + 1
+      report << "#{start_index}-#{start_index + slice.length - 1}: #{slice.join(', ')}"
     end
-
-    report.join("\n")
+    report
   end
 
   def count_json_objects(data, count = 0)

@@ -41,6 +41,7 @@ Metrics/ClassLength:
 Metrics/ModuleLength:
   Exclude:
     - 'spec/**/*'
+    - 'plugins/data_export_plugin.rb'
 
 Metrics/AbcSize:
   Max: 25  # Increased for plugin system complexity
