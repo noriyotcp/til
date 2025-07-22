@@ -79,6 +79,7 @@ class Numana::PluginSandbox::CapabilityManager
     @violation_log = []
   end
 
+  # rubocop:disable Naming/PredicateMethod
   # Verify that a plugin has the required capabilities
   def verify_capabilities(plugin_name, requested_capabilities)
     plugin_name = plugin_name.to_s
@@ -120,6 +121,7 @@ class Numana::PluginSandbox::CapabilityManager
 
     true
   end
+  # rubocop:enable Naming/PredicateMethod
 
   # Grant a specific capability to a plugin
   def grant_capability(plugin_name, capability)
@@ -256,6 +258,7 @@ class Numana::PluginSandbox::CapabilityManager
     host_matches_patterns(host, allowed_hosts)
   end
 
+  # rubocop:disable Naming/PredicateMethod
   def validate_command_access(capability_config, command)
     command_name = command.is_a?(Array) ? command.first : command
 
@@ -269,6 +272,7 @@ class Numana::PluginSandbox::CapabilityManager
 
     allowed_commands.include?(command_name)
   end
+  # rubocop:enable Naming/PredicateMethod
 
   def host_matches_patterns(host, patterns)
     patterns.any? do |pattern|

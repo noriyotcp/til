@@ -233,7 +233,7 @@ class Numana::PluginLoader
     # Add security and configuration checks
     enhanced_info = basic_info.dup
     enhanced_info[:config_enabled] = PluginConfiguration.plugin_enabled?(basic_info[:name], config)
-    enhanced_info[:trusted_author] = check_trusted_author(basic_info[:author], config)
+    enhanced_info[:trusted_author] = trusted_author?(basic_info[:author], config)
     enhanced_info[:preliminary_security] = perform_quick_security_check(plugin_file)
 
     # Only proceed with full analysis if basic checks pass
@@ -257,7 +257,7 @@ class Numana::PluginLoader
     # High risk plugins require explicit approval or trusted author
     if (validation_result[:risk_level] == :high) && !(options[:allow_high_risk] ||
                           (validation_result[:metadata] &&
-                          trusted_author?(validation_result[:metadata]['author'],
+                          PluginValidator.trusted_author?(validation_result[:metadata]['author'],
                                           security_config['trusted_authors'] || [])))
       return false
     end
@@ -413,7 +413,7 @@ class Numana::PluginLoader
   end
 
   # Check if author is trusted
-  def self.check_trusted_author(author, config)
+  def self.trusted_author?(author, config)
     return false unless author
 
     trusted_authors = config.dig('security', 'trusted_authors') || []
@@ -464,8 +464,5 @@ class Numana::PluginLoader
     false
   end
 
-  # Check if author is trusted (helper method)
-  def self.trusted_author?(author, trusted_authors)
-    PluginValidator.trusted_author?(author, trusted_authors)
-  end
+  
 end

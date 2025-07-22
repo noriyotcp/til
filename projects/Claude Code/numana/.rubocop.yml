@@ -45,7 +45,6 @@ Metrics/ModuleLength:
 Metrics/AbcSize:
   Max: 25  # Increased for plugin system complexity
   Exclude:
-    - 'lib/numana/plugin_error_handler.rb'
     - 'plugins/**/*'
     - 'spec/numana/statistics/**/*'
 
@@ -68,10 +67,7 @@ Naming/MethodParameterName:
     - 'plugins/**/*'
 
 Naming/PredicateMethod:
-  Exclude:
-    - 'lib/numana/plugin_sandbox/capability_manager.rb'
-    - 'lib/numana/plugin_loader.rb'
-    - 'lib/numana/plugin_template.rb'
+  Exclude: []
 
 Style/ClassAndModuleChildren:
   EnforcedStyle: compact

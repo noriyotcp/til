@@ -99,6 +99,7 @@ class Numana::PluginTemplate
       PLUGIN_TYPES[plugin_type.to_sym]
     end
 
+    # rubocop:disable Naming/PredicateMethod
     # Validate plugin configuration
     def validate_plugin_config(config)
       required_fields = %i[plugin_name class_name module_name author version]
@@ -117,6 +118,7 @@ class Numana::PluginTemplate
 
       true
     end
+    # rubocop:enable Naming/PredicateMethod
 
     private
 

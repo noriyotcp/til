@@ -220,41 +220,67 @@ class Numana
   class PluginErrorReport
     def self.generate(error_handler)
       stats = error_handler.error_statistics
+      new(stats).generate
+    end
 
-      report = ['Plugin Error Report', '=' * 50]
-      report << "Total Errors: #{stats[:total_errors]}"
-      report << ''
+    def initialize(stats)
+      @stats = stats
+      @report = []
+    end
 
-      if stats[:errors_by_plugin].any?
-        report << 'Errors by Plugin:'
-        stats[:errors_by_plugin].each do |plugin, count|
-          report << "  #{plugin}: #{count} errors"
-        end
-        report << ''
+    def generate
+      build_header
+      build_errors_by_plugin_section
+      build_errors_by_type_section
+      build_disabled_plugins_section
+      build_recovery_attempts_section
+      @report.join("\n")
+    end
+
+    private
+
+    def build_header
+      @report << 'Plugin Error Report'
+      @report << ('=' * 50)
+      @report << "Total Errors: #{@stats[:total_errors]}"
+      @report << ''
+    end
+
+    def build_errors_by_plugin_section
+      return unless @stats[:errors_by_plugin].any?
+
+      @report << 'Errors by Plugin:'
+      @stats[:errors_by_plugin].each do |plugin, count|
+        @report << "  #{plugin}: #{count} errors"
       end
+      @report << ''
+    end
 
-      if stats[:errors_by_type].any?
-        report << 'Errors by Type:'
-        stats[:errors_by_type].each do |type, count|
-          report << "  #{type}: #{count} occurrences"
-        end
-        report << ''
+    def build_errors_by_type_section
+      return unless @stats[:errors_by_type].any?
+
+      @report << 'Errors by Type:'
+      @stats[:errors_by_type].each do |type, count|
+        @report << "  #{type}: #{count} occurrences"
       end
+      @report << ''
+    end
 
-      if stats[:disabled_plugins].any?
-        report << 'Disabled Plugins:'
-        stats[:disabled_plugins].each do |plugin|
-          report << "  - #{plugin}"
-        end
-        report << ''
+    def build_disabled_plugins_section
+      return unless @stats[:disabled_plugins].any?
+
+      @report << 'Disabled Plugins:'
+      @stats[:disabled_plugins].each do |plugin|
+        @report << "  - #{plugin}"
       end
+      @report << ''
+    end
 
-      report << 'Recovery Attempts:'
-      stats[:recovery_attempts].each do |plugin, attempts|
-        report << "  #{plugin}: #{attempts} retries"
+    def build_recovery_attempts_section
+      @report << 'Recovery Attempts:'
+      @stats[:recovery_attempts].each do |plugin, attempts|
+        @report << "  #{plugin}: #{attempts} retries"
       end
-
-      report.join("\n")
     end
   end
 end
