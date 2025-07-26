@@ -26,6 +26,11 @@ const { tag } = Astro.params
 ---
 
 <Layout>
+  <div class="breadcrumb mb-4">
+    <a href={url('tags')} class="text-accent hover:underline">← All Tags</a>
+    <span class="mx-2 text-foreground/60">/</span>
+    <span class="text-foreground">#{tag}</span>
+  </div>
   <BlockHeader>#{tag}</BlockHeader>
   <PostPreviewsWithYear posts={page.data} />
   <Pagination
