@@ -2,15 +2,15 @@ import type { SiteConfig } from '@types'
 
 const config: SiteConfig = {
   // Absolute URL to the root of your published site, used for generating links and sitemaps.
-  site: 'https://multiterm-astro.stelclementine.com',
+  site: 'https://noriyotcp.github.io/til/',
   // The name of your site, used in the title and for SEO.
-  title: 'MultiTerm',
+  title: 'til',
   // The description of your site, used for SEO and RSS feed.
-  description: 'A coder-ready Astro blog theme with 59 of your favorite color schemes to choose from',
+  description: 'Noriyo Akita\'s Today I Learned',
   // The author of the site, used in the footer, SEO, and RSS feed.
-  author: 'Katy Kookaburra',
+  author: 'Noriyo Akita',
   // Keywords for SEO, used in the meta tags.
-  tags: ['Astro', 'Terminal', 'Theme', 'MultiTerm', 'stelcodes'],
+  tags: ['TIL', 'Today I Learned', 'Programming', 'Development', 'Tech'],
   // Font imported from @fontsource or elsewhere, used for the entire site.
   // To change this see src/styles/global.css and import a different font.
   font: 'JetBrains Mono Variable',
@@ -28,7 +28,7 @@ const config: SiteConfig = {
     },
     {
       name: 'GitHub',
-      url: 'https://github.com/stelcodes/multiterm-astro',
+      url: 'https://github.com/noriyotcp',
       external: true,
     }
   ],
@@ -38,7 +38,7 @@ const config: SiteConfig = {
     mode: 'select',
     // The default theme identifier, used when themeMode is "select" or "light-dark-auto".
     // Make sure this is one of the themes listed in `themes` or "auto" for "light-dark-auto" mode.
-    default: 'catppuccin-macchiato',
+    default: 'github-dark',
     // Shiki themes to bundle with the site.
     // https://expressive-code.com/guides/themes/#using-bundled-themes
     // These will be used to theme the entire site along with syntax highlighting.
@@ -112,12 +112,8 @@ const config: SiteConfig = {
   },
   // Social links to display in the footer.
   socialLinks: {
-    github: 'https://github.com/stelcodes/multiterm-astro',
-    mastodon: 'https://github.com/stelcodes/multiterm-astro',
-    email: 'https://github.com/stelcodes/multiterm-astro',
-    linkedin: 'https://github.com/stelcodes/multiterm-astro',
-    bluesky: 'https://github.com/stelcodes/multiterm-astro',
-    twitter: 'https://github.com/stelcodes/multiterm-astro',
+    github: 'https://github.com/noriyotcp',
+    // Other social links can be added as needed
   },
 }
 
