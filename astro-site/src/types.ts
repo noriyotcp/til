@@ -69,6 +69,7 @@ export interface SiteConfig {
   site: string
   font: string
   title: string
+  subtitle?: string
   description: string
   author: string
   tags: string[]

@@ -5,6 +5,8 @@ const config: SiteConfig = {
   site: 'https://noriyotcp.github.io/til/',
   // The name of your site, used in the title and for SEO.
   title: 'til',
+  // The subtitle of your site, displayed in the header.
+  subtitle: 'Noriyo Akita\'s Today I Learned',
   // The description of your site, used for SEO and RSS feed.
   description: 'Noriyo Akita\'s Today I Learned',
   // The author of the site, used in the footer, SEO, and RSS feed.
