@@ -101,6 +101,7 @@ export interface PostData extends PostFrontmatter {
 export interface PostEntry {
   id: string
   slug: string
+  collection: 'posts'
   data: PostFrontmatter
   body: string
   render: () => Promise<{

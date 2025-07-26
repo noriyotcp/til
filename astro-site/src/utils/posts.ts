@@ -1,5 +1,7 @@
 import { getCollection, type CollectionEntry } from 'astro:content'
-import type { PostEntry, PostValidationResult, SearchablePost } from '../types'
+import type { PostValidationResult, SearchablePost } from '../types'
+
+type PostEntry = CollectionEntry<'posts'>
 
 /**
  * Get all valid posts, excluding drafts and validating schema
@@ -42,10 +44,8 @@ export async function getValidatedPosts(): Promise<PostEntry[]> {
  */
 export async function getPostsByTag(tag: string): Promise<PostEntry[]> {
   const posts = await getValidatedPosts()
-  return posts.filter(post =>
-    post.data.tags?.some(postTag =>
-      postTag.toLowerCase() === tag.toLowerCase()
-    )
+  return posts.filter((post) =>
+    post.data.tags?.some((postTag) => postTag.toLowerCase() === tag.toLowerCase()),
   )
 }
 
@@ -56,8 +56,8 @@ export async function getAllTags(): Promise<string[]> {
   const posts = await getValidatedPosts()
   const tagSet = new Set<string>()
 
-  posts.forEach(post => {
-    post.data.tags?.forEach(tag => tagSet.add(tag))
+  posts.forEach((post) => {
+    post.data.tags?.forEach((tag) => tagSet.add(tag))
   })
 
   return Array.from(tagSet).sort()
@@ -89,7 +89,7 @@ export function validatePost(post: any): PostValidationResult {
   return {
     isValid: errors.length === 0,
     errors: errors.length > 0 ? errors : undefined,
-    post: errors.length === 0 ? post : undefined
+    post: errors.length === 0 ? post : undefined,
   }
 }
 
@@ -101,17 +101,15 @@ export async function getSearchablePosts(): Promise<SearchablePost[]> {
 
   return Promise.all(
     posts.map(async (post) => {
-      const { Content } = await post.render()
-
       return {
         title: post.data.title,
-        content: post.body,
+        content: post.body || '',
         tags: post.data.tags || [],
-        url: `/posts/${post.slug}`,
+        url: `/posts/${post.id}`,
         date: post.data.date || post.data.published,
-        slug: post.slug
+        slug: post.id,
       }
-    })
+    }),
   )
 }
 
@@ -124,7 +122,7 @@ export function formatDate(date: Date | string): string {
   return dateObj.toLocaleDateString('ja-JP', {
     year: 'numeric',
     month: '2-digit',
-    day: '2-digit'
+    day: '2-digit',
   })
 }
 
