@@ -119,6 +119,13 @@ export async function getSortedPosts() {
 
 export function url(...paths: string[]) {
   const base = import.meta.env.BASE_URL
-  const url = `${base}/${paths.join('/')}`.replace(/\/+/g, '/').replace(/\/$/, '')
+  const joinedPath = paths.join('/')
+
+  // If the path already starts with the base URL, don't add it again
+  if (joinedPath.startsWith(base)) {
+    return joinedPath.replace(/\/+/g, '/').replace(/\/$/, '') || '/'
+  }
+
+  const url = `${base}/${joinedPath}`.replace(/\/+/g, '/').replace(/\/$/, '')
   return url === '' ? '/' : url
 }
