@@ -1,11 +1,12 @@
 ---
-title: "Replit Agent 触ってみた"
-date: "2025-01-03 10:44:33 +0900"
-last_modified_at: "2025-03-12 23:55:19 +0900"
+title: 'Replit Agent 触ってみた'
+date: '2025-01-03 10:44:33 +0900'
+last_modified_at: '2025-03-12 23:55:19 +0900'
 tags:
-  - "Replit"
-  - "Replit Agent"
+  - 'Replit'
+  - 'Replit Agent'
 ---
+
 Black Friday Sale で [Replit Core](https://replit.com/pricing) を購入したので、Replit Agent を触ってみた
 
 ## Replit Agent とは
@@ -19,9 +20,11 @@ https://docs.replit.com/replitai/agent
 1. Replitアカウントにログインします(Replit CoreまたはTeamsサブスクリプションを使用)
 2. ホーム ページにアクセスするか、左側のナビゲーションで [Create Repl] を選択します
 3. エージェントに何を構築したいかのプロンプトを入力します
-  - 適切なプロンプトは、説明的で詳細です。あなたが仕事中のチームメイトが完了すべきタスクを説明していると想像してください。仕事を成し遂げるためには、どのような情報が必要でしょうか?
-  - 特定の言語やフレームワークを指定するのではなく、使用するテクノロジーをエージェントに選択させることをお勧めします。
-  - このエージェントは現在、Webベースのアプリケーションの0〜>1のプロトタイピングに最適です。
+
+- 適切なプロンプトは、説明的で詳細です。あなたが仕事中のチームメイトが完了すべきタスクを説明していると想像してください。仕事を成し遂げるためには、どのような情報が必要でしょうか?
+- 特定の言語やフレームワークを指定するのではなく、使用するテクノロジーをエージェントに選択させることをお勧めします。
+- このエージェントは現在、Webベースのアプリケーションの0〜>1のプロトタイピングに最適です。
+
 4. エージェントが生成したプランを確認して反復します。エージェントが推奨するステップを自由に編集または削除してください。
 5. エージェントの進行状況をフォローします。
 6. エージェントと協力して、アプリケーションの構築が進行する際の API キー、フィードバック、または指示を提供します。
@@ -35,6 +38,7 @@ https://docs.replit.com/replitai/agent
 <div style="margin-bottom: 1em;"></div>
 
 ### 動画内容の要約
+
 [Glarity](https://glarity.app/ja) で動画の内容を要約してもらった
 
 ---
@@ -42,6 +46,7 @@ https://docs.replit.com/replitai/agent
 Replit Agent は、AIを活用した仮想環境で、データベースやフロントエンドの構築、ファイルの編集、パッケージのインストールを可能にするもので、開発者にコーディングや構成の手間を省くことができます。このエージェントは、ユーザーの入力を解釈してアプリケーションを計画し、必要なコンポーネントをセットアップします。
 
 #### ハイライト
+
 - 🤖 **プランの作成:** ユーザーの指示に基づいて、アプリケーションの計画を作成し、必要なステップを提案します。
 - 📦 **環境のセットアップ:** PythonやNode.jsなどの環境をワンクリックで設定し、パッケージをインストールします。
 - 🔧 **ファイル編集:** ファイルシステム上でファイルを作成、編集、更新し、データベースやアプリケーションを実際に構築します。
@@ -49,6 +54,7 @@ Replit Agent は、AIを活用した仮想環境で、データベースやフ�
 - 💡 **学習の促進:** エージェントが操作するファイルやロジックを表示することで、ユーザーはアプリケーションの構成を理解できます。
 
 #### キーワード
+
 - AIアシスタント
 - フルスタック開発
 - 自動化コーディング
@@ -56,6 +62,7 @@ Replit Agent は、AIを活用した仮想環境で、データベースやフ�
 ---
 
 ### ゲストブックというものを作る
+
 以下の機能を持つ
 
 - ユーザーが自分の名前とメッセージを残せるようにする
@@ -67,7 +74,7 @@ Replit Agent は、AIを活用した仮想環境で、データベースやフ�
 以下動画。だいぶあたふたしているので2倍速
 
 <div class="video-container">
-  <video controls src="{{ "/assets/images/2025-01-03-replit-agent-first-look/replit-agent-20250102-720p-high.mp4" | relative_url }}" title="replit-agent-first-look"></video>
+  <video controls src="/images/2025-01-03-replit-agent-first-look/replit-agent-20250102-720p-high.mp4" title="replit-agent-first-look"></video>
 </div>
 
 - emoji reaction を付けれるようにした
@@ -85,27 +92,29 @@ Replit Agent は、AIを活用した仮想環境で、データベースやフ�
 
 ファーストプロンプト。最初のプロトタイプを作っているところ
 
-![スクリーンショット 2025-01-02 11.43.25]({{ '/assets/images/2025-01-03-replit-agent-first-look/スクリーンショット 2025-01-02 11.43.25.png' | relative_url }})
+![スクリーンショット-2025-01-02-11.43.25](/images/2025-01-03-replit-agent-first-look/スクリーンショット-2025-01-02-11.43.25.png)
 
 ### PostgreSQL
+
 ポスグレのデータベースを作っているぞ
 
-![スクリーンショット 2025-01-02 11.43.58]({{ '/assets/images/2025-01-03-replit-agent-first-look/スクリーンショット 2025-01-02 11.43.58.png' | relative_url }})
+![スクリーンショット-2025-01-02-11.43.58](/images/2025-01-03-replit-agent-first-look/スクリーンショット-2025-01-02-11.43.58.png)
 
 ### ファイル作成の様子
 
 モリモリとファイルを作っていくぞ
 
-![スクリーンショット 2025-01-02 11.46.28]({{ '/assets/images/2025-01-03-replit-agent-first-look/スクリーンショット 2025-01-02 11.46.28.png' | relative_url }})
+![スクリーンショット-2025-01-02-11.46.28](/images/2025-01-03-replit-agent-first-look/スクリーンショット-2025-01-02-11.46.28.png)
 
 ### 依存ライブラリのインストール
 
-![スクリーンショット 2025-01-02 11.47.32]({{ '/assets/images/2025-01-03-replit-agent-first-look/スクリーンショット 2025-01-02 11.47.32.png' | relative_url }})
+![スクリーンショット-2025-01-02-11.47.32](/images/2025-01-03-replit-agent-first-look/スクリーンショット-2025-01-02-11.47.32.png)
 
 ### スクショとプレビュー画面
+
 スクショ撮ってこんな感じやで？どや？と表示してくれる。自動的に開かれたプレビュー上でフォームに直接入力して試すことができる
 
-![スクリーンショット 2025-01-02 11.47.56]({{ '/assets/images/2025-01-03-replit-agent-first-look/スクリーンショット 2025-01-02 11.47.56.png' | relative_url }})
+![スクリーンショット-2025-01-02-11.47.56](/images/2025-01-03-replit-agent-first-look/スクリーンショット-2025-01-02-11.47.56.png)
 
 ### 絵文字リアクション機能の実装
 
@@ -116,17 +125,17 @@ Replit Agent は、AIを活用した仮想環境で、データベースやフ�
 - リアクションの追加や表示のためのフロントエンドコンポーネントを作成する
 - そのコンポーネントを各エントリーの下部に組み込む
 
-![スクリーンショット 2025-01-02 11.49.47]({{ '/assets/images/2025-01-03-replit-agent-first-look/スクリーンショット 2025-01-02 11.49.47.png' | relative_url }})
+![スクリーンショット-2025-01-02-11.49.47](/images/2025-01-03-replit-agent-first-look/スクリーンショット-2025-01-02-11.49.47.png)
 
 ### 絵文字リアクションコンポーネント
 
 これがエントリーに対する絵文字リアクションのコンポーネント
 
-![スクリーンショット 2025-01-02 11.52.26]({{ '/assets/images/2025-01-03-replit-agent-first-look/スクリーンショット 2025-01-02 11.52.26.png' | relative_url  }})
+![スクリーンショット-2025-01-02-11.52.26](/images/2025-01-03-replit-agent-first-look/スクリーンショット-2025-01-02-11.52.26.png)
 
 ### GuestbookEntriesへのコンポーネント追加
 
-![スクリーンショット 2025-01-02 11.52.53]({{ '/assets/images/2025-01-03-replit-agent-first-look/スクリーンショット 2025-01-02 11.52.53.png' | relative_url }})
+![スクリーンショット-2025-01-02-11.52.53](/images/2025-01-03-replit-agent-first-look/スクリーンショット-2025-01-02-11.52.53.png)
 
 ### 絵文字リアクションが組み込まれた画面
 
@@ -134,7 +143,7 @@ Replit Agent は、AIを活用した仮想環境で、データベースやフ�
 プレビューを触ってみてこれで良さそうだなと思い、終了させようとしたのだがどうすればいいのかわからなくなってしまった  
 なので苦し紛れに `Looks good! Finish it.` と打ってしまった（笑）
 
-![スクリーンショット 2025-01-02 11.57.13]({{ '/assets/images/2025-01-03-replit-agent-first-look/スクリーンショット 2025-01-02 11.57.13.png' | relative_url }})
+![スクリーンショット-2025-01-02-11.57.13](/images/2025-01-03-replit-agent-first-look/スクリーンショット-2025-01-02-11.57.13.png)
 
 ---
 
@@ -146,13 +155,14 @@ Replit Agent は、AIを活用した仮想環境で、データベースやフ�
 - `Usage` は1時間ごとに更新されるらしい
 
 ## その後色々みていく
-`BlogGuestBook` というプロジェクト名になっていた。これも初回のプロンプトから推測してるのかな？  
+
+`BlogGuestBook` というプロジェクト名になっていた。これも初回のプロンプトから推測してるのかな？
 
 ### プロジェクト構成
 
-![スクリーンショット 2025-01-02 11.22.24]({{ '/assets/images/2025-01-03-replit-agent-first-look/スクリーンショット 2025-01-02 11.22.24.png' | relative_url }})
+![スクリーンショット-2025-01-02-11.22.24](/images/2025-01-03-replit-agent-first-look/スクリーンショット-2025-01-02-11.22.24.png)
 
-![スクリーンショット 2025-01-02 11.22.43]({{ '/assets/images/2025-01-03-replit-agent-first-look/スクリーンショット 2025-01-02 11.22.43.png' | relative_url }})
+![スクリーンショット-2025-01-02-11.22.43](/images/2025-01-03-replit-agent-first-look/スクリーンショット-2025-01-02-11.22.43.png)
 
 - server は `express`
 - `hooks/use-toast.ts` が右下に出てくるトーストの処理か
@@ -162,7 +172,6 @@ Replit Agent は、AIを活用した仮想環境で、データベースやフ�
 ### package.json
 
 ```json
-
 {
   "name": "rest-express",
   "version": "1.0.0",
@@ -277,18 +286,19 @@ routing は `wouter` というものを使っている
 
 `Agent` タブ上では `Checkpoint made ...` と表示されている部分がちょうど5つあったのでその度にコミットするのだろう
 
-![スクリーンショット 2025-01-02 12.00.22]({{ '/assets/images/2025-01-03-replit-agent-first-look/スクリーンショット 2025-01-02 12.00.22.png' | relative_url }})
+![スクリーンショット-2025-01-02-12.00.22](/images/2025-01-03-replit-agent-first-look/スクリーンショット-2025-01-02-12.00.22.png)
 
 ### Usage
+
 https://docs.replit.com/replitai/agent#agent-billing
 
 > The Replit Agent operates on a usage-based billing system where you pay 25 cents per checkpoint. A checkpoint occurs whenever the agent makes file changes while working on your request, regardless of whether the entire task is complete.
 
 > Replitエージェントは、チェックポイントごとに25セントを支払う使用ベースの課金システムで動作します。 チェックポイントは、タスク全体が完了したかどうかに関係なく、エージェントがお客様のリクエストの作業中にファイルを変更するたびに発生します。
 
-`Agent` タブ右上から `Usage` ページに飛ぶことができる  
+`Agent` タブ右上から `Usage` ページに飛ぶことができる
 
-![スクリーンショット 2025-01-02 11.30.11]({{ '/assets/images/2025-01-03-replit-agent-first-look/スクリーンショット 2025-01-02 11.30.11.png' | relative_url }})
+![スクリーンショット-2025-01-02-11.30.11](/images/2025-01-03-replit-agent-first-look/スクリーンショット-2025-01-02-11.30.11.png)
 
 `$0.25/per checkpoint` なので2回分しかお金はかかっていない。チェックポイントとしてコミットされたのは5回だったが、実際にファイルの変更があったのは2回しかないということか
 
@@ -387,13 +397,14 @@ ed24da8 Checkpoint after starting plan
 
 ### Deployments
 
-![スクリーンショット 2025-01-02 11.35.30]({{ '/assets/images/2025-01-03-replit-agent-first-look/スクリーンショット 2025-01-02 11.35.30.png' | relative_url }})
+![スクリーンショット-2025-01-02-11.35.30](/images/2025-01-03-replit-agent-first-look/スクリーンショット-2025-01-02-11.35.30.png)
 
-![スクリーンショット 2025-01-02 11.33.32]({{ '/assets/images/2025-01-03-replit-agent-first-look/スクリーンショット 2025-01-02 11.33.32.png' | relative_url }})
+![スクリーンショット-2025-01-02-11.33.32](/images/2025-01-03-replit-agent-first-look/スクリーンショット-2025-01-02-11.33.32.png)
 
 ---
 
 ### 感想
+
 - とにかく凄くて怖い
 - 公式動画のプロンプトをそのまま入れたのでまあまあ精度は高い
   - 違った点は、動画ではバックエンドは `Flask`, `Vanilla JS`, `PostgreSQL` だった
@@ -405,6 +416,6 @@ ed24da8 Checkpoint after starting plan
   - 後から追加追加…とやっていくと破綻しないんだろうか？
     - 今回は emoji reaction の追加だけだったので `reactions` テーブルの追加やコンポーネントの作成くらいで済んだのだが
 - 初回の時点でログイン機能 (Firebase login) など各種機能は選べるようだ
-  - ![スクリーンショット 2025-01-02 12.27.28]({{ '/assets/images/2025-01-03-replit-agent-first-look/スクリーンショット 2025-01-02 12.27.28.png' | relative_url }})
+  - ![スクリーンショット-2025-01-02-12.27.28](/images/2025-01-03-replit-agent-first-look/スクリーンショット-2025-01-02-12.27.28.png)
 - あらかじめ要件や仕様をある程度固めておくと良いのだろうなあ
   - プロンプトは日本語でもいけるのかな？
