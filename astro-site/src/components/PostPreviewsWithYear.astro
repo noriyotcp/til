@@ -14,20 +14,28 @@ let currentYear = 0
 
 <div class={className}>
   {
-    posts.map((post) => {
-      const yearPublished = post.data.published.getFullYear()
-      if (yearMarkers && yearPublished !== currentYear) {
-        currentYear = yearPublished
-        return (
-          <>
-            <div class="text-2xl pb-3 my-7 text-foreground/50 border-b-4 border-dotted border-foreground/20">
-              {yearPublished}
-            </div>
-            <PostPreview post={post} />
-          </>
-        )
-      }
-      return <PostPreview post={post} />
-    })
+    posts.length === 0 ? (
+      <div class="text-center py-12">
+        <div class="text-4xl mb-4 text-accent/30">📝</div>
+        <h3 class="text-xl font-semibold mb-2 text-accent/70">No posts found</h3>
+        <p class="text-accent/50">There are no posts to display at the moment.</p>
+      </div>
+    ) : (
+      posts.map((post) => {
+        const yearPublished = post.data.published.getFullYear()
+        if (yearMarkers && yearPublished !== currentYear) {
+          currentYear = yearPublished
+          return (
+            <>
+              <div class="text-2xl pb-3 my-7 text-foreground/50 border-b-4 border-dotted border-foreground/20">
+                {yearPublished}
+              </div>
+              <PostPreview post={post} />
+            </>
+          )
+        }
+        return <PostPreview post={post} />
+      })
+    )
   }
 </div>

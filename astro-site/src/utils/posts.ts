@@ -12,6 +12,12 @@ export async function getValidatedPosts(): Promise<PostEntry[]> {
 
     // Filter out drafts and validate posts
     const validPosts = posts.filter((post): post is PostEntry => {
+      // Basic safety checks
+      if (!post || !post.data || !post.id) {
+        console.warn('Invalid post structure found, skipping')
+        return false
+      }
+
       // Skip drafts
       if (post.data.draft) {
         return false
@@ -21,6 +27,17 @@ export async function getValidatedPosts(): Promise<PostEntry[]> {
       const postDate = post.data.date || post.data.published
       if (!post.data.title || !postDate) {
         console.warn(`Post ${post.id} missing required fields (title or date/published)`)
+        return false
+      }
+
+      // Validate date format
+      try {
+        if (isNaN(new Date(postDate).getTime())) {
+          console.warn(`Post ${post.id} has invalid date: ${postDate}`)
+          return false
+        }
+      } catch (error) {
+        console.warn(`Post ${post.id} date validation failed:`, error)
         return false
       }
 
@@ -35,6 +52,7 @@ export async function getValidatedPosts(): Promise<PostEntry[]> {
     })
   } catch (error) {
     console.error('Error loading posts:', error)
+    // Return empty array instead of throwing to prevent build failures
     return []
   }
 }
