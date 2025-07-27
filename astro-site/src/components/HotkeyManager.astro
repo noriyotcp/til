@@ -1,0 +1,249 @@
+---
+// HotkeyManager - Global hotkey system for the site
+---
+
+<script>
+  class HotkeyManager {
+    private keySequence: string[] = []
+    private sequenceTimeout: number | null = null
+    private readonly SEQUENCE_TIMEOUT = 1000 // 1 second
+
+    constructor() {
+      this.init()
+    }
+
+    private init() {
+      document.addEventListener('keydown', this.handleKeyDown.bind(this))
+    }
+
+    private handleKeyDown(event: KeyboardEvent) {
+      // Skip if user is typing in an input field
+      if (this.isTyping(event.target as Element)) {
+        return
+      }
+
+      // Handle single key shortcuts
+      if (this.handleSingleKey(event)) {
+        return
+      }
+
+      // Handle key sequences (like 'g h')
+      this.handleKeySequence(event)
+    }
+
+    private isTyping(target: Element): boolean {
+      const tagName = target.tagName.toLowerCase()
+      const inputTypes = ['input', 'textarea', 'select']
+      const isContentEditable = target.getAttribute('contenteditable') === 'true'
+
+      return inputTypes.includes(tagName) || isContentEditable
+    }
+
+    private handleSingleKey(event: KeyboardEvent): boolean {
+      switch (event.key) {
+        case '?':
+          if (!event.shiftKey) return false
+          event.preventDefault()
+          this.showHelp()
+          return true
+
+        case 'Escape':
+          event.preventDefault()
+          this.closeModals()
+          return true
+
+        default:
+          return false
+      }
+    }
+
+    private handleKeySequence(event: KeyboardEvent) {
+      // Add key to sequence
+      this.keySequence.push(event.key.toLowerCase())
+
+      // Clear existing timeout
+      if (this.sequenceTimeout) {
+        clearTimeout(this.sequenceTimeout)
+      }
+
+      // Set new timeout to clear sequence
+      this.sequenceTimeout = setTimeout(() => {
+        this.keySequence = []
+      }, this.SEQUENCE_TIMEOUT)
+
+      // Check for complete sequences
+      const sequence = this.keySequence.join(' ')
+
+      switch (sequence) {
+        case 'g h':
+          event.preventDefault()
+          this.navigateTo('/')
+          this.clearSequence()
+          break
+
+        case 'g t':
+          event.preventDefault()
+          this.navigateTo('/tags')
+          this.clearSequence()
+          break
+
+        case 'g a':
+          event.preventDefault()
+          this.navigateTo('/posts')
+          this.clearSequence()
+          break
+
+        case 'b t':
+          event.preventDefault()
+          this.scrollToTop()
+          this.clearSequence()
+          break
+      }
+
+      // Clear sequence if it gets too long
+      if (this.keySequence.length > 2) {
+        this.clearSequence()
+      }
+    }
+
+    private clearSequence() {
+      this.keySequence = []
+      if (this.sequenceTimeout) {
+        clearTimeout(this.sequenceTimeout)
+        this.sequenceTimeout = null
+      }
+    }
+
+    private navigateTo(path: string) {
+      // Use the same url utility function that the rest of the site uses
+      const baseUrl = import.meta.env.BASE_URL || '/'
+      let fullPath: string
+
+      if (path === '/') {
+        // For home page, use base URL without trailing slash
+        fullPath = baseUrl.replace(/\/$/, '') || '/'
+      } else {
+        // For other paths, construct properly
+        fullPath = `${baseUrl}${path}`.replace(/\/+/g, '/').replace(/\/$/, '')
+      }
+
+      window.location.href = fullPath
+    }
+
+    private scrollToTop() {
+      window.scrollTo({ top: 0, behavior: 'smooth' })
+    }
+
+    private showHelp() {
+      // Create or show help modal
+      let helpModal = document.getElementById('hotkey-help-modal')
+
+      if (!helpModal) {
+        helpModal = this.createHelpModal()
+        document.body.appendChild(helpModal)
+      }
+
+      helpModal.style.display = 'flex'
+    }
+
+    private closeModals() {
+      // Close help modal
+      const helpModal = document.getElementById('hotkey-help-modal')
+      if (helpModal) {
+        helpModal.style.display = 'none'
+      }
+
+      // Close search modal (if open)
+      const searchModal = document.querySelector('site-search dialog') as HTMLDialogElement
+      if (searchModal && searchModal.open) {
+        searchModal.close()
+      }
+    }
+
+    private createHelpModal(): HTMLElement {
+      const modal = document.createElement('div')
+      modal.id = 'hotkey-help-modal'
+      modal.style.cssText = `
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        display: none;
+        justify-content: center;
+        align-items: center;
+        z-index: 1000;
+      `
+
+      modal.innerHTML = `
+        <div style="
+          background: var(--theme-background);
+          color: var(--theme-foreground);
+          padding: 2rem;
+          border-radius: 0.5rem;
+          max-width: 500px;
+          width: 90%;
+          border: 2px solid var(--theme-accent);
+        ">
+          <h2 style="margin-top: 0; color: var(--theme-accent);">Keyboard Shortcuts</h2>
+
+          <div style="margin-bottom: 1.5rem;">
+            <h3 style="color: var(--theme-accent); font-size: 1rem; margin-bottom: 0.5rem;">Navigation</h3>
+            <div style="display: grid; grid-template-columns: auto 1fr; gap: 0.5rem 1rem; font-family: monospace;">
+              <kbd style="background: var(--theme-accent); color: var(--theme-background); padding: 0.2rem 0.4rem; border-radius: 0.25rem;">g h</kbd>
+              <span>Go to Home</span>
+              <kbd style="background: var(--theme-accent); color: var(--theme-background); padding: 0.2rem 0.4rem; border-radius: 0.25rem;">g a</kbd>
+              <span>Go to Archive</span>
+              <kbd style="background: var(--theme-accent); color: var(--theme-background); padding: 0.2rem 0.4rem; border-radius: 0.25rem;">g t</kbd>
+              <span>Go to Tags</span>
+            </div>
+          </div>
+
+          <div style="margin-bottom: 1.5rem;">
+            <h3 style="color: var(--theme-accent); font-size: 1rem; margin-bottom: 0.5rem;">Actions</h3>
+            <div style="display: grid; grid-template-columns: auto 1fr; gap: 0.5rem 1rem; font-family: monospace;">
+              <kbd style="background: var(--theme-accent); color: var(--theme-background); padding: 0.2rem 0.4rem; border-radius: 0.25rem;">Cmd/Ctrl+K</kbd>
+              <span>Search</span>
+              <kbd style="background: var(--theme-accent); color: var(--theme-background); padding: 0.2rem 0.4rem; border-radius: 0.25rem;">b t</kbd>
+              <span>Back to Top</span>
+              <kbd style="background: var(--theme-accent); color: var(--theme-background); padding: 0.2rem 0.4rem; border-radius: 0.25rem;">?</kbd>
+              <span>Show this help</span>
+              <kbd style="background: var(--theme-accent); color: var(--theme-background); padding: 0.2rem 0.4rem; border-radius: 0.25rem;">Esc</kbd>
+              <span>Close modals</span>
+            </div>
+          </div>
+
+          <button onclick="this.closest('#hotkey-help-modal').style.display='none'"
+                  style="
+                    background: var(--theme-accent);
+                    color: var(--theme-background);
+                    border: none;
+                    padding: 0.5rem 1rem;
+                    border-radius: 0.25rem;
+                    cursor: pointer;
+                    float: right;
+                  ">
+            Close
+          </button>
+        </div>
+      `
+
+      // Close on background click
+      modal.addEventListener('click', (e) => {
+        if (e.target === modal) {
+          modal.style.display = 'none'
+        }
+      })
+
+      return modal
+    }
+  }
+
+  // Initialize hotkey manager when DOM is ready
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', () => new HotkeyManager())
+  } else {
+    new HotkeyManager()
+  }
+</script>
