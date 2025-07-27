@@ -1,10 +1,9 @@
 name: Deploy to GitHub Pages
 
 on:
-  # `astro-migration`ブランチにプッシュするたびにワークフローを実行します。
-  # 最終的にmainブランチに移行する際は、`astro-migration`を`main`に変更してください。
+  # mainブランチにプッシュするたびにワークフローを実行します。
   push:
-    branches: [ astro-migration ]
+    branches: [ main ]
   # このワークフローをGitHubのActionsタブから手動で実行できるようにします。
   workflow_dispatch:
 
