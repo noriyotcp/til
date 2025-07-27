@@ -98,6 +98,18 @@
           this.scrollToTop()
           this.clearSequence()
           break
+
+        case 'g p':
+          event.preventDefault()
+          this.navigateToPreviousPage()
+          this.clearSequence()
+          break
+
+        case 'g n':
+          event.preventDefault()
+          this.navigateToNextPage()
+          this.clearSequence()
+          break
       }
 
       // Clear sequence if it gets too long
@@ -115,11 +127,14 @@
     }
 
     private navigateTo(path: string) {
-      // Use the same url utility function that the rest of the site uses
+      // Check if the path already includes the base URL (for pagination links)
       const baseUrl = import.meta.env.BASE_URL || '/'
       let fullPath: string
 
-      if (path === '/') {
+      if (path.startsWith(baseUrl)) {
+        // Path already includes base URL (e.g., from pagination links)
+        fullPath = path.replace(/\/$/, '') || '/'
+      } else if (path === '/') {
         // For home page, use base URL without trailing slash
         fullPath = baseUrl.replace(/\/$/, '') || '/'
       } else {
@@ -132,6 +147,67 @@
 
     private scrollToTop() {
       window.scrollTo({ top: 0, behavior: 'smooth' })
+    }
+
+    private getCurrentPageInfo() {
+      const prevLink = document.querySelector('a[aria-label="Previous Page"]')?.getAttribute('href')
+      const nextLink = document.querySelector('a[aria-label="Next Page"]')?.getAttribute('href')
+
+      return { prevLink, nextLink }
+    }
+
+    private navigateToPreviousPage() {
+      const { prevLink } = this.getCurrentPageInfo()
+      if (prevLink) {
+        this.navigateTo(prevLink)
+      } else {
+        // Visual feedback when no previous page is available
+        this.showTemporaryMessage('Already on first page')
+      }
+    }
+
+    private navigateToNextPage() {
+      const { nextLink } = this.getCurrentPageInfo()
+      if (nextLink) {
+        this.navigateTo(nextLink)
+      } else {
+        // Visual feedback when no next page is available
+        this.showTemporaryMessage('Already on last page')
+      }
+    }
+
+    private showTemporaryMessage(message: string) {
+      // Create temporary message element
+      const messageEl = document.createElement('div')
+      messageEl.textContent = message
+      messageEl.style.cssText = `
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        background: var(--theme-accent);
+        color: var(--theme-background);
+        padding: 0.5rem 1rem;
+        border-radius: 0.25rem;
+        z-index: 1001;
+        font-size: 0.875rem;
+        opacity: 0;
+        transition: opacity 0.2s ease;
+      `
+
+      document.body.appendChild(messageEl)
+
+      // Fade in
+      requestAnimationFrame(() => {
+        messageEl.style.opacity = '1'
+      })
+
+      // Remove after 2 seconds
+      setTimeout(() => {
+        messageEl.style.opacity = '0'
+        setTimeout(() => {
+          document.body.removeChild(messageEl)
+        }, 200)
+      }, 2000)
     }
 
     private showHelp() {
@@ -197,6 +273,16 @@
               <span>Go to Archive</span>
               <kbd style="background: var(--theme-accent); color: var(--theme-background); padding: 0.2rem 0.4rem; border-radius: 0.25rem;">g t</kbd>
               <span>Go to Tags</span>
+            </div>
+          </div>
+
+          <div style="margin-bottom: 1.5rem;">
+            <h3 style="color: var(--theme-accent); font-size: 1rem; margin-bottom: 0.5rem;">Pagination</h3>
+            <div style="display: grid; grid-template-columns: auto 1fr; gap: 0.5rem 1rem; font-family: monospace;">
+              <kbd style="background: var(--theme-accent); color: var(--theme-background); padding: 0.2rem 0.4rem; border-radius: 0.25rem;">g p</kbd>
+              <span>Previous Page</span>
+              <kbd style="background: var(--theme-accent); color: var(--theme-background); padding: 0.2rem 0.4rem; border-radius: 0.25rem;">g n</kbd>
+              <span>Next Page</span>
             </div>
           </div>
 
