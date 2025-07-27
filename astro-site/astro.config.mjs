@@ -28,6 +28,7 @@ import react from '@astrojs/react'
 // https://astro.build/config
 export default defineConfig({
   site: siteConfig.site,
+  base: '/til',
   trailingSlash: 'never',
   prefetch: true,
   vite: {
