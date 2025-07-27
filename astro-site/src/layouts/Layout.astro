@@ -17,17 +17,22 @@ interface Props {
 }
 
 const { title, description, tags, author } = Astro.props
-const pageUrl = new URL(Astro.url.pathname, Astro.site).href.replace(/\/$/, '') // Remove trailing slash for consistency
+// Generate proper URLs with base URL support
+const baseUrl = import.meta.env.BASE_URL || '/'
+console.log('Base URL:', baseUrl) // Debug log
+const fullUrl = new URL(Astro.url.pathname, Astro.site).href
+const pageUrl = fullUrl.replace(/\/$/, '') // Remove trailing slash for consistency
 const pageType = Astro.url.pathname.startsWith('/posts') ? 'article' : 'website'
 const pageTitle = title ? `${title} - ${siteConfig.title}` : siteConfig.title
 const pageDescription = description || siteConfig.description
 const pageAuthor = author || siteConfig.author
 const pageImage =
   pageType === 'article'
-    ? Astro.url.origin +
-      Astro.url.pathname.replace(/\/posts\//, '/social-cards/') +
-      '.png'
-    : `${Astro.url.origin}/social-cards/__default.png`
+    ? new URL(
+        Astro.url.pathname.replace(/\/posts\//, '/social-cards/') + '.png',
+        Astro.site
+      ).href
+    : new URL('/social-cards/__default.png', Astro.site).href
 const pageKeywords = [
   ...new Set(siteConfig.tags.concat(tags || []).map((word) => word.toLowerCase())),
 ].join(', ')
@@ -115,8 +120,13 @@ let generatedCss: string = cssLines.join('\n')
     {pageImage && <meta name="twitter:image" content={pageImage} />}
     <meta name="keywords" content={pageKeywords} />
     <link rel="canonical" href={pageUrl} />
-    <link rel="sitemap" href="/sitemap-index.xml" />
-    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="sitemap" href={new URL('sitemap-index.xml', Astro.site).href} />
+    <!-- Favicon -->
+    <link rel="icon" href={`${baseUrl}/images/favicon.ico`} />
+    <link rel="icon" href={`${baseUrl}/images/favicon-16x16.png`} sizes="16x16" type="image/png" />
+    <link rel="icon" href={`${baseUrl}/images/favicon-32x32.png`} sizes="32x32" type="image/png" />
+    <link rel="apple-touch-icon" href={`${baseUrl}/images/apple-touch-icon.png`} />
+    <link rel="mask-icon" href={`${baseUrl}/images/safari-pinned-tab.svg`} color="#5bbad5" />
     <link
       rel="alternate"
       type="application/rss+xml"
