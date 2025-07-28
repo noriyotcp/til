@@ -7,6 +7,8 @@
     private keySequence: string[] = []
     private sequenceTimeout: number | null = null
     private readonly SEQUENCE_TIMEOUT = 1000 // 1 second
+    private currentFocusIndex: number = -1
+    private postElements: HTMLElement[] = []
 
     constructor() {
       this.init()
@@ -14,6 +16,64 @@
 
     private init() {
       document.addEventListener('keydown', this.handleKeyDown.bind(this))
+      // Initialize post navigation when DOM changes
+      this.initPostNavigation()
+      // Re-initialize when navigating between pages
+      document.addEventListener('astro:page-load', () => {
+        this.initPostNavigation()
+      })
+    }
+
+    private initPostNavigation() {
+      // Only enable post navigation on pages with multiple posts (post lists)
+      // Skip individual post pages
+      const isIndividual = this.isIndividualPostPage()
+
+      if (isIndividual) {
+        this.postElements = []
+        this.currentFocusIndex = -1
+        return
+      }
+
+      // Find all post elements that can be navigated
+      // This includes both article elements and post items in tag pages
+      const articles = Array.from(document.querySelectorAll('article')) as HTMLElement[]
+      const tagPostItems = Array.from(document.querySelectorAll('.post-item')) as HTMLElement[]
+
+      this.postElements = articles.length > 0 ? articles : tagPostItems
+      this.currentFocusIndex = -1
+      this.clearPostFocus()
+    }
+
+    private isIndividualPostPage(): boolean {
+      // Check URL path first - most reliable method
+      const path = window.location.pathname
+      const baseUrl = import.meta.env.BASE_URL || '/'
+
+      // Remove base URL from path for comparison
+      const relativePath = path.replace(baseUrl, '').replace(/^\/+/, '')
+
+      // Individual post pages follow the pattern: posts/[slug] (not posts/ or posts/2, etc.)
+      if (relativePath.startsWith('posts/') && !relativePath.match(/^posts\/(|\d+)$/)) {
+        return true
+      }
+
+      // Fallback: Check DOM structure
+      const articles = document.querySelectorAll('article')
+
+      // If there's exactly one article and it contains post content (not a preview)
+      if (articles.length === 1) {
+        const article = articles[0]
+        // Check if this article contains actual post content (has paragraphs, headings, etc.)
+        // rather than just preview content
+        const hasPostContent = article.querySelector('p, h2, h3, h4, h5, h6, pre, blockquote, ul, ol')
+        const hasReadButton = article.querySelector('.button')
+
+        // If it has post content but no "Read" button, it's likely an individual post
+        return hasPostContent && !hasReadButton
+      }
+
+      return false
     }
 
     private handleKeyDown(event: KeyboardEvent) {
@@ -50,7 +110,32 @@
         case 'Escape':
           event.preventDefault()
           this.closeModals()
+          this.clearPostFocus()
           return true
+
+        case 'j':
+          if (this.postElements.length > 0) {
+            event.preventDefault()
+            this.navigateToNextPost()
+            return true
+          }
+          return false
+
+        case 'k':
+          if (this.postElements.length > 0) {
+            event.preventDefault()
+            this.navigateToPreviousPost()
+            return true
+          }
+          return false
+
+        case 'Enter':
+          if (this.currentFocusIndex >= 0) {
+            event.preventDefault()
+            this.openFocusedPost()
+            return true
+          }
+          return false
 
         default:
           return false
@@ -176,6 +261,68 @@
       }
     }
 
+    private navigateToNextPost() {
+      if (this.postElements.length === 0) return
+
+      this.currentFocusIndex = Math.min(this.currentFocusIndex + 1, this.postElements.length - 1)
+      this.updatePostFocus()
+    }
+
+    private navigateToPreviousPost() {
+      if (this.postElements.length === 0) return
+
+      this.currentFocusIndex = Math.max(this.currentFocusIndex - 1, 0)
+      this.updatePostFocus()
+    }
+
+    private updatePostFocus() {
+      // Clear all existing focus styles
+      this.clearPostFocus()
+
+      if (this.currentFocusIndex >= 0 && this.currentFocusIndex < this.postElements.length) {
+        const focusedPost = this.postElements[this.currentFocusIndex]
+
+        // Add focus styling
+        focusedPost.style.outline = '2px solid var(--theme-accent)'
+        focusedPost.style.outlineOffset = '4px'
+        focusedPost.style.borderRadius = '0.5rem'
+        focusedPost.setAttribute('data-hotkey-focused', 'true')
+
+        // Scroll into view
+        focusedPost.scrollIntoView({
+          behavior: 'smooth',
+          block: 'center'
+        })
+      }
+    }
+
+    private clearPostFocus() {
+      this.postElements.forEach(post => {
+        post.style.outline = ''
+        post.style.outlineOffset = ''
+        post.style.borderRadius = ''
+        post.removeAttribute('data-hotkey-focused')
+      })
+    }
+
+    private openFocusedPost() {
+      if (this.currentFocusIndex >= 0 && this.currentFocusIndex < this.postElements.length) {
+        const focusedPost = this.postElements[this.currentFocusIndex]
+
+        // Try to find the post link in different structures
+        let postLink = focusedPost.querySelector('h1 a') as HTMLAnchorElement
+
+        // For tag page post items, look for direct anchor
+        if (!postLink) {
+          postLink = focusedPost.querySelector('a') as HTMLAnchorElement
+        }
+
+        if (postLink) {
+          window.location.href = postLink.href
+        }
+      }
+    }
+
     private showTemporaryMessage(message: string) {
       // Create temporary message element
       const messageEl = document.createElement('div')
@@ -252,6 +399,21 @@
         z-index: 1000;
       `
 
+      // Show post navigation section only if we have navigable posts
+      const postNavigationSection = this.postElements.length > 0 ? `
+        <div style="margin-bottom: 1.5rem;">
+          <h3 style="color: var(--theme-accent); font-size: 1rem; margin-bottom: 0.5rem;">Post Navigation</h3>
+          <div style="display: grid; grid-template-columns: auto 1fr; gap: 0.5rem 1rem; font-family: monospace;">
+            <kbd style="background: var(--theme-accent); color: var(--theme-background); padding: 0.2rem 0.4rem; border-radius: 0.25rem;">j</kbd>
+            <span>Next post</span>
+            <kbd style="background: var(--theme-accent); color: var(--theme-background); padding: 0.2rem 0.4rem; border-radius: 0.25rem;">k</kbd>
+            <span>Previous post</span>
+            <kbd style="background: var(--theme-accent); color: var(--theme-background); padding: 0.2rem 0.4rem; border-radius: 0.25rem;">Enter</kbd>
+            <span>Open focused post</span>
+          </div>
+        </div>
+      ` : ''
+
       modal.innerHTML = `
         <div style="
           background: var(--theme-background);
@@ -286,6 +448,8 @@
             </div>
           </div>
 
+          ${postNavigationSection}
+
           <div style="margin-bottom: 1.5rem;">
             <h3 style="color: var(--theme-accent); font-size: 1rem; margin-bottom: 0.5rem;">Actions</h3>
             <div style="display: grid; grid-template-columns: auto 1fr; gap: 0.5rem 1rem; font-family: monospace;">
@@ -296,7 +460,7 @@
               <kbd style="background: var(--theme-accent); color: var(--theme-background); padding: 0.2rem 0.4rem; border-radius: 0.25rem;">?</kbd>
               <span>Show this help</span>
               <kbd style="background: var(--theme-accent); color: var(--theme-background); padding: 0.2rem 0.4rem; border-radius: 0.25rem;">Esc</kbd>
-              <span>Close modals</span>
+              <span>Close modals / Clear focus</span>
             </div>
           </div>
 
