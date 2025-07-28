@@ -1,7 +1,6 @@
 ---
 import { Image } from 'astro:assets'
-import ReactGithubCalendar from './ReactGithubCalendar'
-import ErrorBoundary from './ErrorBoundary'
+import LazyGithubCalendar from './LazyGithubCalendar'
 import type { FrontmatterImage } from '../types'
 
 interface Props {
@@ -32,10 +31,8 @@ const { avatarImage, githubCalendar } = Astro.props
   </div>
   {
     githubCalendar && (
-      <div class="h-42">
-        <ErrorBoundary client:only>
-          <ReactGithubCalendar username={githubCalendar} client:only />
-        </ErrorBoundary>
+      <div class="min-h-32">
+        <LazyGithubCalendar username={githubCalendar} client:load />
       </div>
     )
   }

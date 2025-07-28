@@ -35,7 +35,13 @@ export default defineConfig({
     // @ts-ignore - Type compatibility issue with Vite plugin
     plugins: [tailwindcss()],
     build: {
+      // ビルドパフォーマンスの最適化
+      target: 'es2020',
+      minify: 'esbuild',
+      // 並列処理の最適化
       rollupOptions: {
+        // 並列処理数を最適化
+        maxParallelFileOps: 8,
         external: [
           // Exclude non-blog directories and files
           /^\/projects\//,
@@ -48,6 +54,33 @@ export default defineConfig({
           /vitest\.config\.js$/,
           /\.test\.js$/,
         ],
+        output: {
+          // コード分割の最適化
+          manualChunks: {
+            // React関連を別チャンクに分離
+            'react-vendor': ['react', 'react-dom'],
+            // GitHub calendar を別チャンクに分離
+            'github-calendar': ['react-github-calendar'],
+            // Satori関連（Social Cards）を別チャンクに分離
+            'satori': ['satori', '@resvg/resvg-js', 'satori-html'],
+          },
+          // チャンクファイル名の最適化
+          chunkFileNames: (chunkInfo) => {
+            const facadeModuleId = chunkInfo.facadeModuleId
+            if (facadeModuleId) {
+              if (facadeModuleId.includes('github-calendar')) {
+                return 'assets/github-calendar-[hash].js'
+              }
+              if (facadeModuleId.includes('react')) {
+                return 'assets/react-[hash].js'
+              }
+              if (facadeModuleId.includes('satori')) {
+                return 'assets/satori-[hash].js'
+              }
+            }
+            return 'assets/[name]-[hash].js'
+          },
+        },
       },
     },
   },
