@@ -23,11 +23,11 @@ const createMockDOM = () => {
       add: vi.fn(),
       remove: vi.fn(),
     },
-    contains: vi.fn(() => true),
+    contains: vi.fn((node: Node | null) => true),
   }
 
   const mockDocument = {
-    querySelector: vi.fn((selector: string) => {
+    querySelector: vi.fn((selector: string): any => {
       if (selector === 'body') return mockBody
       if (selector === 'input') return mockInput
       if (selector === 'button[data-open-modal]') return mockButton
@@ -165,7 +165,10 @@ describe('Search Integration', () => {
   it('initializes search component correctly', () => {
     const siteSearch = new SiteSearchClass()
 
-    expect(mockDOM.mockButton.addEventListener).toHaveBeenCalledWith('click', expect.any(Function))
+    expect(mockDOM.mockButton.addEventListener).toHaveBeenCalledWith(
+      'click',
+      expect.any(Function),
+    )
     expect(mockDOM.mockButton.disabled).toBe(false)
   })
 
@@ -241,7 +244,7 @@ describe('Search Integration', () => {
 
     expect(mockDOM.mockWindow.addEventListener).toHaveBeenCalledWith(
       'keydown',
-      expect.any(Function)
+      expect.any(Function),
     )
   })
 
