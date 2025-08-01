@@ -3,7 +3,7 @@ name: Deploy to GitHub Pages
 on:
   # mainブランチとastro-previewブランチにプッシュするたびにワークフローを実行します。
   push:
-    branches: [ main, astro-preview ]
+    branches: [ main ]
   # このワークフローをGitHubのActionsタブから手動で実行できるようにします。
   workflow_dispatch:
 

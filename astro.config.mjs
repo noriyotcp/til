@@ -1,4 +1,3 @@
-// @ts-check
 import { defineConfig } from 'astro/config'
 import tailwindcss from '@tailwindcss/vite'
 import sitemap from '@astrojs/sitemap'
@@ -51,7 +50,6 @@ export default defineConfig({
   trailingSlash: 'never',
   prefetch: true,
   vite: {
-    /** @type {import('vite').PluginOption[]} */
     plugins: [tailwindcss()],
     build: {
       // ビルドパフォーマンスの最適化
