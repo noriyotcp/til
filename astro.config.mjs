@@ -25,6 +25,25 @@ import remarkGemoji from './src/plugins/remark-gemoji' /* for shortcode emoji su
 import rehypePixelated from './src/plugins/rehype-pixelated' /* Custom plugin to handle pixelated images */
 import react from '@astrojs/react'
 
+// Custom plugin to fix image paths with base URL
+function rehypeFixImagePaths() {
+  return (tree) => {
+    const visit = (node) => {
+      if (node.type === 'element' && node.tagName === 'img' && node.properties?.src) {
+        const src = node.properties.src
+        // If the src starts with /images/, prepend the base URL
+        if (typeof src === 'string' && src.startsWith('/images/')) {
+          node.properties.src = '/til' + src
+        }
+      }
+      if (node.children) {
+        node.children.forEach(visit)
+      }
+    }
+    visit(tree)
+  }
+}
+
 // https://astro.build/config
 export default defineConfig({
   site: siteConfig.site,
@@ -118,6 +137,7 @@ export default defineConfig({
       ],
       rehypeUnwrapImages,
       rehypePixelated,
+      rehypeFixImagePaths,
       rehypeKatex,
     ],
   },

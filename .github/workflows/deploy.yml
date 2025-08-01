@@ -22,7 +22,7 @@ jobs:
       - name: Install, build, and upload your site
         uses: withastro/action@v3
         with:
-          path: ./astro-site # リポジトリ内のAstroプロジェクトのルートロケーション
+          path: . # リポジトリ内のAstroプロジェクトのルートロケーション
           node-version: 20 # サイト構築に使用するNodeのバージョン
           package-manager: npm # 依存関係のインストールとサイトのビルドに使用するNodeパッケージマネージャ
 
