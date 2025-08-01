@@ -29,6 +29,10 @@ const config: SiteConfig = {
       url: '/posts',
     },
     {
+      name: 'Tags',
+      url: '/tags',
+    },
+    {
       name: 'GitHub',
       url: 'https://github.com/noriyotcp',
       external: true,
