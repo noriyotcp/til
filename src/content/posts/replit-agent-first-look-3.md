@@ -5,6 +5,7 @@ last_modified_at: "2025-03-12 23:55:19 +0900"
 tags:
   - "Replit"
   - "Replit Agent"
+draft: false
 ---
 前回： [Replit Agent 触ってみた2 - til](https://noriyotcp.github.io/til/2025/01/05/replit-agent-first-look-2.html)
 

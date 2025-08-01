@@ -5,6 +5,7 @@ last_modified_at: "2024-12-23 22:16:33 +0900"
 tags:
   - "TypeScript"
   - "Events"
+draft: false
 ---
 # TypeScriptを活用した型安全なチーム開発 2024
 https://sansan.connpass.com/event/337268/

@@ -5,6 +5,7 @@ last_modified_at: "2025-03-12 23:55:19 +0900"
 tags:
   - "Replit"
   - "Replit Agent"
+draft: false
 ---
 # Replit Agent 触ってみた4
 ## tl;dr

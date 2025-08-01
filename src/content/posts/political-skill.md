@@ -4,6 +4,7 @@ date: "2025-04-10 00:01:17 +0900"
 last_modified_at: "2025-04-10 00:21:33 +0900"
 tags:
   - "Books"
+draft: false
 ---
 この記事は以下の書籍を NotebookLM や AI を使用してまとめたものである。
 

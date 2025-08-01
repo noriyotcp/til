@@ -6,6 +6,7 @@ tags:
   - "Hugging Face"
   - "AI Agent"
   - "体験記"
+draft: false
 ---
 [Hugging Face Agents Course](https://huggingface.co/agents-course) が開講していたのでやってみることにしました、無料だし。
 

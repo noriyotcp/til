@@ -6,6 +6,7 @@ tags:
   - "Ruby"
   - "Ruby on Rails"
   - "Books"
+draft: false
 ---
 注：以下の文章は、機械翻訳や Packt に備わっている Assistant AI による要約から成り立っている
 

@@ -7,6 +7,7 @@ tags:
   - "Ruby on Rails"
   - "Events"
   - "KaigiOnRails2024"
+draft: false
 ---
 # Kaigi on Rails 2024 Day2
 ## Cache to Your Advantage: フラグメントキャッシュの基本と応用
