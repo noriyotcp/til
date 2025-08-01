@@ -1,0 +1,499 @@
+---
+// HotkeyManager - Global hotkey system for the site
+---
+
+<script>
+  class HotkeyManager {
+    private keySequence: string[] = []
+    private sequenceTimeout: number | null = null
+    private readonly SEQUENCE_TIMEOUT = 1000 // 1 second
+    private currentFocusIndex: number = -1
+    private postElements: HTMLElement[] = []
+
+    constructor() {
+      this.init()
+    }
+
+    private init() {
+      document.addEventListener('keydown', this.handleKeyDown.bind(this))
+      // Initialize post navigation when DOM changes
+      this.initPostNavigation()
+      // Re-initialize when navigating between pages
+      document.addEventListener('astro:page-load', () => {
+        this.initPostNavigation()
+      })
+    }
+
+    private initPostNavigation() {
+      // Only enable post navigation on pages with multiple posts (post lists)
+      // Skip individual post pages
+      const isIndividual = this.isIndividualPostPage()
+
+      if (isIndividual) {
+        this.postElements = []
+        this.currentFocusIndex = -1
+        return
+      }
+
+      // Find all post elements that can be navigated
+      // This includes both article elements and post items in tag pages
+      const articles = Array.from(document.querySelectorAll('article')) as HTMLElement[]
+      const tagPostItems = Array.from(document.querySelectorAll('.post-item')) as HTMLElement[]
+
+      this.postElements = articles.length > 0 ? articles : tagPostItems
+      this.currentFocusIndex = -1
+      this.clearPostFocus()
+    }
+
+    private isIndividualPostPage(): boolean {
+      // Check URL path first - most reliable method
+      const path = window.location.pathname
+      const baseUrl = import.meta.env.BASE_URL || '/'
+
+      // Remove base URL from path for comparison
+      const relativePath = path.replace(baseUrl, '').replace(/^\/+/, '')
+
+      // Individual post pages follow the pattern: posts/[slug] (not posts/ or posts/2, etc.)
+      if (relativePath.startsWith('posts/') && !relativePath.match(/^posts\/(|\d+)$/)) {
+        return true
+      }
+
+      // Fallback: Check DOM structure
+      const articles = document.querySelectorAll('article')
+
+      // If there's exactly one article and it contains post content (not a preview)
+      if (articles.length === 1) {
+        const article = articles[0]
+        // Check if this article contains actual post content (has paragraphs, headings, etc.)
+        // rather than just preview content
+        const hasPostContent = article.querySelector('p, h2, h3, h4, h5, h6, pre, blockquote, ul, ol')
+        const hasReadButton = article.querySelector('.button')
+
+        // If it has post content but no "Read" button, it's likely an individual post
+        return hasPostContent && !hasReadButton
+      }
+
+      return false
+    }
+
+    private handleKeyDown(event: KeyboardEvent) {
+      // Skip if user is typing in an input field
+      if (this.isTyping(event.target as Element)) {
+        return
+      }
+
+      // Handle single key shortcuts
+      if (this.handleSingleKey(event)) {
+        return
+      }
+
+      // Handle key sequences (like 'g h')
+      this.handleKeySequence(event)
+    }
+
+    private isTyping(target: Element): boolean {
+      const tagName = target.tagName.toLowerCase()
+      const inputTypes = ['input', 'textarea', 'select']
+      const isContentEditable = target.getAttribute('contenteditable') === 'true'
+
+      return inputTypes.includes(tagName) || isContentEditable
+    }
+
+    private handleSingleKey(event: KeyboardEvent): boolean {
+      switch (event.key) {
+        case '?':
+          if (!event.shiftKey) return false
+          event.preventDefault()
+          this.showHelp()
+          return true
+
+        case 'Escape':
+          event.preventDefault()
+          this.closeModals()
+          this.clearPostFocus()
+          return true
+
+        case 'j':
+          if (this.postElements.length > 0) {
+            event.preventDefault()
+            this.navigateToNextPost()
+            return true
+          }
+          return false
+
+        case 'k':
+          if (this.postElements.length > 0) {
+            event.preventDefault()
+            this.navigateToPreviousPost()
+            return true
+          }
+          return false
+
+        case 'Enter':
+          if (this.currentFocusIndex >= 0) {
+            event.preventDefault()
+            this.openFocusedPost()
+            return true
+          }
+          return false
+
+        default:
+          return false
+      }
+    }
+
+    private handleKeySequence(event: KeyboardEvent) {
+      // Add key to sequence
+      this.keySequence.push(event.key.toLowerCase())
+
+      // Clear existing timeout
+      if (this.sequenceTimeout) {
+        clearTimeout(this.sequenceTimeout)
+      }
+
+      // Set new timeout to clear sequence
+      this.sequenceTimeout = setTimeout(() => {
+        this.keySequence = []
+      }, this.SEQUENCE_TIMEOUT)
+
+      // Check for complete sequences
+      const sequence = this.keySequence.join(' ')
+
+      switch (sequence) {
+        case 'g h':
+          event.preventDefault()
+          this.navigateTo('/')
+          this.clearSequence()
+          break
+
+        case 'g t':
+          event.preventDefault()
+          this.navigateTo('/tags')
+          this.clearSequence()
+          break
+
+        case 'g a':
+          event.preventDefault()
+          this.navigateTo('/posts')
+          this.clearSequence()
+          break
+
+        case 'b t':
+          event.preventDefault()
+          this.scrollToTop()
+          this.clearSequence()
+          break
+
+        case 'g p':
+          event.preventDefault()
+          this.navigateToPreviousPage()
+          this.clearSequence()
+          break
+
+        case 'g n':
+          event.preventDefault()
+          this.navigateToNextPage()
+          this.clearSequence()
+          break
+      }
+
+      // Clear sequence if it gets too long
+      if (this.keySequence.length > 2) {
+        this.clearSequence()
+      }
+    }
+
+    private clearSequence() {
+      this.keySequence = []
+      if (this.sequenceTimeout) {
+        clearTimeout(this.sequenceTimeout)
+        this.sequenceTimeout = null
+      }
+    }
+
+    private navigateTo(path: string) {
+      // Check if the path already includes the base URL (for pagination links)
+      const baseUrl = import.meta.env.BASE_URL || '/'
+      let fullPath: string
+
+      if (path.startsWith(baseUrl)) {
+        // Path already includes base URL (e.g., from pagination links)
+        fullPath = path.replace(/\/$/, '') || '/'
+      } else if (path === '/') {
+        // For home page, use base URL without trailing slash
+        fullPath = baseUrl.replace(/\/$/, '') || '/'
+      } else {
+        // For other paths, construct properly
+        fullPath = `${baseUrl}${path}`.replace(/\/+/g, '/').replace(/\/$/, '')
+      }
+
+      window.location.href = fullPath
+    }
+
+    private scrollToTop() {
+      window.scrollTo({ top: 0, behavior: 'smooth' })
+    }
+
+    private getCurrentPageInfo() {
+      const prevLink = document.querySelector('a[aria-label="Previous Page"]')?.getAttribute('href')
+      const nextLink = document.querySelector('a[aria-label="Next Page"]')?.getAttribute('href')
+
+      return { prevLink, nextLink }
+    }
+
+    private navigateToPreviousPage() {
+      const { prevLink } = this.getCurrentPageInfo()
+      if (prevLink) {
+        this.navigateTo(prevLink)
+      } else {
+        // Visual feedback when no previous page is available
+        this.showTemporaryMessage('Already on first page')
+      }
+    }
+
+    private navigateToNextPage() {
+      const { nextLink } = this.getCurrentPageInfo()
+      if (nextLink) {
+        this.navigateTo(nextLink)
+      } else {
+        // Visual feedback when no next page is available
+        this.showTemporaryMessage('Already on last page')
+      }
+    }
+
+    private navigateToNextPost() {
+      if (this.postElements.length === 0) return
+
+      this.currentFocusIndex = Math.min(this.currentFocusIndex + 1, this.postElements.length - 1)
+      this.updatePostFocus()
+    }
+
+    private navigateToPreviousPost() {
+      if (this.postElements.length === 0) return
+
+      this.currentFocusIndex = Math.max(this.currentFocusIndex - 1, 0)
+      this.updatePostFocus()
+    }
+
+    private updatePostFocus() {
+      // Clear all existing focus styles
+      this.clearPostFocus()
+
+      if (this.currentFocusIndex >= 0 && this.currentFocusIndex < this.postElements.length) {
+        const focusedPost = this.postElements[this.currentFocusIndex]
+
+        // Add focus styling
+        focusedPost.style.outline = '2px solid var(--theme-accent)'
+        focusedPost.style.outlineOffset = '4px'
+        focusedPost.style.borderRadius = '0.5rem'
+        focusedPost.setAttribute('data-hotkey-focused', 'true')
+
+        // Scroll into view
+        focusedPost.scrollIntoView({
+          behavior: 'smooth',
+          block: 'center'
+        })
+      }
+    }
+
+    private clearPostFocus() {
+      this.postElements.forEach(post => {
+        post.style.outline = ''
+        post.style.outlineOffset = ''
+        post.style.borderRadius = ''
+        post.removeAttribute('data-hotkey-focused')
+      })
+    }
+
+    private openFocusedPost() {
+      if (this.currentFocusIndex >= 0 && this.currentFocusIndex < this.postElements.length) {
+        const focusedPost = this.postElements[this.currentFocusIndex]
+
+        // Try to find the post link in different structures
+        let postLink = focusedPost.querySelector('h1 a') as HTMLAnchorElement
+
+        // For tag page post items, look for direct anchor
+        if (!postLink) {
+          postLink = focusedPost.querySelector('a') as HTMLAnchorElement
+        }
+
+        if (postLink) {
+          window.location.href = postLink.href
+        }
+      }
+    }
+
+    private showTemporaryMessage(message: string) {
+      // Create temporary message element
+      const messageEl = document.createElement('div')
+      messageEl.textContent = message
+      messageEl.style.cssText = `
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        background: var(--theme-accent);
+        color: var(--theme-background);
+        padding: 0.5rem 1rem;
+        border-radius: 0.25rem;
+        z-index: 1001;
+        font-size: 0.875rem;
+        opacity: 0;
+        transition: opacity 0.2s ease;
+      `
+
+      document.body.appendChild(messageEl)
+
+      // Fade in
+      requestAnimationFrame(() => {
+        messageEl.style.opacity = '1'
+      })
+
+      // Remove after 2 seconds
+      setTimeout(() => {
+        messageEl.style.opacity = '0'
+        setTimeout(() => {
+          document.body.removeChild(messageEl)
+        }, 200)
+      }, 2000)
+    }
+
+    private showHelp() {
+      // Create or show help modal
+      let helpModal = document.getElementById('hotkey-help-modal')
+
+      if (!helpModal) {
+        helpModal = this.createHelpModal()
+        document.body.appendChild(helpModal)
+      }
+
+      helpModal.style.display = 'flex'
+    }
+
+    private closeModals() {
+      // Close help modal
+      const helpModal = document.getElementById('hotkey-help-modal')
+      if (helpModal) {
+        helpModal.style.display = 'none'
+      }
+
+      // Close search modal (if open)
+      const searchModal = document.querySelector('site-search dialog') as HTMLDialogElement
+      if (searchModal && searchModal.open) {
+        searchModal.close()
+      }
+    }
+
+    private createHelpModal(): HTMLElement {
+      const modal = document.createElement('div')
+      modal.id = 'hotkey-help-modal'
+      modal.style.cssText = `
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        display: none;
+        justify-content: center;
+        align-items: center;
+        z-index: 1000;
+      `
+
+      // Show post navigation section only if we have navigable posts
+      const postNavigationSection = this.postElements.length > 0 ? `
+        <div style="margin-bottom: 1.5rem;">
+          <h3 style="color: var(--theme-accent); font-size: 1rem; margin-bottom: 0.5rem;">Post Navigation</h3>
+          <div style="display: grid; grid-template-columns: auto 1fr; gap: 0.5rem 1rem; font-family: monospace;">
+            <kbd style="background: var(--theme-accent); color: var(--theme-background); padding: 0.2rem 0.4rem; border-radius: 0.25rem;">j</kbd>
+            <span>Next post</span>
+            <kbd style="background: var(--theme-accent); color: var(--theme-background); padding: 0.2rem 0.4rem; border-radius: 0.25rem;">k</kbd>
+            <span>Previous post</span>
+            <kbd style="background: var(--theme-accent); color: var(--theme-background); padding: 0.2rem 0.4rem; border-radius: 0.25rem;">Enter</kbd>
+            <span>Open focused post</span>
+          </div>
+        </div>
+      ` : ''
+
+      modal.innerHTML = `
+        <div style="
+          background: var(--theme-background);
+          color: var(--theme-foreground);
+          padding: 2rem;
+          border-radius: 0.5rem;
+          max-width: 500px;
+          width: 90%;
+          border: 2px solid var(--theme-accent);
+        ">
+          <h2 style="margin-top: 0; color: var(--theme-accent);">Keyboard Shortcuts</h2>
+
+          <div style="margin-bottom: 1.5rem;">
+            <h3 style="color: var(--theme-accent); font-size: 1rem; margin-bottom: 0.5rem;">Navigation</h3>
+            <div style="display: grid; grid-template-columns: auto 1fr; gap: 0.5rem 1rem; font-family: monospace;">
+              <kbd style="background: var(--theme-accent); color: var(--theme-background); padding: 0.2rem 0.4rem; border-radius: 0.25rem;">g h</kbd>
+              <span>Go to Home</span>
+              <kbd style="background: var(--theme-accent); color: var(--theme-background); padding: 0.2rem 0.4rem; border-radius: 0.25rem;">g a</kbd>
+              <span>Go to Archive</span>
+              <kbd style="background: var(--theme-accent); color: var(--theme-background); padding: 0.2rem 0.4rem; border-radius: 0.25rem;">g t</kbd>
+              <span>Go to Tags</span>
+            </div>
+          </div>
+
+          <div style="margin-bottom: 1.5rem;">
+            <h3 style="color: var(--theme-accent); font-size: 1rem; margin-bottom: 0.5rem;">Pagination</h3>
+            <div style="display: grid; grid-template-columns: auto 1fr; gap: 0.5rem 1rem; font-family: monospace;">
+              <kbd style="background: var(--theme-accent); color: var(--theme-background); padding: 0.2rem 0.4rem; border-radius: 0.25rem;">g p</kbd>
+              <span>Previous Page</span>
+              <kbd style="background: var(--theme-accent); color: var(--theme-background); padding: 0.2rem 0.4rem; border-radius: 0.25rem;">g n</kbd>
+              <span>Next Page</span>
+            </div>
+          </div>
+
+          ${postNavigationSection}
+
+          <div style="margin-bottom: 1.5rem;">
+            <h3 style="color: var(--theme-accent); font-size: 1rem; margin-bottom: 0.5rem;">Actions</h3>
+            <div style="display: grid; grid-template-columns: auto 1fr; gap: 0.5rem 1rem; font-family: monospace;">
+              <kbd style="background: var(--theme-accent); color: var(--theme-background); padding: 0.2rem 0.4rem; border-radius: 0.25rem;">Cmd/Ctrl+K</kbd>
+              <span>Search</span>
+              <kbd style="background: var(--theme-accent); color: var(--theme-background); padding: 0.2rem 0.4rem; border-radius: 0.25rem;">b t</kbd>
+              <span>Back to Top</span>
+              <kbd style="background: var(--theme-accent); color: var(--theme-background); padding: 0.2rem 0.4rem; border-radius: 0.25rem;">?</kbd>
+              <span>Show this help</span>
+              <kbd style="background: var(--theme-accent); color: var(--theme-background); padding: 0.2rem 0.4rem; border-radius: 0.25rem;">Esc</kbd>
+              <span>Close modals / Clear focus</span>
+            </div>
+          </div>
+
+          <button onclick="this.closest('#hotkey-help-modal').style.display='none'"
+                  style="
+                    background: var(--theme-accent);
+                    color: var(--theme-background);
+                    border: none;
+                    padding: 0.5rem 1rem;
+                    border-radius: 0.25rem;
+                    cursor: pointer;
+                    float: right;
+                  ">
+            Close
+          </button>
+        </div>
+      `
+
+      // Close on background click
+      modal.addEventListener('click', (e) => {
+        if (e.target === modal) {
+          modal.style.display = 'none'
+        }
+      })
+
+      return modal
+    }
+  }
+
+  // Initialize hotkey manager when DOM is ready
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', () => new HotkeyManager())
+  } else {
+    new HotkeyManager()
+  }
+</script>

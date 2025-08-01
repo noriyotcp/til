@@ -1,0 +1,89 @@
+---
+import Layout from '@layouts/Layout.astro'
+import { getSortedPosts, url } from '@utils'
+import BlockHeader from '@components/BlockHeader.astro'
+
+// Get all posts and extract tags with counts
+const posts = await getSortedPosts()
+const tagCounts = new Map<string, number>()
+
+// Count posts per tag
+posts.forEach((post) => {
+  post.data.tags?.forEach((tag) => {
+    tagCounts.set(tag, (tagCounts.get(tag) || 0) + 1)
+  })
+})
+
+// Sort tags by count (descending) then alphabetically
+const sortedTags = Array.from(tagCounts.entries())
+  .sort(([tagA, countA], [tagB, countB]) => {
+    if (countA !== countB) {
+      return countB - countA // Sort by count descending
+    }
+    return tagA.localeCompare(tagB) // Then alphabetically
+  })
+---
+
+<Layout title="Tags" description="All tags used in blog posts">
+  <BlockHeader>Tags</BlockHeader>
+
+  <div class="tag-list">
+    {sortedTags.map(([tag, count]) => (
+      <div class="tag-item mb-4">
+        <h2 class="text-xl font-semibold mb-2">
+          <a href={url('tags', tag)} class="text-accent hover:underline">
+            #{tag} ({count})
+          </a>
+        </h2>
+        <div class="tag-posts">
+          {posts
+            .filter((post) => post.data.tags?.includes(tag))
+            .slice(0, 5) // Show first 5 posts
+            .map((post) => (
+              <div class="post-item mb-3">
+                <a href={url('posts', post.id)} class="text-foreground hover:text-accent">
+                  {post.data.title}
+                </a>
+                <span class="text-foreground/60 text-sm ml-2">
+                  {new Date(post.data.published).toLocaleDateString('ja-JP')}
+                </span>
+              </div>
+            ))
+          }
+          {posts.filter((post) => post.data.tags?.includes(tag)).length > 5 && (
+            <div class="text-sm text-foreground/60 mt-1">
+              <a href={url('tags', tag)} class="hover:text-accent">
+                ...and {posts.filter((post) => post.data.tags?.includes(tag)).length - 5} more posts
+              </a>
+            </div>
+          )}
+        </div>
+      </div>
+    ))}
+  </div>
+</Layout>
+
+<style>
+  .tag-list {
+    max-width: 100%;
+  }
+
+  .tag-item {
+    border-bottom: 1px solid var(--theme-accent, #666);
+    border-opacity: 0.1;
+    padding-bottom: 1rem;
+  }
+
+  .post-item {
+    line-height: 1.6;
+    padding: 0.5rem;
+    margin: 0.25rem 0;
+    border-radius: 0.25rem;
+    transition: background-color 0.2s ease;
+  }
+
+  .post-item:hover {
+    background-color: var(--theme-accent, #666);
+    background-opacity: 0.1;
+  }
+</style>

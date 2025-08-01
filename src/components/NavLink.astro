@@ -1,0 +1,20 @@
+---
+import type { NavLink } from '@types'
+import { url } from '../utils'
+
+interface Props {
+  link: NavLink
+}
+
+const { link } = Astro.props
+const linkUrl = link.external ? link.url : url(link.url)
+---
+
+<a
+  class="underline"
+  rel={link.external ? 'noopener noreferrer' : undefined}
+  target={link.external ? '_blank' : undefined}
+  href={linkUrl}
+>
+  {link.name}
+</a>
