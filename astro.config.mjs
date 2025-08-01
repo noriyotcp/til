@@ -62,16 +62,9 @@ export default defineConfig({
         // 並列処理数を最適化
         maxParallelFileOps: 8,
         external: [
-          // Exclude non-blog directories and files
-          /^\/projects\//,
-          /^\/Rails\//,
-          /^\/tmp\//,
+          // Exclude directories that shouldn't be bundled
           /^\/excludes\//,
           /^\/node_modules\//,
-          /^\/_site\//,
-          /\.sh$/,
-          /vitest\.config\.js$/,
-          /\.test\.js$/,
         ],
         output: {
           // コード分割の最適化
