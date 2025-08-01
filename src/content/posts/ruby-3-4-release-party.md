@@ -5,6 +5,7 @@ last_modified_at: "2024-12-26 23:41:37 +0900"
 tags:
   - "Ruby"
   - "Events"
+draft: false
 ---
 # Ruby 3.4 リリースパーティー presented by STORES / アンドパッド
 https://andpad.connpass.com/event/336742/

@@ -6,6 +6,7 @@ tags:
   - "ソフトウェア設計"
   - "増田設計道場"
   - "connpass"
+draft: false
 ---
 # 第2回 ソフトウェア設計における思考と学び方を考える 「増田設計道場」 - connpass
 [第2回 ソフトウェア設計における思考と学び方を考える 「増田設計道場」 - connpass](https://levii.connpass.com/event/325035/)

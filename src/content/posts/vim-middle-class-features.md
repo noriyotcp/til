@@ -4,6 +4,7 @@ date: "2024-06-06 02:10:53 +0900"
 last_modified_at: "2024-10-06 00:56:06 +0900"
 tags:
   - "Vim"
+draft: false
 ---
 # https://zenn.dev/vim_jp/articles/2024-06-05-vim-middle-class-features
 

@@ -7,6 +7,7 @@ tags:
   - "Ruby on Rails"
   - "Events"
   - "KaigiOnRails2024"
+draft: false
 ---
 # Kaigi on Rails 2024 Day1
 ## 基調講演

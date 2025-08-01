@@ -5,6 +5,7 @@ last_modified_at: "2024-12-10 00:55:54 +0900"
 tags:
   - "問題発見"
   - "Books"
+draft: false
 ---
 # ライト、ついてますか　問題発見の人間学
 

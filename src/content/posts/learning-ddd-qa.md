@@ -6,6 +6,7 @@ tags:
   - "ドメイン駆動設計"
   - "DDD"
   - "Books"
+draft: false
 ---
 # ドメイン駆動設計をはじめよう - エッセイ形式の問題に対する模範解答
 [O'Reilly Japan - ドメイン駆動設計をはじめよう](https://www.oreilly.co.jp/books/9784814400737/)

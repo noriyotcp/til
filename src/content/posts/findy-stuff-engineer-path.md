@@ -5,6 +5,7 @@ last_modified_at: "2024-10-06 01:02:06 +0900"
 tags:
   - "Forkwell Library"
   - "Staff Engineer"
+draft: false
 ---
 # スタッフエンジニアの道~ Forkwell Library#66
 

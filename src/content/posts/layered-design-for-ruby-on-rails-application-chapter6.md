@@ -6,6 +6,7 @@ tags:
   - "Ruby"
   - "Ruby on Rails"
   - "Books"
+draft: false
 ---
 # Part 2: Extracting Layers from Models - Chapter 6: Data Layer Abstractions
 

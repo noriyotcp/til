@@ -4,6 +4,7 @@ date: "2024-12-03 22:46:10 +0900"
 last_modified_at: "2024-12-10 20:55:37 +0900"
 tags:
   - "Events"
+draft: false
 ---
 # 技術的負債返済の意義を考える、あの時の"やる・やらない"判断基準どうしてた？
 [【再増枠】技術的負債返済の意義を考える、あの時の"やる・やらない"判断基準どうしてた？ - connpass](https://developer-productivity-engineering.connpass.com/event/336048/)

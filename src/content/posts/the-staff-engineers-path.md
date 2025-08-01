@@ -6,6 +6,7 @@ tags:
   - "O'reilly"
   - "スタッフエンジニア"
   - "Books"
+draft: false
 ---
 # スタッフエンジニアの道
 [O'Reilly Japan - スタッフエンジニアの道](https://www.oreilly.co.jp/books/9784814400867/)

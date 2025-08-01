@@ -5,6 +5,7 @@ last_modified_at: "2025-03-12 23:57:55 +0900"
 tags:
   - "自己認識"
   - "Books"
+draft: false
 ---
 この記事は以下の書籍を NotebookLM や AI を使用してまとめたものである
 

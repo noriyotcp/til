@@ -2,6 +2,7 @@
 title: "vim のインラインコードブロックのキーバインディング"
 date: "2025-02-22 19:54:03 +0900"
 last_modified_at: "2025-03-12 23:57:55 +0900"
+draft: false
 ---
 ## vim のインラインコードブロックのキーバインディング
 https://github.com/tpope/vim-surround
