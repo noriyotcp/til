@@ -51,7 +51,7 @@ export default defineConfig({
   trailingSlash: 'never',
   prefetch: true,
   vite: {
-    // @ts-ignore - Type compatibility issue with Vite plugin
+    /** @type {import('vite').PluginOption[]} */
     plugins: [tailwindcss()],
     build: {
       // ビルドパフォーマンスの最適化
