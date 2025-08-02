@@ -11,7 +11,10 @@
     "astro": "astro",
     "test": "vitest",
     "test:watch": "vitest --watch",
-    "test:ui": "vitest --ui"
+    "test:ui": "vitest --ui",
+    "format": "prettier --write .",
+    "format:astro": "prettier --write \"src/**/*.astro\"",
+    "format:check": "prettier --check ."
   },
   "dependencies": {
     "@astrojs/markdown-remark": "^6.3.2",
