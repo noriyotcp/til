@@ -46,8 +46,8 @@ export async function getValidatedPosts(): Promise<PostEntry[]> {
 
     // Sort by date (newest first)
     return validPosts.sort((a, b) => {
-      const dateA = a.data.date || a.data.published
-      const dateB = b.data.date || b.data.published
+      const dateA = (a.data.date || a.data.published)!
+      const dateB = (b.data.date || b.data.published)!
       return new Date(dateB).getTime() - new Date(dateA).getTime()
     })
   } catch (error) {
@@ -124,7 +124,7 @@ export async function getSearchablePosts(): Promise<SearchablePost[]> {
         content: post.body || '',
         tags: post.data.tags || [],
         url: `/posts/${post.id}`,
-        date: post.data.date || post.data.published,
+        date: (post.data.date || post.data.published)!,
         slug: post.id,
       }
     }),

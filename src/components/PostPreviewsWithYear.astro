@@ -22,7 +22,7 @@ let currentYear = 0
       </div>
     ) : (
       posts.map((post) => {
-        const yearPublished = post.data.published.getFullYear()
+        const yearPublished = (post.data.published || post.data.date)!.getFullYear()
         if (yearMarkers && yearPublished !== currentYear) {
           currentYear = yearPublished
           return (

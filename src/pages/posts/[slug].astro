@@ -57,7 +57,7 @@ if (addendum.length > 0) {
       # {postData.title}
     </h1>
     <div class="text-foreground/80 mb-2.5">
-      <time>{dateString(postData.published)}</time>
+      <time>{dateString((postData.published || postData.date)!)}</time>
       {
         postData.author && (
           <span class="before:content-['::'] before:inline-block before:mx-0.5">

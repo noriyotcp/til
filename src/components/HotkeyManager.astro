@@ -38,7 +38,9 @@
       // Find all post elements that can be navigated
       // This includes both article elements and post items in tag pages
       const articles = Array.from(document.querySelectorAll('article')) as HTMLElement[]
-      const tagPostItems = Array.from(document.querySelectorAll('.post-item')) as HTMLElement[]
+      const tagPostItems = Array.from(
+        document.querySelectorAll('.post-item'),
+      ) as HTMLElement[]
 
       this.postElements = articles.length > 0 ? articles : tagPostItems
       this.currentFocusIndex = -1
@@ -66,7 +68,9 @@
         const article = articles[0]
         // Check if this article contains actual post content (has paragraphs, headings, etc.)
         // rather than just preview content
-        const hasPostContent = article.querySelector('p, h2, h3, h4, h5, h6, pre, blockquote, ul, ol')
+        const hasPostContent = article.querySelector(
+          'p, h2, h3, h4, h5, h6, pre, blockquote, ul, ol',
+        )
         const hasReadButton = article.querySelector('.button')
 
         // If it has post content but no "Read" button, it's likely an individual post
@@ -235,8 +239,12 @@
     }
 
     private getCurrentPageInfo() {
-      const prevLink = document.querySelector('a[aria-label="Previous Page"]')?.getAttribute('href')
-      const nextLink = document.querySelector('a[aria-label="Next Page"]')?.getAttribute('href')
+      const prevLink = document
+        .querySelector('a[aria-label="Previous Page"]')
+        ?.getAttribute('href')
+      const nextLink = document
+        .querySelector('a[aria-label="Next Page"]')
+        ?.getAttribute('href')
 
       return { prevLink, nextLink }
     }
@@ -264,7 +272,10 @@
     private navigateToNextPost() {
       if (this.postElements.length === 0) return
 
-      this.currentFocusIndex = Math.min(this.currentFocusIndex + 1, this.postElements.length - 1)
+      this.currentFocusIndex = Math.min(
+        this.currentFocusIndex + 1,
+        this.postElements.length - 1,
+      )
       this.updatePostFocus()
     }
 
@@ -279,7 +290,10 @@
       // Clear all existing focus styles
       this.clearPostFocus()
 
-      if (this.currentFocusIndex >= 0 && this.currentFocusIndex < this.postElements.length) {
+      if (
+        this.currentFocusIndex >= 0 &&
+        this.currentFocusIndex < this.postElements.length
+      ) {
         const focusedPost = this.postElements[this.currentFocusIndex]
 
         // Add focus styling
@@ -291,13 +305,13 @@
         // Scroll into view
         focusedPost.scrollIntoView({
           behavior: 'smooth',
-          block: 'center'
+          block: 'center',
         })
       }
     }
 
     private clearPostFocus() {
-      this.postElements.forEach(post => {
+      this.postElements.forEach((post) => {
         post.style.outline = ''
         post.style.outlineOffset = ''
         post.style.borderRadius = ''
@@ -306,7 +320,10 @@
     }
 
     private openFocusedPost() {
-      if (this.currentFocusIndex >= 0 && this.currentFocusIndex < this.postElements.length) {
+      if (
+        this.currentFocusIndex >= 0 &&
+        this.currentFocusIndex < this.postElements.length
+      ) {
         const focusedPost = this.postElements[this.currentFocusIndex]
 
         // Try to find the post link in different structures
@@ -377,7 +394,9 @@
       }
 
       // Close search modal (if open)
-      const searchModal = document.querySelector('site-search dialog') as HTMLDialogElement
+      const searchModal = document.querySelector(
+        'site-search dialog',
+      ) as HTMLDialogElement
       if (searchModal && searchModal.open) {
         searchModal.close()
       }
@@ -400,7 +419,9 @@
       `
 
       // Show post navigation section only if we have navigable posts
-      const postNavigationSection = this.postElements.length > 0 ? `
+      const postNavigationSection =
+        this.postElements.length > 0
+          ? `
         <div style="margin-bottom: 1.5rem;">
           <h3 style="color: var(--theme-accent); font-size: 1rem; margin-bottom: 0.5rem;">Post Navigation</h3>
           <div style="display: grid; grid-template-columns: auto 1fr; gap: 0.5rem 1rem; font-family: monospace;">
@@ -412,7 +433,8 @@
             <span>Open focused post</span>
           </div>
         </div>
-      ` : ''
+      `
+          : ''
 
       modal.innerHTML = `
         <div style="

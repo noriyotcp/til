@@ -20,7 +20,7 @@ const description = remarkPluginFrontmatter.description || post.data.description
     <a href={url('posts', post.id)}># {post.data.title}</a>
   </h1>
   <div class="text-foreground/80 my-3">
-    <time>{dateString(post.data.published)}</time>
+    <time>{dateString((post.data.published || post.data.date)!)}</time>
     {
       post.data.author && (
         <span class="before:content-['::'] before:inline-block before:mx-0.5">
