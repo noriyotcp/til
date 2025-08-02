@@ -1,7 +1,7 @@
 ---
 avatarImage:
     src: "./avatar.jpg"
-    alt: "My avatar"
+    alt: "noriyotcp's avatar"
 githubCalendar: "noriyotcp"
 ---
-Welcome to the example site. This site is meant to show off my custom Astro theme/template **MultiTerm** which creates a coder-ready blog complete with an interactive theme changer, RSS, sitemap, tagging, and markdown extensions.
+Hello, I'm Noriyo Akita, a web engineer based in Hachinohe City, Aomori Prefecture, Japan. I work remotely full-time.
