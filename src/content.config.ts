@@ -26,16 +26,14 @@ const postsCollection = defineCollection({
         .optional(),
     })
     .transform((data) => {
-      // Normalize date field - use 'date' if available, otherwise use 'published'
-      const normalizedDate = data.date || data.published
-      if (!normalizedDate) {
+      if (!data.date && !data.published) {
         throw new Error('Either date or published field is required')
       }
 
       return {
         ...data,
-        date: normalizedDate,
-        published: data.published || normalizedDate
+        date: data.date || data.published,
+        published: data.published || data.date,
       }
     }),
 })

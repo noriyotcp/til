@@ -15,51 +15,60 @@ posts.forEach((post) => {
 })
 
 // Sort tags by count (descending) then alphabetically
-const sortedTags = Array.from(tagCounts.entries())
-  .sort(([tagA, countA], [tagB, countB]) => {
+const sortedTags = Array.from(tagCounts.entries()).sort(
+  ([tagA, countA], [tagB, countB]) => {
     if (countA !== countB) {
       return countB - countA // Sort by count descending
     }
     return tagA.localeCompare(tagB) // Then alphabetically
-  })
+  },
+)
 ---
 
 <Layout title="Tags" description="All tags used in blog posts">
   <BlockHeader>Tags</BlockHeader>
 
   <div class="tag-list">
-    {sortedTags.map(([tag, count]) => (
-      <div class="tag-item mb-4">
-        <h2 class="text-xl font-semibold mb-2">
-          <a href={url('tags', tag)} class="text-accent hover:underline">
-            #{tag} ({count})
-          </a>
-        </h2>
-        <div class="tag-posts">
-          {posts
-            .filter((post) => post.data.tags?.includes(tag))
-            .slice(0, 5) // Show first 5 posts
-            .map((post) => (
-              <div class="post-item mb-3">
-                <a href={url('posts', post.id)} class="text-foreground hover:text-accent">
-                  {post.data.title}
+    {
+      sortedTags.map(([tag, count]) => (
+        <div class="tag-item mb-4">
+          <h2 class="text-xl font-semibold mb-2">
+            <a href={url('tags', tag)} class="text-accent hover:underline">
+              #{tag} ({count})
+            </a>
+          </h2>
+          <div class="tag-posts">
+            {posts
+              .filter((post) => post.data.tags?.includes(tag))
+              .slice(0, 5) // Show first 5 posts
+              .map((post) => (
+                <div class="post-item mb-3">
+                  <a
+                    href={url('posts', post.id)}
+                    class="text-foreground hover:text-accent"
+                  >
+                    {post.data.title}
+                  </a>
+                  <span class="text-foreground/60 text-sm ml-2">
+                    {new Date(
+                      (post.data.published || post.data.date)!,
+                    ).toLocaleDateString('ja-JP')}
+                  </span>
+                </div>
+              ))}
+            {posts.filter((post) => post.data.tags?.includes(tag)).length > 5 && (
+              <div class="text-sm text-foreground/60 mt-1">
+                <a href={url('tags', tag)} class="hover:text-accent">
+                  ...and{' '}
+                  {posts.filter((post) => post.data.tags?.includes(tag)).length - 5} more
+                  posts
                 </a>
-                <span class="text-foreground/60 text-sm ml-2">
-                  {new Date(post.data.published).toLocaleDateString('ja-JP')}
-                </span>
               </div>
-            ))
-          }
-          {posts.filter((post) => post.data.tags?.includes(tag)).length > 5 && (
-            <div class="text-sm text-foreground/60 mt-1">
-              <a href={url('tags', tag)} class="hover:text-accent">
-                ...and {posts.filter((post) => post.data.tags?.includes(tag)).length - 5} more posts
-              </a>
-            </div>
-          )}
+            )}
+          </div>
         </div>
-      </div>
-    ))}
+      ))
+    }
   </div>
 </Layout>
 
