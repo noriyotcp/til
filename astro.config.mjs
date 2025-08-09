@@ -62,6 +62,7 @@ export default defineConfig({
         external: [
           // Exclude directories that shouldn't be bundled
           /^\/excludes\//,
+          /^\/scripts\//,
           /^\/node_modules\//,
         ],
         output: {
