@@ -1,12 +1,10 @@
 ---
-title: "Model Context Protocol (MCP) 学習メモ - AIの統合問題を解決する新しいプロトコル"
+title: "Hugging Face MCP Course - 1. Introduction to Model Context Protocol 学習メモ"
 date: "2025-08-17 05:22:07 +0900"
 last_modified_at: "2025-08-17 05:22:07 +0900"
 draft: false
-tags: ["AI", "MCP", "Protocol", "Integration", "Learning"]
+tags: ["MCP", "Hugging Face"]
 ---
-
-# Model Context Protocol (MCP) 学習メモ
 
 Hugging Face の MCP Course Unit1 を受講したので、学習内容をまとめておく。MCPは「AIアプリケーションのためのUSB-C」と表現される新しいプロトコルで、AI統合の複雑さを劇的に軽減する可能性を秘めている。
 
@@ -84,7 +82,7 @@ def weather_resource(location: str) -> str:
 ```
 
 ### Gradio統合
-`demo.launch(mcp_server=True)` だけでGradioアプリがMCPサーバーに変身。人間向けWebUIとAI向けAPIを同時提供できる。これは実用的で面白い機能だ。
+`demo.launch(mcp_server=True)` だけでGradioアプリがMCPサーバーに変身。人間向けWebUIとAI向けAPIを同時提供できる。
 
 ## 動的発見の威力
 
