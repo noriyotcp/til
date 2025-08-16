@@ -16,30 +16,36 @@ brew で入れたほうはどうやら Intel ver. のようで、Rosetta2 でエ
 
 ```sh
 # kiro があることを確認
-❯ brew list --cask
+brew list --cask
 
 # caskroom のパスを確認する
-❯ brew --caskroom
+brew --caskroom
 /usr/local/Caskroom
 
 # caskroom に kiro があることを確認
-❯ ls -la $(brew --caskroom)
+ls -la $(brew --caskroom)
 drwxr-xr-x   4 noriyo_tcp  wheel  128  7 21 22:57 kiro
 
 # metadata がある
-❯ ls -la $(brew --caskroom)/kiro
+ls -la $(brew --caskroom)/kiro
 total 0
 drwxr-xr-x   4 noriyo_tcp  wheel  128  7 21 22:57 .
 drwxrwxr-x@ 16 noriyo_tcp  wheel  512  7 21 22:57 ..
 drwxr-xr-x   5 noriyo_tcp  wheel  160  7 21 22:57 .metadata
 drwxr-xr-x@  3 noriyo_tcp  wheel   96  7 21 22:57 0.1.15,202507180243
+```
 
-# kiro を caskroom から削除する
-❯ rm -rf $(brew --caskroom)/kiro
+kiro を caskroom から削除する
 
-# caskroom から無くなった。リストからも消えている
-❯ ls -la $(brew --caskroom)
-❯ brew list --cask
+```sh
+rm -rf $(brew --caskroom)/kiro
+```
+
+caskroom から無くなった。リストからも消えている
+
+```sh
+ls -la $(brew --caskroom)
+brew list --cask
 ```
 
 これでダウンロードした kiro のほうを使用していく。
