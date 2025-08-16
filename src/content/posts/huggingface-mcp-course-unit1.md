@@ -101,3 +101,5 @@ MCPは統合問題に対する非常にエレガントな解決策だと感じ�
 ## 次のステップ
 
 Unit2では実際に Gradio を使って MCP サーバーを構築し、複数のクライアントと接続することで、エンドツーエンドの MCP アプリケーションを構築する方法を学ぶ。
+
+参考: [HuggingFace MCP Course Unit1](https://huggingface.co/learn/mcp-course/unit1/introduction)
