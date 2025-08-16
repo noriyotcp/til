@@ -1,14 +1,12 @@
 ---
-title: "HuggingFace MCP Course Unit2: エンドツーエンドMCPアプリケーション構築 学習メモ"
+title: "Hugging Face MCP Course Unit2: エンドツーエンドMCPアプリケーション構築 学習メモ"
 date: "2025-08-17 05:51:06 +0900"
 last_modified_at: "2025-08-17 05:51:06 +0900"
 draft: true
-tags: ["MCP", "Gradio", "HuggingFace"]
+tags: ["MCP", "Gradio", "Hugging Face"]
 ---
 
-# HuggingFace MCP Course Unit2: エンドツーエンドMCPアプリケーション構築
-
-HuggingFace MCP Course の Unit2 を学習したメモ。Unit1 で基本概念を学んだ後、実際にGradioを使ってMCPサーバーを構築し、複数のクライアントと接続するエンドツーエンドのアプリケーションを作成する。
+Hugging Face MCP Course の Unit2 を学習したメモ。Unit1 で基本概念を学んだ後、実際にGradioを使ってMCPサーバーを構築し、複数のクライアントと接続するエンドツーエンドのアプリケーションを作成する。
 
 ## Gradio MCPサーバーの構築
 
@@ -252,4 +250,4 @@ Desktop Commander MCPサーバーを使用してローカルマシン上でコ�
 
 Unit2では実際にMCPアプリケーションを構築する方法を学んだ。MCPのモジュール式アプローチにより、複数のツールプロバイダーへの接続、利用可能なツールの動的な検出、カスタムツールの使用、ファイルシステムアクセスやウェブブラウジングなどの他の機能との組み合わせが可能になる。
 
-参考: [HuggingFace MCP Course Unit2](https://huggingface.co/learn/mcp-course/unit2/introduction)
+参考: [Hugging Face MCP Course Unit2](https://huggingface.co/learn/mcp-course/unit2/introduction)
