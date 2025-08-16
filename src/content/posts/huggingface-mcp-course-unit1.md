@@ -2,7 +2,7 @@
 title: "Hugging Face MCP Course - 1. Introduction to Model Context Protocol 学習メモ"
 date: "2025-08-17 05:22:07 +0900"
 last_modified_at: "2025-08-17 05:22:07 +0900"
-draft: false
+draft: true
 tags: ["MCP", "Hugging Face"]
 ---
 
