@@ -2,7 +2,7 @@
 title: "Hugging Face MCP Course Unit2: エンドツーエンドMCPアプリケーション構築 学習メモ"
 date: "2025-08-17 05:51:06 +0900"
 last_modified_at: "2025-08-17 05:51:06 +0900"
-draft: true
+draft: false
 tags: ["MCP", "Gradio", "Hugging Face"]
 ---
 
