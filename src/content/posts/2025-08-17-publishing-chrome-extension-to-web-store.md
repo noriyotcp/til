@@ -153,3 +153,8 @@ https://noriyotcp.github.io/lazycluster/
 連絡先メールアドレスを入力する必要があった  
 
 ここまでやって審査のため送信ができるようになった。  
+
+### (2025-08-31 追記) 公開されてた
+8/17 に申請して 8/19 に公開されてた。全然気づかなかった
+
+[lazycluster - Chrome ウェブストア](https://chromewebstore.google.com/detail/lazycluster/peloeelkfdipohffhacbjkiooekhbpmo?authuser=0&hl=ja)
