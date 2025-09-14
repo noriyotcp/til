@@ -1,7 +1,7 @@
 ---
 title: "Chrome拡張を Chrome Web Store に公開した"
 date: "2025-08-17 10:22:42 +0900"
-last_modified_at: "2025-09-14 20:36:57 +0900"
+last_modified_at: "2025-09-15 00:58:38 +0900"
 draft: false
 tags: ['Chrome Extension']
 ---
@@ -197,4 +197,11 @@ To github.com:noriyotcp/lazycluster.git
 
 `gh release create v1.1.0 .output/lazycluster-1.1.0-chrome.zip --notes-from-tag`
 
-`--generate-notes` をつけるのを忘れてしまった。まあいいか
+~~`--generate-notes` をつけるのを忘れてしまった。まあいいか~~
+
+いや、一緒にはできなさそう
+
+```
+❯ gh release create v1.1.1 .output/lazycluster-1.1.1-chrome.zip --notes-from-tag --generate-notes
+using `--notes-from-tag` with `--generate-notes` or `--notes-start-tag` is not supported
+```
