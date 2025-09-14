@@ -1,7 +1,7 @@
 ---
-title: "Chrome拡張を Chrome Web Store に公開する（審査に提出した）"
+title: "Chrome拡張を Chrome Web Store に公開した"
 date: "2025-08-17 10:22:42 +0900"
-last_modified_at: "2025-08-17 10:22:42 +0900"
+last_modified_at: "2025-09-14 20:36:57 +0900"
 draft: false
 tags: ['Chrome Extension']
 ---
@@ -158,3 +158,43 @@ https://noriyotcp.github.io/lazycluster/
 8/17 に申請して 8/19 に公開されてた。全然気づかなかった
 
 [lazycluster - Chrome ウェブストア](https://chromewebstore.google.com/detail/lazycluster/peloeelkfdipohffhacbjkiooekhbpmo?authuser=0&hl=ja)
+
+---
+
+## 新しいバージョンを公開する手順
+
+### GitHub でバージョンを更新してタグを打つ
+`package.json` の `version` を更新してコミットし、タグを打つ
+
+### リリースノートを書く
+
+### ストアの掲載情報の変更
+説明文の変更やスクリーンショットの追加などは、`Developer Dashboard` の「ストアの掲載情報」タブから行う。
+
+### 新しいバージョンのアップロード
+1. `wxt zip` コマンドを実行して、新しいバージョンの Zip ファイルを生成する。
+2. （手動の場合）`Developer Dashboard` の「パッケージ」タブに移動し、「新しいバージョンをアップロード」セクションで、生成した Zip ファイルをアップロードする。
+3. （自動の場合）`wxt submit` command を使用する。https://wxt.dev/guide/essentials/publishing.html#automation
+
+一応タグがなければ以下コマンドで自動的に作ってくれるらしいが、今回は先にタグをプッシュしておいた。
+
+```
+❯ git push origin --tags
+Enumerating objects: 1, done.
+Counting objects: 100% (1/1), done.
+Writing objects: 100% (1/1), 810 bytes | 810.00 KiB/s, done.
+Total 1 (delta 0), reused 0 (delta 0), pack-reused 0 (from 0)
+To github.com:noriyotcp/lazycluster.git
+ * [new tag]         v1.1.0 -> v1.1.0
+```
+
+その場合は以下オプションをつけるといいらしい。
+
+> Use `--notes-from-tag` to automatically generate the release notes
+> from the annotated git tag.
+
+成果物はあくまで release のアセットとしてアップロードされるだけ。Chrome Web Store にアップロードするのは別途行う必要がある。
+
+`gh release create v1.1.0 .output/lazycluster-1.1.0-chrome.zip --notes-from-tag`
+
+`--generate-notes` をつけるのを忘れてしまった。まあいいか
