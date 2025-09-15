@@ -1,7 +1,7 @@
 ---
 import type { GetStaticPaths } from 'astro'
 import Layout from '@layouts/Layout.astro'
-import { dateString, getSortedPosts } from '@utils'
+import { dateString, getSortedPosts, url } from '@utils'
 import PostPreview from '@components/PostPreview.astro'
 import DividerText from '@components/DividerText.astro'
 import { getCollection, render } from 'astro:content'
@@ -70,7 +70,7 @@ if (addendum.length > 0) {
       postData.tags && (
         <div class="text-accent mb-5">
           {postData.tags.map((tag) => (
-            <a class="underline mr-4 inline-block" href={`/tags/${tag}`}>
+            <a class="underline mr-4 inline-block" href={url('tags', tag)}>
               #{tag}
             </a>
           ))}
