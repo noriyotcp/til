@@ -1,8 +1,9 @@
 ---
 title: "LLMのプロンプトエンジアリング"
 date: "2025-09-18 22:09:35 +0900"
-last_modified_at: "2025-09-18 22:09:35 +0900"
+last_modified_at: "2025-09-18 23:31 +0900"
 draft: false
+tags: ['Books', 'LLM', 'Prompt Engineering']
 ---
 
 これは書籍 [LLMのプロンプトエンジニアリング - O'Reilly Japan](https://www.oreilly.co.jp/books/9784814401130/) を NotebookLM を用いてブログ記事風にまとめてもらったものです。
