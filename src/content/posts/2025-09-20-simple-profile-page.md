@@ -3,6 +3,7 @@ title: "簡単なプロフィールページを作った"
 date: "2025-09-20 11:43:02 +0900"
 last_modified_at: "2025-09-20 11:43:02 +0900"
 draft: false
+tags: ["GitHub Pages", "NFC", "shields.io"]
 ---
 
 ## noriyotcp.github.io を作成した
