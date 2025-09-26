@@ -1,5 +1,5 @@
 ---
-title: "KaigiOnRails Day1"
+title: "KaigiOnRails 2025 Day1"
 date: "2025-09-26 02:43:12 +0900"
 last_modified_at: "2025-09-26 02:43:12 +0900"
 draft: true
