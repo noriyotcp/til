@@ -8,7 +8,7 @@ draft: true
 ## memo
 
 ### Keynote - dynamic!
-moro3 は SMS なのか  
+moro3 は SMS 所属なのか  
 
 なぜ動的でありたいか。最初から「正解」を選ぶのは難しい  
 変えるようにする仕組み作りも大事。外的環境もどんどん変わる。  
@@ -152,7 +152,7 @@ XSS の脆弱性に対して
 カスタムデータ属性
 
 form builder をカスタマイズして form helper を作ったりできる  
-form_with の builder option
+`form_with` の builder option
 
 ### [5年間のFintech × Rails実践に学ぶ - 基本に忠実な運用で築く高信頼性システム | Kaigi on Rails 2025](https://kaigionrails.org/2025/talks/ohbarye/#day1)
 
@@ -180,7 +180,7 @@ module で分割している。まあそうだろね
 
 パフォーマンスミーティングをやっている。人数が多くなり効率的な運用を模索している
 
-バッチ仕様書。アラートを受け取ったエンジアが誰でも対応をできるようにする
+バッチ仕様書。アラートを受け取ったエンジニアが誰でも対応をできるようにする
 
 旗振り役が最初は頑張る、やっぱり大事よね。。。
 
@@ -193,5 +193,9 @@ Runbook -> 手順書。
 LoC が増加傾向なのに障害はピークの2023 年から６割減か！すごい
 
 ### [2分台で1500examples完走！爆速CIを支える環境構築術 | Kaigi on Rails 2025](https://kaigionrails.org/2025/talks/falcon8823/#day1)
+（疲れたのでスキップ）
+
 ### [Railsによる人工的「設計」入門 | Kaigi on Rails 2025](https://kaigionrails.org/2025/talks/nay/#day1)
+
 ### [今改めてServiceクラスについて考える 〜あるRails開発者の10年〜 | Kaigi on Rails 2025](https://kaigionrails.org/2025/talks/joker1007/#day1)
+
