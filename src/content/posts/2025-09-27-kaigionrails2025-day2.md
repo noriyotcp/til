@@ -387,6 +387,110 @@ As one example, I will introduce what we actually practiced when implementing st
 Before explaining why one job per item is desirable here, let me briefly summarize how asynchronous jobs work. When running asynchronous jobs, we first urgently stack the jobs we want to run. As shown in this diagram, it's like lining up in a queue, realized by stacking information on which job to execute with what arguments. I think Redis or RDBMS are often used for the urgent stack. Basically, jobs are taken out from the front of the stack in order, and one process/thread processes one item at a time. And then when the processing is finished,it moves on to the next job. That's how it works.It becomes a movement where, just like how a web server processes requests, it takes from the next row when there's an opening in the preface.For example, I mentioned that when long-running requests increase on a web server, the overall performance drops, um, the same thing happens even in non-synchronous departments.Retrying after failures can be thought of in the same way as web servers. When long-running processes fail, it becomes difficult to determine at which stage they failed, leading to inconsistencies where processing stops midway and only some data gets updated, becoming a troublesome issue. On the other hand, for small and simple jobs, cases where retrying without much thought can resolve the issue become more common. Of course, this assumes that the jobs are properly designed. If this prerequisite is met, retrying becomes a powerful recovery method. Since retrying is easy, it becomes powerful, or ratherThat's how it feels.From the perspective of monitoring asynchronous jobs, there are advantages to keeping things small and simple. Asynchronous jobs are difficult to track in terms of execution status, and it's hard to see... I'm sorry. For long-running jobs, right? Long-running jobs are difficult to monitor, and to know how far they've progressed, you need to write logs within the actions or send detailed data to external services like, what would it be, DataDog or New Relic APM. On the other hand, for short-duration jobs, it's sufficient to just capture the start and end events, and with just that, you can measure processing time and failure rates and suchSo, there's no impact even during deployment maintenance. In many cases, asynchronous disposal workers need to stop old processes and replace them with new ones during deployment, just like web servers. At this time, if long-running jobs that never end are still running, as in the first example, the deployment itself might stop. Furthermore, if you're using something like Fargate or AWS Lambda, even if there's a service-side specification, it might be forcibly terminated from that end, so we need to somehow deal with such things.Yes, summarizing the discussion so far, it seems that making asynchronous tasks simple processes that finish quickly could be a good design principle. Long-running tasks reduce performance, make retries difficult, and complicate monitoring and deployment operations. Conversely, keeping jobs short can maintain simplicity in terms of performance reliability, operability, and various other aspects, I think.Yes, so, up until now we've been talking about principles, but from here on, I think we'll dive into the fun, fun topic of breaking those principles.In actual web application development, I think there are still cases where you have to do long-running tasks in the foreground. For example, cases where you want to process things as real-time as possible, need to process items one by one in order, or want to batch process the next step after completing all previous processes. Well, I think there are features like "I want to import from CSV" or "I want to export information to CSV," and these are particularly common in SaaS, and you can't really avoid them. When dealing with these, you have to consider long-running jobs.I think it might come, and well, when I joined the project, there's this historical notion that it doesn't necessarily need to be a long-term job, and I think we'll have to face that kind of thing.So, when you think, "Okay, we have to operate it," what you need to consider is the problem of jobs terminating midway during deployment, which I mentioned earlier. When servers are replaced or containers are restarted, jobs that haven't finished processing are forcibly stopped, which ultimately leads to failures and causes trouble. I think this is a point that needs to be considered in advance when operating long-running jobs: how to prevent this from happening.Well, how to handle when a specific part suddenly causes an error during long-term operation in the jib
 
 ### [Railsアプリから何を切り出す？機能分離の判断基準 / yumu | Kaigi on Rails 2025](https://kaigionrails.org/2025/talks/myumura/#day2)
+memo: 分離の判断基準はまあ難しいよね  
+
+1. ビジネスロジックとの関連度
+2. インフラリソースとの依存関係
+- 認証基盤への依存
+3. 機能の複雑さ
+- 単一責任だと分離しやすい
+4. 運用工数 vs 開発スピード
+人数が少ないと属人化するよなあ。マイクロサービスを少人数はまあ厳しいよね  
+5. ビジネス上の柔軟性が求められるか
+
+
+はい、ではレイルズアプリから何を切り出す機能分離の判断基準というテーマでお話しさせていただきます。
+よろしくお願いします。
+はい、えgmoペパボでミンネというプロダクトを開発しているユムと言います。
+え新卒三年目でエンジニアとしては五年目ルビーストとしても五年目です。
+え昨年の開業レールズでスポンサーltをさせていただいて、あの時の体験がすごく良かったので、今回登壇できてすごく嬉しいです。
+え押しているジェムは小流拳です。
+はい、でえーさて私が開発しているミンネというサービスなんですけれども、国内最大級のハンドメイド作品の売買ができるプラットフォームで、現在リリースから13年目になりますで作家の数が95万件以上、登録作品数は1,800万件以上ということで、歴史も結構長くなってきて、大きなサービスになっています。
+でミンネのものすごくざっくりなアーキテクチャーはこんな感じでえaws上で動いているんですが、コアとなるレイルズアプリケーションがあって、一部の画面はネクストjs化されているという構成になっています。
+でモバイルアプリとウェブアプリが両方ありまして、apiやグラフql化を進めているんですが、レストapiが残っているところもあります。
+で、認証については独立したオーセンティケーションのコンポネットを持っています。
+でこのように部分的にコンポーネント分離は行っているんですけれど、今回お話しするのはコアとなるレイルズアプリケーション内で処理可能な機能をさらに分離するかどうかっていうような判断基準のお話になります。
+でここから何回も出てくるので、これ以降このコアとなるレイルズアプリケーションをみんなアップと表現します。
+えっとミンネもかなり大規模なecサイトとなってきたので、開発において様々な問題が出てきています。
+えまずコードベースの複雑化ですね。
+で、ミヌのレイルズアプリケーションはモデルだけで300近くあるんですけども、行動の全体像が把握しづらいですし、ライブラリーのアップデートなどの変更を加えた時に思わぬところに影響が出てしまったりします。
+またデータベースのパフォーマンスの悪化の問題もあって、レコード数がかなり多くなってきているので、なんでもかんでもスケールに入れていると結構苦しくなってきました。
+であと開発速度の低下っていう問題もあって、ちょっとした改修でも巨大なテストスイートを全部回さないと安心できないので、ciの実行時間も長くなって、開発のサイクルが遅くなってしまっています。
+えーこういった課題に直面するとまデータベースの設計を見直した方がいいだろうとか、ciの高速化を頑張った方がいいだろうっていうのはまそれはその通りなんですけれども、別の解決策として、みんなアップから切り出せる機能は切り出したいなっていう気持ちになってきます。
+なんですけど、ま実際に分離すべきかどうかの判断基準はこれまでチーム内で明文化されていなくて、その時々の機能開発でディスカッションして、これはまー分離した方がいいだろう。
+これは分離しない方がいいだろうみたいな感じで、あのそれぞれ結論を出してきました。
+なんで今回は機能分離の結構事例も溜まってきたので、適切に機能を分離するための判断基準を改めてまとめてみようと思いました。
+で、えっとミンネではま実際にこれらのいろんな機能を分離検討したり分離を実施したりしてまして、えっと独立した小流拳ワーカーを立ってたりとか、クラウドラウンファンクションを使ったりとか、ラムダ関数を使ったりとかして、みんなアップから分離をしています。
+で本当はちょっとそれぞれの機能をどういうアクティクチャーでやってるかっていうのをお話ししたいんですが、時間がないので他のカンファレンスで発表した時の資料があるので、詳しくはそちらを見ていただけるとです。
+で、これ以外にも他にあのプライベートジムにしたりだとか、ecsファーゲットで別サービス化にしたりだとか、あのいろんな機能でウアップから分離を実現しています。
+でこれらの分離事例の中でま成功したなっていうのもあれば、ちょっとミスったかもなっていうのもあって、今日はこれらの体験から体系化した実践的な機能分離の判断基準をお話ししようと思っています。
+あんまり理論的な話ではなくって、できるだけ具体的に明日から使える内容をあのおしゃべりできるといいなと思います。
+でえー今背景と課題までお話ししたので、ここから機能分離の五つの判断軸について説明していきます。
+でその後じ実践事例ということで三つのパターンを判断のマトリックスで分析した後まとめっていう感じでいこうと思います。
+で、えー早速軸なんですけれども、今回紹介する五つの軸はこちらです。
+えービジネスロジックとの関連度合い、他のインフラリソースとの依存度合い、機能の複雑性えー運用コストと開発スピードのトレードオフ、そしてビジネス上の柔軟性が求められるかどうかっていう三つ、あ三つじゃない、五つです。
+でえー最初の三つは技術的な観点でえー後の二つは組織とか運用の観点です。
+で、えーひとつずつ解説していくんですけど、えまずえー1個目がビジネスロジックとの関連度でえー高関連の場合は分離を避けるべきだと思っています。
+ミンネで言うと商品管理とか注文とか決済はまさにビジネスの中核となっているので、これらを分離するのはあまり現実的ではありませんでした。
+また複数のテーブルとかモデルと強い関連がある機能も同じようにえー分離を避けた方がいいかなっていう判断をしています。
+でまさにサブスクリプションの機能はこのタイプでした。
+で一方低関連の機能は分離の候補になってくるんですけど、動画変換のような技術的な処理だとか、アクセス解析のような分析系の機能はこれに当たります。
+で二つ目の軸は他のインフラリソースとの依存関係です。
+えー依存が強い場合は分離が難しいです。
+えーマイsqlの直接参照が必要な機能だとか、認証基盤への依存がある機能などはこれに当たります。
+特に認証基盤については前述の通りあのミンネでは認証システムが分離されてるんですけれども、これは現在の構成だとみんなネアップからしか呼び出せないようになっています。
+なのでユーザー認証が必要な機能を分離するときは、この制約を考慮し分離する必要があります。
+で、依存が弱い場合は分離可能でえーエスリー経由でデータの受け渡しが可能だったりとか、api経由で初結合が実現できている場合とか、マイsql以外のデータベースをま選択できる、選択したい場合などです。
+で動画変換機能はまさに依存が弱いパターンでした。
+で、三つ目が機能の複雑さで、複雑な機能は要検討ということで、えー複数サービス間の連携が必要だったりとか、データフローが複雑になる機能は分離することで、逆にアーキテクチャ全体の把握が難しくなってしまいます。
+でシンプルな機能は分離しやすくて、単一責任で外部依存が少ない機能っていうのがこれに当たります。
+これはソフトウェア設計でいう単一スキニの原則と同じ考え方で、ひとつの機能がひとつの明確なに持っている状態だと分離がスムーズに行えます。
+でアナリティクス機能とか動画変換機能はとてもシンプルで、まさに無理に向いていると言えると思います。
+で4個目の軸は運用コストと開発スピードのトレードオフっていうところで、えー運用コストが高いことを許容できない場合は分離が難しいです。
+分離すると複数のデプロイパイプラインの管理が必要ですし、ログとか管理士のシステムが分散して、障害児の影響範囲調査が難しくなったりとかいう課題があります。
+で一方で運用コストより開発スピードを重視するっていう場合は分離のメリットがあって、えー独立したリリースサイクルはみんなアップにかかわらず素早いリリースができますし、技術スタックもみんなアップの技術スタックに引っ張られることなく、比較的自由に選択することができます。
+で運用コストの話で大事なこととして、これを考える時にはチーム規模を考慮する必要があるなと思っていて、特にみんなンネはですねあの正社員のエンジニアが10名前後で運営しているので、の運用工数の拡大が結構クリティカルな問題になってきます。
+人が少ないので分離した機能のアーキテクチャ全体を把握している人があの機能を開発した本人ぐらいしかいなくって、結構族人化してしまっています。
+でドキュメント化はしてはいるんですけど、まみんなあんま読むだけで実態はその人しか面倒を見てくれないみたいなのが結構あります。
+で、これはそうですね、今ウェイの法則そのもので10名前後の小規模なチームで複数のマイクロサービスを管理するっていうのはちょっと組織構造的に厳しいのがあるなと思っています。
+デート最後の軸がビジネス上の柔軟性が求められるかどうかっていうところで、え柔軟性が求められないものは単純な機能改善とか他に応用する可能性のない単一の用途ののみのものです。
+でこれは軸の三つ目の機能の複雑さの軸と相反するように思えるかもしれませんが、これはあくまであの私とじゃあビジネス上の用途っていう話でえ例えば動画変換機能だと、技術的には単一的にでシンプルなんですけど、ビジネス的には将来的に社内の他のサービスでも活用したいっていう構想があったので、その場合は柔軟性が求められるっていう判断になって、分離のメリットが大きくなります。
+でこれらの軸を整理したのがこの判断マトリックスで各軸を分離推奨用検討分量を避けるの三段階で評価します。
+で特に軸四と軸五はあごめんなさい。
+チック四だけですね。
+はトレードオフの関係なので、あの単純な良し悪しっていうよりは、その各機能の開発状況とかにおいて重視する視点っていうところで評価します。
+で判断基準としては三つ以上が分離推奨なら積極的に分離を検討して、二つが分量を避けるんだったら慎重に判断するっていうような基準にしました。
+でこの基準はこれまでのその分離の事例の成功をしたやつと失敗したやつを振り返ってみて決めたっていうような感じです。
+でこの判断基準は実際の事例で検証してみようと思うんですけど、まずえー成功パターンで動画変換の機能とアナリティクスの機能です。
+え動画変換機能は小流圏ワーカーとしてあの分離していて、これは作家さんのが作品の動画をアップロードするっていう機能でえー動画を変換する処理をみんなアップとは別の専用の省流拳ワーカーで分離しているっていうような感じです。
+でアナリティクスの方はえークラウドランファンクションにしていて、これはユーザーの行動ログを集計するっていうような機能コードログがビッグクエリに保存されるっていう既存のシステムを活用したかったので、クラウドランファンクションズで集計を行ってクラウドファイアスターに集計データを保存しています。
+で判断マトリックスで評価すると二つの機能のいずれも五つの軸のうち四つが分離推奨、ひとつが要検討っていう結果になっています。
+で結果はどうだったかっていうと、どちらもかなり成功していて、あの両方ともあんまり頻繁に回収が必要な機能ではないので、レイルズアプリケーションの複雑性を緩和しながら安定して稼働が実現できています。
+で次に要注意パターンのリワード広告の機能なんですけど、これはユーザーが広告を閲覧するとスタンプが獲得できるっていうような機能で、スタンプのデータはダイナモdbに格納していて、みんなアップからダイナモディebをクエリするラムダを叩くっていうような形で分離しています。
+でえーハ断マトリックス上はちょっとこのどっちだろうっていうような感じなんですけど、えっと実際に分離してみて結構あの大変になっちゃったなと思っていて、えっととみんなアップからダイナムdbをクエリするラマダを呼び出すっていう構成なので、仕様変更の際にラムダとミアップをどちらも変更する必要があるっていうのと、あとま度々バグが発生するんですけど、その時にま作った人、私しかあの全容を把握してないので、私しかあのインシデント対応ができないみたいな感じになってしまっています。
+でまー一方でこの機論はあのチャレンジングな試みだったっていうところがあって、ビジネス上の柔軟性の確保をかなり重視してたっていうのがありました。
+なのでま運用コストとのトレードをふわったんですけど、柔軟性を重視して分離を継続するっていうような判断にしています。
+はい。
+であとはえー分離回避パターンのサブスクリプションの機能で、これはあのミンネの作家さん向けに有料で一部の機能を解放するっていうようなサブスクなんですけど、これはユーザーの権限制御とか決済の処理とか、あのかなりたくさんのそのミニアップの機能と密接に関わっているので分離するっていうのは現実的ではありませんでした。
+なんで代わりにデータベースやモデルの設計に時間をかけてレイルズ内での最適化に注力しました。
+結果としてスから一年以上経ってるんですけど、運用コストもまそこまで大きくはなく、あの大きな障害もなくいい感じに動いてるんじゃないかなと思います。
+でまとめです。
+えっと一応五つの判断軸を再計しておきます。
+で最後に考え方のポイントっていうところでお話ししたいんですけど、一つ目はあの完璧な分離はなかなかないっていうところで、私たちの分離事例のすべてに何かしらのトレードオフがあって、それを受け入れた上で総合的にメリットが大きいかどうかっていうところを判断する必要があります。
+で、二つ目はチームの状況によって各軸の重みは結構変わってくるっていうところで、私たちのような小規模なチームとエンジニアが潤沢ニールチームではどの軸項を重視するかは結構変わってくるんじゃないかなと思います。
+ここはチーム内で話し合ってどの軸に重みがあるのかっていうのを決めたいところです。
+で三つ目はこれは結構最近特に感じることなんですが、分離された機能はあのaiが理解活用しやすいっていう観点も重要になってきているんじゃないかなと思います。
+え単一責任で粗結合な機能はaiが行動を解析したり自動化する際にも扱いやすいです。
+将来的なai活用を考えると適切な機能分離は価値があるんじゃないかなと思います。
+で四つ目あの一番大事なこととしてまやっぱり失敗から学んで判断基準を磨いていくのが大事だなと思ってます。
+今日お話しした軸も失敗を重ねながら改良してきたものですし、ま今の軸も別に完璧じゃないなと思っていて、昨日のセッションでも何度もその継続的に変化とか改善をし続けるのが大事だよっていうお話があったと思うんですけど、ま本当にその通りだなと思っていて、あのこれがま正解っていうよりは皆さんも今回のお伝えした基準を参考に自分たちのチームに合ったあの基準を作っていっていただけるといいんじゃないかなと思っています。
+はい、以上です。
+ご清聴ありがとうございました。
+
+
+Yes, then I will talk about the criteria for deciding what functionality to extract from a Rails application. Thank you for your attention.Yes, I'm Yumu, developing a product called Minne at GMO Pepabo. I'm in my third year as a new graduate and fifth year as an engineer and Rubyist. I was a sponsor at last year's Rails conference, and that experience was so great that I'm really happy to be speaking this time. The gem I'm pushing is Koryu-ken.Yes, well, the service I'm developing called Minne is Japan's largest platform for buying and selling handmade items. It's now in its 13th year since release, with over 950,000 creators and more than 18 million registered works, so it has quite a long history and has become a large service.So, Minne's very rough architecture is like this, running on AWS, with a core Rails application, and some screens have been converted to Next.js. We have both mobile and web apps, and while we're moving towards API and GraphQL, some REST APIs still remain. For authentication, we have an independent authentication component. While we're implementing partial component separation like this,Today, we'll be discussing the criteria for deciding whether to further separate functions that can be processed within the core Rails application.Since it appears many times from here on, this core Rails application will be referred to as "app" by everyone.Well, as Minne has become quite a large-scale e-commerce site, various problems have arisen in development. First, there's the increasing complexity of the codebase. You see, Minne's Rails application has nearly 300 models alone, which makes it difficult to grasp the overall picture of behavior, and when we make changes like library updates, it can unexpectedly affect other areas. There's also the issue of database performance degradation, as the number of records has become quite large, so everythingIt's getting quite tough when put into scale. There's also the problem of decreased development speed, where even for small modifications, we can't feel at ease without running the entire huge test suite, so CI execution time gets longer, and the development cycle has been slowing down.Uh, when facing such challenges, it's true that we should reconsider the database design or work on speeding up CI, but as another solution, we're starting to feel like we want to extract any features that can be extracted from the app.So, at Minne, we've actually been considering and implementing the separation of these various functions. We've set up independent small-scale workers, used cloud functions, used Lambda functions, and separated everything from the app. I'd like to talk about the architecture we're using for each function, but since we don't have time, there are materials from presentations at other conferences, so for more details, please look at those if you'd likeThat's it.And besides this, we've achieved separation from the app through various functions, such as making it a private gym or creating a separate service on ECS Fargate.Among these separation cases, there are some that were successful and some that might have been a bit of a mistake. Today, I'd like to talk about the practical criteria for functional separation that I've systematized from these experiences. Rather than a theoretical discussion, I hope to chat about content that you can use from tomorrow, as concretely as possible.So, now that I've talked about the background and issues, I'll explain the five criteria for functional separation. Then, as practical examples, I'll analyze three patterns using a decision matrix, and then wrap it up like that.Um, so, for the first one, I think we should avoid separation if it's highly related to business logic. For Minne, product management, orders, and payments are at the core of the business, so separating these wasn't very practical. Also, we've decided that it's better to avoid separating functions that have strong connections to multiple tables or models. And the subscription feature was exactly this type. So on the other hand, lowRelated functions are becoming candidates for separation, but technical processes like video conversion and analytical functions like access analysis fall into this category.The second axis is the dependency on other infrastructure resources. Um, if the dependency is strong, separation becomes difficult. This applies to functions that require direct reference to MySQL or functions that depend on the authentication infrastructure. Especially regarding the authentication infrastructure, as mentioned earlier, in Minne, the authentication system is separated, but with the current configuration, it can only be called from Minne App. So, when separating functions that require user authentication, considering this constraintIt needs to be separated.And, the third is the complexity of functions, where complex functions need to be considered carefully. Um, functions that require coordination between multiple services or have complex data flows can make it harder to grasp the overall architecture when separated. Simple functions are easier to separate, and this applies to functions with single responsibility and low external dependencies. This is the same concept as the Single Responsibility Principle in software design, where one function has one clearWhen held in this position, separation can be performed smoothly.The analytics and video conversion features are very simple, I think it can be said that it's absolutely geared towards the impossible.The fourth axis is the trade-off between operational costs and development speed, and if high operational costs cannot be tolerated, separation becomes difficult. Separation requires managing multiple deployment pipelines, and systems for logs and administration become distributed, making it challenging to investigate the scope of impact during incidents. On the other hand, if development speed is prioritized over operational costs, there are benefits to separation, such as independent release cycles that everyoneWhen it comes to operational costs, I think it's important to consider team size. Especially for us, since we're operating with about 10 full-time engineers, the expansion of operational man-hours becomes quite a critical issue. With so few people, only the person who developed a particular feature understands the overall architecture of that separated function, leading to a significant silo effect. SoWe do document things, but it seems like people just skim through it, and in reality, only that one person ends up taking care of it.The final axis of the date is whether business flexibility is required or not. Things that don't require flexibility are simple functional improvements or those with a single purpose that can't be applied elsewhere. This might seem to contradict the third axis of functional complexity, but this is strictly in terms of business applications. For example, video conversion functionality is technically simpleIt's simple in terms of goals, but from a business perspective, there was a plan to utilize it in other internal services in the future, so in that case, it was decided that flexibility would be required, the benefits of separation become significant.So, organizing these axes is this decision matrix, where each axis is evaluated in three stages to avoid the recommended amount of separation for consideration. Particularly for axes four and five, oh sorry, just tick four. There's a trade-off relationship, so rather than a simple good or bad, the perspective we prioritize in the development status of each function
+動画や字幕に不具合がある場合は、しばらく待ってからページを再読み込みしてください。
+
 
 ### [非同期処理実行基盤、Delayed脱出〜SolidQueue完全移行への旅路。
  | Kaigi on Rails 2025](https://kaigionrails.org/2025/talks/srockstyle/#day2)
@@ -400,6 +504,3 @@ Before explaining why one job per item is desirable here, let me briefly summari
   - STORES の VPoE
 ### [「技術負債にならない・間違えない」権限管理の設計と実装 / naro143 (Yusuke Ishimi) | Kaigi on Rails 2025](https://kaigionrails.org/2025/talks/naro143/#day2)
   - 裏の willnet さんのも気になるが。
-  。
-  。
-  
