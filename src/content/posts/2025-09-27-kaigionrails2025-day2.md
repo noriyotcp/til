@@ -653,3 +653,7 @@ no memo
 no memo 大体この時間帯は眠くなってくるからな…
 
 ### [「技術負債にならない・間違えない」権限管理の設計と実装 / naro143 (Yusuke Ishimi) | Kaigi on Rails 2025](https://kaigionrails.org/2025/talks/naro143/#day2)
+役割に依存した形はアンチパターン  
+
+役割ではなく権限に依存する  
+cancancan とか banken か、gem でいうと pundit もあったなあ
