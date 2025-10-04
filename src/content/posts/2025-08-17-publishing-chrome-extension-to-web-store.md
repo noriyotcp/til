@@ -1,7 +1,7 @@
 ---
 title: "Chrome拡張を Chrome Web Store に公開した"
 date: "2025-08-17 10:22:42 +0900"
-last_modified_at: "2025-09-15 00:58:38 +0900"
+last_modified_at: "2025-10-05 00:36:44 +0900"
 draft: false
 tags: ['Chrome Extension']
 ---
@@ -167,15 +167,6 @@ https://noriyotcp.github.io/lazycluster/
 `package.json` の `version` を更新してコミットし、タグを打つ
 
 ### リリースノートを書く
-
-### ストアの掲載情報の変更
-説明文の変更やスクリーンショットの追加などは、`Developer Dashboard` の「ストアの掲載情報」タブから行う。
-
-### 新しいバージョンのアップロード
-1. `wxt zip` コマンドを実行して、新しいバージョンの Zip ファイルを生成する。
-2. （手動の場合）`Developer Dashboard` の「パッケージ」タブに移動し、「新しいバージョンをアップロード」セクションで、生成した Zip ファイルをアップロードする。
-3. （自動の場合）`wxt submit` command を使用する。https://wxt.dev/guide/essentials/publishing.html#automation
-
 一応タグがなければ以下コマンドで自動的に作ってくれるらしいが、今回は先にタグをプッシュしておいた。
 
 ```
@@ -205,3 +196,11 @@ To github.com:noriyotcp/lazycluster.git
 ❯ gh release create v1.1.1 .output/lazycluster-1.1.1-chrome.zip --notes-from-tag --generate-notes
 using `--notes-from-tag` with `--generate-notes` or `--notes-start-tag` is not supported
 ```
+
+### ストアの掲載情報の変更
+説明文の変更やスクリーンショットの追加などは、`Developer Dashboard` の「ストアの掲載情報」タブから行う。
+
+### 新しいバージョンのアップロード
+1. `wxt zip` コマンドを実行して、新しいバージョンの Zip ファイルを生成する。
+2. （手動の場合）`Developer Dashboard` の「パッケージ」タブに移動し、「新しいバージョンをアップロード」セクションで、生成した Zip ファイルをアップロードする。
+3. （自動の場合）`wxt submit` command を使用する。https://wxt.dev/guide/essentials/publishing.html#automation
