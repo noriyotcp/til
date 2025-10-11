@@ -1,12 +1,10 @@
 ---
-title: "2025-10-12"
+title: "react, react-dom のバージョン不一致エラーの対処メモ"
 date: "2025-10-12 01:23:07 +0900"
 last_modified_at: "2025-10-12 01:23:07 +0900"
 tags: ["React", "dependabot"]
 draft: false
 ---
-
-# 2025-10-12
 
 拙作の Chrome 拡張、`lazycluster` の dependabot のプルリクが CI でこけてしまっていた。  
 
