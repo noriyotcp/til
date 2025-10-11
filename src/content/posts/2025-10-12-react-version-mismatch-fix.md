@@ -3,7 +3,7 @@ title: "2025-10-12"
 date: "2025-10-12 01:23:07 +0900"
 last_modified_at: "2025-10-12 01:23:07 +0900"
 tags: ["React", "dependabot"]
-draft: true
+draft: false
 ---
 
 # 2025-10-12
