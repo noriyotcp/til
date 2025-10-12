@@ -167,7 +167,7 @@ https://noriyotcp.github.io/lazycluster/
 `package.json` の `version` を更新してコミットし、タグを打つ
 
 ### リリースノートを書く
-一応タグがなければ以下コマンドで自動的に作ってくれるらしいが、今回は先にタグをプッシュしておいた。
+`gh release create` のオプションで、一応タグがなければ自動的に作ってくれるらしいが、今回は先にタグをプッシュしておいた。
 
 ```
 ❯ git push origin --tags
