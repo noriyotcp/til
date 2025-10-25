@@ -166,6 +166,11 @@ https://noriyotcp.github.io/lazycluster/
 ### GitHub でバージョンを更新してタグを打つ
 `package.json` の `version` を更新してコミットし、タグを打つ
 
+```
+# マイナーバージョンのアップデート
+npm version minor
+```
+
 ### リリースノートを書く
 `gh release create` のオプションで、一応タグがなければ自動的に作ってくれるらしいが、今回は先にタグをプッシュしておいた。
 
@@ -184,7 +189,10 @@ To github.com:noriyotcp/lazycluster.git
 > Use `--notes-from-tag` to automatically generate the release notes
 > from the annotated git tag.
 
-成果物はあくまで release のアセットとしてアップロードされるだけ。Chrome Web Store にアップロードするのは別途行う必要がある。
+### Zip ファイルを生成する
+`wxt zip` コマンドを実行して、新しいバージョンの Zip ファイルを生成する。
+
+zip はあくまで release のアセットとしてアップロードされるだけ。Chrome Web Store にアップロードするのは別途行う必要がある。
 
 `gh release create v1.1.0 .output/lazycluster-1.1.0-chrome.zip --notes-from-tag`
 
@@ -201,6 +209,5 @@ using `--notes-from-tag` with `--generate-notes` or `--notes-start-tag` is not s
 説明文の変更やスクリーンショットの追加などは、`Developer Dashboard` の「ストアの掲載情報」タブから行う。
 
 ### 新しいバージョンのアップロード
-1. `wxt zip` コマンドを実行して、新しいバージョンの Zip ファイルを生成する。
-2. （手動の場合）`Developer Dashboard` の「パッケージ」タブに移動し、「新しいバージョンをアップロード」セクションで、生成した Zip ファイルをアップロードする。
-3. （自動の場合）`wxt submit` command を使用する。https://wxt.dev/guide/essentials/publishing.html#automation
+1. （手動の場合）`Developer Dashboard` の「パッケージ」タブに移動し、「新しいバージョンをアップロード」セクションで、生成しておいた Zip ファイルをアップロードする。
+2. （自動の場合）`wxt submit` command を使用する。https://wxt.dev/guide/essentials/publishing.html#automation
