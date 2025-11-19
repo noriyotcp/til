@@ -163,3 +163,7 @@ dist
 # Astro specific
 .astro/
 .env.production
+
+# memo
+excludes/memo/
+
