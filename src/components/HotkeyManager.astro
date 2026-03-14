@@ -136,9 +136,12 @@
         case 'Enter':
           if (this.currentFocusIndex >= 0) {
             const focusedArticle = this.postElements[this.currentFocusIndex]
+            const titleLink =
+              (focusedArticle.querySelector('h1 a') as HTMLElement) ||
+              (focusedArticle.querySelector('a') as HTMLElement)
             if (
-              focusedArticle.contains(document.activeElement) ||
-              document.activeElement === document.body
+              document.activeElement === document.body ||
+              document.activeElement === titleLink
             ) {
               event.preventDefault()
               this.openFocusedPost()

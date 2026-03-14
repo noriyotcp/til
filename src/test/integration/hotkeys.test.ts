@@ -224,9 +224,12 @@ describe('Hotkey Navigation System', () => {
           case 'Enter':
             if (this.currentFocusIndex >= 0) {
               const focusedArticle = this.postElements[this.currentFocusIndex]
+              const titleLink =
+                focusedArticle.querySelector('h1 a') ||
+                focusedArticle.querySelector('a')
               if (
-                focusedArticle.contains(mockDOM.mockDocument.activeElement) ||
-                mockDOM.mockDocument.activeElement === mockDOM.mockDocument.body
+                mockDOM.mockDocument.activeElement === mockDOM.mockDocument.body ||
+                mockDOM.mockDocument.activeElement === titleLink
               ) {
                 event.preventDefault()
                 this.openFocusedPost()
@@ -709,6 +712,29 @@ describe('Hotkey Navigation System', () => {
 
     expect(mockEvent.preventDefault).toHaveBeenCalled()
     expect(mockDOM.mockWindow.location.href).toBe('/post/1')
+  })
+
+  it('does NOT preventDefault on Enter when activeElement is a tag link inside the article', () => {
+    const hotkeyManager = new HotkeyManagerClass()
+
+    // Focus on first post with j
+    hotkeyManager.testNavigateToNextPost()
+    expect(hotkeyManager.getCurrentFocusIndex()).toBe(0)
+
+    // Simulate Tab moving focus to a tag link inside the same article
+    const tagLink = { tagName: 'A', href: '/tags/Books' }
+    mockDOM.mockDocument.activeElement = tagLink
+
+    const mockEvent = {
+      key: 'Enter',
+      preventDefault: vi.fn(),
+      target: { tagName: 'BODY' },
+    }
+
+    hotkeyManager.testHandleKeyDown(mockEvent as any)
+
+    // Should NOT preventDefault — browser should follow the tag link
+    expect(mockEvent.preventDefault).not.toHaveBeenCalled()
   })
 
   it('still opens focused post with Enter when activeElement is body', () => {
