@@ -145,9 +145,22 @@ describe('Hotkey Navigation System', () => {
         }
 
         const articles = Array.from(mockDOM.mockDocument.querySelectorAll('article'))
-        const tagPostItems = Array.from(mockDOM.mockDocument.querySelectorAll('.post-item'))
 
-        this.postElements = articles.length > 0 ? articles : tagPostItems
+        if (articles.length > 0) {
+          this.postElements = articles
+        } else {
+          const tagItems = mockDOM.mockDocument.querySelectorAll('.tag-item')
+          const elements: any[] = []
+          tagItems.forEach((tagItem: any) => {
+            const heading = tagItem.querySelector('h2')
+            if (heading) elements.push(heading)
+            const posts = tagItem.querySelectorAll('.post-item')
+            posts.forEach((post: any) => elements.push(post))
+          })
+          this.postElements = elements.length > 0
+            ? elements
+            : Array.from(mockDOM.mockDocument.querySelectorAll('.post-item'))
+        }
         this.currentFocusIndex = -1
         this.clearPostFocus()
       }
@@ -805,5 +818,331 @@ describe('Hotkey Navigation System', () => {
 
     expect(mockDOM.mockDocument.createElement).toHaveBeenCalledWith('div')
     expect(mockDOM.mockDocument.body.appendChild).toHaveBeenCalled()
+  })
+})
+
+describe('Tags list page j/k navigation', () => {
+  let mockDOM: ReturnType<typeof createTagsPageMockDOM>
+  let HotkeyManagerClass: any
+
+  function createTagsPageMockDOM() {
+    const tagLink1 = { href: '/tags/Books', focus: vi.fn() }
+    const postLink1 = { href: '/post/1', focus: vi.fn() }
+    const postLink2 = { href: '/post/2', focus: vi.fn() }
+    const tagLink2 = { href: '/tags/Coding', focus: vi.fn() }
+    const postLink3 = { href: '/post/3', focus: vi.fn() }
+
+    const tagHeading1 = {
+      scrollIntoView: vi.fn(),
+      querySelector: vi.fn((selector: string) => {
+        if (selector === 'h1 a') return null
+        if (selector === 'a') return tagLink1
+        return null
+      }),
+    }
+    const postItem1 = {
+      scrollIntoView: vi.fn(),
+      querySelector: vi.fn((selector: string) => {
+        if (selector === 'h1 a') return null
+        if (selector === 'a') return postLink1
+        return null
+      }),
+    }
+    const postItem2 = {
+      scrollIntoView: vi.fn(),
+      querySelector: vi.fn((selector: string) => {
+        if (selector === 'h1 a') return null
+        if (selector === 'a') return postLink2
+        return null
+      }),
+    }
+    const tagHeading2 = {
+      scrollIntoView: vi.fn(),
+      querySelector: vi.fn((selector: string) => {
+        if (selector === 'h1 a') return null
+        if (selector === 'a') return tagLink2
+        return null
+      }),
+    }
+    const postItem3 = {
+      scrollIntoView: vi.fn(),
+      querySelector: vi.fn((selector: string) => {
+        if (selector === 'h1 a') return null
+        if (selector === 'a') return postLink3
+        return null
+      }),
+    }
+
+    const tagItem1 = {
+      querySelector: vi.fn((selector: string) => {
+        if (selector === 'h2') return tagHeading1
+        return null
+      }),
+      querySelectorAll: vi.fn((selector: string) => {
+        if (selector === '.post-item') return [postItem1, postItem2]
+        return []
+      }),
+    }
+    const tagItem2 = {
+      querySelector: vi.fn((selector: string) => {
+        if (selector === 'h2') return tagHeading2
+        return null
+      }),
+      querySelectorAll: vi.fn((selector: string) => {
+        if (selector === '.post-item') return [postItem3]
+        return []
+      }),
+    }
+
+    const mockBody = {
+      appendChild: vi.fn(),
+      removeChild: vi.fn(),
+    }
+
+    const mockDocument = {
+      addEventListener: vi.fn(),
+      activeElement: mockBody as any,
+      querySelectorAll: vi.fn((selector: string) => {
+        if (selector === 'article') return []
+        if (selector === '.tag-item') return [tagItem1, tagItem2]
+        if (selector === '.post-item') return [postItem1, postItem2, postItem3]
+        return []
+      }),
+      querySelector: vi.fn((selector: string) => {
+        if (selector === '#hotkey-help-modal') return null
+        if (selector === 'site-search dialog') return null
+        return null
+      }),
+      body: mockBody,
+      createElement: vi.fn(() => ({
+        style: { cssText: '', opacity: '0' },
+        textContent: '',
+        addEventListener: vi.fn(),
+        innerHTML: '',
+        id: '',
+      })),
+      getElementById: vi.fn(() => null),
+      readyState: 'complete',
+    }
+
+    const mockWindow = {
+      location: { pathname: '/tags', href: 'http://localhost:3000/tags' },
+      scrollTo: vi.fn(),
+      requestAnimationFrame: vi.fn((cb: any) => cb()),
+    }
+
+    return {
+      mockDocument,
+      mockWindow,
+      tagLinks: [tagLink1, tagLink2],
+      postLinks: [postLink1, postLink2, postLink3],
+      elements: { tagHeading1, postItem1, postItem2, tagHeading2, postItem3 },
+    }
+  }
+
+  beforeEach(() => {
+    mockDOM = createTagsPageMockDOM()
+    global.document = mockDOM.mockDocument as any
+    global.window = mockDOM.mockWindow as any
+
+    HotkeyManagerClass = class HotkeyManager {
+      private keySequence: string[] = []
+      private sequenceTimeout: number | null = null
+      private readonly SEQUENCE_TIMEOUT = 1000
+      private currentFocusIndex: number = -1
+      private postElements: any[] = []
+
+      constructor() {
+        this.init()
+      }
+
+      private init() {
+        mockDOM.mockDocument.addEventListener('keydown', this.handleKeyDown.bind(this))
+        this.initPostNavigation()
+      }
+
+      private initPostNavigation() {
+        const articles = Array.from(mockDOM.mockDocument.querySelectorAll('article'))
+
+        if (articles.length > 0) {
+          this.postElements = articles
+        } else {
+          const tagItems = mockDOM.mockDocument.querySelectorAll('.tag-item')
+          const elements: any[] = []
+          tagItems.forEach((tagItem: any) => {
+            const heading = tagItem.querySelector('h2')
+            if (heading) elements.push(heading)
+            const posts = tagItem.querySelectorAll('.post-item')
+            posts.forEach((post: any) => elements.push(post))
+          })
+          this.postElements = elements.length > 0
+            ? elements
+            : Array.from(mockDOM.mockDocument.querySelectorAll('.post-item'))
+        }
+        this.currentFocusIndex = -1
+      }
+
+      private isIndividualPostPage(): boolean {
+        return false
+      }
+
+      private handleKeyDown(event: KeyboardEvent) {
+        if (this.isTyping(event.target as Element)) return
+        if (this.handleSingleKey(event)) return
+      }
+
+      private isTyping(target: Element): boolean {
+        const tagName = target.tagName?.toLowerCase() || ''
+        return ['input', 'textarea', 'select'].includes(tagName)
+      }
+
+      private handleSingleKey(event: KeyboardEvent): boolean {
+        switch (event.key) {
+          case 'j':
+            if (this.postElements.length > 0) {
+              event.preventDefault()
+              this.navigateToNextPost()
+              return true
+            }
+            return false
+          case 'k':
+            if (this.postElements.length > 0) {
+              event.preventDefault()
+              this.navigateToPreviousPost()
+              return true
+            }
+            return false
+          case 'Enter':
+            if (this.currentFocusIndex >= 0) {
+              const focusedArticle = this.postElements[this.currentFocusIndex]
+              const titleLink =
+                focusedArticle.querySelector('h1 a') ||
+                focusedArticle.querySelector('a')
+              if (
+                mockDOM.mockDocument.activeElement === mockDOM.mockDocument.body ||
+                mockDOM.mockDocument.activeElement === titleLink
+              ) {
+                event.preventDefault()
+                this.openFocusedPost()
+                return true
+              }
+            }
+            return false
+          default:
+            return false
+        }
+      }
+
+      private navigateToNextPost() {
+        if (this.postElements.length === 0) return
+        this.currentFocusIndex = Math.min(this.currentFocusIndex + 1, this.postElements.length - 1)
+        this.updatePostFocus()
+      }
+
+      private navigateToPreviousPost() {
+        if (this.postElements.length === 0) return
+        this.currentFocusIndex = Math.max(this.currentFocusIndex - 1, 0)
+        this.updatePostFocus()
+      }
+
+      private updatePostFocus() {
+        if (this.currentFocusIndex >= 0 && this.currentFocusIndex < this.postElements.length) {
+          const focusedPost = this.postElements[this.currentFocusIndex]
+          const titleLink = focusedPost.querySelector('h1 a') || focusedPost.querySelector('a')
+          if (titleLink) {
+            titleLink.focus({ preventScroll: true })
+            mockDOM.mockDocument.activeElement = titleLink
+          }
+          focusedPost.scrollIntoView({ behavior: 'smooth', block: 'center' })
+        }
+      }
+
+      private clearPostFocus() {}
+
+      private openFocusedPost() {
+        if (this.currentFocusIndex >= 0 && this.currentFocusIndex < this.postElements.length) {
+          const focusedPost = this.postElements[this.currentFocusIndex]
+          let postLink = focusedPost.querySelector('h1 a')
+          if (!postLink) postLink = focusedPost.querySelector('a')
+          if (postLink) mockDOM.mockWindow.location.href = postLink.href
+        }
+      }
+
+      public testHandleKeyDown = this.handleKeyDown.bind(this)
+      public testNavigateToNextPost = this.navigateToNextPost.bind(this)
+      public getCurrentFocusIndex = () => this.currentFocusIndex
+      public getPostElements = () => this.postElements
+    }
+  })
+
+  afterEach(() => {
+    vi.clearAllMocks()
+    vi.unstubAllGlobals()
+  })
+
+  it('collects tag headings and post items in order', () => {
+    const hotkeyManager = new HotkeyManagerClass()
+    const elements = hotkeyManager.getPostElements()
+
+    // Should be: tagHeading1, postItem1, postItem2, tagHeading2, postItem3
+    expect(elements.length).toBe(5)
+    expect(elements[0]).toBe(mockDOM.elements.tagHeading1)
+    expect(elements[1]).toBe(mockDOM.elements.postItem1)
+    expect(elements[2]).toBe(mockDOM.elements.postItem2)
+    expect(elements[3]).toBe(mockDOM.elements.tagHeading2)
+    expect(elements[4]).toBe(mockDOM.elements.postItem3)
+  })
+
+  it('navigates through tag headings and posts with j/k', () => {
+    const hotkeyManager = new HotkeyManagerClass()
+    const jEvent = {
+      key: 'j',
+      preventDefault: vi.fn(),
+      target: { tagName: 'BODY' },
+    }
+
+    // j -> tag heading 1 (#Books)
+    hotkeyManager.testHandleKeyDown(jEvent as any)
+    expect(hotkeyManager.getCurrentFocusIndex()).toBe(0)
+    expect(mockDOM.tagLinks[0].focus).toHaveBeenCalled()
+
+    // j -> post 1
+    hotkeyManager.testHandleKeyDown(jEvent as any)
+    expect(hotkeyManager.getCurrentFocusIndex()).toBe(1)
+    expect(mockDOM.postLinks[0].focus).toHaveBeenCalled()
+
+    // j -> post 2
+    hotkeyManager.testHandleKeyDown(jEvent as any)
+    expect(hotkeyManager.getCurrentFocusIndex()).toBe(2)
+    expect(mockDOM.postLinks[1].focus).toHaveBeenCalled()
+
+    // j -> tag heading 2 (#Coding)
+    hotkeyManager.testHandleKeyDown(jEvent as any)
+    expect(hotkeyManager.getCurrentFocusIndex()).toBe(3)
+    expect(mockDOM.tagLinks[1].focus).toHaveBeenCalled()
+
+    // j -> post 3
+    hotkeyManager.testHandleKeyDown(jEvent as any)
+    expect(hotkeyManager.getCurrentFocusIndex()).toBe(4)
+    expect(mockDOM.postLinks[2].focus).toHaveBeenCalled()
+  })
+
+  it('opens tag page with Enter when tag heading is focused', () => {
+    const hotkeyManager = new HotkeyManagerClass()
+
+    // Navigate to first tag heading
+    hotkeyManager.testNavigateToNextPost()
+    expect(hotkeyManager.getCurrentFocusIndex()).toBe(0)
+
+    const enterEvent = {
+      key: 'Enter',
+      preventDefault: vi.fn(),
+      target: { tagName: 'BODY' },
+    }
+
+    hotkeyManager.testHandleKeyDown(enterEvent as any)
+
+    expect(enterEvent.preventDefault).toHaveBeenCalled()
+    expect(mockDOM.mockWindow.location.href).toBe('/tags/Books')
   })
 })
