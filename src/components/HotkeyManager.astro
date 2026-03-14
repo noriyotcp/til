@@ -297,9 +297,22 @@
       }
     }
 
+    private syncFocusIndex() {
+      const active = document.activeElement
+      if (!active || active === document.body) return
+
+      for (let i = 0; i < this.postElements.length; i++) {
+        if (this.postElements[i].contains(active)) {
+          this.currentFocusIndex = i
+          return
+        }
+      }
+    }
+
     private navigateToNextPost() {
       if (this.postElements.length === 0) return
 
+      this.syncFocusIndex()
       this.currentFocusIndex = Math.min(
         this.currentFocusIndex + 1,
         this.postElements.length - 1,
@@ -310,6 +323,7 @@
     private navigateToPreviousPost() {
       if (this.postElements.length === 0) return
 
+      this.syncFocusIndex()
       this.currentFocusIndex = Math.max(this.currentFocusIndex - 1, 0)
       this.updatePostFocus()
     }
