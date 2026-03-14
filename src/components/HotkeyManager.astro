@@ -115,6 +115,10 @@
           event.preventDefault()
           this.closeModals()
           this.clearPostFocus()
+          this.currentFocusIndex = -1
+          if (document.activeElement instanceof HTMLElement) {
+            document.activeElement.blur()
+          }
           return true
 
         case 'j':
@@ -305,12 +309,6 @@
       ) {
         const focusedPost = this.postElements[this.currentFocusIndex]
 
-        // Add focus styling
-        focusedPost.style.outline = '2px solid var(--theme-accent)'
-        focusedPost.style.outlineOffset = '4px'
-        focusedPost.style.borderRadius = '0.5rem'
-        focusedPost.setAttribute('data-hotkey-focused', 'true')
-
         // Focus the title link to unify j/k focus with browser focus
         const titleLink =
           (focusedPost.querySelector('h1 a') as HTMLElement) ||
@@ -328,12 +326,7 @@
     }
 
     private clearPostFocus() {
-      this.postElements.forEach((post) => {
-        post.style.outline = ''
-        post.style.outlineOffset = ''
-        post.style.borderRadius = ''
-        post.removeAttribute('data-hotkey-focused')
-      })
+      // No visual styles to clear; browser focus on title link is the indicator
     }
 
     private openFocusedPost() {

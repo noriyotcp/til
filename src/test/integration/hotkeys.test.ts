@@ -203,6 +203,10 @@ describe('Hotkey Navigation System', () => {
             event.preventDefault()
             this.closeModals()
             this.clearPostFocus()
+            this.currentFocusIndex = -1
+            if (mockDOM.mockDocument.activeElement?.blur) {
+              mockDOM.mockDocument.activeElement.blur()
+            }
             return true
 
           case 'j':
@@ -367,10 +371,6 @@ describe('Hotkey Navigation System', () => {
 
         if (this.currentFocusIndex >= 0 && this.currentFocusIndex < this.postElements.length) {
           const focusedPost = this.postElements[this.currentFocusIndex]
-          focusedPost.style.outline = '2px solid var(--theme-accent)'
-          focusedPost.style.outlineOffset = '4px'
-          focusedPost.style.borderRadius = '0.5rem'
-          focusedPost.setAttribute('data-hotkey-focused', 'true')
 
           // Focus the title link to unify j/k focus with browser focus
           const titleLink = focusedPost.querySelector('h1 a') || focusedPost.querySelector('a')
@@ -387,12 +387,7 @@ describe('Hotkey Navigation System', () => {
       }
 
       private clearPostFocus() {
-        this.postElements.forEach(post => {
-          post.style.outline = ''
-          post.style.outlineOffset = ''
-          post.style.borderRadius = ''
-          post.removeAttribute('data-hotkey-focused')
-        })
+        // No visual styles to clear; browser focus on title link is the indicator
       }
 
       private openFocusedPost() {
@@ -647,14 +642,12 @@ describe('Hotkey Navigation System', () => {
     expect(mockEvent.preventDefault).not.toHaveBeenCalled()
   })
 
-  it('applies focus styling to posts correctly', () => {
+  it('scrolls focused post into view', () => {
     const hotkeyManager = new HotkeyManagerClass()
 
     hotkeyManager.testNavigateToNextPost()
 
     const focusedPost = hotkeyManager.getPostElements()[0]
-    expect(focusedPost.style.outline).toBe('2px solid var(--theme-accent)')
-    expect(focusedPost.setAttribute).toHaveBeenCalledWith('data-hotkey-focused', 'true')
     expect(focusedPost.scrollIntoView).toHaveBeenCalledWith({
       behavior: 'smooth',
       block: 'center'
