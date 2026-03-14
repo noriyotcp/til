@@ -41,14 +41,18 @@
       if (articles.length > 0) {
         this.postElements = articles
       } else {
-        // Tags list page: collect tag headings and post items in DOM order
+        // Tags list page: collect tag headings, post items, and "more posts" links in DOM order
         const tagItems = document.querySelectorAll('.tag-item')
         const elements: HTMLElement[] = []
         tagItems.forEach((tagItem) => {
           const heading = tagItem.querySelector('h2') as HTMLElement
           if (heading) elements.push(heading)
-          const posts = tagItem.querySelectorAll('.post-item')
-          posts.forEach((post) => elements.push(post as HTMLElement))
+          const tagPosts = tagItem.querySelector('.tag-posts')
+          if (tagPosts) {
+            Array.from(tagPosts.children).forEach((child) => {
+              elements.push(child as HTMLElement)
+            })
+          }
         })
         this.postElements = elements.length > 0
           ? elements

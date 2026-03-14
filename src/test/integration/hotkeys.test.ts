@@ -888,6 +888,7 @@ describe('Tags list page j/k navigation', () => {
     const tagLink1 = { href: '/tags/Books', focus: vi.fn() }
     const postLink1 = { href: '/post/1', focus: vi.fn() }
     const postLink2 = { href: '/post/2', focus: vi.fn() }
+    const moreLink1 = { href: '/tags/Books', focus: vi.fn() }
     const tagLink2 = { href: '/tags/Coding', focus: vi.fn() }
     const postLink3 = { href: '/post/3', focus: vi.fn() }
 
@@ -918,6 +919,15 @@ describe('Tags list page j/k navigation', () => {
         return null
       }),
     }
+    const morePostsItem1 = {
+      tagName: 'DIV',
+      scrollIntoView: vi.fn(),
+      querySelector: vi.fn((selector: string) => {
+        if (selector === 'h1 a') return null
+        if (selector === 'a') return moreLink1
+        return null
+      }),
+    }
     const tagHeading2 = {
       tagName: 'H2',
       scrollIntoView: vi.fn(),
@@ -937,9 +947,16 @@ describe('Tags list page j/k navigation', () => {
       }),
     }
 
+    const tagPosts1 = {
+      children: [postItem1, postItem2, morePostsItem1],
+    }
+    const tagPosts2 = {
+      children: [postItem3],
+    }
     const tagItem1 = {
       querySelector: vi.fn((selector: string) => {
         if (selector === 'h2') return tagHeading1
+        if (selector === '.tag-posts') return tagPosts1
         return null
       }),
       querySelectorAll: vi.fn((selector: string) => {
@@ -950,6 +967,7 @@ describe('Tags list page j/k navigation', () => {
     const tagItem2 = {
       querySelector: vi.fn((selector: string) => {
         if (selector === 'h2') return tagHeading2
+        if (selector === '.tag-posts') return tagPosts2
         return null
       }),
       querySelectorAll: vi.fn((selector: string) => {
@@ -1000,7 +1018,8 @@ describe('Tags list page j/k navigation', () => {
       mockWindow,
       tagLinks: [tagLink1, tagLink2],
       postLinks: [postLink1, postLink2, postLink3],
-      elements: { tagHeading1, postItem1, postItem2, tagHeading2, postItem3 },
+      moreLinks: [moreLink1],
+      elements: { tagHeading1, postItem1, postItem2, morePostsItem1, tagHeading2, postItem3 },
     }
   }
 
@@ -1036,8 +1055,12 @@ describe('Tags list page j/k navigation', () => {
           tagItems.forEach((tagItem: any) => {
             const heading = tagItem.querySelector('h2')
             if (heading) elements.push(heading)
-            const posts = tagItem.querySelectorAll('.post-item')
-            posts.forEach((post: any) => elements.push(post))
+            const tagPosts = tagItem.querySelector('.tag-posts')
+            if (tagPosts) {
+              Array.from(tagPosts.children).forEach((child: any) => {
+                elements.push(child)
+              })
+            }
           })
           this.postElements = elements.length > 0
             ? elements
@@ -1203,13 +1226,14 @@ describe('Tags list page j/k navigation', () => {
     const hotkeyManager = new HotkeyManagerClass()
     const elements = hotkeyManager.getPostElements()
 
-    // Should be: tagHeading1, postItem1, postItem2, tagHeading2, postItem3
-    expect(elements.length).toBe(5)
+    // Should be: tagHeading1, postItem1, postItem2, morePostsItem1, tagHeading2, postItem3
+    expect(elements.length).toBe(6)
     expect(elements[0]).toBe(mockDOM.elements.tagHeading1)
     expect(elements[1]).toBe(mockDOM.elements.postItem1)
     expect(elements[2]).toBe(mockDOM.elements.postItem2)
-    expect(elements[3]).toBe(mockDOM.elements.tagHeading2)
-    expect(elements[4]).toBe(mockDOM.elements.postItem3)
+    expect(elements[3]).toBe(mockDOM.elements.morePostsItem1)
+    expect(elements[4]).toBe(mockDOM.elements.tagHeading2)
+    expect(elements[5]).toBe(mockDOM.elements.postItem3)
   })
 
   it('navigates through tag headings and posts with j/k', () => {
@@ -1235,14 +1259,19 @@ describe('Tags list page j/k navigation', () => {
     expect(hotkeyManager.getCurrentFocusIndex()).toBe(2)
     expect(mockDOM.postLinks[1].focus).toHaveBeenCalled()
 
-    // j -> tag heading 2 (#Coding)
+    // j -> "...and N more posts" link
     hotkeyManager.testHandleKeyDown(jEvent as any)
     expect(hotkeyManager.getCurrentFocusIndex()).toBe(3)
+    expect(mockDOM.moreLinks[0].focus).toHaveBeenCalled()
+
+    // j -> tag heading 2 (#Coding)
+    hotkeyManager.testHandleKeyDown(jEvent as any)
+    expect(hotkeyManager.getCurrentFocusIndex()).toBe(4)
     expect(mockDOM.tagLinks[1].focus).toHaveBeenCalled()
 
     // j -> post 3
     hotkeyManager.testHandleKeyDown(jEvent as any)
-    expect(hotkeyManager.getCurrentFocusIndex()).toBe(4)
+    expect(hotkeyManager.getCurrentFocusIndex()).toBe(5)
     expect(mockDOM.postLinks[2].focus).toHaveBeenCalled()
   })
 
@@ -1279,7 +1308,7 @@ describe('Tags list page j/k navigation', () => {
     expect(hotkeyManager.getCurrentFocusIndex()).toBe(0)
     expect(mockDOM.tagLinks[0].focus).toHaveBeenCalled()
 
-    // Shift+J -> second tag heading (index=3, tagHeading2), skipping posts
+    // Shift+J -> second tag heading (index=4, tagHeading2), skipping posts and more link
     const shiftJEvent2 = {
       key: 'J',
       shiftKey: true,
@@ -1287,7 +1316,7 @@ describe('Tags list page j/k navigation', () => {
       target: { tagName: 'BODY' },
     }
     hotkeyManager.testHandleKeyDown(shiftJEvent2 as any)
-    expect(hotkeyManager.getCurrentFocusIndex()).toBe(3)
+    expect(hotkeyManager.getCurrentFocusIndex()).toBe(4)
     expect(mockDOM.tagLinks[1].focus).toHaveBeenCalled()
   })
 
@@ -1303,7 +1332,7 @@ describe('Tags list page j/k navigation', () => {
     }
     hotkeyManager.testHandleKeyDown(shiftJ as any)
     hotkeyManager.testHandleKeyDown(shiftJ as any)
-    expect(hotkeyManager.getCurrentFocusIndex()).toBe(3)
+    expect(hotkeyManager.getCurrentFocusIndex()).toBe(4)
 
     // Shift+K -> back to first tag heading (index=0)
     const shiftKEvent = {
@@ -1331,10 +1360,10 @@ describe('Tags list page j/k navigation', () => {
     hotkeyManager.testHandleKeyDown(shiftJ as any)
     // Go to second tag heading
     hotkeyManager.testHandleKeyDown(shiftJ as any)
-    expect(hotkeyManager.getCurrentFocusIndex()).toBe(3)
+    expect(hotkeyManager.getCurrentFocusIndex()).toBe(4)
 
     // Try again - should stay at second tag heading (no more H2s)
     hotkeyManager.testHandleKeyDown(shiftJ as any)
-    expect(hotkeyManager.getCurrentFocusIndex()).toBe(3)
+    expect(hotkeyManager.getCurrentFocusIndex()).toBe(4)
   })
 })
