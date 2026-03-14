@@ -1,4 +1,4 @@
-import GitHubCalendar from 'react-github-calendar';
+import { GitHubCalendar } from 'react-github-calendar';
 
 const themeFromColorscheme = [ "var(--theme-background)", "var(--theme-accent)"]
 const theme = { light: themeFromColorscheme, dark: themeFromColorscheme }

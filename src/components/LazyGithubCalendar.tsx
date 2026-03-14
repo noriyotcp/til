@@ -2,7 +2,9 @@ import { Suspense, lazy, useState, useEffect } from 'react'
 import ErrorBoundary from './ErrorBoundary'
 
 // 動的インポートでGitHubカレンダーを遅延読み込み
-const GitHubCalendar = lazy(() => import('react-github-calendar'))
+const GitHubCalendar = lazy(() =>
+  import('react-github-calendar').then((mod) => ({ default: mod.GitHubCalendar }))
+)
 
 interface LazyGithubCalendarProps {
   username: string

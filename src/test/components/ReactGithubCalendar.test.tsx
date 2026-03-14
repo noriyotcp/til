@@ -4,7 +4,7 @@ import ReactGithubCalendar from '../../components/ReactGithubCalendar'
 
 // Mock the react-github-calendar component
 vi.mock('react-github-calendar', () => ({
-  default: ({ username, theme }: { username: string; theme: any }) => (
+  GitHubCalendar: ({ username, theme }: { username: string; theme: any }) => (
     <div data-testid="github-calendar" data-username={username} data-theme={JSON.stringify(theme)}>
       GitHub Calendar for {username}
     </div>
