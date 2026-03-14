@@ -43,10 +43,13 @@ updates:
           - "@vitest/*"
           - "@testing-library/*"
     # Astro v6 へのメジャーアップグレードは手動で対応する（Shiki v4, Node 22 等の破壊的変更あり）
+    # Zod 4 も Astro v6 とセットで移行する（Astro v5 は Zod 3 前提）
     ignore:
       - dependency-name: "astro"
         update-types: ["version-update:semver-major"]
       - dependency-name: "@astrojs/*"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "zod"
         update-types: ["version-update:semver-major"]
     # セキュリティアップデートは個別で即座に対応
     open-pull-requests-limit: 10
