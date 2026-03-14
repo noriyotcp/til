@@ -328,6 +328,10 @@ describe('Hotkey Navigation System', () => {
 
       private scrollToTop() {
         mockDOM.mockWindow.scrollTo({ top: 0, behavior: 'smooth' })
+        this.currentFocusIndex = -1
+        if (mockDOM.mockDocument.activeElement?.blur) {
+          mockDOM.mockDocument.activeElement.blur()
+        }
       }
 
       private getCurrentPageInfo() {
@@ -627,6 +631,33 @@ describe('Hotkey Navigation System', () => {
 
     expect(tEvent.preventDefault).toHaveBeenCalled()
     expect(mockDOM.mockWindow.scrollTo).toHaveBeenCalledWith({ top: 0, behavior: 'smooth' })
+  })
+
+  it('resets focus index after back to top (b t)', () => {
+    const hotkeyManager = new HotkeyManagerClass()
+
+    // Navigate to second post
+    hotkeyManager.testNavigateToNextPost()
+    hotkeyManager.testNavigateToNextPost()
+    expect(hotkeyManager.getCurrentFocusIndex()).toBe(1)
+
+    // Press b t to scroll to top
+    const bEvent = {
+      key: 'b',
+      preventDefault: vi.fn(),
+      target: { tagName: 'BODY' },
+    }
+    const tEvent = {
+      key: 't',
+      preventDefault: vi.fn(),
+      target: { tagName: 'BODY' },
+    }
+
+    hotkeyManager.testHandleKeyDown(bEvent as any)
+    hotkeyManager.testHandleKeyDown(tEvent as any)
+
+    // Focus index should be reset
+    expect(hotkeyManager.getCurrentFocusIndex()).toBe(-1)
   })
 
   it('ignores keystrokes when typing in input fields', () => {
