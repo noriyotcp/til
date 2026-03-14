@@ -20,7 +20,6 @@ interface Props {
 const { title, description, tags, author } = Astro.props
 // Generate proper URLs with base URL support
 const baseUrl = import.meta.env.BASE_URL || '/'
-console.log('Base URL:', baseUrl) // Debug log
 const fullUrl = new URL(Astro.url.pathname, Astro.site).href
 const pageUrl = fullUrl.replace(/\/$/, '') // Remove trailing slash for consistency
 const pageType = Astro.url.pathname.startsWith('/posts') ? 'article' : 'website'
