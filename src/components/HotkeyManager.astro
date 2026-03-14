@@ -41,14 +41,18 @@
       if (articles.length > 0) {
         this.postElements = articles
       } else {
-        // Tags list page: collect tag headings and post items in DOM order
+        // Tags list page: collect tag headings, post items, and "more posts" links in DOM order
         const tagItems = document.querySelectorAll('.tag-item')
         const elements: HTMLElement[] = []
         tagItems.forEach((tagItem) => {
           const heading = tagItem.querySelector('h2') as HTMLElement
           if (heading) elements.push(heading)
-          const posts = tagItem.querySelectorAll('.post-item')
-          posts.forEach((post) => elements.push(post as HTMLElement))
+          const tagPosts = tagItem.querySelector('.tag-posts')
+          if (tagPosts) {
+            Array.from(tagPosts.children).forEach((child) => {
+              elements.push(child as HTMLElement)
+            })
+          }
         })
         this.postElements = elements.length > 0
           ? elements
@@ -131,6 +135,22 @@
             document.activeElement.blur()
           }
           return true
+
+        case 'J':
+          if (this.hasTagHeadings()) {
+            event.preventDefault()
+            this.navigateToNextTagHeading()
+            return true
+          }
+          return false
+
+        case 'K':
+          if (this.hasTagHeadings()) {
+            event.preventDefault()
+            this.navigateToPreviousTagHeading()
+            return true
+          }
+          return false
 
         case 'j':
           if (this.postElements.length > 0) {
@@ -294,6 +314,33 @@
       } else {
         // Visual feedback when no next page is available
         this.showTemporaryMessage('Already on last page')
+      }
+    }
+
+    private hasTagHeadings(): boolean {
+      return this.postElements.some((el) => el.tagName === 'H2')
+    }
+
+    private navigateToNextTagHeading() {
+      this.syncFocusIndex()
+      for (let i = this.currentFocusIndex + 1; i < this.postElements.length; i++) {
+        if (this.postElements[i].tagName === 'H2') {
+          this.currentFocusIndex = i
+          this.updatePostFocus()
+          return
+        }
+      }
+    }
+
+    private navigateToPreviousTagHeading() {
+      this.syncFocusIndex()
+      const start = this.currentFocusIndex < 0 ? this.postElements.length - 1 : this.currentFocusIndex - 1
+      for (let i = start; i >= 0; i--) {
+        if (this.postElements[i].tagName === 'H2') {
+          this.currentFocusIndex = i
+          this.updatePostFocus()
+          return
+        }
       }
     }
 
@@ -470,6 +517,10 @@
             <span>Previous post</span>
             <kbd style="background: var(--theme-accent); color: var(--theme-background); padding: 0.2rem 0.4rem; border-radius: 0.25rem;">Enter</kbd>
             <span>Open focused post</span>
+            <kbd style="background: var(--theme-accent); color: var(--theme-background); padding: 0.2rem 0.4rem; border-radius: 0.25rem;">Shift+j</kbd>
+            <span>Next tag heading (Tags page only)</span>
+            <kbd style="background: var(--theme-accent); color: var(--theme-background); padding: 0.2rem 0.4rem; border-radius: 0.25rem;">Shift+k</kbd>
+            <span>Previous tag heading (Tags page only)</span>
           </div>
         </div>
       `
