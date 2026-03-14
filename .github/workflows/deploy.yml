@@ -23,7 +23,7 @@ jobs:
         uses: withastro/action@v5
         with:
           path: . # リポジトリ内のAstroプロジェクトのルートロケーション
-          node-version: 20 # サイト構築に使用するNodeのバージョン
+          node-version: 22 # サイト構築に使用するNodeのバージョン
           package-manager: npm # 依存関係のインストールとサイトのビルドに使用するNodeパッケージマネージャ
 
   deploy:
