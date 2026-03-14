@@ -504,22 +504,27 @@
         z-index: 1000;
       `
 
+      const kbdStyle = 'background: var(--theme-accent); color: var(--theme-background); padding: 0.2rem 0.4rem; border-radius: 0.25rem; white-space: nowrap;'
+      const sectionStyle = 'margin-bottom: 1rem;'
+      const h3Style = 'color: var(--theme-accent); font-size: 1rem; margin-bottom: 0.5rem;'
+      const gridStyle = 'display: grid; grid-template-columns: auto 1fr; gap: 0.5rem 1rem; font-family: monospace;'
+
       // Show post navigation section only if we have navigable posts
       const postNavigationSection =
         this.postElements.length > 0
           ? `
-        <div style="margin-bottom: 1.5rem;">
-          <h3 style="color: var(--theme-accent); font-size: 1rem; margin-bottom: 0.5rem;">Post Navigation</h3>
-          <div style="display: grid; grid-template-columns: auto 1fr; gap: 0.5rem 1rem; font-family: monospace;">
-            <kbd style="background: var(--theme-accent); color: var(--theme-background); padding: 0.2rem 0.4rem; border-radius: 0.25rem;">j</kbd>
+        <div style="${sectionStyle}">
+          <h3 style="${h3Style}">Post Navigation</h3>
+          <div style="${gridStyle}">
+            <kbd style="${kbdStyle}">j</kbd>
             <span>Next post</span>
-            <kbd style="background: var(--theme-accent); color: var(--theme-background); padding: 0.2rem 0.4rem; border-radius: 0.25rem;">k</kbd>
+            <kbd style="${kbdStyle}">k</kbd>
             <span>Previous post</span>
-            <kbd style="background: var(--theme-accent); color: var(--theme-background); padding: 0.2rem 0.4rem; border-radius: 0.25rem;">Enter</kbd>
+            <kbd style="${kbdStyle}">Enter</kbd>
             <span>Open focused post</span>
-            <kbd style="background: var(--theme-accent); color: var(--theme-background); padding: 0.2rem 0.4rem; border-radius: 0.25rem;">Shift+j</kbd>
+            <kbd style="${kbdStyle}">Shift+j</kbd>
             <span>Next tag heading (Tags page only)</span>
-            <kbd style="background: var(--theme-accent); color: var(--theme-background); padding: 0.2rem 0.4rem; border-radius: 0.25rem;">Shift+k</kbd>
+            <kbd style="${kbdStyle}">Shift+k</kbd>
             <span>Previous tag heading (Tags page only)</span>
           </div>
         </div>
@@ -532,47 +537,56 @@
           color: var(--theme-foreground);
           padding: 2rem;
           border-radius: 0.5rem;
-          max-width: 500px;
+          max-width: 750px;
+          min-width: 320px;
           width: 90%;
           border: 2px solid var(--theme-accent);
+          max-height: 90vh;
+          overflow-y: auto;
         ">
           <h2 style="margin-top: 0; color: var(--theme-accent);">Keyboard Shortcuts</h2>
 
-          <div style="margin-bottom: 1.5rem;">
-            <h3 style="color: var(--theme-accent); font-size: 1rem; margin-bottom: 0.5rem;">Navigation</h3>
-            <div style="display: grid; grid-template-columns: auto 1fr; gap: 0.5rem 1rem; font-family: monospace;">
-              <kbd style="background: var(--theme-accent); color: var(--theme-background); padding: 0.2rem 0.4rem; border-radius: 0.25rem;">g h</kbd>
-              <span>Go to Home</span>
-              <kbd style="background: var(--theme-accent); color: var(--theme-background); padding: 0.2rem 0.4rem; border-radius: 0.25rem;">g a</kbd>
-              <span>Go to Archive</span>
-              <kbd style="background: var(--theme-accent); color: var(--theme-background); padding: 0.2rem 0.4rem; border-radius: 0.25rem;">g t</kbd>
-              <span>Go to Tags</span>
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 0 2rem;">
+            <div>
+              <div style="${sectionStyle}">
+                <h3 style="${h3Style}">Navigation</h3>
+                <div style="${gridStyle}">
+                  <kbd style="${kbdStyle}">g h</kbd>
+                  <span>Go to Home</span>
+                  <kbd style="${kbdStyle}">g a</kbd>
+                  <span>Go to Archive</span>
+                  <kbd style="${kbdStyle}">g t</kbd>
+                  <span>Go to Tags</span>
+                </div>
+              </div>
+
+              <div style="${sectionStyle}">
+                <h3 style="${h3Style}">Pagination</h3>
+                <div style="${gridStyle}">
+                  <kbd style="${kbdStyle}">g p</kbd>
+                  <span>Previous Page</span>
+                  <kbd style="${kbdStyle}">g n</kbd>
+                  <span>Next Page</span>
+                </div>
+              </div>
             </div>
-          </div>
 
-          <div style="margin-bottom: 1.5rem;">
-            <h3 style="color: var(--theme-accent); font-size: 1rem; margin-bottom: 0.5rem;">Pagination</h3>
-            <div style="display: grid; grid-template-columns: auto 1fr; gap: 0.5rem 1rem; font-family: monospace;">
-              <kbd style="background: var(--theme-accent); color: var(--theme-background); padding: 0.2rem 0.4rem; border-radius: 0.25rem;">g p</kbd>
-              <span>Previous Page</span>
-              <kbd style="background: var(--theme-accent); color: var(--theme-background); padding: 0.2rem 0.4rem; border-radius: 0.25rem;">g n</kbd>
-              <span>Next Page</span>
-            </div>
-          </div>
+            <div>
+              ${postNavigationSection}
 
-          ${postNavigationSection}
-
-          <div style="margin-bottom: 1.5rem;">
-            <h3 style="color: var(--theme-accent); font-size: 1rem; margin-bottom: 0.5rem;">Actions</h3>
-            <div style="display: grid; grid-template-columns: auto 1fr; gap: 0.5rem 1rem; font-family: monospace;">
-              <kbd style="background: var(--theme-accent); color: var(--theme-background); padding: 0.2rem 0.4rem; border-radius: 0.25rem;">Cmd/Ctrl+K</kbd>
-              <span>Search</span>
-              <kbd style="background: var(--theme-accent); color: var(--theme-background); padding: 0.2rem 0.4rem; border-radius: 0.25rem;">b t</kbd>
-              <span>Back to Top</span>
-              <kbd style="background: var(--theme-accent); color: var(--theme-background); padding: 0.2rem 0.4rem; border-radius: 0.25rem;">?</kbd>
-              <span>Show this help</span>
-              <kbd style="background: var(--theme-accent); color: var(--theme-background); padding: 0.2rem 0.4rem; border-radius: 0.25rem;">Esc</kbd>
-              <span>Close modals / Clear focus</span>
+              <div style="${sectionStyle}">
+                <h3 style="${h3Style}">Actions</h3>
+                <div style="${gridStyle}">
+                  <kbd style="${kbdStyle}">Cmd/Ctrl+K</kbd>
+                  <span>Search</span>
+                  <kbd style="${kbdStyle}">b t</kbd>
+                  <span>Back to Top</span>
+                  <kbd style="${kbdStyle}">?</kbd>
+                  <span>Show this help</span>
+                  <kbd style="${kbdStyle}">Esc</kbd>
+                  <span>Close modals / Clear focus</span>
+                </div>
+              </div>
             </div>
           </div>
 
