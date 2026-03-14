@@ -2,6 +2,10 @@ import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 
 // Mock DOM environment for hotkey testing
 const createHotkeyMockDOM = () => {
+  const titleLink1 = { href: '/post/1', focus: vi.fn() }
+  const titleLink2 = { href: '/post/2', focus: vi.fn() }
+  const titleLink3 = { href: '/post/3', focus: vi.fn() }
+
   const mockElements = {
     articles: [
       {
@@ -9,23 +13,39 @@ const createHotkeyMockDOM = () => {
         setAttribute: vi.fn(),
         removeAttribute: vi.fn(),
         scrollIntoView: vi.fn(),
-        querySelector: vi.fn(() => ({ href: '/post/1' }))
+        contains: vi.fn((el: any) => el === titleLink1),
+        querySelector: vi.fn((selector: string) => {
+          if (selector === 'h1 a') return titleLink1
+          if (selector === 'a') return titleLink1
+          return null
+        }),
       },
       {
         style: {},
         setAttribute: vi.fn(),
         removeAttribute: vi.fn(),
         scrollIntoView: vi.fn(),
-        querySelector: vi.fn(() => ({ href: '/post/2' }))
+        contains: vi.fn((el: any) => el === titleLink2),
+        querySelector: vi.fn((selector: string) => {
+          if (selector === 'h1 a') return titleLink2
+          if (selector === 'a') return titleLink2
+          return null
+        }),
       },
     ],
+    titleLinks: [titleLink1, titleLink2, titleLink3],
     postItems: [
       {
         style: {},
         setAttribute: vi.fn(),
         removeAttribute: vi.fn(),
         scrollIntoView: vi.fn(),
-        querySelector: vi.fn(() => ({ href: '/post/3' }))
+        contains: vi.fn((el: any) => el === titleLink3),
+        querySelector: vi.fn((selector: string) => {
+          if (selector === 'h1 a') return titleLink3
+          if (selector === 'a') return titleLink3
+          return null
+        }),
       },
     ],
     prevLink: { getAttribute: vi.fn(() => '/page/1') },
@@ -33,8 +53,14 @@ const createHotkeyMockDOM = () => {
     searchDialog: { close: vi.fn(), open: false },
   }
 
+  const mockBody = {
+    appendChild: vi.fn(),
+    removeChild: vi.fn(),
+  }
+
   const mockDocument = {
     addEventListener: vi.fn(),
+    activeElement: mockBody as any,
     querySelectorAll: vi.fn((selector: string) => {
       if (selector === 'article') return mockElements.articles
       if (selector === '.post-item') return mockElements.postItems
@@ -47,10 +73,7 @@ const createHotkeyMockDOM = () => {
       if (selector === '#hotkey-help-modal') return null
       return null
     }),
-    body: {
-      appendChild: vi.fn(),
-      removeChild: vi.fn(),
-    },
+    body: mockBody,
     createElement: vi.fn(() => ({
       style: { cssText: '', opacity: '0' },
       textContent: '',
@@ -200,9 +223,15 @@ describe('Hotkey Navigation System', () => {
 
           case 'Enter':
             if (this.currentFocusIndex >= 0) {
-              event.preventDefault()
-              this.openFocusedPost()
-              return true
+              const focusedArticle = this.postElements[this.currentFocusIndex]
+              if (
+                focusedArticle.contains(mockDOM.mockDocument.activeElement) ||
+                mockDOM.mockDocument.activeElement === mockDOM.mockDocument.body
+              ) {
+                event.preventDefault()
+                this.openFocusedPost()
+                return true
+              }
             }
             return false
 
@@ -339,6 +368,14 @@ describe('Hotkey Navigation System', () => {
           focusedPost.style.outlineOffset = '4px'
           focusedPost.style.borderRadius = '0.5rem'
           focusedPost.setAttribute('data-hotkey-focused', 'true')
+
+          // Focus the title link to unify j/k focus with browser focus
+          const titleLink = focusedPost.querySelector('h1 a') || focusedPost.querySelector('a')
+          if (titleLink) {
+            titleLink.focus({ preventScroll: true })
+            mockDOM.mockDocument.activeElement = titleLink
+          }
+
           focusedPost.scrollIntoView({
             behavior: 'smooth',
             block: 'center'
@@ -619,6 +656,80 @@ describe('Hotkey Navigation System', () => {
       behavior: 'smooth',
       block: 'center'
     })
+  })
+
+  it('focuses title link when navigating with j/k', () => {
+    const hotkeyManager = new HotkeyManagerClass()
+
+    hotkeyManager.testNavigateToNextPost()
+
+    const titleLink = mockDOM.mockElements.titleLinks[0]
+    expect(titleLink.focus).toHaveBeenCalledWith({ preventScroll: true })
+  })
+
+  it('does NOT preventDefault on Enter when activeElement is outside the focused article', () => {
+    const hotkeyManager = new HotkeyManagerClass()
+
+    // Focus on first post with j
+    hotkeyManager.testNavigateToNextPost()
+    expect(hotkeyManager.getCurrentFocusIndex()).toBe(0)
+
+    // Simulate Tab moving focus to an external element (e.g., Archive button)
+    const externalButton = { tagName: 'A', href: '/archive' }
+    mockDOM.mockDocument.activeElement = externalButton
+
+    const mockEvent = {
+      key: 'Enter',
+      preventDefault: vi.fn(),
+      target: { tagName: 'BODY' },
+    }
+
+    hotkeyManager.testHandleKeyDown(mockEvent as any)
+
+    // Should NOT preventDefault — browser default behavior (Archive link) should work
+    expect(mockEvent.preventDefault).not.toHaveBeenCalled()
+  })
+
+  it('still opens focused post with Enter when activeElement is inside the article', () => {
+    const hotkeyManager = new HotkeyManagerClass()
+
+    // Focus on first post with j
+    hotkeyManager.testNavigateToNextPost()
+
+    // activeElement is the title link inside the article (set by updatePostFocus)
+    // mockDOM.mockDocument.activeElement is already set to titleLink1 by updatePostFocus
+
+    const mockEvent = {
+      key: 'Enter',
+      preventDefault: vi.fn(),
+      target: { tagName: 'BODY' },
+    }
+
+    hotkeyManager.testHandleKeyDown(mockEvent as any)
+
+    expect(mockEvent.preventDefault).toHaveBeenCalled()
+    expect(mockDOM.mockWindow.location.href).toBe('/post/1')
+  })
+
+  it('still opens focused post with Enter when activeElement is body', () => {
+    const hotkeyManager = new HotkeyManagerClass()
+
+    // Focus on first post with j
+    hotkeyManager.testNavigateToNextPost()
+
+    // Simulate activeElement being body (e.g., user clicked somewhere neutral)
+    mockDOM.mockDocument.activeElement = mockDOM.mockDocument.body
+
+    const mockEvent = {
+      key: 'Enter',
+      preventDefault: vi.fn(),
+      target: { tagName: 'BODY' },
+    }
+
+    hotkeyManager.testHandleKeyDown(mockEvent as any)
+
+    expect(mockEvent.preventDefault).toHaveBeenCalled()
+    expect(mockDOM.mockWindow.location.href).toBe('/post/1')
   })
 
   it('shows temporary messages correctly', () => {

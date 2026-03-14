@@ -135,9 +135,15 @@
 
         case 'Enter':
           if (this.currentFocusIndex >= 0) {
-            event.preventDefault()
-            this.openFocusedPost()
-            return true
+            const focusedArticle = this.postElements[this.currentFocusIndex]
+            if (
+              focusedArticle.contains(document.activeElement) ||
+              document.activeElement === document.body
+            ) {
+              event.preventDefault()
+              this.openFocusedPost()
+              return true
+            }
           }
           return false
 
@@ -301,6 +307,14 @@
         focusedPost.style.outlineOffset = '4px'
         focusedPost.style.borderRadius = '0.5rem'
         focusedPost.setAttribute('data-hotkey-focused', 'true')
+
+        // Focus the title link to unify j/k focus with browser focus
+        const titleLink =
+          (focusedPost.querySelector('h1 a') as HTMLElement) ||
+          (focusedPost.querySelector('a') as HTMLElement)
+        if (titleLink) {
+          titleLink.focus({ preventScroll: true })
+        }
 
         // Scroll into view
         focusedPost.scrollIntoView({
