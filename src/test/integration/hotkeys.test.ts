@@ -371,14 +371,28 @@ describe('Hotkey Navigation System', () => {
         }
       }
 
+      private syncFocusIndex() {
+        const active = mockDOM.mockDocument.activeElement
+        if (!active || active === mockDOM.mockDocument.body) return
+
+        for (let i = 0; i < this.postElements.length; i++) {
+          if (this.postElements[i].contains?.(active)) {
+            this.currentFocusIndex = i
+            return
+          }
+        }
+      }
+
       private navigateToNextPost() {
         if (this.postElements.length === 0) return
+        this.syncFocusIndex()
         this.currentFocusIndex = Math.min(this.currentFocusIndex + 1, this.postElements.length - 1)
         this.updatePostFocus()
       }
 
       private navigateToPreviousPost() {
         if (this.postElements.length === 0) return
+        this.syncFocusIndex()
         this.currentFocusIndex = Math.max(this.currentFocusIndex - 1, 0)
         this.updatePostFocus()
       }
@@ -707,6 +721,51 @@ describe('Hotkey Navigation System', () => {
     expect(titleLink.focus).toHaveBeenCalledWith({ preventScroll: true })
   })
 
+  it('syncs focus index when Tab moves focus to a different article before j/k', () => {
+    const hotkeyManager = new HotkeyManagerClass()
+
+    // j to navigate to first article (index=0)
+    hotkeyManager.testNavigateToNextPost()
+    expect(hotkeyManager.getCurrentFocusIndex()).toBe(0)
+
+    // Simulate Tab moving focus into the second article (index=1)
+    mockDOM.mockDocument.activeElement = mockDOM.mockElements.titleLinks[1]
+    // articles[1].contains(titleLink2) returns true via the mock
+
+    // Press k - should sync to index=1 first, then decrement to index=0
+    const kEvent = {
+      key: 'k',
+      preventDefault: vi.fn(),
+      target: { tagName: 'BODY' },
+    }
+    hotkeyManager.testHandleKeyDown(kEvent as any)
+
+    expect(hotkeyManager.getCurrentFocusIndex()).toBe(0)
+    expect(mockDOM.mockElements.titleLinks[0].focus).toHaveBeenCalled()
+  })
+
+  it('syncs focus index when Tab moves focus forward before pressing j', () => {
+    const hotkeyManager = new HotkeyManagerClass()
+
+    // j to navigate to first article (index=0)
+    hotkeyManager.testNavigateToNextPost()
+    expect(hotkeyManager.getCurrentFocusIndex()).toBe(0)
+
+    // Simulate Tab moving focus into the second article
+    mockDOM.mockDocument.activeElement = mockDOM.mockElements.titleLinks[1]
+
+    // Press j - should sync to index=1 first, then stay at index=1 (max)
+    const jEvent = {
+      key: 'j',
+      preventDefault: vi.fn(),
+      target: { tagName: 'BODY' },
+    }
+    hotkeyManager.testHandleKeyDown(jEvent as any)
+
+    // Only 2 articles, so index stays at 1
+    expect(hotkeyManager.getCurrentFocusIndex()).toBe(1)
+  })
+
   it('does NOT preventDefault on Enter when activeElement is outside the focused article', () => {
     const hotkeyManager = new HotkeyManagerClass()
 
@@ -1033,14 +1092,28 @@ describe('Tags list page j/k navigation', () => {
         }
       }
 
+      private syncFocusIndex() {
+        const active = mockDOM.mockDocument.activeElement
+        if (!active || active === mockDOM.mockDocument.body) return
+
+        for (let i = 0; i < this.postElements.length; i++) {
+          if (this.postElements[i].contains?.(active)) {
+            this.currentFocusIndex = i
+            return
+          }
+        }
+      }
+
       private navigateToNextPost() {
         if (this.postElements.length === 0) return
+        this.syncFocusIndex()
         this.currentFocusIndex = Math.min(this.currentFocusIndex + 1, this.postElements.length - 1)
         this.updatePostFocus()
       }
 
       private navigateToPreviousPost() {
         if (this.postElements.length === 0) return
+        this.syncFocusIndex()
         this.currentFocusIndex = Math.max(this.currentFocusIndex - 1, 0)
         this.updatePostFocus()
       }
