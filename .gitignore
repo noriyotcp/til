@@ -167,3 +167,5 @@ dist
 # memo
 excludes/memo/
 
+.claude/
+
