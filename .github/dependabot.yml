@@ -1,0 +1,56 @@
+version: 2
+updates:
+  # npm dependencies
+  - package-ecosystem: "npm"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    groups:
+      # Astro 本体と公式インテグレーションをまとめる
+      astro:
+        patterns:
+          - "astro"
+          - "@astrojs/*"
+      # expressive-code 関連をまとめる（密結合のため一括で確認したい）
+      expressive-code:
+        patterns:
+          - "astro-expressive-code"
+          - "@expressive-code/*"
+      # remark/rehype プラグインをまとめる
+      markdown:
+        patterns:
+          - "remark-*"
+          - "rehype-*"
+          - "mdast-*"
+          - "hast-*"
+          - "unified"
+      # React 関連をまとめる
+      react:
+        patterns:
+          - "react"
+          - "react-dom"
+          - "@types/react"
+          - "@types/react-dom"
+      # Tailwind CSS 関連をまとめる
+      tailwind:
+        patterns:
+          - "tailwindcss"
+          - "@tailwindcss/*"
+      # テスト関連をまとめる
+      testing:
+        patterns:
+          - "vitest"
+          - "@vitest/*"
+          - "@testing-library/*"
+    # セキュリティアップデートは個別で即座に対応
+    open-pull-requests-limit: 10
+
+  # GitHub Actions
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    groups:
+      github-actions:
+        patterns:
+          - "*"
