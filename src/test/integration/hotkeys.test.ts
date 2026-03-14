@@ -892,6 +892,7 @@ describe('Tags list page j/k navigation', () => {
     const postLink3 = { href: '/post/3', focus: vi.fn() }
 
     const tagHeading1 = {
+      tagName: 'H2',
       scrollIntoView: vi.fn(),
       querySelector: vi.fn((selector: string) => {
         if (selector === 'h1 a') return null
@@ -900,6 +901,7 @@ describe('Tags list page j/k navigation', () => {
       }),
     }
     const postItem1 = {
+      tagName: 'DIV',
       scrollIntoView: vi.fn(),
       querySelector: vi.fn((selector: string) => {
         if (selector === 'h1 a') return null
@@ -908,6 +910,7 @@ describe('Tags list page j/k navigation', () => {
       }),
     }
     const postItem2 = {
+      tagName: 'DIV',
       scrollIntoView: vi.fn(),
       querySelector: vi.fn((selector: string) => {
         if (selector === 'h1 a') return null
@@ -916,6 +919,7 @@ describe('Tags list page j/k navigation', () => {
       }),
     }
     const tagHeading2 = {
+      tagName: 'H2',
       scrollIntoView: vi.fn(),
       querySelector: vi.fn((selector: string) => {
         if (selector === 'h1 a') return null
@@ -924,6 +928,7 @@ describe('Tags list page j/k navigation', () => {
       }),
     }
     const postItem3 = {
+      tagName: 'DIV',
       scrollIntoView: vi.fn(),
       querySelector: vi.fn((selector: string) => {
         if (selector === 'h1 a') return null
@@ -1057,6 +1062,20 @@ describe('Tags list page j/k navigation', () => {
 
       private handleSingleKey(event: KeyboardEvent): boolean {
         switch (event.key) {
+          case 'J':
+            if (this.hasTagHeadings()) {
+              event.preventDefault()
+              this.navigateToNextTagHeading()
+              return true
+            }
+            return false
+          case 'K':
+            if (this.hasTagHeadings()) {
+              event.preventDefault()
+              this.navigateToPreviousTagHeading()
+              return true
+            }
+            return false
           case 'j':
             if (this.postElements.length > 0) {
               event.preventDefault()
@@ -1089,6 +1108,33 @@ describe('Tags list page j/k navigation', () => {
             return false
           default:
             return false
+        }
+      }
+
+      private hasTagHeadings(): boolean {
+        return this.postElements.some((el: any) => el.tagName === 'H2')
+      }
+
+      private navigateToNextTagHeading() {
+        this.syncFocusIndex()
+        for (let i = this.currentFocusIndex + 1; i < this.postElements.length; i++) {
+          if (this.postElements[i].tagName === 'H2') {
+            this.currentFocusIndex = i
+            this.updatePostFocus()
+            return
+          }
+        }
+      }
+
+      private navigateToPreviousTagHeading() {
+        this.syncFocusIndex()
+        const start = this.currentFocusIndex < 0 ? this.postElements.length - 1 : this.currentFocusIndex - 1
+        for (let i = start; i >= 0; i--) {
+          if (this.postElements[i].tagName === 'H2') {
+            this.currentFocusIndex = i
+            this.updatePostFocus()
+            return
+          }
         }
       }
 
@@ -1217,5 +1263,78 @@ describe('Tags list page j/k navigation', () => {
 
     expect(enterEvent.preventDefault).toHaveBeenCalled()
     expect(mockDOM.mockWindow.location.href).toBe('/tags/Books')
+  })
+
+  it('navigates between tag headings with Shift+J', () => {
+    const hotkeyManager = new HotkeyManagerClass()
+
+    // Shift+J -> first tag heading (index=0, tagHeading1)
+    const shiftJEvent1 = {
+      key: 'J',
+      shiftKey: true,
+      preventDefault: vi.fn(),
+      target: { tagName: 'BODY' },
+    }
+    hotkeyManager.testHandleKeyDown(shiftJEvent1 as any)
+    expect(hotkeyManager.getCurrentFocusIndex()).toBe(0)
+    expect(mockDOM.tagLinks[0].focus).toHaveBeenCalled()
+
+    // Shift+J -> second tag heading (index=3, tagHeading2), skipping posts
+    const shiftJEvent2 = {
+      key: 'J',
+      shiftKey: true,
+      preventDefault: vi.fn(),
+      target: { tagName: 'BODY' },
+    }
+    hotkeyManager.testHandleKeyDown(shiftJEvent2 as any)
+    expect(hotkeyManager.getCurrentFocusIndex()).toBe(3)
+    expect(mockDOM.tagLinks[1].focus).toHaveBeenCalled()
+  })
+
+  it('navigates between tag headings with Shift+K', () => {
+    const hotkeyManager = new HotkeyManagerClass()
+
+    // First go to second tag heading with two Shift+J
+    const shiftJ = {
+      key: 'J',
+      shiftKey: true,
+      preventDefault: vi.fn(),
+      target: { tagName: 'BODY' },
+    }
+    hotkeyManager.testHandleKeyDown(shiftJ as any)
+    hotkeyManager.testHandleKeyDown(shiftJ as any)
+    expect(hotkeyManager.getCurrentFocusIndex()).toBe(3)
+
+    // Shift+K -> back to first tag heading (index=0)
+    const shiftKEvent = {
+      key: 'K',
+      shiftKey: true,
+      preventDefault: vi.fn(),
+      target: { tagName: 'BODY' },
+    }
+    hotkeyManager.testHandleKeyDown(shiftKEvent as any)
+    expect(hotkeyManager.getCurrentFocusIndex()).toBe(0)
+    expect(mockDOM.tagLinks[0].focus).toHaveBeenCalled()
+  })
+
+  it('does not move past last tag heading with Shift+J', () => {
+    const hotkeyManager = new HotkeyManagerClass()
+
+    const shiftJ = {
+      key: 'J',
+      shiftKey: true,
+      preventDefault: vi.fn(),
+      target: { tagName: 'BODY' },
+    }
+
+    // Go to first tag heading
+    hotkeyManager.testHandleKeyDown(shiftJ as any)
+    // Go to second tag heading
+    hotkeyManager.testHandleKeyDown(shiftJ as any)
+    expect(hotkeyManager.getCurrentFocusIndex()).toBe(3)
+
+    // Try again - should stay at second tag heading (no more H2s)
+    hotkeyManager.testHandleKeyDown(shiftJ as any)
+    expect(hotkeyManager.getCurrentFocusIndex()).toBe(3)
   })
 })
