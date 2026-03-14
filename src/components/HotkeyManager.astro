@@ -249,6 +249,10 @@
 
     private scrollToTop() {
       window.scrollTo({ top: 0, behavior: 'smooth' })
+      this.currentFocusIndex = -1
+      if (document.activeElement instanceof HTMLElement) {
+        document.activeElement.blur()
+      }
     }
 
     private getCurrentPageInfo() {
