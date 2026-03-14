@@ -131,7 +131,4 @@ export default defineConfig({
     icon(),
     react(),
   ],
-  experimental: {
-    contentIntellisense: true,
-  },
 })
