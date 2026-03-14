@@ -36,13 +36,24 @@
       }
 
       // Find all post elements that can be navigated
-      // This includes both article elements and post items in tag pages
       const articles = Array.from(document.querySelectorAll('article')) as HTMLElement[]
-      const tagPostItems = Array.from(
-        document.querySelectorAll('.post-item'),
-      ) as HTMLElement[]
 
-      this.postElements = articles.length > 0 ? articles : tagPostItems
+      if (articles.length > 0) {
+        this.postElements = articles
+      } else {
+        // Tags list page: collect tag headings and post items in DOM order
+        const tagItems = document.querySelectorAll('.tag-item')
+        const elements: HTMLElement[] = []
+        tagItems.forEach((tagItem) => {
+          const heading = tagItem.querySelector('h2') as HTMLElement
+          if (heading) elements.push(heading)
+          const posts = tagItem.querySelectorAll('.post-item')
+          posts.forEach((post) => elements.push(post as HTMLElement))
+        })
+        this.postElements = elements.length > 0
+          ? elements
+          : Array.from(document.querySelectorAll('.post-item')) as HTMLElement[]
+      }
       this.currentFocusIndex = -1
       this.clearPostFocus()
     }
