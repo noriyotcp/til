@@ -4,7 +4,7 @@ import LazyGithubCalendar from '../../components/LazyGithubCalendar'
 
 // Mock react-github-calendar
 vi.mock('react-github-calendar', () => ({
-  default: ({ username, theme }: { username: string; theme: any }) => (
+  GitHubCalendar: ({ username, theme }: { username: string; theme: any }) => (
     <div
       data-testid="github-calendar"
       data-username={username}
@@ -17,10 +17,12 @@ vi.mock('react-github-calendar', () => ({
 
 // Mock Intersection Observer
 const mockIntersectionObserver = vi.fn()
-mockIntersectionObserver.mockReturnValue({
-  observe: vi.fn(),
-  unobserve: vi.fn(),
-  disconnect: vi.fn(),
+mockIntersectionObserver.mockImplementation(function () {
+  return {
+    observe: vi.fn(),
+    unobserve: vi.fn(),
+    disconnect: vi.fn(),
+  }
 })
 
 beforeEach(() => {
@@ -51,7 +53,7 @@ describe('LazyGithubCalendar', () => {
   it('renders GitHub calendar when visible', async () => {
     let intersectionCallback: ((entries: any[]) => void) | undefined
 
-    mockIntersectionObserver.mockImplementation((callback) => {
+    mockIntersectionObserver.mockImplementation(function (callback: any) {
       intersectionCallback = callback
       return {
         observe: vi.fn(),
@@ -75,7 +77,7 @@ describe('LazyGithubCalendar', () => {
   it('applies correct theme to GitHub calendar', async () => {
     let intersectionCallback: ((entries: any[]) => void) | undefined
 
-    mockIntersectionObserver.mockImplementation((callback) => {
+    mockIntersectionObserver.mockImplementation(function (callback: any) {
       intersectionCallback = callback
       return {
         observe: vi.fn(),
@@ -103,10 +105,12 @@ describe('LazyGithubCalendar', () => {
   it('disconnects observer when component unmounts', () => {
     const mockDisconnect = vi.fn()
 
-    mockIntersectionObserver.mockReturnValue({
-      observe: vi.fn(),
-      unobserve: vi.fn(),
-      disconnect: mockDisconnect,
+    mockIntersectionObserver.mockImplementation(function () {
+      return {
+        observe: vi.fn(),
+        unobserve: vi.fn(),
+        disconnect: mockDisconnect,
+      }
     })
 
     const { unmount } = render(<LazyGithubCalendar username="testuser" />)
