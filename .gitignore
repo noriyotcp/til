@@ -164,8 +164,8 @@ dist
 .astro/
 .env.production
 
-# memo
-excludes/memo/
+# Old/archived code (not part of this project)
+excludes/
 
 .claude/
 
