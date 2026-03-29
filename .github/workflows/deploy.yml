@@ -20,7 +20,7 @@ jobs:
       - name: Checkout your repository using git
         uses: actions/checkout@v6
       - name: Install, build, and upload your site
-        uses: withastro/action@v5
+        uses: withastro/action@v6
         with:
           path: . # リポジトリ内のAstroプロジェクトのルートロケーション
           node-version: 22 # サイト構築に使用するNodeのバージョン
@@ -35,4 +35,4 @@ jobs:
     steps:
       - name: Deploy to GitHub Pages
         id: deployment
-        uses: actions/deploy-pages@v4
+        uses: actions/deploy-pages@v5
