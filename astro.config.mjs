@@ -47,33 +47,6 @@ export default defineConfig({
           /^\/scripts\//,
           /^\/node_modules\//,
         ],
-        output: {
-          // コード分割の最適化
-          manualChunks: {
-            // React関連を別チャンクに分離
-            'react-vendor': ['react', 'react-dom'],
-            // GitHub calendar を別チャンクに分離
-            'github-calendar': ['react-github-calendar'],
-            // Satori関連（Social Cards）を別チャンクに分離
-            'satori': ['satori', '@resvg/resvg-js', 'satori-html'],
-          },
-          // チャンクファイル名の最適化
-          chunkFileNames: (chunkInfo) => {
-            const facadeModuleId = chunkInfo.facadeModuleId
-            if (facadeModuleId) {
-              if (facadeModuleId.includes('github-calendar')) {
-                return 'assets/github-calendar-[hash].js'
-              }
-              if (facadeModuleId.includes('react')) {
-                return 'assets/react-[hash].js'
-              }
-              if (facadeModuleId.includes('satori')) {
-                return 'assets/satori-[hash].js'
-              }
-            }
-            return 'assets/[name]-[hash].js'
-          },
-        },
       },
     },
   },
