@@ -13,9 +13,9 @@ permissions:
   pages: write
   id-token: write
 
-# 短時間に複数push（例: 依存関係PRの連続マージ）が発生した場合、デプロイを並行実行させず
-# 1つずつ順番に処理する。cancel-in-progress: false により、実行中のデプロイを打ち切らず
-# 完了を待ってから次のデプロイに進むため、最終的に最新のmainが確実にデプロイされる。
+# 短時間に複数push（例: 依存関係PRの連続マージ）が発生した場合、古い実行中のデプロイを
+# キャンセルして最新のpushのみを反映する。cancel-in-progress: true により、無駄な
+# デプロイの重複実行を防ぎつつ、常に最新のmainが速やかにデプロイされる。
 concurrency:
   group: "pages"
   cancel-in-progress: true
