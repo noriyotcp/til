@@ -25,7 +25,7 @@
     "@astrojs/ts-plugin": "^1.10.10",
     "@expo-google-fonts/jetbrains-mono": "^0.4.1",
     "@expressive-code/plugin-line-numbers": "^0.44.1",
-    "@fontsource-variable/jetbrains-mono": "^5.2.8",
+    "@fontsource-variable/jetbrains-mono": "^5.3.0",
     "@pagefind/default-ui": "^1.5.2",
     "@resvg/resvg-js": "^2.6.2",
     "@tailwindcss/vite": "^4.3.3",
