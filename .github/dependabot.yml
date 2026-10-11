@@ -42,6 +42,14 @@ updates:
           - "vitest"
           - "@vitest/*"
           - "@testing-library/*"
+      # 上のどのグループにも入らない依存の minor/patch をまとめる（個別 PR 同士の lockfile 衝突を避けるため）
+      # 先に定義したグループが優先されるので、必ず最後に置く。メジャー更新は個別 PR のまま
+      npm-minor-patch:
+        patterns:
+          - "*"
+        update-types:
+          - "minor"
+          - "patch"
     # Astro v6 へのメジャーアップグレードは手動で対応する（Shiki v4, Node 22 等の破壊的変更あり）
     # Zod 4 も Astro v6 とセットで移行する（Astro v5 は Zod 3 前提）
     ignore:
