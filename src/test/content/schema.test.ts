@@ -1,5 +1,5 @@
 import { describe, it, expect, vi } from 'vitest'
-import { z } from 'zod'
+import { z } from 'astro/zod'
 
 // Mock the image function from Astro
 const mockImage = () => z.string()

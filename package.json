@@ -75,7 +75,6 @@
     "prettier": "3.9.10",
     "prettier-plugin-astro": "1.1.2",
     "sass-embedded": "^1.106.1",
-    "vitest": "^5.0.5",
-    "zod": "^3.25.76"
+    "vitest": "^5.0.5"
   }
 }
