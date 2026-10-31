@@ -24,6 +24,7 @@ import remarkGemoji from './src/plugins/remark-gemoji' /* for shortcode emoji su
 import rehypePixelated from './src/plugins/rehype-pixelated' /* Custom plugin to handle pixelated images */
 import rehypeFixImagePaths from './src/plugins/rehype-fix-image-paths' /* Custom plugin to fix image paths with base URL */
 import react from '@astrojs/react'
+import { unified } from '@astrojs/markdown-remark'
 
 // https://astro.build/config
 export default defineConfig({
@@ -31,16 +32,14 @@ export default defineConfig({
   base: '/til',
   trailingSlash: 'never',
   prefetch: true,
+  // Astro 7 の既定値 'jsx' はインライン要素間の空白を消すので、v6 までの挙動を維持する
+  compressHTML: true,
   vite: {
     plugins: [tailwindcss()],
     build: {
       // ビルドパフォーマンスの最適化
       target: 'es2020',
-      minify: 'esbuild',
-      // 並列処理の最適化
-      rollupOptions: {
-        // 並列処理数を最適化
-        maxParallelFileOps: 8,
+      rolldownOptions: {
         external: [
           // Exclude directories that shouldn't be bundled
           /^\/excludes\//,
@@ -51,42 +50,44 @@ export default defineConfig({
     },
   },
   markdown: {
-    remarkPlugins: [
-      [remarkDescription, { maxChars: 200 }],
-      remarkReadingTime,
-      remarkDirective,
-      remarkAdmonitions,
-      remarkMath,
-      remarkGemoji,
-    ],
-    rehypePlugins: [
-      rehypeSlug,
-      [
-        rehypeAutolinkHeadings,
-        {
-          behavior: 'append',
-          properties: {
-            className: ['heading-anchor'],
+    processor: unified({
+      remarkPlugins: [
+        [remarkDescription, { maxChars: 200 }],
+        remarkReadingTime,
+        remarkDirective,
+        remarkAdmonitions,
+        remarkMath,
+        remarkGemoji,
+      ],
+      rehypePlugins: [
+        rehypeSlug,
+        [
+          rehypeAutolinkHeadings,
+          {
+            behavior: 'append',
+            properties: {
+              className: ['heading-anchor'],
+            },
+            content: fromHtmlIsomorphic(
+              '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link-icon lucide-link"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>',
+              { fragment: true },
+            ).children,
           },
-          content: fromHtmlIsomorphic(
-            '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link-icon lucide-link"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>',
-            { fragment: true },
-          ).children,
-        },
+        ],
+        rehypeTitleFigure,
+        [
+          rehypeExternalLinks,
+          {
+            rel: ['noreferrer', 'noopener'],
+            target: '_blank',
+          },
+        ],
+        rehypeUnwrapImages,
+        rehypePixelated,
+        rehypeFixImagePaths,
+        rehypeKatex,
       ],
-      rehypeTitleFigure,
-      [
-        rehypeExternalLinks,
-        {
-          rel: ['noreferrer', 'noopener'],
-          target: '_blank',
-        },
-      ],
-      rehypeUnwrapImages,
-      rehypePixelated,
-      rehypeFixImagePaths,
-      rehypeKatex,
-    ],
+    }),
   },
 
   integrations: [
