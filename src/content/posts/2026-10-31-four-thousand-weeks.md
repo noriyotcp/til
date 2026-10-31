@@ -4,7 +4,7 @@ date: "2026-10-31 22:29:37 +0900"
 last_modified_at: "2026-10-31 22:29:37 +0900"
 tags:
   - "Books"
-draft: true
+draft: false
 ---
 
 ## はじめに
