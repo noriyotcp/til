@@ -143,18 +143,20 @@ article img {
   h4,
   h5,
   h6 {
-    @apply flex items-center my-6.5 font-semibold;
+    /* flex にするとテキストと <code> が別々の flex item になり崩れるため、
+       ブロックのまま # マーカーを左の padding に絶対配置してぶら下げインデントにする */
+    @apply relative my-6.5 font-semibold;
 
     span[role='img'] {
       @apply mx-2.5;
     }
 
     .heading-anchor {
-      @apply opacity-0 inline-block text-accent/10 ml-3 transition-opacity;
+      @apply opacity-0 inline-block align-middle text-accent/10 ml-3 transition-opacity;
     }
 
     &::before {
-      @apply self-start;
+      @apply absolute left-0;
     }
 
     &:hover .heading-anchor {
@@ -163,10 +165,10 @@ article img {
   }
 
   h1 {
-    @apply text-2xl text-[var(--theme-h1)];
+    @apply text-2xl text-[var(--theme-h1)] pl-[calc(1ch+0.5rem)];
 
     &::before {
-      @apply mr-2 content-['#'];
+      @apply content-['#'];
     }
 
     .heading-anchor svg {
@@ -175,10 +177,10 @@ article img {
   }
 
   h2 {
-    @apply text-2xl text-[var(--theme-h2)];
+    @apply text-2xl text-[var(--theme-h2)] pl-[calc(2ch+0.5rem)];
 
     &::before {
-      @apply mr-2 content-['##'];
+      @apply content-['##'];
     }
 
     .heading-anchor svg {
@@ -187,10 +189,10 @@ article img {
   }
 
   h3 {
-    @apply text-xl text-[var(--theme-h3)];
+    @apply text-xl text-[var(--theme-h3)] pl-[calc(3ch+0.5rem)];
 
     &::before {
-      @apply mr-2 content-['###'];
+      @apply content-['###'];
     }
 
     .heading-anchor svg {
@@ -199,10 +201,10 @@ article img {
   }
 
   h4 {
-    @apply text-xl text-[var(--theme-h4)];
+    @apply text-xl text-[var(--theme-h4)] pl-[calc(4ch+0.5rem)];
 
     &::before {
-      @apply mr-2 content-['####'];
+      @apply content-['####'];
     }
 
     .heading-anchor svg {
@@ -211,10 +213,10 @@ article img {
   }
 
   h5 {
-    @apply text-lg text-[var(--theme-h5)];
+    @apply text-lg text-[var(--theme-h5)] pl-[calc(5ch+0.5rem)];
 
     &::before {
-      @apply mr-2 content-['#####'];
+      @apply content-['#####'];
     }
 
     .heading-anchor svg {
@@ -223,10 +225,10 @@ article img {
   }
 
   h6 {
-    @apply text-lg text-[var(--theme-h6)];
+    @apply text-lg text-[var(--theme-h6)] pl-[calc(6ch+0.5rem)];
 
     &::before {
-      @apply mr-2 content-['######'];
+      @apply content-['######'];
     }
 
     .heading-anchor svg {
