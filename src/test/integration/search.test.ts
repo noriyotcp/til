@@ -60,12 +60,12 @@ describe('Search Integration', () => {
     mockDOM = createMockDOM()
 
     // Mock global objects
-    global.document = mockDOM.mockDocument as any
-    global.window = mockDOM.mockWindow as any
-    global.HTMLElement = class HTMLElement {} as any
-    global.customElements = {
+    vi.stubGlobal('document', mockDOM.mockDocument)
+    vi.stubGlobal('window', mockDOM.mockWindow)
+    vi.stubGlobal('HTMLElement', class HTMLElement {})
+    vi.stubGlobal('customElements', {
       define: vi.fn(),
-    } as any
+    })
 
     // Mock import.meta.env
     vi.stubGlobal('import.meta', {

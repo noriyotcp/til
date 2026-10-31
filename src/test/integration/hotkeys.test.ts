@@ -13,8 +13,8 @@ describe('Hotkey Navigation System', () => {
     mockDOM = createHotkeyMockDOM()
 
     // Mock global objects
-    global.document = mockDOM.mockDocument as any
-    global.window = mockDOM.mockWindow as any
+    vi.stubGlobal('document', mockDOM.mockDocument)
+    vi.stubGlobal('window', mockDOM.mockWindow)
 
     // Mock import.meta.env
     vi.stubGlobal('import.meta', {
@@ -429,8 +429,8 @@ describe('Tags list page j/k navigation', () => {
 
   beforeEach(() => {
     mockDOM = createTagsPageMockDOM()
-    global.document = mockDOM.mockDocument as any
-    global.window = mockDOM.mockWindow as any
+    vi.stubGlobal('document', mockDOM.mockDocument)
+    vi.stubGlobal('window', mockDOM.mockWindow)
 
     HotkeyManagerClass = createHotkeyManagerMock({
       mockDOM,
