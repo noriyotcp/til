@@ -14,7 +14,7 @@ export async function GET(_context: AstroGlobal) {
     )
     return
   }
-  const posts = await getCollection('posts')
+  const posts = await getCollection('posts', ({ data }) => data.draft !== true)
   return rss({
     stylesheet: '/rss.xsl',
     title: siteConfig.title,
