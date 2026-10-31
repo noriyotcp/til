@@ -3,6 +3,9 @@
   "description": "noriyo_tcp's TIL (Today I Learned) blog built with Astro.",
   "type": "module",
   "version": "1.0.0",
+  "engines": {
+    "node": ">=22.23.4"
+  },
   "scripts": {
     "dev": "astro dev",
     "build": "NODE_OPTIONS='--max-old-space-size=4096' astro build",
