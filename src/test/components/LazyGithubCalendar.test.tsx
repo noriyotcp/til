@@ -1,4 +1,4 @@
-import { render, screen, waitFor } from '@testing-library/react'
+import { act, render, screen, waitFor } from '@testing-library/react'
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import LazyGithubCalendar from '../../components/LazyGithubCalendar'
 
@@ -65,7 +65,9 @@ describe('LazyGithubCalendar', () => {
     render(<LazyGithubCalendar username="testuser" />)
 
     // Simulate intersection
-    intersectionCallback!([{ isIntersecting: true }])
+    act(() => {
+      intersectionCallback!([{ isIntersecting: true }])
+    })
 
     await waitFor(() => {
       expect(screen.getByTestId('github-calendar')).toBeInTheDocument()
@@ -89,7 +91,9 @@ describe('LazyGithubCalendar', () => {
     render(<LazyGithubCalendar username="testuser" />)
 
     // Simulate intersection
-    intersectionCallback!([{ isIntersecting: true }])
+    act(() => {
+      intersectionCallback!([{ isIntersecting: true }])
+    })
 
     await waitFor(() => {
       const calendar = screen.getByTestId('github-calendar')
