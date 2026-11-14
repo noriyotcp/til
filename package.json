@@ -35,7 +35,7 @@
     "@types/hast": "^3.0.5",
     "@types/react": "^19.3.0",
     "@types/react-dom": "^19.3.0",
-    "astro": "^7.4.4",
+    "astro": "^7.4.12",
     "astro-expressive-code": "^0.44.3",
     "astro-icon": "^1.2.0",
     "emoji-regex": "^11.0.0",
