@@ -64,12 +64,12 @@
     "unified": "^11.0.5"
   },
   "devDependencies": {
-    "@testing-library/jest-dom": "^7.0.1",
+    "@testing-library/jest-dom": "^8.0.0",
     "@testing-library/react": "^16.3.3",
-    "@testing-library/user-event": "^14.6.8",
+    "@testing-library/user-event": "^14.6.13",
     "@types/markdown-it": "^14.2.0",
     "@types/sanitize-html": "^2.16.2",
-    "@vitest/ui": "^5.0.5",
+    "@vitest/ui": "^5.1.1",
     "jsdom": "^30.1.3",
     "pagefind": "^1.5.2",
     "prettier": "3.9.10",
